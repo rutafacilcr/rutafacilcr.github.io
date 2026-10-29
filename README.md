@@ -1,29 +1,40 @@
+<p align="center"><img src="icon-192.png" width="96" alt="Ícono de RutaFácil CR"></p>
+
 # RutaFácil CR
 
-App para coordinar entregas de paquetes: cargás la lista del día, mandás el mensaje de WhatsApp a cada cliente y te arma la ruta más corta.
+Herramienta web para repartidores de paquetes en Costa Rica. Cargás la lista de entregas del día, le mandás a cada cliente un WhatsApp con el mensaje ya escrito, el cliente confirma su horario y ubicación en un formulario, y la app arma la ruta más corta.
 
-**Abrir la app:** https://victormenav.github.io/RutafacilCR/
+**Usar la app:** https://victormenav.github.io/RutafacilCR/
 
-## Archivos
+## Qué hace
 
-- `index.html`: la app completa. No necesita servidor ni base de datos.
-- `plantilla-paquetes.xlsx`: plantilla de Excel para la lista de paquetes (columnas `nombre, telefono, direccion, ubicacion, guia, nota`).
+| Paso | Qué resuelve |
+|---|---|
+| **1. Paquetes** | Importa la lista desde Excel, CSV o copiando y pegando. También se puede agregar a mano. Acepta links de Google Maps / Waze y saca las coordenadas solo. |
+| **2. Mensajes** | Un botón por cliente abre WhatsApp con el mensaje de coordinación listo. El mensaje lleva un link a un formulario donde el cliente marca horario, señas y ubicación. |
+| **3. Respuestas** | Lo que llena el cliente entra solo a la app y lo marca como *Confirmado*. |
+| **4. Ruta** | Ordena las paradas para recorrer la menor distancia, abre la ruta en Google Maps y cada parada en Waze, y manda el aviso de "voy en camino". |
 
-## Uso rápido
+Funciona desde el celular, se puede instalar como ícono en la pantalla de inicio y no necesita servidor propio.
 
-1. **Paquetes:** subí la plantilla llena o pegá las filas copiadas de Excel / Google Sheets.
-2. **Mensajes:** tocá *Abrir WhatsApp* en cada cliente y enviá. Marcá *Confirmó* o *No responde*.
-3. **Ruta:** poné el punto de salida y tocá *Calcular mejor ruta*. Abrí la ruta en Google Maps o cada parada en Waze.
+## Documentación
 
-Los datos se guardan en el navegador del celular donde usás la app.
+- [Manual de usuario](docs/manual-usuario.md): cómo usar la app día a día.
+- [Manual técnico](docs/manual-tecnico.md): publicación, Supabase, configuración y mantenimiento.
+- [Manual de programador y diseño](docs/manual-programador.md): estructura del código, datos, seguridad y sistema visual.
+- [Historial de cambios](CHANGELOG.md)
 
-## Formulario para clientes (opcional)
+## Archivos principales
 
-Cada mensaje de WhatsApp puede llevar un link (`f.html`) donde el cliente marca su horario, sus señas y su ubicación. Las respuestas entran solas a la app.
+| Archivo | Para qué es |
+|---|---|
+| `index.html` | La app del repartidor (todo en un archivo). |
+| `f.html` | Formulario que llena el cliente. |
+| `config.js` | Dirección y llave pública de Supabase. |
+| `supabase.sql` | Crea la tabla y las funciones del formulario en Supabase. |
+| `plantilla-paquetes.xlsx` | Plantilla de Excel para la lista de paquetes. |
+| `manifest.json`, `*.png` | Ícono y datos para instalar la app en el celular. |
 
-Configuración (una sola vez):
-1. Crear un proyecto gratis en https://supabase.com.
-2. En **SQL Editor**, pegar y ejecutar todo `supabase.sql`.
-3. En **Project Settings > API**, copiar la **Project URL** y la **anon public key** dentro de `config.js`.
+## Estado
 
-Mientras `config.js` esté vacío, la app funciona igual que antes, sin formulario.
+Versión piloto en uso por el autor. Hecha en HTML, CSS y JavaScript sin frameworks, publicada con GitHub Pages y Supabase (plan gratis).
