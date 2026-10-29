@@ -92,6 +92,8 @@ Si los dos valores están vacíos, la app funciona sin formulario: los mensajes 
 
 ## 6. Mantenimiento
 
+- **Versión visible:** el encabezado de la app muestra la versión (ej. `v29-oct-c`). Al publicar un cambio se actualiza ese texto en `index.html`, así se puede confirmar si un celular tiene la versión nueva.
+
 - **Cambiar textos o mensajes por defecto:** `index.html`, constantes `DEF_COORD`, `DEF_COORD_F` y `DEF_CAMINO`.
 - **Cambiar horarios del formulario:** `entrega.html`, arreglo `SLOTS`.
 - **Links viejos** (`f.html?…`) redirigen a `entrega.html`. No borrar `f.html` mientras haya mensajes viejos circulando.
