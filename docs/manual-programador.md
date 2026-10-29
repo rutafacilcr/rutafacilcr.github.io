@@ -80,6 +80,17 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - `applyReply(p, texto)`: ubicación con `parseCoord()` y, si el link solo trae el nombre del lugar (`?q=Vitafuerte…`), la busca con `geocodeText()` en OpenStreetMap Nominatim, solo Costa Rica. La hora sale de `findTime()` (regex `TIME_RE`: "4 pm", "a las 4", "de 2 a 4", "en la tarde", "cualquier hora"…), que ignora líneas con links o coordenadas y quita el encabezado `[hora, fecha] Nombre:` que WhatsApp agrega al copiar varios mensajes.
 - Guarda `p.ubic`, `p.horario` y pasa `pendiente`/`noresponde` a `confirmado`.
 
+## 3c. Escanear etiquetas
+
+- Panel **Escanear etiquetas** en *Paquetes* + hoja `#scanSheet`. Entradas: `#scanCam` (`capture=environment`) y `#scanGal` (`multiple`, va a la cola `SCAN.queue`).
+- Librerías cargadas con `loadScript()` solo al escanear: ZXing (`LIB_ZXING`) y Tesseract.js (`LIB_OCR`). Un solo worker de Tesseract (`SCAN.ocr`, idioma `spa`) por sesión.
+- `scanCanvas(file, rot)`: reduce a 2000 px y gira de 90 en 90 (botón *Girar*).
+- `readCodes(c)`: `BarcodeDetector` nativo si existe (Android); si no, ZXing con `TRY_HARDER` sobre la foto entera y por franjas, porque la etiqueta trae más de un código.
+- `deskew(c)`: busca el ángulo (−12° a 12°, afinado a 0,25°) con el perfil de proyección de filas más marcado y endereza; con 2–3° de inclinación Tesseract pasaba de leer bien a no leer nada. Aplica gris y contraste.
+- `parseLabel(texto, códigos)`: guía = código tipo `HZCR56461310263` (o regex en el texto); teléfono = 8 dígitos que empiecen en 2/4/5/6/7/8, prefiriendo líneas con *tel/cel*, y descartando dígitos de la guía; nombre = texto después de *TO/Destinatario/Nombre/Para* (o primera línea de 2–5 palabras); dirección = líneas con palabras de señas o provincias (`L_ADDR`), sin las del remitente (`L_SENDER`: Temu, China, aduana…).
+- *Guardar* abre la cámara **dentro del mismo toque** (iPhone no deja abrirla después de un `await`) y agrega con `mkPkg()`. Las fotos de etiqueta no se guardan.
+- Prueba local: las CDN están bloqueadas en el sandbox; se instalan los paquetes con npm y Playwright sirve los archivos interceptando las URL de jsDelivr. Las etiquetas de prueba se generan con JsBarcode.
+
 ## 3b. Prueba de entrega
 
 - Al pasar un paquete a **entregado** (botón o etiqueta de estado) se abre `#podSheet` con `openPOD(p)`. Nunca se pone `st='entregado'` sin evidencia.

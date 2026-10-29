@@ -23,6 +23,7 @@ Servicios externos sin cuenta: wa.me (WhatsApp), Google Maps, Waze
 - No hay servidor propio. Todo el código corre en el navegador.
 - La lista de paquetes vive en `localStorage` del navegador (clave `rutafacil-cr-v1`).
 - En Supabase se guardan las respuestas del formulario y las **pruebas de entrega** (tabla `entregas` + fotos en Storage, carpeta `evidencias`).
+- **Escanear etiquetas** corre todo en el celular: no manda fotos ni datos a ningún servidor y no tiene costo. Las librerías se bajan solo al usar el escáner.
 - Las fotos de evidencia también quedan en el celular (IndexedDB `rutafacil-evidencias`).
 
 ## 2. Publicación (GitHub Pages)
@@ -108,6 +109,8 @@ Si los dos valores están vacíos, la app funciona sin formulario: los mensajes 
 | Google Fonts | Tipografías | Usa fuentes del sistema. |
 | `wa.me` | Abrir WhatsApp con texto | Botón **Copiar texto**. |
 | Google Maps / Waze | Navegación | Se pueden copiar las coordenadas. |
+| jsDelivr `@zxing/library 0.21.3` | Leer el código de barras de la etiqueta (solo si el navegador no trae `BarcodeDetector`, como en iPhone) | Se escribe la guía a mano. |
+| jsDelivr `tesseract.js 5.1.1` (+ núcleo WASM y datos de idioma `spa`, unos 5 MB la primera vez; luego quedan en IndexedDB del navegador) | Leer el texto de la etiqueta (OCR) | Se llenan los datos a mano. |
 | OpenStreetMap Nominatim | Buscar un lugar por nombre cuando el link de ubicación no trae coordenadas (botón *Pegar respuesta*) | Pegar las coordenadas o un link con coordenadas. Uso bajo, sin llave. |
 | Geolocalización del navegador | Botón "Estoy en mi casa" del formulario | El cliente la manda por WhatsApp o pega un link. Requiere HTTPS (GitHub Pages ya lo da). En iPhone depende de *Ajustes > Privacidad y seguridad > Localización > Sitios web de Safari* y del permiso por sitio en Safari (*aA > Configuración del sitio web > Ubicación*), también dentro del navegador de WhatsApp. |
 

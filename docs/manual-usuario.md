@@ -27,11 +27,19 @@ Después abrí siempre la app desde el ícono **RutaFácil**. En iPhone, el íco
 
 La primera vez vas a ver datos de ejemplo: tocá **Borrar ejemplo**.
 
-Tenés tres formas de cargar:
+Tenés cuatro formas de cargar:
 
-1. **Plantilla de Excel:** tocá **Bajar plantilla de Excel**, llenala (un paquete por fila) y subila con **Subir Excel / CSV**.
-2. **Copiar y pegar:** seleccioná las filas en Excel o Google Sheets, copiá y pegá en el cuadro **Importar lista** > **Agregar a la lista**.
-3. **A mano:** **Agregar un paquete a mano**.
+1. **Escanear etiquetas (lo más rápido con muchos paquetes):** tocá **📷 Escanear etiquetas** y tomale foto a la etiqueta.
+   - La app saca la **guía** del código de barras y trata de leer **nombre, teléfono y dirección**.
+   - Revisá los datos, corregí lo que haga falta y tocá **Guardar y tomar otra**. Así seguís con los 70 sin salir de la pantalla. Al final tocá **Terminar**.
+   - **Si ya tomaste las fotos:** tocá **Elegir fotos de la galería** y seleccioná varias. La app las va mostrando una por una.
+   - **Para que lea bien:** etiqueta derecha y llenando la pantalla, a la sombra, sin reflejo y con la bolsa estirada. Si sale mal, tocá **↻ Girar y leer de nuevo** o tomá otra foto.
+   - Si la guía ya estaba en la lista, sale un aviso en rojo para que no la repitás.
+   - La primera vez tarda un poco más porque baja el lector de texto (unos MB). Después queda guardado en el celular.
+   - Lo que no lea, lo escribís a mano en el mismo cuadro. En **Ver texto leído** está todo lo que la app alcanzó a leer.
+2. **Plantilla de Excel:** tocá **Bajar plantilla de Excel**, llenala (un paquete por fila) y subila con **Subir Excel / CSV**.
+3. **Copiar y pegar:** seleccioná las filas en Excel o Google Sheets, copiá y pegá en el cuadro **Importar lista** > **Agregar a la lista**.
+4. **A mano:** **Agregar un paquete a mano**.
 
 Columnas: `nombre`, `telefono`, `direccion`, `ubicacion`, `guia`, `nota`.
 
@@ -120,6 +128,7 @@ Tocá la etiqueta de color para pasar al siguiente estado.
 | Sale "No se pudo revisar (código …)" o "No se pudo enviar (código …)" | Mandale una captura del mensaje con el código al técnico: indica la causa exacta. |
 | "Confirmar entrega" no se activa | Faltan fotos (mínimo 3) o la ubicación. Si dice que la ubicación está bloqueada, activala en Ajustes (ver *Prueba de entrega*). |
 | La evidencia dice "⏳ sin subir" | No había internet. Se sube sola cada minuto con la app abierta, o tocá **Revisar respuestas ahora**. |
+| El escáner no lee la etiqueta | Acercá el celular, quitá el reflejo, estirá la bolsa y probá **↻ Girar y leer de nuevo**. Si dice que no pudo cargar el lector, revisá el internet. Siempre podés llenar a mano. |
 | "No encontré hora ni ubicación" | Lo que copiaste no traía ninguna de las dos. Copiá el mensaje con la hora o el link de la ubicación. |
 | No llegan las respuestas | Revisá el internet y tocá **Revisar respuestas ahora**. El cliente tiene que tocar **Enviar** en el formulario. |
 | Desapareció mi lista | Abriste la app en otro navegador o desde Safari en vez del ícono. |

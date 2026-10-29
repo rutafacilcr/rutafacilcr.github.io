@@ -120,16 +120,19 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);outline-
 .podline{display:flex;gap:8px;align-items:flex-start;font-size:14px}
 .podline b{min-width:22px}
 .ev{font-size:12.5px;color:var(--ok);font-weight:600}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:14px;z-index:20;max-width:calc(100% - 32px)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:14px;z-index:40;max-width:calc(100% - 32px)}
 details summary{cursor:pointer;font-weight:600}
 .empty{text-align:center;padding:28px 12px;color:var(--muted);border:2px dashed var(--line);border-radius:10px}
+.scanimg{width:100%;max-height:220px;object-fit:contain;background:var(--bg);border-radius:8px;display:block}
+.scanst{font-size:14px;font-weight:600;margin:0}
+.scanraw{white-space:pre-wrap;font-family:var(--f-mono);font-size:11.5px;background:var(--bg);border-radius:7px;padding:8px;max-height:180px;overflow:auto}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
 
 <header class="top"><div class="wrap">
-  <div><h1>Ruta<span>Fácil</span> CR</h1><p class="sub">Paquetes, mensajes de WhatsApp y ruta del día · <span class="mono" style="font-size:11px;opacity:.8">v29-oct-j</span></p></div>
+  <div><h1>Ruta<span>Fácil</span> CR</h1><p class="sub">Paquetes, mensajes de WhatsApp y ruta del día · <span class="mono" style="font-size:11px;opacity:.8">v29-oct-k</span></p></div>
   <span class="daypill" id="daypill"></span>
 </div></header>
 <nav class="tabs"><div class="wrap" role="tablist">
@@ -143,6 +146,15 @@ details summary{cursor:pointer;font-weight:600}
 <section id="v-paquetes">
   <div class="example" id="exampleBar" hidden><span>Estás viendo datos de ejemplo. Importá tu lista para empezar.</span><button class="btn sm" id="clearExample">Borrar ejemplo</button></div>
   <div class="stats" id="stats"></div>
+
+  <div class="panel">
+    <h2>Escanear etiquetas</h2>
+    <p class="small muted">Tomale foto a la etiqueta de cada paquete: la app lee la <b>guía</b> del código de barras y trata de leer <b>nombre, teléfono y dirección</b>. Revisás, corregís si hace falta y seguís con el próximo. También podés elegir varias fotos de la galería.</p>
+    <div class="row">
+      <button class="btn primary" id="scanCamBtn">📷 Escanear etiquetas</button>
+      <label class="btn" for="scanGal" style="text-transform:none;letter-spacing:0;font-size:14px;color:var(--ink);flex-direction:row">Elegir fotos de la galería</label>
+    </div>
+  </div>
 
   <div class="panel">
     <h2>Importar lista</h2>
@@ -248,6 +260,30 @@ details summary{cursor:pointer;font-weight:600}
   <h2 id="evTitle">Evidencia de entrega</h2>
   <div id="evBody" class="list"></div>
   <button class="btn" id="evClose">Cerrar</button>
+</div></div>
+<div class="sheet" id="scanSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="scanTitle">
+  <h2 id="scanTitle">Escanear etiquetas</h2>
+  <p class="small muted" id="scanCount"></p>
+  <img class="scanimg" id="scanImg" alt="Foto de la etiqueta" hidden>
+  <p class="scanst" id="scanSt"></p>
+  <form id="scanForm" class="list" hidden onsubmit="return false">
+    <label>Guía<input id="s-guia" class="mono" autocomplete="off"></label>
+    <p class="small" id="scanDup" hidden style="color:var(--bad);margin:0"></p>
+    <label>Nombre<input id="s-nombre" autocomplete="off"></label>
+    <label>Teléfono<input id="s-tel" inputmode="tel" autocomplete="off" placeholder="8888-1234"></label>
+    <label>Dirección<textarea id="s-dir" rows="3"></textarea></label>
+    <label>Nota<input id="s-nota" autocomplete="off" placeholder="Ej: número escrito en el paquete"></label>
+    <details><summary class="small">Ver texto leído de la etiqueta</summary><div class="scanraw" id="scanRaw"></div></details>
+  </form>
+  <input type="file" id="scanCam" accept="image/*" capture="environment" hidden>
+  <input type="file" id="scanGal" accept="image/*" multiple hidden>
+  <div class="row">
+    <button class="btn primary" id="scanSave" hidden>Guardar y siguiente</button>
+    <button class="btn primary" id="scanShot">📷 Tomar foto</button>
+    <button class="btn sm ghost" id="scanRot" hidden>↻ Girar y leer de nuevo</button>
+    <button class="btn sm ghost" id="scanSkip" hidden>Descartar</button>
+    <button class="btn ghost" id="scanEnd">Terminar</button>
+  </div>
 </div></div>
 <div class="toast" id="toast" hidden></div>
 
@@ -599,6 +635,142 @@ async function openEvidence(p){
   $('#evSheet').hidden=false;document.body.style.overflow='hidden';
 }
 $('#evClose').onclick=()=>{$('#evSheet').hidden=true;document.body.style.overflow='';$('#evBody').querySelectorAll('img').forEach(i=>URL.revokeObjectURL(i.src))};
+
+// ===== Escanear etiquetas (gratis, dentro del celular) =====
+// Guía: código de barras (BarcodeDetector nativo o ZXing). Texto: OCR con Tesseract.js en español.
+// Las librerías se cargan solo al escanear y la foto de la etiqueta no se guarda.
+const LIB_ZXING='https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';
+const LIB_OCR='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
+const loadScript=src=>(loadScript.c||(loadScript.c={}))[src]||(loadScript.c[src]=new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>{delete loadScript.c[src];rej(new Error('lib'))};document.head.appendChild(s)}));
+const SCAN={queue:[],file:null,rot:0,busy:false,cam:false,n:0,url:null,ocr:null};
+const scanSt=t=>$('#scanSt').textContent=t;
+function scanCanvas(file,rot){
+  return new Promise((res,rej)=>{const img=new Image(),u=URL.createObjectURL(file);
+    img.onload=()=>{const k=Math.min(1,2000/Math.max(img.width,img.height));const w=Math.round(img.width*k),h=Math.round(img.height*k);
+      const c=document.createElement('canvas'),sw=rot%2;c.width=sw?h:w;c.height=sw?w:h;const x=c.getContext('2d');
+      x.translate(c.width/2,c.height/2);x.rotate(rot*Math.PI/2);x.drawImage(img,-w/2,-h/2,w,h);URL.revokeObjectURL(u);res(c)};
+    img.onerror=()=>{URL.revokeObjectURL(u);rej(new Error('foto'))};img.src=u});
+}
+function crop(c,y0,y1){const o=document.createElement('canvas');o.width=c.width;o.height=Math.round(c.height*(y1-y0));o.getContext('2d').drawImage(c,0,-Math.round(c.height*y0));return o}
+async function readCodes(c){
+  const out=new Set();
+  if('BarcodeDetector' in window){try{const d=new BarcodeDetector();(await d.detect(c)).forEach(b=>out.add(b.rawValue))}catch(e){}}
+  if(out.size)return[...out];
+  await loadScript(LIB_ZXING);const Z=window.ZXing;
+  const r=new Z.MultiFormatReader(),h=new Map();h.set(Z.DecodeHintType.TRY_HARDER,true);
+  h.set(Z.DecodeHintType.POSSIBLE_FORMATS,[Z.BarcodeFormat.CODE_128,Z.BarcodeFormat.CODE_39,Z.BarcodeFormat.CODE_93,Z.BarcodeFormat.ITF,Z.BarcodeFormat.EAN_13,Z.BarcodeFormat.QR_CODE,Z.BarcodeFormat.DATA_MATRIX]);r.setHints(h);
+  // La etiqueta trae más de un código: se lee la foto entera y por partes.
+  for(const part of [c,crop(c,0,.5),crop(c,.5,1),crop(c,.25,.75)]){
+    try{out.add(r.decode(new Z.BinaryBitmap(new Z.HybridBinarizer(new Z.HTMLCanvasElementLuminanceSource(part)))).getText())}catch(e){}}
+  return[...out];
+}
+async function readText(c){
+  await loadScript(LIB_OCR);
+  if(!SCAN.ocr){scanSt('Preparando el lector de texto (la primera vez tarda un poco)…');
+    SCAN.ocr=Tesseract.createWorker('spa',1,{logger:m=>{if(m.status==='recognizing text')scanSt(`Leyendo el texto… ${Math.round(m.progress*100)} %`)}}).catch(e=>{SCAN.ocr=null;throw e})}
+  const w=await SCAN.ocr;
+  return (await w.recognize(deskew(c))).data.text;
+}
+// El OCR falla con texto torcido aunque sean 2–3°. Se busca el ángulo en que las filas de texto
+// quedan más marcadas (perfil de proyección) y se endereza la foto antes de leerla.
+function deskew(c){
+  const k=Math.min(1,700/c.width),sw=Math.round(c.width*k),sh=Math.round(c.height*k);
+  const t=document.createElement('canvas');t.width=sw;t.height=sh;const tx=t.getContext('2d',{willReadFrequently:true});
+  const score=a=>{tx.setTransform(1,0,0,1,0,0);tx.fillStyle='#fff';tx.fillRect(0,0,sw,sh);tx.translate(sw/2,sh/2);tx.rotate(a*Math.PI/180);tx.drawImage(c,-sw/2,-sh/2,sw,sh);
+    const d=tx.getImageData(0,0,sw,sh).data;let prev=0,sc=0;
+    for(let y=0;y<sh;y++){let n=0;for(let i=y*sw*4;i<(y+1)*sw*4;i+=8)if(d[i]+d[i+1]+d[i+2]<330)n++;if(y)sc+=(n-prev)**2;prev=n}return sc};
+  let best=0,bs=score(0);
+  for(let a=-12;a<=12;a+=1){if(!a)continue;const v=score(a);if(v>bs){bs=v;best=a}}
+  const b0=best;for(let a=b0-.75;a<=b0+.75;a+=.25){const v=score(a);if(v>bs){bs=v;best=a}}
+  const g=document.createElement('canvas');g.width=c.width;g.height=c.height;const x=g.getContext('2d');
+  x.fillStyle='#fff';x.fillRect(0,0,g.width,g.height);x.filter='grayscale(1) contrast(1.4)';
+  x.translate(g.width/2,g.height/2);x.rotate(best*Math.PI/180);x.drawImage(c,-c.width/2,-c.height/2);
+  return g;
+}
+const L_SENDER=/temu|whaleco|china|shenzhen|guangzhou|shanghai|hong ?kong|warehouse|sender|remitente|shipper|\bfrom\b|cn ?22|customs|aduana|declara|gift|regalo|weight|peso|value|valor|signature|firma|qty|cantidad|tariff|origin/i;
+const L_ADDR=/\b(metros|mts?|sur|norte|este|oeste|frente|contiguo|costado|diagonal|casa|barrio|calle|avenida|ave|urb|urbanizaci[oó]n|residencial|condominio|apartamento|apto|edificio|iglesia|escuela|plaza|parque|pulper[ií]a|super|esquina|port[oó]n|distrito|cant[oó]n|provincia|san jos[eé]|alajuela|heredia|cartago|puntarenas|lim[oó]n|guanacaste|address|direcci[oó]n)\b/i;
+const L_NAME=/^(?:.*?\b)?(destinatari[oa]|recipient|consignee|ship\s*to|deliver\s*to|para|nombre|name|to)\b\s*[:.\-]?\s*(.*)$/i;
+const L_TEL=/(?:\+?\s?506[\s-]?)?\b([245678]\d{3})[\s-]?(\d{4})\b/g;
+function parseLabel(text,codes){
+  const lines=text.split('\n').map(l=>l.replace(/[|_~«»]+/g,' ').replace(/\s+/g,' ').trim()).filter(l=>l.length>1);
+  const r={guia:'',nombre:'',tel:'',dir:''};
+  const gc=codes.map(c=>c.replace(/\s/g,'')).sort((a,b)=>/^[A-Z]{2,5}\d{8,}$/.test(b)-/^[A-Z]{2,5}\d{8,}$/.test(a)||b.length-a.length);
+  r.guia=gc[0]||'';
+  if(!r.guia){const m=text.match(/\b([A-Z]{2,5})\s?((?:\d\s?){9,16}\d)\b/);if(m)r.guia=(m[1]+m[2]).replace(/\s/g,'')}
+  const gd=r.guia.replace(/\D/g,'');
+  let tels=[];
+  lines.forEach((l,i)=>{for(const m of l.matchAll(L_TEL)){const d=m[1]+m[2];if(gd.includes(d)||/\d{3}\s?\d{3}\s?\d{3}/.test(l.replace(m[0],'')))continue;tels.push({t:m[1]+'-'+m[2],k:/tel|cel|phone|m[oó]vil|whats/i.test(l)?0:1,i})}});
+  tels.sort((a,b)=>a.k-b.k||a.i-b.i);if(tels[0])r.tel=tels[0].t;
+  const clean=l=>l.replace(L_TEL,'').replace(/\b(tel[eé]fono|tel|cel|phone|m[oó]vil)\b\s*[:.]?/ig,'').replace(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ .'-]/g,' ').replace(/\s+/g,' ').trim();
+  let ni=-1;
+  for(let i=0;i<lines.length&&!r.nombre;i++){const m=lines[i].match(L_NAME);if(!m||L_SENDER.test(lines[i]))continue;
+    const rest=clean(m[2]);if(rest.replace(/[^A-Za-zÁ-ú]/g,'').length>=4&&!L_ADDR.test(rest)){r.nombre=rest;ni=i}
+    else if(lines[i+1]&&!L_SENDER.test(lines[i+1])){const nx=clean(lines[i+1]);if(nx.length>=4&&!L_ADDR.test(nx)){r.nombre=nx;ni=i+1}}}
+  if(!r.nombre){const i=lines.findIndex(l=>/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ.' ]{5,40}$/.test(l)&&l.trim().split(' ').length>=2&&l.split(' ').length<=5&&!L_SENDER.test(l)&&!L_ADDR.test(l)&&!L_NAME.test(l));if(i>-1){r.nombre=lines[i];ni=i}}
+  r.nombre=r.nombre.replace(/\b\w+/g,w=>w[0].toUpperCase()+w.slice(1).toLowerCase());
+  const dl=[];
+  lines.forEach((l,i)=>{if(i===ni||L_SENDER.test(l))return;
+    const kw=/^(direcci[oó]n|address|se[nñ]as)\s*[:.]?\s*$/i.test(l);
+    if(kw){if(lines[i+1])dl.push(i+1);return}
+    if(L_ADDR.test(l))dl.push(i)});
+  r.dir=[...new Set(dl)].sort((a,b)=>a-b).map(i=>lines[i].replace(/^(direcci[oó]n|address|se[nñ]as)\s*[:.]?\s*/i,'').replace(L_TEL,'').trim()).filter(Boolean).join(', ');
+  return r;
+}
+function scanDupCheck(){const g=$('#s-guia').value.replace(/\s/g,'').toUpperCase(),el=$('#scanDup');
+  const p=g&&S.pk.find(p=>!S.ex&&(p.guia||'').replace(/\s/g,'').toUpperCase()===g);el.hidden=!p;if(p)el.textContent=`Esta guía ya está en la lista (${p.nombre||'sin nombre'}).`}
+$('#s-guia').addEventListener('input',scanDupCheck);
+function scanUI(mode){ // mode: 'wait' | 'busy' | 'review'
+  $('#scanForm').hidden=mode==='wait';$('#scanSave').hidden=$('#scanRot').hidden=$('#scanSkip').hidden=mode!=='review';
+  $('#scanShot').hidden=mode!=='wait';$('#scanSave').disabled=mode==='busy';
+  const q=SCAN.queue.length;$('#scanCount').textContent=`Guardadas en esta tanda: ${SCAN.n}`+(q?` · faltan ${q} foto(s)`:'');
+  $('#scanSave').textContent=q?'Guardar y siguiente':(SCAN.cam?'Guardar y tomar otra':'Guardar');
+}
+function openScan(){if($('#scanSheet').hidden){SCAN.n=0}$('#scanSheet').hidden=false;document.body.style.overflow='hidden';
+  if(!SCAN.file){$('#scanImg').hidden=true;scanSt('Tomá la foto con la etiqueta derecha, de cerca, a la sombra y sin reflejo.');scanUI('wait')}}
+function closeScan(){$('#scanSheet').hidden=true;document.body.style.overflow='';SCAN.queue=[];SCAN.file=null;if(SCAN.url)URL.revokeObjectURL(SCAN.url);SCAN.url=null;
+  if(SCAN.n)toast(`${SCAN.n} paquete(s) agregado(s) desde etiquetas`)}
+async function scanFile(file,rot=0){
+  SCAN.file=file;SCAN.rot=rot;SCAN.busy=true;
+  if(SCAN.url)URL.revokeObjectURL(SCAN.url);SCAN.url=URL.createObjectURL(file);$('#scanImg').src=SCAN.url;$('#scanImg').hidden=false;$('#scanImg').style.transform=`rotate(${rot*90}deg)`;
+  ['guia','nombre','tel','dir','nota'].forEach(k=>$('#s-'+k).value='');$('#scanRaw').textContent='';$('#scanDup').hidden=true;
+  scanUI('busy');$('#scanForm').hidden=false;scanSt('Buscando el código de barras…');
+  let codes=[],text='',fail='';
+  try{const c=await scanCanvas(file,rot);
+    try{codes=await readCodes(c)}catch(e){fail='código'}
+    if(codes.length){$('#s-guia').value=parseLabel('',codes).guia;scanDupCheck()}
+    try{text=await readText(c)}catch(e){fail=fail?'lector':'texto'}
+  }catch(e){fail='foto'}
+  if(SCAN.file!==file)return;
+  const r=parseLabel(text,codes);
+  ['guia','nombre','tel','dir'].forEach(k=>{if(r[k])$('#s-'+k).value=r[k]});scanDupCheck();
+  $('#scanRaw').textContent=(codes.length?'Código: '+codes.join(' · ')+'\n\n':'')+(text.trim()||'(sin texto)');
+  const got=['guia','nombre','tel','dir'].filter(k=>r[k]).length;
+  scanSt(fail==='foto'?'No se pudo abrir esa foto. Tomala de nuevo.':fail&&!got?'No se pudo cargar el lector. Revisá el internet y tocá "Girar y leer de nuevo", o llená los datos a mano.':
+    got===4?'✓ Listo. Revisá los datos y guardá.':got?`Leí ${got} de 4 datos. Completá lo que falta o corregilo.`:'No pude leer la etiqueta. Probá girarla, tomar otra foto más de cerca o llenar a mano.');
+  SCAN.busy=false;scanUI('review');
+}
+function scanNext(){
+  const f=SCAN.queue.shift();
+  if(f){scanFile(f);return}
+  SCAN.file=null;$('#scanImg').hidden=true;scanSt(SCAN.n?`Van ${SCAN.n}. Tomá la siguiente foto o tocá Terminar.`:'Tomá la foto con la etiqueta derecha, de cerca, a la sombra y sin reflejo.');scanUI('wait');
+}
+$('#scanCamBtn').onclick=()=>{SCAN.cam=true;openScan();$('#scanCam').click()};
+$('#scanShot').onclick=()=>{SCAN.cam=true;$('#scanCam').click()};
+$('#scanCam').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f){openScan();scanFile(f)}};
+$('#scanGal').onchange=e=>{const fs=[...e.target.files];e.target.value='';if(!fs.length)return;SCAN.cam=false;SCAN.queue.push(...fs);openScan();if(!SCAN.file||!SCAN.busy&&$('#scanForm').hidden)scanNext();else scanUI(SCAN.busy?'busy':'review')};
+$('#scanRot').onclick=()=>{if(SCAN.file&&!SCAN.busy)scanFile(SCAN.file,(SCAN.rot+1)%4)};
+$('#scanSkip').onclick=()=>{if(!SCAN.busy)scanNext()};
+$('#scanEnd').onclick=closeScan;
+$('#scanSave').onclick=()=>{
+  if(SCAN.busy)return;
+  const v=['nombre','tel','dir','','guia','nota'].map(k=>k?$('#s-'+k).value:'');
+  if(!v[0].trim()&&!v[1].trim()&&!v[4].trim()){toast('Poné al menos el nombre, el teléfono o la guía');return}
+  const again=!SCAN.queue.length&&SCAN.cam;
+  if(again)$('#scanCam').click(); // abrir la cámara dentro del toque (iPhone lo exige)
+  if(S.ex){S.pk=[];S.ex=false}
+  S.pk.push(mkPkg(v));S.route=null;save();render();SCAN.n++;toast(`Guardado (${SCAN.n})`);
+  scanNext();
+};
 
 if(!load()){S.pk=EXAMPLE.map(mkPkg);S.ex=true;S.pk[0].st='confirmado';S.pk[2].st='confirmado';S.pk[1].sent=true}
 bind('#m-yo','yo');bind('#m-fecha','fecha');bind('#m-coord','coord');bind('#m-camino','camino');bind('#m-form','form');bind('#r-start','start');bind('#r-vel','vel',1);bind('#r-min','min',1);bind('#r-filter','filter');
