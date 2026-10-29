@@ -113,7 +113,7 @@ $('#form').onsubmit=async e=>{
   const b=$('#sendBtn');b.disabled=true;b.textContent='Enviando…';
   try{
     const r=await fetch(C.supabaseUrl.replace(/\/$/,'')+'/rest/v1/rpc/enviar_respuesta',{method:'POST',
-      headers:{'Content-Type':'application/json',apikey:C.supabaseAnonKey,Authorization:'Bearer '+C.supabaseAnonKey},
+      headers:{'Content-Type':'application/json',apikey:C.supabaseAnonKey,...(C.supabaseAnonKey.startsWith('eyJ')?{Authorization:'Bearer '+C.supabaseAnonKey}:{})},
       body:JSON.stringify({p_token:T,p_guia:G,p_horario:sel.join(', '),p_senas:$('#senas').value.trim(),p_recibe:$('#recibe').value.trim(),p_lat:c?c[0]:null,p_lng:c?c[1]:null})});
     if(!r.ok)throw new Error(r.status);
     $('#form').hidden=true;$('#done').hidden=false;window.scrollTo({top:0});

@@ -418,7 +418,7 @@ async function syncResp(manual){
   if(!FORM_ON||!S.pk.length)return;
   const C=RF_CONFIG;$('#syncInfo').textContent='Revisando…';
   try{
-    const r=await fetch(C.supabaseUrl.replace(/\/$/,'')+'/rest/v1/rpc/leer_respuestas',{method:'POST',headers:{'Content-Type':'application/json',apikey:C.supabaseAnonKey,Authorization:'Bearer '+C.supabaseAnonKey},body:JSON.stringify({p_tokens:S.pk.map(p=>p.tok)})});
+    const r=await fetch(C.supabaseUrl.replace(/\/$/,'')+'/rest/v1/rpc/leer_respuestas',{method:'POST',headers:{'Content-Type':'application/json',apikey:C.supabaseAnonKey,...(C.supabaseAnonKey.startsWith('eyJ')?{Authorization:'Bearer '+C.supabaseAnonKey}:{})},body:JSON.stringify({p_tokens:S.pk.map(p=>p.tok)})});
     if(!r.ok)throw new Error(r.status);
     const rows=await r.json();let nuevos=0;
     for(const row of rows){const p=S.pk.find(x=>x.tok===row.token);if(!p)continue;
