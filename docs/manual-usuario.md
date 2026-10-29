@@ -44,7 +44,7 @@ Columnas: `nombre`, `telefono`, `direccion`, `ubicacion`, `guia`, `nota`.
 1. Poné **tu nombre** y revisá el texto del mensaje (se puede editar).
 2. En cada cliente tocá **Abrir WhatsApp** > **Enviar** > volvé a la app.
 3. El mensaje le da al cliente **dos opciones**, para que elija la que le dé más confianza:
-   - **Responder por el mismo chat:** la hora y su ubicación de WhatsApp (**+** o 📎 > **Ubicación** > **Enviar mi ubicación actual**).
+   - **Responder por el mismo chat:** la hora y su ubicación de WhatsApp (clip 📎 o signo de más > **Ubicación** > **Enviar mi ubicación actual**).
    - **Formulario de 1 minuto** (link `…/RutafacilCR/entrega?t=…`). Ahí marca horario, señas y quién recibe. Para la ubicación puede usar el GPS del teléfono o elegir **Prefiero mandarla por WhatsApp**.
 4. Las respuestas del formulario **entran solas** (la app revisa cada minuto, o tocá **Revisar respuestas ahora**). El cliente queda **Confirmado** con 🕓 horario y 🏠 señas. Si eligió mandar la ubicación por WhatsApp, en las señas dice *(Manda la ubicación por WhatsApp)*.
 5. Si el cliente responde por el chat: abrí la ubicación que mandó, copiá el link, pegalo en **Editar > Ubicación** y marcá **Confirmó**.

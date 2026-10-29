@@ -120,7 +120,7 @@ details summary{cursor:pointer;font-weight:600}
 <body>
 
 <header class="top"><div class="wrap">
-  <div><h1>Ruta<span>Fácil</span> CR</h1><p class="sub">Paquetes, mensajes de WhatsApp y ruta del día · <span class="mono" style="font-size:11px;opacity:.8">v29-oct-c</span></p></div>
+  <div><h1>Ruta<span>Fácil</span> CR</h1><p class="sub">Paquetes, mensajes de WhatsApp y ruta del día · <span class="mono" style="font-size:11px;opacity:.8">v29-oct-d</span></p></div>
   <span class="daypill" id="daypill"></span>
 </div></header>
 <nav class="tabs"><div class="wrap" role="tablist">
@@ -220,9 +220,9 @@ const STATUS=[['pendiente','Pendiente'],['confirmado','Confirmado'],['noresponde
 const SLABEL=Object.fromEntries(STATUS);
 const tomorrow=()=>{const d=new Date();d.setDate(d.getDate()+1);return d.toLocaleDateString('es-CR',{weekday:'long',day:'numeric',month:'long'})};
 const DEF_COORD='Hola {nombre}, le saluda {yo}, el repartidor de su pedido de Temu (guía {guia}). El {fecha} se lo estaría entregando en: {direccion}.\n\n¿Me confirma si habrá alguien para recibirlo? Si puede, envíeme su ubicación por WhatsApp para llegar más fácil. ¡Muchas gracias!';
-const DEF_COORD_F='Hola {nombre}, le saluda {yo}, el repartidor de su paquete de Temu (guía {guia}). Se lo estaría entregando el {fecha}.\n\nPara coordinar, puede responderme por aquí:\n1. A qué hora puede recibir\n2. Su ubicación: toque + (o 📎) > Ubicación > Enviar mi ubicación actual\n\nO si le es más fácil, confírmelo en este formulario de 1 minuto. No pide pagos ni datos bancarios:\n{formulario}\n\n¡Muchas gracias!';
+const DEF_COORD_F='Hola {nombre}, le saluda {yo}, el repartidor de su paquete de Temu (guía {guia}). Se lo estaría entregando el {fecha}.\n\nPara coordinar, puede responderme por aquí:\n1. A qué hora puede recibir\n2. Su ubicación: toque el clip 📎 (o el signo de más) y elija Ubicación > Enviar mi ubicación actual\n\nO si le es más fácil, confírmelo en este formulario de 1 minuto. No pide pagos ni datos bancarios:\n{formulario}\n\n¡Muchas gracias!';
 // Plantillas anteriores: si el usuario no las cambió, se reemplazan por la vigente.
-const OLD_COORD_F=['Hola {nombre}, le saluda {yo}, el repartidor de su pedido de Temu (guía {guia}). El {fecha} se lo estaría entregando.\n\nPara coordinar, por favor llene este formulario con su horario, las señas de la casa y su ubicación (toma 1 minuto):\n{formulario}\n\n¡Muchas gracias!'];
+const OLD_COORD_F=['Hola {nombre}, le saluda {yo}, el repartidor de su paquete de Temu (guía {guia}). Se lo estaría entregando el {fecha}.\n\nPara coordinar, puede responderme por aquí:\n1. A qué hora puede recibir\n2. Su ubicación: toque + (o 📎) > Ubicación > Enviar mi ubicación actual\n\nO si le es más fácil, confírmelo en este formulario de 1 minuto. No pide pagos ni datos bancarios:\n{formulario}\n\n¡Muchas gracias!','Hola {nombre}, le saluda {yo}, el repartidor de su pedido de Temu (guía {guia}). El {fecha} se lo estaría entregando.\n\nPara coordinar, por favor llene este formulario con su horario, las señas de la casa y su ubicación (toma 1 minuto):\n{formulario}\n\n¡Muchas gracias!'];
 const FORM_ON=!!(window.RF_CONFIG&&RF_CONFIG.supabaseUrl&&RF_CONFIG.supabaseAnonKey);
 const tok=()=>{const a=new Uint8Array(12);crypto.getRandomValues(a);return [...a].map(x=>'abcdefghijkmnpqrstuvwxyz23456789'[x%32]).join('')};
 const DEF_CAMINO='Hola {nombre}, voy en camino con su paquete de Temu. Llego en aproximadamente {eta} minutos. ¡Gracias!';
@@ -286,7 +286,7 @@ function addPkgs(list){
 }
 
 function fill(t,p,extra={}){
-  const v={nombre:(p.nombre||'').split(' ')[0]||'',guia:p.guia||'-',direccion:p.dir||'su dirección',fecha:S.fecha||tomorrow(),yo:S.yo||'su repartidor',eta:extra.eta??'15',formulario:formLink(p)};
+  const v={nombre:(p.nombre||'').split(' ')[0]||'',guia:p.guia||'-',direccion:p.dir||'su dirección',fecha:(S.fecha||'').trim()||tomorrow(),yo:S.yo||'su repartidor',eta:extra.eta??'15',formulario:formLink(p)};
   return t.replace(/\{(\w+)\}/g,(m,k)=>v[k]??m);
 }
 function waLink(p,text){const n=phoneWA(p.tel);return n?`https://wa.me/${n}?text=${encodeURIComponent(text)}`:''}

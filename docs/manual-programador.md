@@ -69,6 +69,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
   1. GPS: primero `enableHighAccuracy` con 10 s; si falla (no por permiso), reintenta con ubicación aproximada, 20 s y caché de 5 min. Si el error es de permiso (`code 1`), muestra cómo habilitarlo (iOS: Ajustes > Privacidad > Localización > Sitios web de Safari).
   2. "Prefiero mandarla por WhatsApp": agrega *(Manda la ubicación por WhatsApp)* a `senas` e indica los pasos en el chat.
   3. Pegar link de Maps/Waze (dentro de un `<details>`).
+- Los mensajes no deben llevar el signo `+`: al pasar por `wa.me` WhatsApp lo convierte en espacio.
 - Plantillas: `DEF_COORD_F` es la vigente. `OLD_COORD_F` lista las anteriores; si el usuario tiene guardada una sin cambios, se reemplaza sola al abrir.
 
 ## 4. Base de datos y seguridad (`supabase.sql`)
