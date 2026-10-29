@@ -132,7 +132,7 @@ details summary{cursor:pointer;font-weight:600}
 <body>
 
 <header class="top"><div class="wrap">
-  <div><h1>Ruta<span>Fácil</span> CR</h1><p class="sub">Paquetes, mensajes de WhatsApp y ruta del día · <span class="mono" style="font-size:11px;opacity:.8">v29-oct-k</span></p></div>
+  <div><h1>Ruta<span>Fácil</span> CR</h1><p class="sub">Paquetes, mensajes de WhatsApp y ruta del día · <span class="mono" style="font-size:11px;opacity:.8">v29-oct-l</span></p></div>
   <span class="daypill" id="daypill"></span>
 </div></header>
 <nav class="tabs"><div class="wrap" role="tablist">
@@ -222,12 +222,17 @@ details summary{cursor:pointer;font-weight:600}
     <h2>Punto de salida</h2>
     <div class="grid2">
       <label>Coordenadas o link<input id="r-start" placeholder="9.9986,-84.1165"></label>
+      <label>Hora de salida<input id="r-hora" type="time" value="08:00"></label>
+    </div>
+    <button class="btn sm" id="r-here" type="button">📍 Usar mi ubicación actual</button>
+    <div class="grid2">
       <label>Velocidad promedio (km/h)<input id="r-vel" type="number" min="5" max="80" value="25"></label>
+      <label>Minutos por entrega<input id="r-min" type="number" min="0" max="60" value="7"></label>
     </div>
     <div class="grid2">
-      <label>Minutos por entrega<input id="r-min" type="number" min="0" max="60" value="7"></label>
       <label>Incluir<select id="r-filter"><option value="todos">Todos menos entregados</option><option value="confirmados">Solo confirmados</option></select></label>
     </div>
+    <p class="small muted">La ruta respeta el horario que confirmó cada cliente (🕓). A media ruta, tocá <b>Usar mi ubicación actual</b> y <b>Calcular</b> de nuevo para reordenar lo que falta.</p>
     <label class="row small" style="text-transform:none;letter-spacing:0;font-weight:500;flex-direction:row"><input type="checkbox" id="r-return" style="width:auto"> Volver al punto de salida al final</label>
     <button class="btn primary" id="routeBtn">Calcular mejor ruta</button>
   </div>
@@ -408,21 +413,57 @@ function renderMsg(){
 // ---- Ruta ----
 function hav(a,b){const R=6371,r=x=>x*Math.PI/180;const dLa=r(b[0]-a[0]),dLo=r(b[1]-a[1]);const h=Math.sin(dLa/2)**2+Math.cos(r(a[0]))*Math.cos(r(b[0]))*Math.sin(dLo/2)**2;return 2*R*Math.asin(Math.sqrt(h))*1.35} // ×1.35: calles no van en línea recta
 function pathLen(pts,ord,ret){let d=0,prev=pts[0];for(const i of ord){d+=hav(prev,pts[i]);prev=pts[i]}if(ret)d+=hav(prev,pts[0]);return d}
-function optimize(pts,ret){
-  const n=pts.length-1;let left=[...Array(n)].map((_,i)=>i+1),ord=[],cur=0;
-  while(left.length){let bi=0,bd=1e9;left.forEach((j,k)=>{const d=hav(pts[cur],pts[j]);if(d<bd){bd=d;bi=k}});cur=left.splice(bi,1)[0];ord.push(cur)}
-  let best=pathLen(pts,ord,ret),imp=true;
-  while(imp){imp=false;for(let i=0;i<ord.length-1;i++)for(let k=i+1;k<ord.length;k++){const t=[...ord.slice(0,i),...ord.slice(i,k+1).reverse(),...ord.slice(k+1)];const L=pathLen(pts,t,ret);if(L<best-1e-9){best=L;ord=t;imp=true}}}
-  return ord;
+// Horario del cliente → ventanas en minutos del día. "2 a 4 pm" → [[840,960]]. null = cualquier hora.
+function hr(h,suf,ref){h=+h;suf=(suf||'').replace(/\W/g,'');if(suf.startsWith('p')&&h<12)h+=12;else if(suf.startsWith('a')&&h===12)h=0;else if(!suf&&ref==null&&h>=1&&h<=6)h+=12;return h}
+function parseWin(t){
+  t=(t||'').toLowerCase().replace(/mediod[ií]a|medio d[ií]a/g,'12 md').replace(/\./g,'');
+  if(!t.trim()||/cualquier|todo el d[ií]a/.test(t))return null;
+  const W=[],H='(\\d{1,2})(?::(\\d{2}))?\\s*(am|pm|md|hrs?|horas)?';
+  for(const m of t.matchAll(new RegExp(H+'\\s*(?:a|-|–|hasta|y)\\s*'+H,'g'))){
+    let s2=m[3]||'',e2=m[6]||'';let e=hr(m[4],e2==='md'?'p':e2),a=+m[1];
+    let st=s2?hr(a,s2==='md'?'p':s2,0):(e2.startsWith('p')&&a<12&&a+12<=e?a+12:hr(a,'',null));
+    if(st>e&&!s2)st-=12;W.push([st*60+(+m[2]||0),e*60+(+m[5]||0)]);t=t.replace(m[0],' ')}
+  if(/ma[ñn]ana/.test(t))W.push([480,720]);if(/tarde/.test(t))W.push([720,1080]);if(/noche/.test(t))W.push([1080,1260]);
+  for(const m of t.matchAll(new RegExp('(despu[eé]s de las?|antes de las?|a las?|tipo a las?|como a las?)?\\s*'+H,'g'))){
+    if(!m[2]||(!m[4]&&!m[1]))continue;const h=hr(m[2],m[4]==='md'?'p':m[4]),x=h*60+(+m[3]||0);
+    if(/despu/.test(m[1]||''))W.push([x,1260]);else if(/antes/.test(m[1]||''))W.push([0,x]);else W.push([x-30,x+60])}
+  return W.length?W.sort((a,b)=>a[0]-b[0]):null;
 }
+const hm=m=>{m=Math.round(m);const h=Math.floor(m/60)%24,mm=m%60;return `${h%12||12}:${String(mm).padStart(2,'0')} ${h<12?'am':'pm'}`};
+// Recorre el orden y calcula llegada, espera y atraso. El costo suma el tiempo total y castiga llegar tarde.
+function sched(ord,M,W,t0,mins,ret){
+  let t=t0,prev=0,late=0,nl=0;const out=[];
+  for(const i of ord){t+=M[prev][i];let wait=0,lt=0;const w=W[i];
+    if(w){const ok=w.find(x=>x[1]>=t);if(!ok){lt=t-w[w.length-1][1];late+=lt;nl++}else if(t<ok[0]){wait=ok[0]-t;t=ok[0]}}
+    out.push({arr:t,wait,late:lt});t+=mins;prev=i}
+  if(ret)t+=M[prev][0];
+  return {cost:t-t0+3*late+60*nl,end:t,out,nl};
+}
+function optimize(pts,W,t0,mins,vel,ret){
+  const n=pts.length-1,M=pts.map(a=>pts.map(b=>hav(a,b)/vel*60)),ids=[...Array(n)].map((_,i)=>i+1);
+  const C=o=>sched(o,M,W,t0,mins,ret).cost;
+  const greedy=tw=>{let left=[...ids],o=[],cur=0,t=t0;while(left.length){let bi=0,bc=1e12;left.forEach((j,k)=>{let a=t+M[cur][j],c=M[cur][j];
+      if(tw&&W[j]){const ok=W[j].find(x=>x[1]>=a);c+=ok?Math.max(0,ok[0]-a):3*(a-W[j][W[j].length-1][1])+60;}if(c<bc){bc=c;bi=k}});
+    const j=left.splice(bi,1)[0];t+=M[cur][j];if(W[j]){const ok=W[j].find(x=>x[1]>=t);if(ok&&t<ok[0])t=ok[0]}t+=mins;o.push(j);cur=j}return o};
+  const improve=o=>{let best=C(o),imp=true,guard=0;const T=Date.now();
+    while(imp&&guard++<200&&Date.now()-T<2500){imp=false;
+      for(let i=0;i<o.length-1;i++)for(let k=i+1;k<o.length;k++){const t=[...o.slice(0,i),...o.slice(i,k+1).reverse(),...o.slice(k+1)];const c=C(t);if(c<best-1e-9){best=c;o=t;imp=true}}
+      for(let L=1;L<=3;L++)for(let i=0;i+L<=o.length;i++){const seg=o.slice(i,i+L),rest=[...o.slice(0,i),...o.slice(i+L)];
+        for(let k=0;k<=rest.length;k++){if(k===i)continue;const t=[...rest.slice(0,k),...seg,...rest.slice(k)];const c=C(t);if(c<best-1e-9){best=c;o=t;imp=true;break}}}}
+    return o};
+  const cands=[improve(greedy(false))];if(W.some(Boolean))cands.push(improve(greedy(true)));
+  return cands.sort((a,b)=>C(a)-C(b))[0];
+}
+const t0min=()=>{const m=(S.hora||'08:00').match(/(\d{1,2}):(\d{2})/);return m?+m[1]*60+ +m[2]:480};
 function calcRoute(){
   const start=parseCoord(S.start);
   if(!start){toast('Poné un punto de salida válido (coordenadas o link)');return}
   const pool=S.pk.filter(p=>p.st!=='entregado'&&p.st!=='fallido'&&(S.filter==='todos'||p.st==='confirmado'));
   const withC=pool.filter(p=>parseCoord(p.ubic)),noC=pool.filter(p=>!parseCoord(p.ubic));
-  const pts=[start,...withC.map(p=>parseCoord(p.ubic))];
-  const ord=withC.length?optimize(pts,S.ret):[];
-  S.route={start,ids:ord.map(i=>withC[i-1].id),noC:noC.map(p=>p.id)};save();renderRoute();
+  const pts=[start,...withC.map(p=>parseCoord(p.ubic))],W=[null,...withC.map(p=>parseWin(p.horario))];
+  $('#routeBtn').textContent='Calculando…';
+  setTimeout(()=>{const ord=withC.length?optimize(pts,W,t0min(),+S.min||0,+S.vel||25,S.ret):[];
+    S.route={start,ids:ord.map(i=>withC[i-1].id),noC:noC.map(p=>p.id)};save();renderRoute();$('#routeBtn').textContent='Calcular mejor ruta'},30);
 }
 function renderRoute(){
   const O=$('#routeOut');const R=S.route;
@@ -430,20 +471,24 @@ function renderRoute(){
   const byId=Object.fromEntries(S.pk.map(p=>[p.id,p]));
   const stops=R.ids.map(id=>byId[id]).filter(Boolean);
   const vel=+S.vel||25,mins=+S.min||0;
-  let prev=R.start,km=0,t=0;const rows=[];
-  stops.forEach((p,i)=>{const c=parseCoord(p.ubic);const d=hav(prev,c);km+=d;t+=d/vel*60;const eta=Math.round(d/vel*60)+2;rows.push({p,c,d,km,t,eta});t+=mins;prev=c});
-  if(S.ret&&stops.length){km+=hav(prev,R.start);t+=hav(prev,R.start)/vel*60}
-  const hh=Math.floor(t/60),mm=Math.round(t%60);
+  const t0=t0min(),cs=stops.map(p=>parseCoord(p.ubic)),pts=[R.start,...cs],M=pts.map(a=>pts.map(b=>hav(a,b)/vel*60));
+  const sc=sched(stops.map((_,i)=>i+1),M,[null,...stops.map(p=>parseWin(p.horario))],t0,mins,S.ret);
+  let prev=R.start,km=0;const rows=[];
+  stops.forEach((p,i)=>{const c=cs[i];const d=hav(prev,c);km+=d;const eta=Math.round(d/vel*60)+2;rows.push({p,c,d,km,eta,...sc.out[i]});prev=c});
+  if(S.ret&&stops.length)km+=hav(prev,R.start);
+  const t=sc.end-t0,hh=Math.floor(t/60),mm=Math.round(t%60);
   // Google Maps admite hasta 9 paradas intermedias por link, así que se parte en tramos
   const chain=[R.start,...rows.map(r=>r.c)];if(S.ret&&stops.length)chain.push(R.start);
   const legs=[];for(let i=0;i<chain.length-1;i+=10){const seg=chain.slice(i,i+11);const f=x=>x.join(',');legs.push(`https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=${f(seg[0])}&destination=${f(seg[seg.length-1])}${seg.length>2?'&waypoints='+seg.slice(1,-1).map(f).join('%7C'):''}`)}
   let h=`<div class="stats"><div class="stat"><b>${stops.length}</b><span>paradas</span></div><div class="stat"><b>${km.toFixed(1)}</b><span>km aprox.</span></div><div class="stat"><b>${hh}h ${mm}m</b><span>tiempo estimado</span></div><div class="stat"><b>${R.noC.length}</b><span>sin ubicación</span></div></div>`;
+  if(stops.length)h+=`<p class="small muted">Salís ${hm(t0)} · terminás aprox. ${hm(sc.end)}.</p>`;
+  if(sc.nl)h+=`<div class="notice"><b>${sc.nl} entrega(s) quedarían fuera del horario</b> del cliente (marcadas con ⚠). Salí más temprano, avisales o pasalas a otro día.</div>`;
   if(legs.length)h+=`<div class="panel"><h3>Abrir la ruta completa en Google Maps</h3><div class="row">${legs.map((l,i)=>`<a class="btn road" href="${l}" target="_blank" rel="noopener">${legs.length>1?`Tramo ${i+1}`:'Iniciar ruta'}</a>`).join('')}</div><p class="small muted">Las distancias son un estimado en línea recta ajustada. Google Maps te da el tiempo real con tráfico.</p></div>`;
   h+=`<div class="panel"><h2>Orden de entrega</h2><div class="leg"><div class="stop"><div class="dot start">SALE</div><div class="body"><b>Punto de salida</b><span class="km mono">${R.start.join(', ')}</span></div></div>`;
   rows.forEach((r,i)=>{const p=r.p;const msg=fill(S.camino,p,{eta:r.eta});const l=waLink(p,msg);h+=`<div class="stop"><div class="dot ${p.st==='entregado'?'done':''}">${i+1}</div><div class="body">
     <div class="name" style="font-weight:700;display:flex;gap:8px;flex-wrap:wrap;align-items:center">${esc(p.nombre)} ${stChip(p)}</div>
     <span class="addr small muted">${esc(p.dir)}${p.nota?` · <i>${esc(p.nota)}</i>`:''}</span>${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}
-    <span class="km">+${r.d.toFixed(1)} km · llegada aprox. ${fmtT(r.t)} desde que salís</span>
+    <span class="km">+${r.d.toFixed(1)} km · llegada aprox. ${hm(r.arr)}${r.wait>=5?` · esperar ${fmtT(r.wait)}`:''}</span>${r.late?`<div class="small" style="color:var(--bad);font-weight:600">⚠ Llegarías ${fmtT(r.late)} tarde para su horario</div>`:''}
     <div class="row"><a class="btn sm" href="${waze(r.c)}" target="_blank" rel="noopener">Waze</a><a class="btn sm" href="${gmaps(r.c)}" target="_blank" rel="noopener">Maps</a>${l?`<a class="btn sm wa" href="${l}" target="_blank" rel="noopener">Voy en camino</a>`:''}<button class="btn sm" data-act="set" data-st="entregado" data-id="${p.id}">Entregado</button><button class="btn sm ghost" data-act="set" data-st="fallido" data-id="${p.id}">No se pudo</button></div>
   </div></div>`});
   h+='</div></div>';
@@ -494,6 +539,10 @@ $('#clearExample').onclick=()=>{S.pk=[];S.ex=false;S.route=null;save();render()}
 $('#clearAll').onclick=e=>{const b=e.currentTarget;if(b.dataset.c){S.pk=[];S.ex=false;S.route=null;save();render();b.textContent='Vaciar lista';delete b.dataset.c}else{b.dataset.c=1;b.textContent='¿Seguro? Tocá otra vez';setTimeout(()=>{b.textContent='Vaciar lista';delete b.dataset.c},3000)}};
 const bind=(sel,k,num)=>{const el=$(sel);el.value=S[k]??'';el.addEventListener(el.type==='checkbox'?'change':'input',()=>{S[k]=el.type==='checkbox'?el.checked:(num?+el.value:el.value);save();if(['coord','form','yo','fecha'].includes(k))renderMsg()})};
 $('#routeBtn').onclick=calcRoute;
+$('#r-here').onclick=()=>{const b=$('#r-here');if(!navigator.geolocation){toast('Este navegador no da la ubicación');return}b.textContent='Buscando…';
+  navigator.geolocation.getCurrentPosition(g=>{S.start=g.coords.latitude.toFixed(6)+','+g.coords.longitude.toFixed(6);$('#r-start').value=S.start;
+    const d=new Date();S.hora=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');$('#r-hora').value=S.hora;save();b.textContent='📍 Usar mi ubicación actual';toast('Listo: salida desde aquí y ahora')},
+    e=>{b.textContent='📍 Usar mi ubicación actual';toast(e.code===1?'La ubicación está bloqueada: activala en Ajustes':'No se pudo obtener la ubicación')},{enableHighAccuracy:true,timeout:15000,maximumAge:60000})};
 
 // Decisión de Victor (29-oct): el mensaje nunca lleva links; a los clientes les parecen estafa.
 function coordText(p){const t=S.coord.split('\n').filter(l=>!l.includes('{formulario}')).join('\n').replace(/\n{3,}/g,'\n\n').trim();return fill(t,p)}
@@ -773,7 +822,8 @@ $('#scanSave').onclick=()=>{
 };
 
 if(!load()){S.pk=EXAMPLE.map(mkPkg);S.ex=true;S.pk[0].st='confirmado';S.pk[2].st='confirmado';S.pk[1].sent=true}
-bind('#m-yo','yo');bind('#m-fecha','fecha');bind('#m-coord','coord');bind('#m-camino','camino');bind('#m-form','form');bind('#r-start','start');bind('#r-vel','vel',1);bind('#r-min','min',1);bind('#r-filter','filter');
+if(!S.hora)S.hora='08:00';
+bind('#m-yo','yo');bind('#m-fecha','fecha');bind('#m-coord','coord');bind('#m-camino','camino');bind('#m-form','form');bind('#r-start','start');bind('#r-hora','hora');bind('#r-vel','vel',1);bind('#r-min','min',1);bind('#r-filter','filter');
 $('#r-return').checked=!!S.ret;$('#r-return').onchange=e=>{S.ret=e.target.checked;save()};
 $('#m-fecha').placeholder=tomorrow();
 const grow=el=>{el.style.height='auto';el.style.height=el.scrollHeight+2+'px'};

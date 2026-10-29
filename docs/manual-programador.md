@@ -28,7 +28,7 @@ S = {
   ex: bool,               // ¿son datos de ejemplo?
   yo, fecha,              // nombre del repartidor y fecha mostrada
   coord, form, camino,    // plantillas: primer mensaje, mensaje con formulario, voy en camino
-  start, vel, min, ret, filter,   // parámetros de ruta
+  start, hora, vel, min, ret, filter,   // parámetros de ruta (hora = salida 'HH:MM')
   route: {start, ids, noC} | null // última ruta calculada
 }
 Paquete = {
@@ -54,7 +54,9 @@ Paquete = {
 | `formLink(p)` | Arma `entrega?t=&n=` (corto a propósito: links largos dan desconfianza). |
 | `coordText(p)` | Texto del primer mensaje. Siempre quita las líneas con `{formulario}`: el primer mensaje nunca lleva links. |
 | Botón **📝 Mandar formulario** | Segundo mensaje con `S.form` (`DEF_FORM`), que sí lleva `{formulario}`. Marca `p.formSent`. Solo aparece si `config.js` tiene Supabase. |
-| `optimize(pts, ret)` | Vecino más cercano y luego mejora 2-opt. |
+| `parseWin(texto)` | Convierte el horario del cliente en ventanas en minutos del día (`"2 a 4 pm"` → `[[840,960]]`; `"4 pm"` → 3:30–5:00; *mañana* 8–12, *tarde* 12–6, *noche* 6–9; `null` = cualquier hora). Horas sin am/pm de 1 a 6 se toman como pm. |
+| `sched(ord, M, W, t0, min, ret)` | Recorre un orden con la matriz de minutos `M`: llegada, espera si llega antes y atraso. Costo = tiempo total + 3 × minutos tarde + 60 por parada tarde. |
+| `optimize(pts, W, t0, min, vel, ret)` | Dos arranques (vecino más cercano por distancia y otro que considera horarios), luego búsqueda local con 2-opt y reubicación de tramos de 1 a 3 paradas sobre el costo de `sched`. Tope de 2,5 s. Con 70 paradas tarda menos de 1 s en PC. |
 | `hav(a, b)` | Distancia haversine × 1.35 (factor por calles). |
 | `syncResp()` | Llama `leer_respuestas` con todos los tokens. Corre al abrir, cada 60 s con la pestaña visible y al volver a la app. |
 

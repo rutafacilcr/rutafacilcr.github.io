@@ -68,15 +68,20 @@ Variables que podés usar en los mensajes: `{nombre}` `{guia}` `{direccion}` `{f
 
 ### Día de entrega (pestaña **3 Ruta**)
 
-1. **Punto de salida:** pegá las coordenadas o el link de donde salís. En Google Maps, dejá el dedo presionado sobre el lugar y copiá los números.
-2. Elegí si incluir **todos** o **solo confirmados**, y si volver al punto de salida.
-3. Tocá **Calcular mejor ruta**.
-4. **Iniciar ruta** abre todo el recorrido en Google Maps. Con más de 10 paradas sale en **Tramo 1, Tramo 2…**
-5. En cada parada:
+1. **Punto de salida:** pegá las coordenadas o el link de donde salís, o tocá **📍 Usar mi ubicación actual** (pone tu ubicación y la hora de ahora). En Google Maps, dejá el dedo presionado sobre el lugar y copiá los números.
+2. **Hora de salida:** a qué hora arrancás (ej. 8:00 am).
+3. Elegí si incluir **todos** o **solo confirmados**, y si volver al punto de salida.
+4. Tocá **Calcular mejor ruta**. Con 70 paquetes tarda unos segundos.
+   - La app ordena las paradas para manejar lo menos posible **y llegar dentro del horario** que confirmó cada cliente (🕓). Entiende cosas como *8 a 10 am*, *2 a 4 pm*, *4 pm*, *en la tarde*, *después de las 3* o *cualquier hora*.
+   - Cada parada muestra la **hora aproximada de llegada**. Si llegás antes de su horario dice cuánto esperar; si quedaría tarde sale **⚠ Llegarías … tarde**. Arriba dice a qué hora terminás.
+   - Si salen ⚠: salí más temprano, avisale al cliente o pasá el paquete a otro día.
+   - **A media ruta** (por ejemplo, si alguien no estaba): tocá **📍 Usar mi ubicación actual** y **Calcular mejor ruta** otra vez. Reordena solo lo que falta, desde donde estás y con la hora de ahora.
+5. **Iniciar ruta** abre todo el recorrido en Google Maps. Con más de 10 paradas sale en **Tramo 1, Tramo 2…**
+6. En cada parada:
    - **Waze** / **Maps**: navegar a esa casa.
    - **Voy en camino**: WhatsApp con la hora aproximada de llegada.
    - **Entregado** o **No se pudo** al terminar.
-6. Los paquetes sin ubicación salen aparte, en un aviso amarillo.
+7. Los paquetes sin ubicación salen aparte, en un aviso amarillo.
 
 Los km y tiempos son aproximados. Google Maps o Waze dan el tiempo real con tránsito.
 

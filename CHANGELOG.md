@@ -1,6 +1,7 @@
 # Historial de cambios
 
 ## 2026-10-29
+- **Ruta con horarios (v29-oct-l):** la ruta respeta el horario que confirmó cada cliente (8 a 10 am, 2 a 4 pm, en la tarde, después de las 3…). Nueva *Hora de salida*, hora estimada de llegada por parada, aviso ⚠ si alguna quedaría fuera de horario y botón *Usar mi ubicación actual* para recalcular a media ruta. Optimización con 2-opt y reubicación de tramos, probada con 70 paradas.
 - **Escanear etiquetas (v29-oct-k):** en *1 Paquetes*, foto a la etiqueta (o varias fotos de la galería): la guía sale del código de barras y nombre, teléfono y dirección se leen con OCR gratis dentro del celular (Tesseract.js). Se revisa y se guarda en serie; avisa si la guía ya está en la lista. La foto se endereza sola y no se guarda.
 - **Ahorro de espacio (v29-oct-j):** fotos de evidencia a 1024 px (~100–150 KB). Las fotos ya respaldadas se borran del celular a los 7 días. Consulta SQL para ver el espacio usado.
 - **📋 Pegar respuesta (v29-oct-i):** un botón por cliente lee lo copiado de WhatsApp, saca hora y ubicación (incluso pines de lugar, buscándolos en OpenStreetMap) y lo marca Confirmado, sin abrir Editar.
