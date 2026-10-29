@@ -27,7 +27,7 @@ S = {
   pk: [Paquete],          // lista del día
   ex: bool,               // ¿son datos de ejemplo?
   yo, fecha,              // nombre del repartidor y fecha mostrada
-  coord, camino,          // plantillas de mensaje
+  coord, form, camino,    // plantillas: primer mensaje, mensaje con formulario, voy en camino
   start, vel, min, ret, filter,   // parámetros de ruta
   route: {start, ids, noC} | null // última ruta calculada
 }
@@ -52,7 +52,8 @@ Paquete = {
 | `parseText(t)` | Pegado: separa por tab, `;` o `\|`. Los CSV con comas se leen con SheetJS. |
 | `fill(tpl, p, extra)` | Reemplaza `{variables}` en las plantillas. |
 | `formLink(p)` | Arma `entrega?t=&n=` (corto a propósito: links largos dan desconfianza). |
-| `coordText(p)` | Texto final del mensaje. Siempre quita las líneas con `{formulario}`: por decisión del dueño el mensaje nunca lleva links. El panel de respuestas (`#syncPanel`) y `syncResp()` quedan en el código pero desactivados. |
+| `coordText(p)` | Texto del primer mensaje. Siempre quita las líneas con `{formulario}`: el primer mensaje nunca lleva links. |
+| Botón **📝 Mandar formulario** | Segundo mensaje con `S.form` (`DEF_FORM`), que sí lleva `{formulario}`. Marca `p.formSent`. Solo aparece si `config.js` tiene Supabase. |
 | `optimize(pts, ret)` | Vecino más cercano y luego mejora 2-opt. |
 | `hav(a, b)` | Distancia haversine × 1.35 (factor por calles). |
 | `syncResp()` | Llama `leer_respuestas` con todos los tokens. Corre al abrir, cada 60 s con la pestaña visible y al volver a la app. |
@@ -63,9 +64,10 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 - GitHub Pages sirve `entrega.html` también como `/entrega` (sin extensión).
 - Parámetros de URL: `t` (token, obligatorio, ≥12) y `n` (nombre). Acepta también `g` (guía) e `y` (repartidor) de links viejos.
-- Etiquetas Open Graph (`og:title`, `og:description`, `og:image` = `icon-512.png`) para que WhatsApp muestre una vista previa con marca.
+- Vista previa sobria: solo `og:title` ("RutaFácil · Su entrega") y `og:image` (`icon-512.png`). Sin descripción: textos como "no pide pagos" generaban desconfianza.
 - Envía con `POST /rest/v1/rpc/enviar_respuesta`. Volver a enviar actualiza la respuesta (upsert por token).
-- Ubicación, tres caminos:
+- Ubicación, en este orden en pantalla: (1) *Se la mando por WhatsApp*, (2) pegar link, (3) GPS dentro de un `<details>`, porque en iPhone suele estar bloqueado.
+- Detalle del GPS:
   1. GPS: primero `enableHighAccuracy` con 10 s; si falla (no por permiso), reintenta con ubicación aproximada, 20 s y caché de 5 min. Si el error es de permiso (`code 1`), muestra cómo habilitarlo (iOS: Ajustes > Privacidad y seguridad > Localización > Sitios web de Safari, y en Safari aA > Configuración del sitio web > Ubicación) y recomienda la opción de WhatsApp.
   2. "Prefiero mandarla por WhatsApp": agrega *(Manda la ubicación por WhatsApp)* a `senas` e indica los pasos en el chat.
   3. Pegar link de Maps/Waze (dentro de un `<details>`).

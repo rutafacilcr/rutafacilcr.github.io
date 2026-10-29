@@ -43,16 +43,20 @@ Columnas: `nombre`, `telefono`, `direccion`, `ubicacion`, `guia`, `nota`.
 
 1. Poné **tu nombre** y revisá el texto del mensaje (se puede editar).
 2. En cada cliente tocá **Abrir WhatsApp** > **Enviar** > volvé a la app.
-3. El mensaje es **corto y sin links**: *"Hola Sofía, soy Victor, le llevo su paquete de Temu el viernes. ¿A qué hora le queda bien recibirlo? Si puede, mándeme su ubicación por aquí 📍 ¡Gracias!"*
-4. El cliente responde por el chat. Abrí la ubicación que te mandó, copiá el link, pegalo en **1 Paquetes > Editar > Ubicación** y marcá **Confirmó**.
-5. El formulario para clientes está **desactivado**: el mensaje nunca lleva links.
+3. **Primer mensaje, sin links:** *"Hola Sofía, soy Victor, le llevo su paquete de Temu el viernes. ¿A qué hora le queda bien recibirlo? Si puede, mándeme su ubicación por aquí 📍 ¡Gracias!"*
+4. **Cuando el cliente conteste**, tocá **📝 Mandar formulario** en ese cliente. Le llega un segundo mensaje corto: *"Gracias Sofía. Para no fallarle con la entrega, ¿me ayuda marcando aquí su hora y las señas de la casa? Es 1 minuto: …"*. Como ya habló con vos, confía más en el link.
+5. En el formulario el cliente marca horario y señas. Para la ubicación, lo principal es **mandarla por WhatsApp** (clip 📎 > Ubicación); también puede pegar un link o usar el GPS.
+6. Lo que llene **entra solo** a la app (revisa cada minuto, o tocá **Revisar respuestas ahora**) y queda **Confirmado** con 🕓 horario y 🏠 señas.
+7. La ubicación que llegue por WhatsApp: abrila, copiá el link y pegalo en **1 Paquetes > Editar > Ubicación**.
+
+Los tres mensajes (primer mensaje, formulario y "voy en camino") se pueden editar en **2 Mensajes**.
 
 **Para que los clientes confíen más:**
 - Usá **WhatsApp Business** con foto de perfil, nombre (ej. "Victor · Entregas Temu") y descripción.
-- El formulario muestra el ícono de RutaFácil en la vista previa de WhatsApp y aclara que no pide pagos ni datos bancarios.
+- El link solo se manda a quien ya contestó, y la vista previa en WhatsApp es sobria: "RutaFácil · Su entrega" con el ícono.
 - Con un dominio propio el link se vería más corto y confiable (pendiente de decidir).
 
-Variables que podés usar en los mensajes: `{nombre}` `{guia}` `{direccion}` `{fecha}` `{yo}` `{eta}`. Si cambiás el mensaje y quitás `{formulario}`, la app agrega el link del formulario al final sola. El cuadro del mensaje crece para mostrar el texto completo.
+Variables que podés usar en los mensajes: `{nombre}` `{guia}` `{direccion}` `{fecha}` `{yo}` `{eta}` `{formulario}` (este último va en el mensaje del formulario). Si cambiás el mensaje y quitás `{formulario}`, la app agrega el link del formulario al final sola. El cuadro del mensaje crece para mostrar el texto completo.
 
 ### Día de entrega (pestaña **3 Ruta**)
 

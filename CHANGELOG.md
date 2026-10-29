@@ -1,6 +1,7 @@
 # Historial de cambios
 
 ## 2026-10-29
+- **Formulario en dos pasos (v29-oct-g):** el primer mensaje sigue sin links; el formulario se manda aparte con el botón *📝 Mandar formulario* a quien ya contestó. Vista previa sobria sin textos de "no pide pagos". En el formulario, la ubicación por WhatsApp va primero y el GPS queda como opción secundaria.
 - **Sin links (v29-oct-f):** el mensaje nunca lleva el link del formulario, aunque esté guardado de antes. Se quita la casilla y el panel de respuestas. `entrega.html` y Supabase quedan sin uso.
 - **Mensaje simple por defecto (v29-oct-e):** corto, cercano y sin links; el cliente responde hora y ubicación por WhatsApp. El link del formulario pasa a ser opcional (casilla *Agregar al mensaje el link del formulario*).
 - **Formulario:** cuando el iPhone bloquea la ubicación, la ayuda recomienda primero mandarla por WhatsApp y da los pasos correctos de iOS. Más espacio al final para que la barra de Safari no tape el texto.

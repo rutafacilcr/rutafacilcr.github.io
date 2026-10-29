@@ -120,7 +120,7 @@ details summary{cursor:pointer;font-weight:600}
 <body>
 
 <header class="top"><div class="wrap">
-  <div><h1>Ruta<span>Fácil</span> CR</h1><p class="sub">Paquetes, mensajes de WhatsApp y ruta del día · <span class="mono" style="font-size:11px;opacity:.8">v29-oct-f</span></p></div>
+  <div><h1>Ruta<span>Fácil</span> CR</h1><p class="sub">Paquetes, mensajes de WhatsApp y ruta del día · <span class="mono" style="font-size:11px;opacity:.8">v29-oct-g</span></p></div>
   <span class="daypill" id="daypill"></span>
 </div></header>
 <nav class="tabs"><div class="wrap" role="tablist">
@@ -178,12 +178,13 @@ details summary{cursor:pointer;font-weight:600}
       <label>Día de entrega<input id="m-fecha"></label>
     </div>
     <label>Mensaje para coordinar (día antes)<textarea id="m-coord"></textarea></label>
+    <label>Mensaje con el formulario (se manda aparte, después de que el cliente conteste)<textarea id="m-form"></textarea></label>
     <label>Mensaje "voy en camino"<textarea id="m-camino"></textarea></label>
-    <p class="small muted">Variables: <span class="mono">{nombre} {guia} {direccion} {fecha} {yo} {eta}</span></p>
+    <p class="small muted">Variables: <span class="mono">{nombre} {guia} {direccion} {fecha} {yo} {eta} {formulario}</span></p>
   </div>
   <div class="panel" id="syncPanel" hidden>
     <div class="row" style="justify-content:space-between"><h3>Respuestas del formulario</h3><span class="small muted" id="syncInfo"></span></div>
-    <p class="small">Opcional. Si lo activás, el mensaje termina con un link donde el cliente marca horario, señas y ubicación, y la respuesta entra sola a la lista. Apagado, el cliente responde por el chat.</p>
+    <p class="small">El primer mensaje va sin link. Cuando el cliente te conteste, tocá <b>📝 Mandar formulario</b> en ese cliente: le llega un segundo mensaje corto con el link. Lo que llene entra solo a la lista y queda <b>Confirmado</b>.</p>
         <button class="btn road" id="syncBtn">Revisar respuestas ahora</button>
   </div>
   <div class="panel">
@@ -226,6 +227,7 @@ const DEF_COORD_F='Hola {nombre}, le saluda {yo}, el repartidor de su paquete de
 const OLD_COORD_F=['Hola {nombre}, le saluda {yo}, el repartidor de su paquete de Temu (guía {guia}). Se lo estaría entregando el {fecha}.\n\nPara coordinar, puede responderme por aquí:\n1. A qué hora puede recibir\n2. Su ubicación: toque + (o 📎) > Ubicación > Enviar mi ubicación actual\n\nO si le es más fácil, confírmelo en este formulario de 1 minuto. No pide pagos ni datos bancarios:\n{formulario}\n\n¡Muchas gracias!','Hola {nombre}, le saluda {yo}, el repartidor de su pedido de Temu (guía {guia}). El {fecha} se lo estaría entregando.\n\nPara coordinar, por favor llene este formulario con su horario, las señas de la casa y su ubicación (toma 1 minuto):\n{formulario}\n\n¡Muchas gracias!'];
 const FORM_ON=!!(window.RF_CONFIG&&RF_CONFIG.supabaseUrl&&RF_CONFIG.supabaseAnonKey);
 const tok=()=>{const a=new Uint8Array(12);crypto.getRandomValues(a);return [...a].map(x=>'abcdefghijkmnpqrstuvwxyz23456789'[x%32]).join('')};
+const DEF_FORM='Gracias {nombre}. Para no fallarle con la entrega, ¿me ayuda marcando aquí su hora y las señas de la casa? Es 1 minuto: {formulario}';
 const DEF_CAMINO='Hola {nombre}, voy en camino con su paquete de Temu. Llego en aproximadamente {eta} minutos. ¡Gracias!';
 const EXAMPLE=[
  ['María Rojas','8812-3456','Santo Domingo de Heredia, 100 m sur de la iglesia','9.9813,-84.0897','TM-58210'],
@@ -237,7 +239,7 @@ const EXAMPLE=[
  ['Sofía Ramírez','8977-4410','San Joaquín de Flores, 50 m norte de la plaza','9.9944,-84.1592','TM-58216'],
  ['Pablo Quesada','6233-8820','Mercedes Norte, 300 m este del Más x Menos','','TM-58217'],
 ];
-let S={pk:[],ex:false,yo:'',fecha:'',coord:DEF_SIMPLE,useForm:false,camino:DEF_CAMINO,start:'9.9986,-84.1165',vel:25,min:7,ret:false,filter:'todos',route:null};
+let S={pk:[],ex:false,yo:'',fecha:'',coord:DEF_SIMPLE,form:DEF_FORM,camino:DEF_CAMINO,start:'9.9986,-84.1165',vel:25,min:7,ret:false,filter:'todos',route:null};
 let editId=null;
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -319,10 +321,11 @@ function renderMsg(){
   if(!S.pk.length){L.innerHTML='<div class="empty">Agregá paquetes en el paso 1 para preparar los mensajes.</div>';return}
   L.innerHTML=S.pk.map((p,i)=>{const txt=coordText(p);const l=waLink(p,txt);return `<div class="pkg">
     <div class="num">${i+1}</div>
-    <div class="name">${esc(p.nombre)} ${stChip(p)} ${p.sent?'<span class="small muted">✓ mensaje abierto</span>':''}</div>
+    <div class="name">${esc(p.nombre)} ${stChip(p)} ${p.sent?'<span class="small muted">✓ mensaje abierto</span>':''}${p.formSent?'<span class="small muted">· formulario enviado</span>':''}</div>
     <div class="addr"><span class="mono">${esc(p.tel||'sin teléfono')}</span>${p.resp?' <span class="small" style="color:var(--ok);font-weight:600">✓ llenó el formulario</span>':''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
     <details class="small"><summary>Ver mensaje</summary><div class="preview">${esc(txt)}</div></details>
     <div class="actions">${l?`<a class="btn wa" href="${l}" target="_blank" rel="noopener" data-act="sent" data-id="${p.id}">Abrir WhatsApp</a>`:'<span class="small" style="color:var(--bad)">Teléfono inválido, corregilo en Paquetes</span>'}
+      ${FORM_ON&&l?`<a class="btn sm" href="${waLink(p,fill(S.form,p))}" target="_blank" rel="noopener" data-act="formsent" data-id="${p.id}">📝 Mandar formulario</a>`:''}
       <button class="btn sm" data-act="copy" data-id="${p.id}">Copiar texto</button>
       <button class="btn sm" data-act="set" data-st="confirmado" data-id="${p.id}">Confirmó</button>
       <button class="btn sm" data-act="set" data-st="noresponde" data-id="${p.id}">No responde</button></div>
@@ -390,6 +393,7 @@ document.addEventListener('click',async e=>{
   if(a==='st'&&p){const i=STATUS.findIndex(s=>s[0]===p.st);p.st=STATUS[(i+1)%STATUS.length][0]}
   else if(a==='set'&&p){p.st=el.dataset.st;toast(`${p.nombre}: ${SLABEL[p.st]}`)}
   else if(a==='sent'&&p){p.sent=true;save();setTimeout(render,300);return}
+  else if(a==='formsent'&&p){p.formSent=true;save();setTimeout(render,300);return}
   else if(a==='copy'&&p){const t=coordText(p);try{await navigator.clipboard.writeText(t);toast('Mensaje copiado')}catch(err){const d=el.closest('.pkg').querySelector('details');d.open=true;const r=document.createRange();r.selectNodeContents(d.querySelector('.preview'));getSelection().removeAllRanges();getSelection().addRange(r);toast('Texto seleccionado, copialo')}return}
   else if(a==='del'&&p){S.pk=S.pk.filter(x=>x!==p);S.route=null;toast('Paquete quitado')}
   else if(a==='edit'&&p){editId=p.id;$('#f-nombre').value=p.nombre;$('#f-tel').value=p.tel;$('#f-dir').value=p.dir;$('#f-ubic').value=p.ubic;$('#f-guia').value=p.guia;$('#f-nota').value=p.nota||'';$('#formPanel').open=true;$('#formTitle').textContent='Editar paquete';$('#saveBtn').textContent='Guardar cambios';$('#cancelEdit').hidden=false;$('#formPanel').scrollIntoView({behavior:'smooth'});
@@ -413,7 +417,7 @@ $('#fileIn').onchange=async e=>{const f=e.target.files[0];if(!f)return;
   e.target.value=''};
 $('#clearExample').onclick=()=>{S.pk=[];S.ex=false;S.route=null;save();render()};
 $('#clearAll').onclick=e=>{const b=e.currentTarget;if(b.dataset.c){S.pk=[];S.ex=false;S.route=null;save();render();b.textContent='Vaciar lista';delete b.dataset.c}else{b.dataset.c=1;b.textContent='¿Seguro? Tocá otra vez';setTimeout(()=>{b.textContent='Vaciar lista';delete b.dataset.c},3000)}};
-const bind=(sel,k,num)=>{const el=$(sel);el.value=S[k]??'';el.addEventListener(el.type==='checkbox'?'change':'input',()=>{S[k]=el.type==='checkbox'?el.checked:(num?+el.value:el.value);save();if(['coord','yo','fecha'].includes(k))renderMsg()})};
+const bind=(sel,k,num)=>{const el=$(sel);el.value=S[k]??'';el.addEventListener(el.type==='checkbox'?'change':'input',()=>{S[k]=el.type==='checkbox'?el.checked:(num?+el.value:el.value);save();if(['coord','form','yo','fecha'].includes(k))renderMsg()})};
 $('#routeBtn').onclick=calcRoute;
 
 // Decisión de Victor (29-oct): el mensaje nunca lleva links; a los clientes les parecen estafa.
@@ -436,18 +440,18 @@ async function syncResp(manual){
   }catch(e){$('#syncInfo').textContent='No se pudo revisar (código '+(e.message||'red')+')';if(manual)toast('No se pudo revisar las respuestas')}
 }
 if(!load()){S.pk=EXAMPLE.map(mkPkg);S.ex=true;S.pk[0].st='confirmado';S.pk[2].st='confirmado';S.pk[1].sent=true}
-bind('#m-yo','yo');bind('#m-fecha','fecha');bind('#m-coord','coord');bind('#m-camino','camino');bind('#r-start','start');bind('#r-vel','vel',1);bind('#r-min','min',1);bind('#r-filter','filter');
+bind('#m-yo','yo');bind('#m-fecha','fecha');bind('#m-coord','coord');bind('#m-camino','camino');bind('#m-form','form');bind('#r-start','start');bind('#r-vel','vel',1);bind('#r-min','min',1);bind('#r-filter','filter');
 $('#r-return').checked=!!S.ret;$('#r-return').onchange=e=>{S.ret=e.target.checked;save()};
 $('#m-fecha').placeholder=tomorrow();
 const grow=el=>{el.style.height='auto';el.style.height=el.scrollHeight+2+'px'};
-['#m-coord','#m-camino'].forEach(id=>{const el=$(id);el.addEventListener('input',()=>grow(el));requestAnimationFrame(()=>grow(el))});
-document.querySelector('[data-tab="mensajes"]').addEventListener('click',()=>requestAnimationFrame(()=>['#m-coord','#m-camino'].forEach(id=>grow($(id)))));
+['#m-coord','#m-form','#m-camino'].forEach(id=>{const el=$(id);el.addEventListener('input',()=>grow(el));requestAnimationFrame(()=>grow(el))});
+document.querySelector('[data-tab="mensajes"]').addEventListener('click',()=>requestAnimationFrame(()=>['#m-coord','#m-form','#m-camino'].forEach(id=>grow($(id)))));
 $('#daypill').textContent='Entrega: '+tomorrow();
 S.pk.forEach(p=>{if(!p.tok)p.tok=tok()});
 if([DEF_COORD,DEF_COORD_F,...OLD_COORD_F].includes(S.coord)){S.coord=DEF_SIMPLE;$('#m-coord').value=S.coord}
 save();
 render();
-if(false){ // formulario desactivado: el mensaje ya no lleva link
+if(FORM_ON){ // formulario como segundo mensaje: el primero nunca lleva link
 $('#syncPanel').hidden=false;$('#syncBtn').onclick=()=>syncResp(true);syncResp();setInterval(()=>{if(!document.hidden)syncResp()},60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncResp()})}
 </script>
 </body>

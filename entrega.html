@@ -3,10 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Coordinar su entrega · RutaFácil</title>
-<meta name="description" content="Formulario del repartidor para confirmar horario y ubicación de entrega. No pide pagos ni datos bancarios.">
-<meta property="og:title" content="Coordinar su entrega · RutaFácil">
-<meta property="og:description" content="Confirme su horario y ubicación en 1 minuto. No pide pagos ni datos bancarios.">
+<title>RutaFácil · Su entrega</title>
+<meta property="og:title" content="RutaFácil · Su entrega">
 <meta property="og:image" content="https://victormenav.github.io/RutafacilCR/icon-512.png">
 <meta property="og:type" content="website">
 <link rel="icon" type="image/png" href="favicon.png">
@@ -71,13 +69,14 @@ details summary{cursor:pointer}
     </div>
     <div class="card">
       <h2>Ubicación de su casa</h2>
-      <p class="hint">Elija la opción más fácil para usted.</p>
+      <p class="hint">Si ya me la mandó por WhatsApp, no hace falta nada más.</p>
+      <button type="button" class="btn loc" id="waBtn">💬 Se la mando por WhatsApp</button>
+      <div class="help" id="waHelp" hidden>Al terminar, vuelva al chat, toque el clip 📎 (o el signo de más) y elija <b>Ubicación</b> &gt; <b>Enviar mi ubicación actual</b>.</div>
+      <input id="locLink" placeholder="O pegue un link de Maps o Waze">
+      <details><summary class="hint">Usar el GPS de este teléfono</summary><div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
       <button type="button" class="btn loc" id="locBtn">📍 Estoy en mi casa: usar mi ubicación</button>
       <span class="ok" id="locOk" hidden></span>
-      <div class="help" id="locHelp" hidden></div>
-      <button type="button" class="btn loc" id="waBtn">💬 Prefiero mandarla por WhatsApp</button>
-      <div class="help" id="waHelp" hidden>Al terminar este formulario, vuelva al chat con su repartidor, toque el clip 📎 (o el signo de más) y elija <b>Ubicación</b> &gt; <b>Enviar mi ubicación actual</b>.</div>
-      <details><summary class="hint">Tengo un link de Google Maps o Waze</summary><input id="locLink" placeholder="Pegar link de ubicación" style="margin-top:8px"></details>
+      <div class="help" id="locHelp" hidden></div></div></details>
     </div>
     <div class="card">
       <h2>Señas de la casa</h2>
@@ -115,9 +114,9 @@ function locFail(err){
   locMsg('No se pudo obtener su ubicación.',false);
   const h=$('#locHelp');h.hidden=false;
   h.innerHTML=err&&err.code===1
-    ?(isIOS?'Su iPhone no dejó compartir la ubicación desde esta página. Lo más fácil: toque <b>Prefiero mandarla por WhatsApp</b> aquí abajo.<br><br>Si quiere activarla: <b>Ajustes</b> &gt; <b>Privacidad y seguridad</b> &gt; <b>Localización</b> (encendida) &gt; <b>Sitios web de Safari</b> &gt; <b>Al usar la app</b>. Luego toque <b>aA</b> en la barra de Safari &gt; <b>Configuración del sitio web</b> &gt; <b>Ubicación</b> &gt; <b>Preguntar</b>, y vuelva a intentar.'
-           :'Su teléfono bloqueó la ubicación. Toque el candado junto a la dirección de la página y permita <b>Ubicación</b>. O use la opción de WhatsApp de abajo.')
-    :'Revise que la ubicación (GPS) esté encendida y que tenga señal, e intente de nuevo. Si no funciona, use la opción de WhatsApp de abajo.';
+    ?(isIOS?'Su iPhone no dejó compartir la ubicación desde esta página. Lo más fácil: mándela por WhatsApp (botón de arriba).<br><br>Si quiere activarla: <b>Ajustes</b> &gt; <b>Privacidad y seguridad</b> &gt; <b>Localización</b> (encendida) &gt; <b>Sitios web de Safari</b> &gt; <b>Al usar la app</b>. Luego toque <b>aA</b> en la barra de Safari &gt; <b>Configuración del sitio web</b> &gt; <b>Ubicación</b> &gt; <b>Preguntar</b>, y vuelva a intentar.'
+           :'Su teléfono bloqueó la ubicación. Toque el candado junto a la dirección de la página y permita <b>Ubicación</b>. O mándela por WhatsApp (botón de arriba).')
+    :'Revise que la ubicación (GPS) esté encendida y que tenga señal, e intente de nuevo. Si no funciona, mándela por WhatsApp (botón de arriba).';
 }
 $('#locBtn').onclick=()=>{
   if(!navigator.geolocation){locFail();return}
