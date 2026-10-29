@@ -43,11 +43,9 @@ Columnas: `nombre`, `telefono`, `direccion`, `ubicacion`, `guia`, `nota`.
 
 1. Poné **tu nombre** y revisá el texto del mensaje (se puede editar).
 2. En cada cliente tocá **Abrir WhatsApp** > **Enviar** > volvé a la app.
-3. El mensaje le da al cliente **dos opciones**, para que elija la que le dé más confianza:
-   - **Responder por el mismo chat:** la hora y su ubicación de WhatsApp (clip 📎 o signo de más > **Ubicación** > **Enviar mi ubicación actual**).
-   - **Formulario de 1 minuto** (link `…/RutafacilCR/entrega?t=…`). Ahí marca horario, señas y quién recibe. Para la ubicación puede usar el GPS del teléfono o elegir **Prefiero mandarla por WhatsApp**.
-4. Las respuestas del formulario **entran solas** (la app revisa cada minuto, o tocá **Revisar respuestas ahora**). El cliente queda **Confirmado** con 🕓 horario y 🏠 señas. Si eligió mandar la ubicación por WhatsApp, en las señas dice *(Manda la ubicación por WhatsApp)*.
-5. Si el cliente responde por el chat: abrí la ubicación que mandó, copiá el link, pegalo en **Editar > Ubicación** y marcá **Confirmó**.
+3. El mensaje es **corto y sin links**: *"Hola Sofía, soy Victor, le llevo su paquete de Temu el viernes. ¿A qué hora le queda bien recibirlo? Si puede, mándeme su ubicación por aquí 📍 ¡Gracias!"*
+4. El cliente responde por el chat. Abrí la ubicación que te mandó, copiá el link, pegalo en **1 Paquetes > Editar > Ubicación** y marcá **Confirmó**.
+5. **Formulario (opcional):** en **Respuestas del formulario** podés activar *Agregar al mensaje el link del formulario*. El mensaje termina entonces con *"O si prefiere, confirme aquí: …/entrega?t=…"*. Lo que el cliente llene entra solo a la app y lo marca **Confirmado** (revisa cada minuto, o tocá **Revisar respuestas ahora**).
 
 **Para que los clientes confíen más:**
 - Usá **WhatsApp Business** con foto de perfil, nombre (ej. "Victor · Entregas Temu") y descripción.

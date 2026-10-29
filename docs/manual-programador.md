@@ -28,6 +28,7 @@ S = {
   ex: bool,               // ¿son datos de ejemplo?
   yo, fecha,              // nombre del repartidor y fecha mostrada
   coord, camino,          // plantillas de mensaje
+  useForm,                // agregar link del formulario al mensaje (default false)
   start, vel, min, ret, filter,   // parámetros de ruta
   route: {start, ids, noC} | null // última ruta calculada
 }
@@ -52,7 +53,7 @@ Paquete = {
 | `parseText(t)` | Pegado: separa por tab, `;` o `\|`. Los CSV con comas se leen con SheetJS. |
 | `fill(tpl, p, extra)` | Reemplaza `{variables}` en las plantillas. |
 | `formLink(p)` | Arma `entrega?t=&n=` (corto a propósito: links largos dan desconfianza). |
-| `coordText(p)` | Texto final del mensaje de coordinación. Si el formulario está activo y la plantilla no trae `{formulario}`, agrega el link al final. |
+| `coordText(p)` | Texto final del mensaje. Por defecto (`S.useForm=false`) quita las líneas con `{formulario}`; si el repartidor activa el link, lo agrega al final aunque la plantilla no lo traiga. |
 | `optimize(pts, ret)` | Vecino más cercano y luego mejora 2-opt. |
 | `hav(a, b)` | Distancia haversine × 1.35 (factor por calles). |
 | `syncResp()` | Llama `leer_respuestas` con todos los tokens. Corre al abrir, cada 60 s con la pestaña visible y al volver a la app. |
@@ -70,7 +71,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
   2. "Prefiero mandarla por WhatsApp": agrega *(Manda la ubicación por WhatsApp)* a `senas` e indica los pasos en el chat.
   3. Pegar link de Maps/Waze (dentro de un `<details>`).
 - Los mensajes no deben llevar el signo `+`: al pasar por `wa.me` WhatsApp lo convierte en espacio.
-- Plantillas: `DEF_COORD_F` es la vigente. `OLD_COORD_F` lista las anteriores; si el usuario tiene guardada una sin cambios, se reemplaza sola al abrir.
+- Plantillas: `DEF_SIMPLE` es la vigente (corta, sin link). `DEF_COORD`, `DEF_COORD_F` y `OLD_COORD_F` son anteriores; si el usuario tiene guardada una sin cambios, se reemplaza sola por `DEF_SIMPLE` al abrir.
 
 ## 4. Base de datos y seguridad (`supabase.sql`)
 

@@ -120,7 +120,7 @@ details summary{cursor:pointer;font-weight:600}
 <body>
 
 <header class="top"><div class="wrap">
-  <div><h1>Ruta<span>Fácil</span> CR</h1><p class="sub">Paquetes, mensajes de WhatsApp y ruta del día · <span class="mono" style="font-size:11px;opacity:.8">v29-oct-d</span></p></div>
+  <div><h1>Ruta<span>Fácil</span> CR</h1><p class="sub">Paquetes, mensajes de WhatsApp y ruta del día · <span class="mono" style="font-size:11px;opacity:.8">v29-oct-e</span></p></div>
   <span class="daypill" id="daypill"></span>
 </div></header>
 <nav class="tabs"><div class="wrap" role="tablist">
@@ -183,7 +183,8 @@ details summary{cursor:pointer;font-weight:600}
   </div>
   <div class="panel" id="syncPanel" hidden>
     <div class="row" style="justify-content:space-between"><h3>Respuestas del formulario</h3><span class="small muted" id="syncInfo"></span></div>
-    <p class="small">Cada mensaje lleva un link donde el cliente marca su horario, sus señas y su ubicación. Las respuestas entran solas a la lista y el cliente queda como <b>Confirmado</b>.</p>
+    <p class="small">Opcional. Si lo activás, el mensaje termina con un link donde el cliente marca horario, señas y ubicación, y la respuesta entra sola a la lista. Apagado, el cliente responde por el chat.</p>
+    <label class="row small" style="text-transform:none;letter-spacing:0;font-weight:500;flex-direction:row;color:var(--ink)"><input type="checkbox" id="m-useForm" style="width:auto"> Agregar al mensaje el link del formulario</label>
     <button class="btn road" id="syncBtn">Revisar respuestas ahora</button>
   </div>
   <div class="panel">
@@ -219,6 +220,7 @@ const KEY='rutafacil-cr-v1';
 const STATUS=[['pendiente','Pendiente'],['confirmado','Confirmado'],['noresponde','No responde'],['entregado','Entregado'],['fallido','No se entregó']];
 const SLABEL=Object.fromEntries(STATUS);
 const tomorrow=()=>{const d=new Date();d.setDate(d.getDate()+1);return d.toLocaleDateString('es-CR',{weekday:'long',day:'numeric',month:'long'})};
+const DEF_SIMPLE='Hola {nombre}, soy {yo}, le llevo su paquete de Temu el {fecha}. ¿A qué hora le queda bien recibirlo? Si puede, mándeme su ubicación por aquí 📍 ¡Gracias!';
 const DEF_COORD='Hola {nombre}, le saluda {yo}, el repartidor de su pedido de Temu (guía {guia}). El {fecha} se lo estaría entregando en: {direccion}.\n\n¿Me confirma si habrá alguien para recibirlo? Si puede, envíeme su ubicación por WhatsApp para llegar más fácil. ¡Muchas gracias!';
 const DEF_COORD_F='Hola {nombre}, le saluda {yo}, el repartidor de su paquete de Temu (guía {guia}). Se lo estaría entregando el {fecha}.\n\nPara coordinar, puede responderme por aquí:\n1. A qué hora puede recibir\n2. Su ubicación: toque el clip 📎 (o el signo de más) y elija Ubicación > Enviar mi ubicación actual\n\nO si le es más fácil, confírmelo en este formulario de 1 minuto. No pide pagos ni datos bancarios:\n{formulario}\n\n¡Muchas gracias!';
 // Plantillas anteriores: si el usuario no las cambió, se reemplazan por la vigente.
@@ -236,7 +238,7 @@ const EXAMPLE=[
  ['Sofía Ramírez','8977-4410','San Joaquín de Flores, 50 m norte de la plaza','9.9944,-84.1592','TM-58216'],
  ['Pablo Quesada','6233-8820','Mercedes Norte, 300 m este del Más x Menos','','TM-58217'],
 ];
-let S={pk:[],ex:false,yo:'',fecha:'',coord:FORM_ON?DEF_COORD_F:DEF_COORD,camino:DEF_CAMINO,start:'9.9986,-84.1165',vel:25,min:7,ret:false,filter:'todos',route:null};
+let S={pk:[],ex:false,yo:'',fecha:'',coord:DEF_SIMPLE,useForm:false,camino:DEF_CAMINO,start:'9.9986,-84.1165',vel:25,min:7,ret:false,filter:'todos',route:null};
 let editId=null;
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -416,7 +418,11 @@ const bind=(sel,k,num)=>{const el=$(sel);el.value=S[k]??'';el.addEventListener(e
 $('#routeBtn').onclick=calcRoute;
 
 // Si la plantilla no trae {formulario}, el link se agrega al final para que nunca falte.
-function coordText(p){let t=S.coord;if(FORM_ON&&!t.includes('{formulario}'))t+='\n\nSi le es más fácil, confirme su horario y ubicación en este formulario de 1 minuto (no pide pagos ni datos bancarios):\n{formulario}';return fill(t,p)}
+// El link del formulario solo va si el repartidor lo activa (a muchos clientes un link les parece estafa).
+function coordText(p){let t=S.coord;
+  if(FORM_ON&&S.useForm){if(!t.includes('{formulario}'))t+='\n\nO si prefiere, confirme aquí: {formulario}'}
+  else t=t.split('\n').filter(l=>!l.includes('{formulario}')).join('\n').replace(/\n{3,}/g,'\n\n').trim();
+  return fill(t,p)}
 function formLink(p){if(!FORM_ON)return '';const u=new URL('entrega',location.href);u.search=new URLSearchParams({t:p.tok,n:(p.nombre||'').split(' ')[0]}).toString();return u.href}
 async function syncResp(manual){
   if(!FORM_ON||!S.pk.length)return;
@@ -436,6 +442,7 @@ async function syncResp(manual){
 }
 if(!load()){S.pk=EXAMPLE.map(mkPkg);S.ex=true;S.pk[0].st='confirmado';S.pk[2].st='confirmado';S.pk[1].sent=true}
 bind('#m-yo','yo');bind('#m-fecha','fecha');bind('#m-coord','coord');bind('#m-camino','camino');bind('#r-start','start');bind('#r-vel','vel',1);bind('#r-min','min',1);bind('#r-filter','filter');
+$('#m-useForm').checked=!!S.useForm;$('#m-useForm').onchange=e=>{S.useForm=e.target.checked;save();renderMsg()};
 $('#r-return').checked=!!S.ret;$('#r-return').onchange=e=>{S.ret=e.target.checked;save()};
 $('#m-fecha').placeholder=tomorrow();
 const grow=el=>{el.style.height='auto';el.style.height=el.scrollHeight+2+'px'};
@@ -443,7 +450,7 @@ const grow=el=>{el.style.height='auto';el.style.height=el.scrollHeight+2+'px'};
 document.querySelector('[data-tab="mensajes"]').addEventListener('click',()=>requestAnimationFrame(()=>['#m-coord','#m-camino'].forEach(id=>grow($(id)))));
 $('#daypill').textContent='Entrega: '+tomorrow();
 S.pk.forEach(p=>{if(!p.tok)p.tok=tok()});
-if(FORM_ON&&(S.coord===DEF_COORD||OLD_COORD_F.includes(S.coord))){S.coord=DEF_COORD_F;$('#m-coord').value=S.coord}
+if([DEF_COORD,DEF_COORD_F,...OLD_COORD_F].includes(S.coord)){S.coord=DEF_SIMPLE;$('#m-coord').value=S.coord}
 save();
 render();
 if(FORM_ON){$('#syncPanel').hidden=false;$('#syncBtn').onclick=()=>syncResp(true);syncResp();setInterval(()=>{if(!document.hidden)syncResp()},60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncResp()})}
