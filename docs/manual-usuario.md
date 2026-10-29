@@ -98,6 +98,7 @@ Tocá la etiqueta de color para pasar al siguiente estado.
 | El mensaje sale desde otro número | WhatsApp usa la cuenta abierta en ese celular. |
 | La ubicación no se detecta | Usá el link largo o las coordenadas, no el link corto. |
 | El cliente no pudo usar "Estoy en mi casa" | El formulario le explica cómo dar permiso de ubicación. Si no puede, que toque **Prefiero mandarla por WhatsApp** y la mande desde el chat. |
+| Sale "No se pudo revisar (código …)" o "No se pudo enviar (código …)" | Mandale una captura del mensaje con el código al técnico: indica la causa exacta. |
 | No llegan las respuestas | Revisá el internet y tocá **Revisar respuestas ahora**. El cliente tiene que tocar **Enviar** en el formulario. |
 | Desapareció mi lista | Abriste la app en otro navegador o desde Safari en vez del ícono. |
 | El link da error 404 | Escribilo con mayúsculas: `RutafacilCR`. |

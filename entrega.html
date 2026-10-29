@@ -142,9 +142,9 @@ $('#form').onsubmit=async e=>{
     const r=await fetch(C.supabaseUrl.replace(/\/$/,'')+'/rest/v1/rpc/enviar_respuesta',{method:'POST',
       headers:{'Content-Type':'application/json',apikey:C.supabaseAnonKey,...(C.supabaseAnonKey.startsWith('eyJ')?{Authorization:'Bearer '+C.supabaseAnonKey}:{})},
       body:JSON.stringify({p_token:T,p_guia:G,p_horario:sel.join(', '),p_senas:[$('#senas').value.trim(),viaWA&&!c?'(Manda la ubicación por WhatsApp)':''].filter(Boolean).join(' '),p_recibe:$('#recibe').value.trim(),p_lat:c?c[0]:null,p_lng:c?c[1]:null})});
-    if(!r.ok)throw new Error(r.status);
+    if(!r.ok)throw new Error(r.status+' '+(await r.text()).slice(0,80));
     $('#form').hidden=true;$('#done').hidden=false;window.scrollTo({top:0});
-  }catch(err){$('#err').hidden=false;$('#err').textContent='No se pudo enviar. Revise su internet e intente de nuevo.';b.disabled=false;b.textContent='Enviar a mi repartidor'}
+  }catch(err){$('#err').hidden=false;$('#err').textContent='No se pudo enviar. Revise su internet e intente de nuevo. (código '+(err.message||'red')+')';b.disabled=false;b.textContent='Enviar a mi repartidor'}
 };
 </script>
 </body>

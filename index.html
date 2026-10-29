@@ -423,7 +423,7 @@ async function syncResp(manual){
   const C=RF_CONFIG;$('#syncInfo').textContent='Revisando…';
   try{
     const r=await fetch(C.supabaseUrl.replace(/\/$/,'')+'/rest/v1/rpc/leer_respuestas',{method:'POST',headers:{'Content-Type':'application/json',apikey:C.supabaseAnonKey,...(C.supabaseAnonKey.startsWith('eyJ')?{Authorization:'Bearer '+C.supabaseAnonKey}:{})},body:JSON.stringify({p_tokens:S.pk.map(p=>p.tok)})});
-    if(!r.ok)throw new Error(r.status);
+    if(!r.ok)throw new Error(r.status+' '+(await r.text()).slice(0,80));
     const rows=await r.json();let nuevos=0;
     for(const row of rows){const p=S.pk.find(x=>x.tok===row.token);if(!p)continue;
       const stamp=row.updated_at||row.created_at;if(p.respAt===stamp)continue;
@@ -432,7 +432,7 @@ async function syncResp(manual){
       if(p.st==='pendiente'||p.st==='noresponde')p.st='confirmado';nuevos++}
     $('#syncInfo').textContent=`${S.pk.filter(p=>p.resp).length} de ${S.pk.length} respondieron · ${new Date().toLocaleTimeString('es-CR',{hour:'numeric',minute:'2-digit'})}`;
     if(nuevos){S.route=null;save();render();toast(`${nuevos} respuesta(s) nueva(s)`)}else if(manual)toast('Sin respuestas nuevas');
-  }catch(e){$('#syncInfo').textContent='No se pudo revisar (¿sin internet?)';if(manual)toast('No se pudo revisar las respuestas')}
+  }catch(e){$('#syncInfo').textContent='No se pudo revisar (código '+(e.message||'red')+')';if(manual)toast('No se pudo revisar las respuestas')}
 }
 if(!load()){S.pk=EXAMPLE.map(mkPkg);S.ex=true;S.pk[0].st='confirmado';S.pk[2].st='confirmado';S.pk[1].sent=true}
 bind('#m-yo','yo');bind('#m-fecha','fecha');bind('#m-coord','coord');bind('#m-camino','camino');bind('#r-start','start');bind('#r-vel','vel',1);bind('#r-min','min',1);bind('#r-filter','filter');
