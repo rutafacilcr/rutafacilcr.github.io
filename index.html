@@ -129,7 +129,7 @@ details summary{cursor:pointer;font-weight:600}
 <body>
 
 <header class="top"><div class="wrap">
-  <div><h1>Ruta<span>Fácil</span> CR</h1><p class="sub">Paquetes, mensajes de WhatsApp y ruta del día · <span class="mono" style="font-size:11px;opacity:.8">v29-oct-h</span></p></div>
+  <div><h1>Ruta<span>Fácil</span> CR</h1><p class="sub">Paquetes, mensajes de WhatsApp y ruta del día · <span class="mono" style="font-size:11px;opacity:.8">v29-oct-i</span></p></div>
   <span class="daypill" id="daypill"></span>
 </div></header>
 <nav class="tabs"><div class="wrap" role="tablist">
@@ -237,6 +237,13 @@ details summary{cursor:pointer;font-weight:600}
   <div class="row"><button class="btn primary" id="podOk" disabled>Confirmar entrega</button><button class="btn ghost" id="podCancel">Cancelar</button></div>
   <p class="small muted" id="podNeed"></p>
 </div></div>
+<div class="sheet" id="pasteSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="pasteTitle">
+  <h2 id="pasteTitle">Pegar respuesta</h2>
+  <p class="small muted" id="pasteWho"></p>
+  <p class="small">En WhatsApp, mantené presionado lo que respondió el cliente (la hora, la ubicación o los dos) &gt; <b>Copiar</b>, y pegalo aquí.</p>
+  <textarea id="pasteBoxR" placeholder="Ej: 4 pm  https://maps.google.com/?q=9.93,-84.08"></textarea>
+  <div class="row"><button class="btn primary" id="pasteOk">Usar esta respuesta</button><button class="btn ghost" id="pasteCancel">Cancelar</button></div>
+</div></div>
 <div class="sheet" id="evSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="evTitle">
   <h2 id="evTitle">Evidencia de entrega</h2>
   <div id="evBody" class="list"></div>
@@ -341,7 +348,7 @@ function renderPk(){
     <div class="name">${esc(p.nombre||'(sin nombre)')} ${stChip(p)}</div>
     <div class="addr">${esc(p.dir||'Sin dirección')}${p.nota?` · <i>${esc(p.nota)}</i>`:''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
     <div class="meta"><span class="mono">${esc(p.tel||'sin teléfono')}</span>${p.guia?`<span class="mono">${esc(p.guia)}</span>`:''}<span class="pin ${c?'yes':'no'}">${c?'● Ubicación lista':'○ Falta ubicación'}</span></div>${p.pod?`<div class="ev">📷 ${p.pod.n} fotos · ${fmtDT(p.pod.at)}${p.pod.lat!=null?' · 📍 ±'+Math.round(p.pod.acc)+' m':' · sin GPS'} · ${p.pod.up?'☁️ respaldada':'⏳ sin subir'} <button class="btn sm" data-act="ev" data-id="${p.id}" style="margin-left:4px">Ver evidencia</button></div>`:''}
-    <div class="actions"><button class="btn sm" data-act="edit" data-id="${p.id}">Editar</button>${c?`<a class="btn sm" href="${waze(c)}" target="_blank" rel="noopener">Waze</a><a class="btn sm" href="${gmaps(c)}" target="_blank" rel="noopener">Maps</a>`:''}<button class="btn sm ghost danger" data-act="del" data-id="${p.id}">Quitar</button></div>
+    <div class="actions"><button class="btn sm primary" data-act="paste" data-id="${p.id}">📋 Pegar respuesta</button><button class="btn sm" data-act="edit" data-id="${p.id}">Editar</button>${c?`<a class="btn sm" href="${waze(c)}" target="_blank" rel="noopener">Waze</a><a class="btn sm" href="${gmaps(c)}" target="_blank" rel="noopener">Maps</a>`:''}<button class="btn sm ghost danger" data-act="del" data-id="${p.id}">Quitar</button></div>
   </div>`}).join('');
 }
 function renderMsg(){
@@ -355,6 +362,7 @@ function renderMsg(){
     <details class="small"><summary>Ver mensaje</summary><div class="preview">${esc(txt)}</div></details>
     <div class="actions">${l?`<a class="btn wa" href="${l}" target="_blank" rel="noopener" data-act="sent" data-id="${p.id}">Abrir WhatsApp</a>`:'<span class="small" style="color:var(--bad)">Teléfono inválido, corregilo en Paquetes</span>'}
       ${FORM_ON&&l?`<a class="btn sm" href="${waLink(p,fill(S.form,p))}" target="_blank" rel="noopener" data-act="formsent" data-id="${p.id}">📝 Mandar formulario</a>`:''}
+      <button class="btn sm primary" data-act="paste" data-id="${p.id}">📋 Pegar respuesta</button>
       <button class="btn sm" data-act="copy" data-id="${p.id}">Copiar texto</button>
       <button class="btn sm" data-act="set" data-st="confirmado" data-id="${p.id}">Confirmó</button>
       <button class="btn sm" data-act="set" data-st="noresponde" data-id="${p.id}">No responde</button></div>
@@ -422,6 +430,7 @@ document.addEventListener('click',async e=>{
   if(a==='st'&&p){const i=STATUS.findIndex(s=>s[0]===p.st);const nx=STATUS[(i+1)%STATUS.length][0];if(nx==='entregado'){openPOD(p);return}p.st=nx}
   else if(a==='set'&&p){if(el.dataset.st==='entregado'&&p.st!=='entregado'){openPOD(p);return}p.st=el.dataset.st;toast(`${p.nombre}: ${SLABEL[p.st]}`)}
   else if(a==='ev'&&p){openEvidence(p);return}
+  else if(a==='paste'&&p){pasteReply(p);return}
   else if(a==='sent'&&p){p.sent=true;save();setTimeout(render,300);return}
   else if(a==='formsent'&&p){p.formSent=true;save();setTimeout(render,300);return}
   else if(a==='copy'&&p){const t=coordText(p);try{await navigator.clipboard.writeText(t);toast('Mensaje copiado')}catch(err){const d=el.closest('.pkg').querySelector('details');d.open=true;const r=document.createRange();r.selectNodeContents(d.querySelector('.preview'));getSelection().removeAllRanges();getSelection().addRange(r);toast('Texto seleccionado, copialo')}return}
@@ -469,6 +478,38 @@ async function syncResp(manual){
     if(nuevos){S.route=null;save();render();toast(`${nuevos} respuesta(s) nueva(s)`)}else if(manual)toast('Sin respuestas nuevas');
   }catch(e){$('#syncInfo').textContent='No se pudo revisar (código '+(e.message||'red')+')';if(manual)toast('No se pudo revisar las respuestas')}
 }
+// ---- Pegar respuesta: saca hora y ubicación de lo que el cliente mandó por WhatsApp ----
+const TIME_RE=/(\d{1,2}(:\d{2})?\s*(a\.?\s?m\.?|p\.?\s?m\.?|hrs?|horas)\b)|(\b(a|de|desde|entre|después de|antes de)\s+las?\s+\d{1,2})|(\b\d{1,2}(:\d{2})?\s*(a|y|-)\s*\d{1,2}(:\d{2})?\b)|mediod[ií]a|medio d[ií]a|en la (mañana|tarde|noche)|por la (mañana|tarde|noche)|cualquier hora|todo el d[ií]a/i;
+function findTime(t){
+  for(const raw of t.split(/\n+/)){const l=raw.replace(/\[[^\]]*\]\s*[^:]*:\s*/,'').trim();   // quita "[4:45 p. m., 29/10] Nombre:" al copiar varios mensajes
+    if(!l||/https?:\/\//i.test(l)||parseCoord(l))continue;
+    if(TIME_RE.test(l))return l.slice(0,60)}
+  return '';
+}
+async function geocodeText(t){
+  // Para pines de lugar sin coordenadas en el link: busca el nombre del lugar en OpenStreetMap, solo en Costa Rica.
+  let q='';try{const u=new URL((t.match(/https?:\/\/\S+/)||[''])[0]);q=u.searchParams.get('q')||u.searchParams.get('query')||u.searchParams.get('address')||u.searchParams.get('daddr')||''}catch(e){}
+  if(!q||parseCoord(q))return null;
+  try{const r=await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=cr&q='+encodeURIComponent(q));const j=await r.json();
+    return j[0]?[+(+j[0].lat).toFixed(6),+(+j[0].lon).toFixed(6)]:null}catch(e){return null}
+}
+let PASTE=null;
+async function applyReply(p,t){
+  const c=parseCoord(t)||await geocodeText(t);const h=findTime(t);
+  if(!c&&!h){toast('No encontré hora ni ubicación en lo que pegaste');return false}
+  if(c)p.ubic=c.join(',');if(h)p.horario=h;
+  if(p.st==='pendiente'||p.st==='noresponde')p.st='confirmado';
+  S.route=null;save();render();
+  toast(`${p.nombre}: ${[h&&'🕓 '+h,c&&'📍 ubicación lista'].filter(Boolean).join(' · ')}${!c?' · falta ubicación':''}${!h?' · falta hora':''}`);return true;
+}
+async function pasteReply(p){
+  let t='';try{t=await navigator.clipboard.readText()}catch(e){}
+  if(t&&(parseCoord(t)||findTime(t)||/https?:\/\//.test(t))){await applyReply(p,t);return}
+  PASTE=p;$('#pasteWho').textContent=p.nombre||'';$('#pasteBoxR').value=t||'';$('#pasteSheet').hidden=false;$('#pasteBoxR').focus();
+}
+$('#pasteOk').onclick=async()=>{if(!PASTE)return;if(await applyReply(PASTE,$('#pasteBoxR').value)){PASTE=null;$('#pasteSheet').hidden=true}};
+$('#pasteCancel').onclick=()=>{PASTE=null;$('#pasteSheet').hidden=true};
+
 // ---- Prueba de entrega: GPS + fecha/hora + mínimo 3 fotos con sello ----
 const MIN_FOTOS=3;
 const fmtDT=t=>new Date(t).toLocaleString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'numeric',minute:'2-digit'});

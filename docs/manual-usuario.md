@@ -47,7 +47,7 @@ Columnas: `nombre`, `telefono`, `direccion`, `ubicacion`, `guia`, `nota`.
 4. **Cuando el cliente conteste**, tocá **📝 Mandar formulario** en ese cliente. Le llega un segundo mensaje corto: *"Gracias Sofía. Para no fallarle con la entrega, ¿me ayuda marcando aquí su hora y las señas de la casa? Es 1 minuto: …"*. Como ya habló con vos, confía más en el link.
 5. En el formulario el cliente marca horario y señas. Para la ubicación, lo principal es **mandarla por WhatsApp** (clip 📎 > Ubicación); también puede pegar un link o usar el GPS.
 6. Lo que llene **entra solo** a la app (revisa cada minuto, o tocá **Revisar respuestas ahora**) y queda **Confirmado** con 🕓 horario y 🏠 señas.
-7. La ubicación que llegue por WhatsApp: abrila, copiá el link y pegalo en **1 Paquetes > Editar > Ubicación**.
+7. **Cuando el cliente responde por el chat (lo más común):** en WhatsApp mantené presionado su mensaje (la hora, la ubicación o los dos seleccionados) > **Copiar**. En la app tocá **📋 Pegar respuesta** en ese cliente. La app saca sola la **hora** y la **ubicación** y lo deja **Confirmado**. Si el iPhone pregunta "Permitir pegar", tocá **Permitir**. Si la ubicación no se puede copiar del chat, abrila, tocá **Compartir** > **Copiar** y volvé a tocar **📋 Pegar respuesta**.
 
 Los tres mensajes (primer mensaje, formulario y "voy en camino") se pueden editar en **2 Mensajes**.
 
@@ -118,6 +118,7 @@ Tocá la etiqueta de color para pasar al siguiente estado.
 | Sale "No se pudo revisar (código …)" o "No se pudo enviar (código …)" | Mandale una captura del mensaje con el código al técnico: indica la causa exacta. |
 | "Confirmar entrega" no se activa | Faltan fotos (mínimo 3) o la ubicación. Si dice que la ubicación está bloqueada, activala en Ajustes (ver *Prueba de entrega*). |
 | La evidencia dice "⏳ sin subir" | No había internet. Se sube sola cada minuto con la app abierta, o tocá **Revisar respuestas ahora**. |
+| "No encontré hora ni ubicación" | Lo que copiaste no traía ninguna de las dos. Copiá el mensaje con la hora o el link de la ubicación. |
 | No llegan las respuestas | Revisá el internet y tocá **Revisar respuestas ahora**. El cliente tiene que tocar **Enviar** en el formulario. |
 | Desapareció mi lista | Abriste la app en otro navegador o desde Safari en vez del ícono. |
 | El link da error 404 | Escribilo con mayúsculas: `RutafacilCR`. |

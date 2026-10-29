@@ -74,6 +74,12 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - Los mensajes no deben llevar el signo `+`: al pasar por `wa.me` WhatsApp lo convierte en espacio.
 - Plantillas: `DEF_SIMPLE` es la vigente (corta, sin link). `DEF_COORD`, `DEF_COORD_F` y `OLD_COORD_F` son anteriores; si el usuario tiene guardada una sin cambios, se reemplaza sola por `DEF_SIMPLE` al abrir.
 
+## 3a. Pegar respuesta
+
+- Botón **📋 Pegar respuesta** (en *Paquetes* y *Mensajes*) → `pasteReply(p)`: lee el portapapeles (`navigator.clipboard.readText`). Si no puede, abre `#pasteSheet` para pegar a mano.
+- `applyReply(p, texto)`: ubicación con `parseCoord()` y, si el link solo trae el nombre del lugar (`?q=Vitafuerte…`), la busca con `geocodeText()` en OpenStreetMap Nominatim, solo Costa Rica. La hora sale de `findTime()` (regex `TIME_RE`: "4 pm", "a las 4", "de 2 a 4", "en la tarde", "cualquier hora"…), que ignora líneas con links o coordenadas y quita el encabezado `[hora, fecha] Nombre:` que WhatsApp agrega al copiar varios mensajes.
+- Guarda `p.ubic`, `p.horario` y pasa `pendiente`/`noresponde` a `confirmado`.
+
 ## 3b. Prueba de entrega
 
 - Al pasar un paquete a **entregado** (botón o etiqueta de estado) se abre `#podSheet` con `openPOD(p)`. Nunca se pone `st='entregado'` sin evidencia.
