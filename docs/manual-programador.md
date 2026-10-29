@@ -66,7 +66,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - Etiquetas Open Graph (`og:title`, `og:description`, `og:image` = `icon-512.png`) para que WhatsApp muestre una vista previa con marca.
 - Envía con `POST /rest/v1/rpc/enviar_respuesta`. Volver a enviar actualiza la respuesta (upsert por token).
 - Ubicación, tres caminos:
-  1. GPS: primero `enableHighAccuracy` con 10 s; si falla (no por permiso), reintenta con ubicación aproximada, 20 s y caché de 5 min. Si el error es de permiso (`code 1`), muestra cómo habilitarlo (iOS: Ajustes > Privacidad > Localización > Sitios web de Safari).
+  1. GPS: primero `enableHighAccuracy` con 10 s; si falla (no por permiso), reintenta con ubicación aproximada, 20 s y caché de 5 min. Si el error es de permiso (`code 1`), muestra cómo habilitarlo (iOS: Ajustes > Privacidad y seguridad > Localización > Sitios web de Safari, y en Safari aA > Configuración del sitio web > Ubicación) y recomienda la opción de WhatsApp.
   2. "Prefiero mandarla por WhatsApp": agrega *(Manda la ubicación por WhatsApp)* a `senas` e indica los pasos en el chat.
   3. Pegar link de Maps/Waze (dentro de un `<details>`).
 - Los mensajes no deben llevar el signo `+`: al pasar por `wa.me` WhatsApp lo convierte en espacio.

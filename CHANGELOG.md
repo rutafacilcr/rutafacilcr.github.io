@@ -1,6 +1,7 @@
 # Historial de cambios
 
 ## 2026-10-29
+- **Formulario:** cuando el iPhone bloquea la ubicación, la ayuda recomienda primero mandarla por WhatsApp y da los pasos correctos de iOS. Más espacio al final para que la barra de Safari no tape el texto.
 - **Corrección:** en WhatsApp desaparecía el signo "+" del mensaje; ahora dice "toque el clip 📎 (o el signo de más)". Se quitan espacios sobrantes en la fecha.
 - **Versión visible** en el encabezado de la app (`v29-oct-c`) para confirmar que el celular tiene la última versión.
 - **Diagnóstico:** los errores al enviar o revisar respuestas muestran el código del servidor.

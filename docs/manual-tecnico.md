@@ -88,7 +88,7 @@ Si los dos valores están vacíos, la app funciona sin formulario: los mensajes 
 | Google Fonts | Tipografías | Usa fuentes del sistema. |
 | `wa.me` | Abrir WhatsApp con texto | Botón **Copiar texto**. |
 | Google Maps / Waze | Navegación | Se pueden copiar las coordenadas. |
-| Geolocalización del navegador | Botón "Estoy en mi casa" del formulario | El cliente la manda por WhatsApp o pega un link. Requiere HTTPS (GitHub Pages ya lo da). En iPhone depende de *Ajustes > Privacidad > Localización > Sitios web de Safari*, también dentro del navegador de WhatsApp. |
+| Geolocalización del navegador | Botón "Estoy en mi casa" del formulario | El cliente la manda por WhatsApp o pega un link. Requiere HTTPS (GitHub Pages ya lo da). En iPhone depende de *Ajustes > Privacidad y seguridad > Localización > Sitios web de Safari* y del permiso por sitio en Safari (*aA > Configuración del sitio web > Ubicación*), también dentro del navegador de WhatsApp. |
 
 ## 6. Mantenimiento
 
