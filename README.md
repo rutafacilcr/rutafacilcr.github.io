@@ -2,7 +2,7 @@
 
 App para coordinar entregas de paquetes: cargás la lista del día, mandás el mensaje de WhatsApp a cada cliente y te arma la ruta más corta.
 
-**Abrir la app:** https://victormenav.github.io/rutafacilcr/
+**Abrir la app:** https://victormenav.github.io/RutafacilCR/
 
 ## Archivos
 
