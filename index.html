@@ -120,7 +120,7 @@ details summary{cursor:pointer;font-weight:600}
 <body>
 
 <header class="top"><div class="wrap">
-  <div><h1>Ruta<span>Fácil</span> CR</h1><p class="sub">Paquetes, mensajes de WhatsApp y ruta del día · <span class="mono" style="font-size:11px;opacity:.8">v29-oct-e</span></p></div>
+  <div><h1>Ruta<span>Fácil</span> CR</h1><p class="sub">Paquetes, mensajes de WhatsApp y ruta del día · <span class="mono" style="font-size:11px;opacity:.8">v29-oct-f</span></p></div>
   <span class="daypill" id="daypill"></span>
 </div></header>
 <nav class="tabs"><div class="wrap" role="tablist">
@@ -179,13 +179,12 @@ details summary{cursor:pointer;font-weight:600}
     </div>
     <label>Mensaje para coordinar (día antes)<textarea id="m-coord"></textarea></label>
     <label>Mensaje "voy en camino"<textarea id="m-camino"></textarea></label>
-    <p class="small muted">Variables: <span class="mono">{nombre} {guia} {direccion} {fecha} {yo} {eta} {formulario}</span></p>
+    <p class="small muted">Variables: <span class="mono">{nombre} {guia} {direccion} {fecha} {yo} {eta}</span></p>
   </div>
   <div class="panel" id="syncPanel" hidden>
     <div class="row" style="justify-content:space-between"><h3>Respuestas del formulario</h3><span class="small muted" id="syncInfo"></span></div>
     <p class="small">Opcional. Si lo activás, el mensaje termina con un link donde el cliente marca horario, señas y ubicación, y la respuesta entra sola a la lista. Apagado, el cliente responde por el chat.</p>
-    <label class="row small" style="text-transform:none;letter-spacing:0;font-weight:500;flex-direction:row;color:var(--ink)"><input type="checkbox" id="m-useForm" style="width:auto"> Agregar al mensaje el link del formulario</label>
-    <button class="btn road" id="syncBtn">Revisar respuestas ahora</button>
+        <button class="btn road" id="syncBtn">Revisar respuestas ahora</button>
   </div>
   <div class="panel">
     <h3>Cómo funciona</h3>
@@ -417,12 +416,8 @@ $('#clearAll').onclick=e=>{const b=e.currentTarget;if(b.dataset.c){S.pk=[];S.ex=
 const bind=(sel,k,num)=>{const el=$(sel);el.value=S[k]??'';el.addEventListener(el.type==='checkbox'?'change':'input',()=>{S[k]=el.type==='checkbox'?el.checked:(num?+el.value:el.value);save();if(['coord','yo','fecha'].includes(k))renderMsg()})};
 $('#routeBtn').onclick=calcRoute;
 
-// Si la plantilla no trae {formulario}, el link se agrega al final para que nunca falte.
-// El link del formulario solo va si el repartidor lo activa (a muchos clientes un link les parece estafa).
-function coordText(p){let t=S.coord;
-  if(FORM_ON&&S.useForm){if(!t.includes('{formulario}'))t+='\n\nO si prefiere, confirme aquí: {formulario}'}
-  else t=t.split('\n').filter(l=>!l.includes('{formulario}')).join('\n').replace(/\n{3,}/g,'\n\n').trim();
-  return fill(t,p)}
+// Decisión de Victor (29-oct): el mensaje nunca lleva links; a los clientes les parecen estafa.
+function coordText(p){const t=S.coord.split('\n').filter(l=>!l.includes('{formulario}')).join('\n').replace(/\n{3,}/g,'\n\n').trim();return fill(t,p)}
 function formLink(p){if(!FORM_ON)return '';const u=new URL('entrega',location.href);u.search=new URLSearchParams({t:p.tok,n:(p.nombre||'').split(' ')[0]}).toString();return u.href}
 async function syncResp(manual){
   if(!FORM_ON||!S.pk.length)return;
@@ -442,7 +437,6 @@ async function syncResp(manual){
 }
 if(!load()){S.pk=EXAMPLE.map(mkPkg);S.ex=true;S.pk[0].st='confirmado';S.pk[2].st='confirmado';S.pk[1].sent=true}
 bind('#m-yo','yo');bind('#m-fecha','fecha');bind('#m-coord','coord');bind('#m-camino','camino');bind('#r-start','start');bind('#r-vel','vel',1);bind('#r-min','min',1);bind('#r-filter','filter');
-$('#m-useForm').checked=!!S.useForm;$('#m-useForm').onchange=e=>{S.useForm=e.target.checked;save();renderMsg()};
 $('#r-return').checked=!!S.ret;$('#r-return').onchange=e=>{S.ret=e.target.checked;save()};
 $('#m-fecha').placeholder=tomorrow();
 const grow=el=>{el.style.height='auto';el.style.height=el.scrollHeight+2+'px'};
@@ -453,7 +447,8 @@ S.pk.forEach(p=>{if(!p.tok)p.tok=tok()});
 if([DEF_COORD,DEF_COORD_F,...OLD_COORD_F].includes(S.coord)){S.coord=DEF_SIMPLE;$('#m-coord').value=S.coord}
 save();
 render();
-if(FORM_ON){$('#syncPanel').hidden=false;$('#syncBtn').onclick=()=>syncResp(true);syncResp();setInterval(()=>{if(!document.hidden)syncResp()},60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncResp()})}
+if(false){ // formulario desactivado: el mensaje ya no lleva link
+$('#syncPanel').hidden=false;$('#syncBtn').onclick=()=>syncResp(true);syncResp();setInterval(()=>{if(!document.hidden)syncResp()},60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncResp()})}
 </script>
 </body>
 </html>

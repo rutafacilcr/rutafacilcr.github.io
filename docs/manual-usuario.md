@@ -45,14 +45,14 @@ Columnas: `nombre`, `telefono`, `direccion`, `ubicacion`, `guia`, `nota`.
 2. En cada cliente tocá **Abrir WhatsApp** > **Enviar** > volvé a la app.
 3. El mensaje es **corto y sin links**: *"Hola Sofía, soy Victor, le llevo su paquete de Temu el viernes. ¿A qué hora le queda bien recibirlo? Si puede, mándeme su ubicación por aquí 📍 ¡Gracias!"*
 4. El cliente responde por el chat. Abrí la ubicación que te mandó, copiá el link, pegalo en **1 Paquetes > Editar > Ubicación** y marcá **Confirmó**.
-5. **Formulario (opcional):** en **Respuestas del formulario** podés activar *Agregar al mensaje el link del formulario*. El mensaje termina entonces con *"O si prefiere, confirme aquí: …/entrega?t=…"*. Lo que el cliente llene entra solo a la app y lo marca **Confirmado** (revisa cada minuto, o tocá **Revisar respuestas ahora**).
+5. El formulario para clientes está **desactivado**: el mensaje nunca lleva links.
 
 **Para que los clientes confíen más:**
 - Usá **WhatsApp Business** con foto de perfil, nombre (ej. "Victor · Entregas Temu") y descripción.
 - El formulario muestra el ícono de RutaFácil en la vista previa de WhatsApp y aclara que no pide pagos ni datos bancarios.
 - Con un dominio propio el link se vería más corto y confiable (pendiente de decidir).
 
-Variables que podés usar en los mensajes: `{nombre}` `{guia}` `{direccion}` `{fecha}` `{yo}` `{eta}` `{formulario}`. Si cambiás el mensaje y quitás `{formulario}`, la app agrega el link del formulario al final sola. El cuadro del mensaje crece para mostrar el texto completo.
+Variables que podés usar en los mensajes: `{nombre}` `{guia}` `{direccion}` `{fecha}` `{yo}` `{eta}`. Si cambiás el mensaje y quitás `{formulario}`, la app agrega el link del formulario al final sola. El cuadro del mensaje crece para mostrar el texto completo.
 
 ### Día de entrega (pestaña **3 Ruta**)
 
