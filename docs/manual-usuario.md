@@ -50,7 +50,7 @@ Columnas: `nombre`, `telefono`, `direccion`, `ubicacion`, `guia`, `nota`.
 4. Las respuestas **entran solas** (la app revisa cada minuto, o tocá **Revisar respuestas ahora**). El cliente queda **Confirmado** con 🕓 horario y 🏠 señas.
 5. Si alguien contesta por WhatsApp en vez del formulario, marcá a mano **Confirmó** o **No responde**.
 
-Variables que podés usar en los mensajes: `{nombre}` `{guia}` `{direccion}` `{fecha}` `{yo}` `{eta}` `{formulario}`. Si cambiás el mensaje, dejá `{formulario}` para que siga yendo el link.
+Variables que podés usar en los mensajes: `{nombre}` `{guia}` `{direccion}` `{fecha}` `{yo}` `{eta}` `{formulario}`. Si cambiás el mensaje y quitás `{formulario}`, la app agrega el link del formulario al final sola. El cuadro del mensaje crece para mostrar el texto completo.
 
 ### Día de entrega (pestaña **3 Ruta**)
 

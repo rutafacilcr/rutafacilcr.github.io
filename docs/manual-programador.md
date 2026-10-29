@@ -52,6 +52,7 @@ Paquete = {
 | `parseText(t)` | Pegado: separa por tab, `;` o `\|`. Los CSV con comas se leen con SheetJS. |
 | `fill(tpl, p, extra)` | Reemplaza `{variables}` en las plantillas. |
 | `formLink(p)` | Arma `f.html?t=&n=&g=&y=`. |
+| `coordText(p)` | Texto final del mensaje de coordinación. Si el formulario está activo y la plantilla no trae `{formulario}`, agrega el link al final. |
 | `optimize(pts, ret)` | Vecino más cercano y luego mejora 2-opt. |
 | `hav(a, b)` | Distancia haversine × 1.35 (factor por calles). |
 | `syncResp()` | Llama `leer_respuestas` con todos los tokens. Corre al abrir, cada 60 s con la pestaña visible y al volver a la app. |

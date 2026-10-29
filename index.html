@@ -65,7 +65,7 @@ p{margin:0}
 .example{background:var(--info-bg);color:var(--info);border-radius:8px;padding:10px 12px;font-size:13px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 label{font-size:12px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);display:flex;flex-direction:column;gap:4px;min-width:0}
 input,textarea,select{font:inherit;font-size:15px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:9px 10px;width:100%;text-transform:none;letter-spacing:0;font-weight:400}
-textarea{min-height:90px;resize:vertical}
+textarea{min-height:90px;resize:vertical;field-sizing:content}
 input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);outline-offset:0;border-color:transparent}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media (max-width:520px){.grid2{grid-template-columns:1fr}}
@@ -314,7 +314,7 @@ function renderMsg(){
   const L=$('#msgList');
   $('#sentCount').textContent=S.pk.length?`${S.pk.filter(p=>p.sent).length} de ${S.pk.length} enviados`:'';
   if(!S.pk.length){L.innerHTML='<div class="empty">Agregá paquetes en el paso 1 para preparar los mensajes.</div>';return}
-  L.innerHTML=S.pk.map((p,i)=>{const txt=fill(S.coord,p);const l=waLink(p,txt);return `<div class="pkg">
+  L.innerHTML=S.pk.map((p,i)=>{const txt=coordText(p);const l=waLink(p,txt);return `<div class="pkg">
     <div class="num">${i+1}</div>
     <div class="name">${esc(p.nombre)} ${stChip(p)} ${p.sent?'<span class="small muted">✓ mensaje abierto</span>':''}</div>
     <div class="addr"><span class="mono">${esc(p.tel||'sin teléfono')}</span>${p.resp?' <span class="small" style="color:var(--ok);font-weight:600">✓ llenó el formulario</span>':''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
@@ -387,7 +387,7 @@ document.addEventListener('click',async e=>{
   if(a==='st'&&p){const i=STATUS.findIndex(s=>s[0]===p.st);p.st=STATUS[(i+1)%STATUS.length][0]}
   else if(a==='set'&&p){p.st=el.dataset.st;toast(`${p.nombre}: ${SLABEL[p.st]}`)}
   else if(a==='sent'&&p){p.sent=true;save();setTimeout(render,300);return}
-  else if(a==='copy'&&p){const t=fill(S.coord,p);try{await navigator.clipboard.writeText(t);toast('Mensaje copiado')}catch(err){const d=el.closest('.pkg').querySelector('details');d.open=true;const r=document.createRange();r.selectNodeContents(d.querySelector('.preview'));getSelection().removeAllRanges();getSelection().addRange(r);toast('Texto seleccionado, copialo')}return}
+  else if(a==='copy'&&p){const t=coordText(p);try{await navigator.clipboard.writeText(t);toast('Mensaje copiado')}catch(err){const d=el.closest('.pkg').querySelector('details');d.open=true;const r=document.createRange();r.selectNodeContents(d.querySelector('.preview'));getSelection().removeAllRanges();getSelection().addRange(r);toast('Texto seleccionado, copialo')}return}
   else if(a==='del'&&p){S.pk=S.pk.filter(x=>x!==p);S.route=null;toast('Paquete quitado')}
   else if(a==='edit'&&p){editId=p.id;$('#f-nombre').value=p.nombre;$('#f-tel').value=p.tel;$('#f-dir').value=p.dir;$('#f-ubic').value=p.ubic;$('#f-guia').value=p.guia;$('#f-nota').value=p.nota||'';$('#formPanel').open=true;$('#formTitle').textContent='Editar paquete';$('#saveBtn').textContent='Guardar cambios';$('#cancelEdit').hidden=false;$('#formPanel').scrollIntoView({behavior:'smooth'});
     document.querySelector('[data-tab="paquetes"]').click();setTimeout(()=>$('#formPanel').scrollIntoView(),50);return}
@@ -413,6 +413,8 @@ $('#clearAll').onclick=e=>{const b=e.currentTarget;if(b.dataset.c){S.pk=[];S.ex=
 const bind=(sel,k,num)=>{const el=$(sel);el.value=S[k]??'';el.addEventListener(el.type==='checkbox'?'change':'input',()=>{S[k]=el.type==='checkbox'?el.checked:(num?+el.value:el.value);save();if(['coord','yo','fecha'].includes(k))renderMsg()})};
 $('#routeBtn').onclick=calcRoute;
 
+// Si la plantilla no trae {formulario}, el link se agrega al final para que nunca falte.
+function coordText(p){let t=S.coord;if(FORM_ON&&!t.includes('{formulario}'))t+='\n\nPara coordinar, llene aquí su horario, señas y ubicación:\n{formulario}';return fill(t,p)}
 function formLink(p){if(!FORM_ON)return '';const u=new URL('f.html',location.href);u.search=new URLSearchParams({t:p.tok,n:(p.nombre||'').split(' ')[0],g:p.guia||'',y:S.yo||''}).toString();return u.href}
 async function syncResp(manual){
   if(!FORM_ON||!S.pk.length)return;
@@ -434,6 +436,9 @@ if(!load()){S.pk=EXAMPLE.map(mkPkg);S.ex=true;S.pk[0].st='confirmado';S.pk[2].st
 bind('#m-yo','yo');bind('#m-fecha','fecha');bind('#m-coord','coord');bind('#m-camino','camino');bind('#r-start','start');bind('#r-vel','vel',1);bind('#r-min','min',1);bind('#r-filter','filter');
 $('#r-return').checked=!!S.ret;$('#r-return').onchange=e=>{S.ret=e.target.checked;save()};
 $('#m-fecha').placeholder=tomorrow();
+const grow=el=>{el.style.height='auto';el.style.height=el.scrollHeight+2+'px'};
+['#m-coord','#m-camino'].forEach(id=>{const el=$(id);el.addEventListener('input',()=>grow(el));requestAnimationFrame(()=>grow(el))});
+document.querySelector('[data-tab="mensajes"]').addEventListener('click',()=>requestAnimationFrame(()=>['#m-coord','#m-camino'].forEach(id=>grow($(id)))));
 $('#daypill').textContent='Entrega: '+tomorrow();
 S.pk.forEach(p=>{if(!p.tok)p.tok=tok()});
 if(FORM_ON&&S.coord===DEF_COORD){S.coord=DEF_COORD_F;$('#m-coord').value=S.coord}
