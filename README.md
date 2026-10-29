@@ -13,6 +13,7 @@ Herramienta web para repartidores de paquetes en Costa Rica. Cargás la lista de
 | **1. Paquetes** | Importa la lista desde Excel, CSV o copiando y pegando. También se puede agregar a mano. Acepta links de Google Maps / Waze y saca las coordenadas solo. |
 | **2. Mensajes** | Un botón por cliente abre WhatsApp con el mensaje de coordinación listo. El primer mensaje es corto y sin links: el cliente responde por el mismo chat. A quien ya contestó se le puede mandar aparte un formulario corto. |
 | **3. Respuestas** | Lo que el cliente llena en el formulario entra solo a la app y lo marca *Confirmado*; la ubicación que manda por WhatsApp se pega en la app. |
+| **5. Prueba de entrega** | Al marcar *Entregado* guarda ubicación GPS, fecha, hora y mínimo 3 fotos con sello; se respalda en Supabase. |
 | **4. Ruta** | Ordena las paradas para recorrer la menor distancia, abre la ruta en Google Maps y cada parada en Waze, y manda el aviso de "voy en camino". |
 
 Funciona desde el celular, se puede instalar como ícono en la pantalla de inicio y no necesita servidor propio.

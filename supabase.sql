@@ -41,3 +41,47 @@ revoke all on function public.enviar_respuesta(text,text,text,text,text,double p
 revoke all on function public.leer_respuestas(text[]) from public;
 grant execute on function public.enviar_respuesta(text,text,text,text,text,double precision,double precision) to anon, authenticated;
 grant execute on function public.leer_respuestas(text[]) to anon, authenticated;
+
+-- =====================================================================
+-- Prueba de entrega (fotos + GPS + fecha/hora). Agregado 2026-10-29.
+-- Se puede correr de nuevo sin problema.
+-- =====================================================================
+
+create table if not exists public.entregas (
+  id            bigint generated always as identity primary key,
+  evidencia_id  text not null unique check (char_length(evidencia_id) between 12 and 40),
+  guia          text,
+  cliente       text,
+  repartidor    text,
+  lat           double precision,
+  lng           double precision,
+  precision_m   double precision,
+  entregado_en  timestamptz not null,
+  fotos         text[] not null default '{}',
+  owner_id      uuid references auth.users(id),  -- se usará cuando la app tenga login
+  created_at    timestamptz not null default now()
+);
+alter table public.entregas enable row level security;
+
+create or replace function public.registrar_entrega(
+  p_evidencia_id text, p_guia text, p_cliente text, p_repartidor text,
+  p_lat double precision, p_lng double precision, p_precision double precision,
+  p_entregado_en timestamptz, p_fotos text[])
+returns void language sql security definer set search_path = public as $$
+  insert into entregas (evidencia_id, guia, cliente, repartidor, lat, lng, precision_m, entregado_en, fotos)
+  values (p_evidencia_id, left(p_guia,60), left(p_cliente,80), left(p_repartidor,80),
+          p_lat, p_lng, p_precision, p_entregado_en, p_fotos[1:10])
+  on conflict (evidencia_id) do update set fotos = excluded.fotos;
+$$;
+revoke all on function public.registrar_entrega(text,text,text,text,double precision,double precision,double precision,timestamptz,text[]) from public;
+grant execute on function public.registrar_entrega(text,text,text,text,double precision,double precision,double precision,timestamptz,text[]) to anon, authenticated;
+
+-- Carpeta privada para las fotos. La app solo puede SUBIR; verlas se hace desde el panel de Supabase.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('evidencias', 'evidencias', false, 2097152, array['image/jpeg'])
+on conflict (id) do nothing;
+
+drop policy if exists "rutafacil subir evidencias" on storage.objects;
+create policy "rutafacil subir evidencias" on storage.objects
+  for insert to anon, authenticated
+  with check (bucket_id = 'evidencias');

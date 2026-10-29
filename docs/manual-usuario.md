@@ -72,9 +72,24 @@ Variables que podés usar en los mensajes: `{nombre}` `{guia}` `{direccion}` `{f
 
 Los km y tiempos son aproximados. Google Maps o Waze dan el tiempo real con tránsito.
 
+### Prueba de entrega (al tocar **Entregado**)
+
+Cada vez que marcás un paquete como **Entregado** se abre la pantalla **Prueba de entrega**:
+
+1. La app toma sola la **fecha y hora** y tu **ubicación GPS** (con su precisión en metros).
+2. Tocá **📷 Tomar foto** al menos **3 veces**. Sugerencia: el paquete en la puerta, la fachada y el paquete en manos de quien recibe.
+3. Cada foto lleva un **sello** con fecha, hora, cliente, guía y coordenadas.
+4. **Confirmar entrega** solo se activa con 3 fotos y la ubicación.
+
+La evidencia se guarda **en el celular** y se **sube a Supabase** como respaldo. En la lista vas a ver *📷 3 fotos · fecha · 📍 ±m · ☁️ respaldada* (o *⏳ sin subir* si no había internet: se sube sola después). Tocá **Ver evidencia** para ver las fotos y el punto en el mapa.
+
+**Activar la ubicación en tu iPhone (una sola vez):** *Ajustes > Privacidad y seguridad > Localización* (encendida) *> Sitios web de Safari > Al usar la app* y activá *Ubicación exacta*.
+
+**Ver los respaldos en la PC:** en Supabase, **Storage > evidencias** (fotos por fecha) y **Table Editor > entregas** (fecha, hora, GPS y lista de fotos).
+
 ### Al terminar el día
 
-**1 Paquetes** > **Vaciar lista** (tocá dos veces para confirmar).
+**1 Paquetes** > **Vaciar lista** (tocá dos veces para confirmar). Antes, revisá que todas las evidencias digan **☁️ respaldada**: al vaciar la lista, la evidencia queda en Supabase.
 
 ---
 
@@ -101,6 +116,8 @@ Tocá la etiqueta de color para pasar al siguiente estado.
 | La ubicación no se detecta | Usá el link largo o las coordenadas, no el link corto. |
 | El cliente no pudo usar "Estoy en mi casa" | El formulario le explica cómo dar permiso de ubicación. Si no puede, que toque **Prefiero mandarla por WhatsApp** y la mande desde el chat. |
 | Sale "No se pudo revisar (código …)" o "No se pudo enviar (código …)" | Mandale una captura del mensaje con el código al técnico: indica la causa exacta. |
+| "Confirmar entrega" no se activa | Faltan fotos (mínimo 3) o la ubicación. Si dice que la ubicación está bloqueada, activala en Ajustes (ver *Prueba de entrega*). |
+| La evidencia dice "⏳ sin subir" | No había internet. Se sube sola cada minuto con la app abierta, o tocá **Revisar respuestas ahora**. |
 | No llegan las respuestas | Revisá el internet y tocá **Revisar respuestas ahora**. El cliente tiene que tocar **Enviar** en el formulario. |
 | Desapareció mi lista | Abriste la app en otro navegador o desde Safari en vez del ícono. |
 | El link da error 404 | Escribilo con mayúsculas: `RutafacilCR`. |

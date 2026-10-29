@@ -22,7 +22,8 @@ Servicios externos sin cuenta: wa.me (WhatsApp), Google Maps, Waze
 
 - No hay servidor propio. Todo el código corre en el navegador.
 - La lista de paquetes vive en `localStorage` del navegador (clave `rutafacil-cr-v1`).
-- Solo las respuestas del formulario se guardan en Supabase.
+- En Supabase se guardan las respuestas del formulario y las **pruebas de entrega** (tabla `entregas` + fotos en Storage, carpeta `evidencias`).
+- Las fotos de evidencia también quedan en el celular (IndexedDB `rutafacil-evidencias`).
 
 ## 2. Publicación (GitHub Pages)
 
@@ -54,6 +55,12 @@ Servicios externos sin cuenta: wa.me (WhatsApp), Google Maps, Waze
 - **secret / service_role** y **contraseña de la base:** nunca van en el repositorio ni se comparten. Las guarda el dueño del proyecto.
 - Con llaves `sb_publishable_` la app manda solo el header `apikey`. Con llaves JWT antiguas (`eyJ…`) manda además `Authorization: Bearer`.
 
+### Prueba de entrega (Storage)
+
+- `supabase.sql` crea la tabla `entregas`, la función `registrar_entrega` y el bucket **privado** `evidencias` (solo JPEG, máx. 2 MB por foto).
+- La app solo puede **subir** fotos (política `rutafacil subir evidencias`). Verlas o descargarlas se hace desde el panel: **Storage > evidencias**. Las fotos se guardan como `AAAA-MM-DD/<guia>_<id>_<n>.jpg`.
+- Cada foto pesa ~150–300 KB (1280 px, JPEG 72 %). Con 1 GB de Storage gratis alcanza para unas 1.000 entregas con 3 fotos.
+
 ### Límites del plan gratis
 
 500 MB de base de datos y pausa automática del proyecto tras ~1 semana sin uso. Si se pausa, el formulario deja de guardar: entrar al panel y tocar **Restore**. Cada respuesta ocupa menos de 1 KB.
@@ -64,6 +71,10 @@ Servicios externos sin cuenta: wa.me (WhatsApp), Google Maps, Waze
 -- Últimas respuestas
 select guia, horario, senas, recibe, lat, lng, updated_at
 from respuestas order by updated_at desc limit 50;
+
+-- Entregas con evidencia de un día
+select guia, cliente, entregado_en, lat, lng, precision_m, fotos
+from entregas where entregado_en::date = '2026-10-30' order by entregado_en;
 
 -- Borrar respuestas de más de 30 días
 delete from respuestas where updated_at < now() - interval '30 days';

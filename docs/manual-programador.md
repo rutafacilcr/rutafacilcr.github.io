@@ -74,7 +74,20 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - Los mensajes no deben llevar el signo `+`: al pasar por `wa.me` WhatsApp lo convierte en espacio.
 - Plantillas: `DEF_SIMPLE` es la vigente (corta, sin link). `DEF_COORD`, `DEF_COORD_F` y `OLD_COORD_F` son anteriores; si el usuario tiene guardada una sin cambios, se reemplaza sola por `DEF_SIMPLE` al abrir.
 
+## 3b. Prueba de entrega
+
+- Al pasar un paquete a **entregado** (botón o etiqueta de estado) se abre `#podSheet` con `openPOD(p)`. Nunca se pone `st='entregado'` sin evidencia.
+- GPS: `enableHighAccuracy` 15 s, `maximumAge 0`; si falla (no por permiso) reintenta aproximado 20 s.
+- Fotos: `<input type=file capture=environment>`. `stampPhoto()` reduce a 1280 px, dibuja el sello (fecha/hora, cliente, guía, GPS) y exporta JPEG 0.72.
+- Mínimo `MIN_FOTOS = 3`. *Confirmar* se habilita con 3 fotos + GPS.
+- Guardado local: IndexedDB `rutafacil-evidencias`, store `ev` → `{id, pid, guia, cliente, at, lat, lng, acc, fotos:[Blob], up}`. En el paquete queda `p.pod = {id, n, at, lat, lng, acc, up}`.
+- Subida: `uploadPOD(id)` sube cada foto a `storage/v1/object/evidencias/<día>/<guia>_<id>_<n>.jpg` y luego llama `registrar_entrega`. Si falla, queda `up:false` y `uploadPending()` reintenta cada 60 s y al tocar *Revisar respuestas ahora*.
+- `openEvidence(p)` muestra fotos (desde IndexedDB), hora, GPS y estado del respaldo.
+
 ## 4. Base de datos y seguridad (`supabase.sql`)
+
+`entregas(evidencia_id UNIQUE, guia, cliente, repartidor, lat, lng, precision_m, entregado_en, fotos text[], owner_id)`: RLS sin políticas, se escribe solo con `registrar_entrega`. Bucket `evidencias` privado con política de solo INSERT para `anon`.
+
 
 ```
 respuestas(id, token UNIQUE, guia, horario, senas, recibe, lat, lng,

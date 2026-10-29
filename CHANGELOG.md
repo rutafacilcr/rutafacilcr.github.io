@@ -1,6 +1,7 @@
 # Historial de cambios
 
 ## 2026-10-29
+- **Prueba de entrega (v29-oct-h):** al marcar *Entregado* la app captura GPS, fecha y hora y exige mínimo 3 fotos con sello. Se guarda en el celular y se sube a Supabase (tabla `entregas`, Storage `evidencias`). Requiere correr de nuevo `supabase.sql`.
 - **Formulario en dos pasos (v29-oct-g):** el primer mensaje sigue sin links; el formulario se manda aparte con el botón *📝 Mandar formulario* a quien ya contestó. Vista previa sobria sin textos de "no pide pagos". En el formulario, la ubicación por WhatsApp va primero y el GPS queda como opción secundaria.
 - **Sin links (v29-oct-f):** el mensaje nunca lleva el link del formulario, aunque esté guardado de antes. Se quita la casilla y el panel de respuestas. `entrega.html` y Supabase quedan sin uso.
 - **Mensaje simple por defecto (v29-oct-e):** corto, cercano y sin links; el cliente responde hora y ubicación por WhatsApp. El link del formulario pasa a ser opcional (casilla *Agregar al mensaje el link del formulario*).
