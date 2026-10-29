@@ -59,7 +59,11 @@ Servicios externos sin cuenta: wa.me (WhatsApp), Google Maps, Waze
 
 - `supabase.sql` crea la tabla `entregas`, la función `registrar_entrega` y el bucket **privado** `evidencias` (solo JPEG, máx. 2 MB por foto).
 - La app solo puede **subir** fotos (política `rutafacil subir evidencias`). Verlas o descargarlas se hace desde el panel: **Storage > evidencias**. Las fotos se guardan como `AAAA-MM-DD/<guia>_<id>_<n>.jpg`.
-- Cada foto pesa ~150–300 KB (1280 px, JPEG 72 %). Con 1 GB de Storage gratis alcanza para unas 1.000 entregas con 3 fotos.
+- **Espacio:** cada foto pesa ~100–150 KB (1024 px, JPEG 65 %), unos 0,3–0,45 MB por entrega con 3 fotos.
+  - Supabase gratis: **1 GB de Storage** → unas **2.200–3.300 entregas**. Con 30 entregas por día, unos 2,5 a 3,5 meses. La tabla `entregas` ocupa menos de 1 KB por entrega: los 500 MB de base de datos no son problema.
+  - Celular: las fotos respaldadas se borran del celular a los **7 días** (`LOCAL_DIAS`). Queda el registro (fecha, GPS, cantidad de fotos) y las fotos siguen en Supabase.
+  - Supabase avisa por correo al acercarse al límite. Opciones: descargar y borrar fotos viejas (ver *Consultas útiles*) o pasar a **Pro** (25 USD/mes, 100 GB).
+  - En iPhone, si la app se usa desde Safari y no desde el ícono, Safari puede borrar los datos de la página tras ~7 días sin abrirla. Por eso Supabase es el respaldo oficial.
 
 ### Límites del plan gratis
 
@@ -75,6 +79,10 @@ from respuestas order by updated_at desc limit 50;
 -- Entregas con evidencia de un día
 select guia, cliente, entregado_en, lat, lng, precision_m, fotos
 from entregas where entregado_en::date = '2026-10-30' order by entregado_en;
+
+-- Espacio usado por las fotos (MB)
+select round(sum((metadata->>'size')::bigint)/1048576.0,1) as mb, count(*) as fotos
+from storage.objects where bucket_id = 'evidencias';
 
 -- Borrar respuestas de más de 30 días
 delete from respuestas where updated_at < now() - interval '30 days';

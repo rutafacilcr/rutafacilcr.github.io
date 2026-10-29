@@ -129,7 +129,7 @@ details summary{cursor:pointer;font-weight:600}
 <body>
 
 <header class="top"><div class="wrap">
-  <div><h1>Ruta<span>Fácil</span> CR</h1><p class="sub">Paquetes, mensajes de WhatsApp y ruta del día · <span class="mono" style="font-size:11px;opacity:.8">v29-oct-i</span></p></div>
+  <div><h1>Ruta<span>Fácil</span> CR</h1><p class="sub">Paquetes, mensajes de WhatsApp y ruta del día · <span class="mono" style="font-size:11px;opacity:.8">v29-oct-j</span></p></div>
   <span class="daypill" id="daypill"></span>
 </div></header>
 <nav class="tabs"><div class="wrap" role="tablist">
@@ -544,15 +544,15 @@ function podRender(){
   $('#podOk').disabled=!!faltan||!POD.geo;
   $('#podNeed').textContent=faltan?`Faltan ${faltan} foto(s).`:(!POD.geo?'Falta la ubicación GPS.':'Todo listo.');
 }
-// Reduce la foto a 1280 px y le pone un sello con fecha, hora, GPS y guía.
+// Reduce la foto a 1024 px (~100–150 KB) y le pone un sello con fecha, hora, GPS y guía.
 function stampPhoto(file){
   return new Promise((res,rej)=>{const img=new Image(),u=URL.createObjectURL(file);
-    img.onload=()=>{const k=Math.min(1,1280/Math.max(img.width,img.height));const w=Math.round(img.width*k),h=Math.round(img.height*k);
+    img.onload=()=>{const k=Math.min(1,1024/Math.max(img.width,img.height));const w=Math.round(img.width*k),h=Math.round(img.height*k);
       const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.drawImage(img,0,0,w,h);
       const g=POD.geo;const lines=[`RutaFácil · Entregado ${fmtDT(Date.now())}`,`${POD.p.nombre||''}${POD.p.guia?' · guía '+POD.p.guia:''}`,g?`GPS ${g.lat}, ${g.lng} (±${Math.round(g.acc)} m)`:'GPS pendiente'];
       const fs=Math.max(14,Math.round(w/40));x.font=`600 ${fs}px system-ui,sans-serif`;const bh=fs*1.35*lines.length+fs*.8;
       x.fillStyle='rgba(0,0,0,.6)';x.fillRect(0,h-bh,w,bh);x.fillStyle='#fff';lines.forEach((l,i)=>x.fillText(l,fs*.6,h-bh+fs*1.3*(i+1)));
-      URL.revokeObjectURL(u);c.toBlob(b=>b?res(b):rej(new Error('foto')),'image/jpeg',.72)};
+      URL.revokeObjectURL(u);c.toBlob(b=>b?res(b):rej(new Error('foto')),'image/jpeg',.65)};
     img.onerror=()=>{URL.revokeObjectURL(u);rej(new Error('No se pudo leer la foto'))};img.src=u});
 }
 $('#podCam').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f||!POD)return;
@@ -583,7 +583,11 @@ async function uploadPOD(id,quiet){
     rec.up=true;await IDB.put(rec);if(p){p.pod.up=true;save();render()}if(!quiet)toast('☁️ Evidencia respaldada');return true;
   }catch(err){if(!quiet)toast('Evidencia guardada en el celular. Se sube cuando haya internet ('+err.message+')');return false}
 }
-async function uploadPending(){for(const p of S.pk)if(p.pod&&!p.pod.up)await uploadPOD(p.pod.id,true)}
+async function uploadPending(){for(const p of S.pk)if(p.pod&&!p.pod.up)await uploadPOD(p.pod.id,true);cleanLocal()}
+// Libera espacio del celular: borra las fotos que ya están respaldadas en Supabase hace más de LOCAL_DIAS días.
+const LOCAL_DIAS=7;
+async function cleanLocal(){try{const d=await IDB.open();const lim=Date.now()-LOCAL_DIAS*864e5;
+  await new Promise(res=>{const t=d.transaction('ev','readwrite');const st=t.objectStore('ev');st.openCursor().onsuccess=e=>{const c=e.target.result;if(!c)return;const v=c.value;if(v.up&&v.at<lim&&v.fotos.length){v.fotos=[];c.update(v)}c.continue()};t.oncomplete=res;t.onerror=res})}catch(e){}}
 async function openEvidence(p){
   const rec=await IDB.get(p.pod.id).catch(()=>null);
   const fotos=rec?rec.fotos.map(b=>URL.createObjectURL(b)):[];
@@ -591,7 +595,7 @@ async function openEvidence(p){
     <div class="podline"><b>🕓</b><span>${fmtDT(p.pod.at)}</span></div>
     <div class="podline"><b>📍</b><span>${p.pod.lat}, ${p.pod.lng} (±${Math.round(p.pod.acc)} m) · <a href="${gmaps([p.pod.lat,p.pod.lng])}" target="_blank" rel="noopener">Ver en mapa</a></span></div>
     <div class="podline"><b>☁️</b><span>${p.pod.up?'Respaldada en Supabase':'Todavía no se subió (se intenta sola cuando hay internet)'}</span></div>
-    ${fotos.length?`<div class="list">${fotos.map((u,i)=>`<img src="${u}" alt="Foto ${i+1} de la entrega" style="width:100%;border-radius:8px">`).join('')}</div>`:'<p class="small muted">Las fotos no están en este celular.</p>'}`;
+    ${fotos.length?`<div class="list">${fotos.map((u,i)=>`<img src="${u}" alt="Foto ${i+1} de la entrega" style="width:100%;border-radius:8px">`).join('')}</div>`:`<p class="small muted">${p.pod.up?'Las fotos ya no están en este celular (se borran a los '+LOCAL_DIAS+' días para ahorrar espacio). Están respaldadas en Supabase > Storage > evidencias.':'Las fotos no están en este celular.'}</p>`}`;
   $('#evSheet').hidden=false;document.body.style.overflow='hidden';
 }
 $('#evClose').onclick=()=>{$('#evSheet').hidden=true;document.body.style.overflow='';$('#evBody').querySelectorAll('img').forEach(i=>URL.revokeObjectURL(i.src))};

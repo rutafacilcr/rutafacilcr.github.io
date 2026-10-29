@@ -85,6 +85,8 @@ La evidencia se guarda **en el celular** y se **sube a Supabase** como respaldo.
 
 **Activar la ubicación en tu iPhone (una sola vez):** *Ajustes > Privacidad y seguridad > Localización* (encendida) *> Sitios web de Safari > Al usar la app* y activá *Ubicación exacta*.
 
+**Espacio:** cada entrega con 3 fotos ocupa ~0,4 MB. El plan gratis de Supabase (1 GB) alcanza para unas 2.500 entregas. Las fotos ya respaldadas se borran solas del celular a los 7 días (siguen en Supabase).
+
 **Ver los respaldos en la PC:** en Supabase, **Storage > evidencias** (fotos por fecha) y **Table Editor > entregas** (fecha, hora, GPS y lista de fotos).
 
 ### Al terminar el día
