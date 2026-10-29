@@ -11,7 +11,7 @@ Herramienta web para repartidores de paquetes en Costa Rica. Cargás la lista de
 | Paso | Qué resuelve |
 |---|---|
 | **1. Paquetes** | Importa la lista desde Excel, CSV o copiando y pegando. También se puede agregar a mano. Acepta links de Google Maps / Waze y saca las coordenadas solo. |
-| **2. Mensajes** | Un botón por cliente abre WhatsApp con el mensaje de coordinación listo. El mensaje lleva un link a un formulario donde el cliente marca horario, señas y ubicación. |
+| **2. Mensajes** | Un botón por cliente abre WhatsApp con el mensaje de coordinación listo. El cliente puede responder por el mismo chat (horario y ubicación de WhatsApp) o, si prefiere, en un formulario corto. |
 | **3. Respuestas** | Lo que llena el cliente entra solo a la app y lo marca como *Confirmado*. |
 | **4. Ruta** | Ordena las paradas para recorrer la menor distancia, abre la ruta en Google Maps y cada parada en Waze, y manda el aviso de "voy en camino". |
 
@@ -29,7 +29,8 @@ Funciona desde el celular, se puede instalar como ícono en la pantalla de inici
 | Archivo | Para qué es |
 |---|---|
 | `index.html` | La app del repartidor (todo en un archivo). |
-| `f.html` | Formulario que llena el cliente. |
+| `entrega.html` | Formulario que llena el cliente (link `…/RutafacilCR/entrega?t=…`). |
+| `f.html` | Redirige links viejos a `entrega.html`. |
 | `config.js` | Dirección y llave pública de Supabase. |
 | `supabase.sql` | Crea la tabla y las funciones del formulario en Supabase. |
 | `plantilla-paquetes.xlsx` | Plantilla de Excel para la lista de paquetes. |

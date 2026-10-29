@@ -220,7 +220,9 @@ const STATUS=[['pendiente','Pendiente'],['confirmado','Confirmado'],['noresponde
 const SLABEL=Object.fromEntries(STATUS);
 const tomorrow=()=>{const d=new Date();d.setDate(d.getDate()+1);return d.toLocaleDateString('es-CR',{weekday:'long',day:'numeric',month:'long'})};
 const DEF_COORD='Hola {nombre}, le saluda {yo}, el repartidor de su pedido de Temu (guía {guia}). El {fecha} se lo estaría entregando en: {direccion}.\n\n¿Me confirma si habrá alguien para recibirlo? Si puede, envíeme su ubicación por WhatsApp para llegar más fácil. ¡Muchas gracias!';
-const DEF_COORD_F='Hola {nombre}, le saluda {yo}, el repartidor de su pedido de Temu (guía {guia}). El {fecha} se lo estaría entregando.\n\nPara coordinar, por favor llene este formulario con su horario, las señas de la casa y su ubicación (toma 1 minuto):\n{formulario}\n\n¡Muchas gracias!';
+const DEF_COORD_F='Hola {nombre}, le saluda {yo}, el repartidor de su paquete de Temu (guía {guia}). Se lo estaría entregando el {fecha}.\n\nPara coordinar, puede responderme por aquí:\n1. A qué hora puede recibir\n2. Su ubicación: toque + (o 📎) > Ubicación > Enviar mi ubicación actual\n\nO si le es más fácil, confírmelo en este formulario de 1 minuto. No pide pagos ni datos bancarios:\n{formulario}\n\n¡Muchas gracias!';
+// Plantillas anteriores: si el usuario no las cambió, se reemplazan por la vigente.
+const OLD_COORD_F=['Hola {nombre}, le saluda {yo}, el repartidor de su pedido de Temu (guía {guia}). El {fecha} se lo estaría entregando.\n\nPara coordinar, por favor llene este formulario con su horario, las señas de la casa y su ubicación (toma 1 minuto):\n{formulario}\n\n¡Muchas gracias!'];
 const FORM_ON=!!(window.RF_CONFIG&&RF_CONFIG.supabaseUrl&&RF_CONFIG.supabaseAnonKey);
 const tok=()=>{const a=new Uint8Array(12);crypto.getRandomValues(a);return [...a].map(x=>'abcdefghijkmnpqrstuvwxyz23456789'[x%32]).join('')};
 const DEF_CAMINO='Hola {nombre}, voy en camino con su paquete de Temu. Llego en aproximadamente {eta} minutos. ¡Gracias!';
@@ -414,8 +416,8 @@ const bind=(sel,k,num)=>{const el=$(sel);el.value=S[k]??'';el.addEventListener(e
 $('#routeBtn').onclick=calcRoute;
 
 // Si la plantilla no trae {formulario}, el link se agrega al final para que nunca falte.
-function coordText(p){let t=S.coord;if(FORM_ON&&!t.includes('{formulario}'))t+='\n\nPara coordinar, llene aquí su horario, señas y ubicación:\n{formulario}';return fill(t,p)}
-function formLink(p){if(!FORM_ON)return '';const u=new URL('f.html',location.href);u.search=new URLSearchParams({t:p.tok,n:(p.nombre||'').split(' ')[0],g:p.guia||'',y:S.yo||''}).toString();return u.href}
+function coordText(p){let t=S.coord;if(FORM_ON&&!t.includes('{formulario}'))t+='\n\nSi le es más fácil, confirme su horario y ubicación en este formulario de 1 minuto (no pide pagos ni datos bancarios):\n{formulario}';return fill(t,p)}
+function formLink(p){if(!FORM_ON)return '';const u=new URL('entrega',location.href);u.search=new URLSearchParams({t:p.tok,n:(p.nombre||'').split(' ')[0]}).toString();return u.href}
 async function syncResp(manual){
   if(!FORM_ON||!S.pk.length)return;
   const C=RF_CONFIG;$('#syncInfo').textContent='Revisando…';
@@ -441,7 +443,7 @@ const grow=el=>{el.style.height='auto';el.style.height=el.scrollHeight+2+'px'};
 document.querySelector('[data-tab="mensajes"]').addEventListener('click',()=>requestAnimationFrame(()=>['#m-coord','#m-camino'].forEach(id=>grow($(id)))));
 $('#daypill').textContent='Entrega: '+tomorrow();
 S.pk.forEach(p=>{if(!p.tok)p.tok=tok()});
-if(FORM_ON&&S.coord===DEF_COORD){S.coord=DEF_COORD_F;$('#m-coord').value=S.coord}
+if(FORM_ON&&(S.coord===DEF_COORD||OLD_COORD_F.includes(S.coord))){S.coord=DEF_COORD_F;$('#m-coord').value=S.coord}
 save();
 render();
 if(FORM_ON){$('#syncPanel').hidden=false;$('#syncBtn').onclick=()=>syncResp(true);syncResp();setInterval(()=>{if(!document.hidden)syncResp()},60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncResp()})}

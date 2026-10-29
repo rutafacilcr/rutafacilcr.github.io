@@ -43,12 +43,16 @@ Columnas: `nombre`, `telefono`, `direccion`, `ubicacion`, `guia`, `nota`.
 
 1. Poné **tu nombre** y revisá el texto del mensaje (se puede editar).
 2. En cada cliente tocá **Abrir WhatsApp** > **Enviar** > volvé a la app.
-3. El mensaje lleva un **link al formulario** donde el cliente marca:
-   - Horario en que puede recibir.
-   - Su ubicación (botón **Usar mi ubicación actual** o pegando un link).
-   - Señas de la casa y quién recibe.
-4. Las respuestas **entran solas** (la app revisa cada minuto, o tocá **Revisar respuestas ahora**). El cliente queda **Confirmado** con 🕓 horario y 🏠 señas.
-5. Si alguien contesta por WhatsApp en vez del formulario, marcá a mano **Confirmó** o **No responde**.
+3. El mensaje le da al cliente **dos opciones**, para que elija la que le dé más confianza:
+   - **Responder por el mismo chat:** la hora y su ubicación de WhatsApp (**+** o 📎 > **Ubicación** > **Enviar mi ubicación actual**).
+   - **Formulario de 1 minuto** (link `…/RutafacilCR/entrega?t=…`). Ahí marca horario, señas y quién recibe. Para la ubicación puede usar el GPS del teléfono o elegir **Prefiero mandarla por WhatsApp**.
+4. Las respuestas del formulario **entran solas** (la app revisa cada minuto, o tocá **Revisar respuestas ahora**). El cliente queda **Confirmado** con 🕓 horario y 🏠 señas. Si eligió mandar la ubicación por WhatsApp, en las señas dice *(Manda la ubicación por WhatsApp)*.
+5. Si el cliente responde por el chat: abrí la ubicación que mandó, copiá el link, pegalo en **Editar > Ubicación** y marcá **Confirmó**.
+
+**Para que los clientes confíen más:**
+- Usá **WhatsApp Business** con foto de perfil, nombre (ej. "Victor · Entregas Temu") y descripción.
+- El formulario muestra el ícono de RutaFácil en la vista previa de WhatsApp y aclara que no pide pagos ni datos bancarios.
+- Con un dominio propio el link se vería más corto y confiable (pendiente de decidir).
 
 Variables que podés usar en los mensajes: `{nombre}` `{guia}` `{direccion}` `{fecha}` `{yo}` `{eta}` `{formulario}`. Si cambiás el mensaje y quitás `{formulario}`, la app agrega el link del formulario al final sola. El cuadro del mensaje crece para mostrar el texto completo.
 
@@ -93,6 +97,7 @@ Tocá la etiqueta de color para pasar al siguiente estado.
 | No abre WhatsApp | Revisá que el teléfono tenga 8 dígitos. Si dice "Teléfono inválido", corregilo con **Editar**. |
 | El mensaje sale desde otro número | WhatsApp usa la cuenta abierta en ese celular. |
 | La ubicación no se detecta | Usá el link largo o las coordenadas, no el link corto. |
+| El cliente no pudo usar "Estoy en mi casa" | El formulario le explica cómo dar permiso de ubicación. Si no puede, que toque **Prefiero mandarla por WhatsApp** y la mande desde el chat. |
 | No llegan las respuestas | Revisá el internet y tocá **Revisar respuestas ahora**. El cliente tiene que tocar **Enviar** en el formulario. |
 | Desapareció mi lista | Abriste la app en otro navegador o desde Safari en vez del ícono. |
 | El link da error 404 | Escribilo con mayúsculas: `RutafacilCR`. |

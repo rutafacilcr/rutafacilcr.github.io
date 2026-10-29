@@ -5,7 +5,7 @@ Para quien vaya a modificar el código o el diseño.
 ## 1. Principios
 
 - **Sin build ni frameworks.** HTML, CSS y JavaScript plano. Se edita el archivo y se hace push.
-- **Un archivo por pantalla:** `index.html` (app del repartidor) y `f.html` (formulario del cliente). CSS y JS van dentro de cada archivo.
+- **Un archivo por pantalla:** `index.html` (app del repartidor) y `entrega.html` (formulario del cliente; `f.html` solo redirige links viejos). CSS y JS van dentro de cada archivo.
 - **Celular primero:** se diseña para 400 px de ancho y se agranda hasta 760 px.
 - **Funciona sin backend:** si `config.js` está vacío, todo lo que no sea el formulario sigue funcionando.
 
@@ -51,7 +51,7 @@ Paquete = {
 | `rowsToPkgs(rows)` | Detecta encabezados por regex (`COLS`). Si no hay encabezado, asume el orden nombre, teléfono, dirección, ubicación, guía, nota. |
 | `parseText(t)` | Pegado: separa por tab, `;` o `\|`. Los CSV con comas se leen con SheetJS. |
 | `fill(tpl, p, extra)` | Reemplaza `{variables}` en las plantillas. |
-| `formLink(p)` | Arma `f.html?t=&n=&g=&y=`. |
+| `formLink(p)` | Arma `entrega?t=&n=` (corto a propósito: links largos dan desconfianza). |
 | `coordText(p)` | Texto final del mensaje de coordinación. Si el formulario está activo y la plantilla no trae `{formulario}`, agrega el link al final. |
 | `optimize(pts, ret)` | Vecino más cercano y luego mejora 2-opt. |
 | `hav(a, b)` | Distancia haversine × 1.35 (factor por calles). |
@@ -59,11 +59,17 @@ Paquete = {
 
 Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Maps URLs).
 
-## 3. Formulario `f.html`
+## 3. Formulario `entrega.html`
 
-- Parámetros de URL: `t` (token, obligatorio, ≥12), `n` (nombre), `g` (guía), `y` (repartidor).
+- GitHub Pages sirve `entrega.html` también como `/entrega` (sin extensión).
+- Parámetros de URL: `t` (token, obligatorio, ≥12) y `n` (nombre). Acepta también `g` (guía) e `y` (repartidor) de links viejos.
+- Etiquetas Open Graph (`og:title`, `og:description`, `og:image` = `icon-512.png`) para que WhatsApp muestre una vista previa con marca.
 - Envía con `POST /rest/v1/rpc/enviar_respuesta`. Volver a enviar actualiza la respuesta (upsert por token).
-- Geolocalización con `enableHighAccuracy` y 15 s de espera. Si falla, se puede pegar un link.
+- Ubicación, tres caminos:
+  1. GPS: primero `enableHighAccuracy` con 10 s; si falla (no por permiso), reintenta con ubicación aproximada, 20 s y caché de 5 min. Si el error es de permiso (`code 1`), muestra cómo habilitarlo (iOS: Ajustes > Privacidad > Localización > Sitios web de Safari).
+  2. "Prefiero mandarla por WhatsApp": agrega *(Manda la ubicación por WhatsApp)* a `senas` e indica los pasos en el chat.
+  3. Pegar link de Maps/Waze (dentro de un `<details>`).
+- Plantillas: `DEF_COORD_F` es la vigente. `OLD_COORD_F` lista las anteriores; si el usuario tiene guardada una sin cambios, se reemplaza sola al abrir.
 
 ## 4. Base de datos y seguridad (`supabase.sql`)
 

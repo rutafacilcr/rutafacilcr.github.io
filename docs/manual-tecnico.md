@@ -7,7 +7,7 @@ Cómo está montada la app, cómo se publica y cómo se mantiene.
 ```
 Celular del repartidor                 Celular del cliente
 ┌──────────────────────┐               ┌──────────────────┐
-│ index.html (app)     │               │ f.html           │
+│ index.html (app)     │               │ entrega.html     │
 │ datos: localStorage  │               │ (formulario)     │
 └──────┬───────────────┘               └────────┬─────────┘
        │ leer_respuestas(tokens)                │ enviar_respuesta(token, ...)
@@ -88,12 +88,13 @@ Si los dos valores están vacíos, la app funciona sin formulario: los mensajes 
 | Google Fonts | Tipografías | Usa fuentes del sistema. |
 | `wa.me` | Abrir WhatsApp con texto | Botón **Copiar texto**. |
 | Google Maps / Waze | Navegación | Se pueden copiar las coordenadas. |
-| Geolocalización del navegador | Botón "Usar mi ubicación" del formulario | El cliente pega un link. Requiere HTTPS, que GitHub Pages ya da. |
+| Geolocalización del navegador | Botón "Estoy en mi casa" del formulario | El cliente la manda por WhatsApp o pega un link. Requiere HTTPS (GitHub Pages ya lo da). En iPhone depende de *Ajustes > Privacidad > Localización > Sitios web de Safari*, también dentro del navegador de WhatsApp. |
 
 ## 6. Mantenimiento
 
 - **Cambiar textos o mensajes por defecto:** `index.html`, constantes `DEF_COORD`, `DEF_COORD_F` y `DEF_CAMINO`.
-- **Cambiar horarios del formulario:** `f.html`, arreglo `SLOTS`.
+- **Cambiar horarios del formulario:** `entrega.html`, arreglo `SLOTS`.
+- **Links viejos** (`f.html?…`) redirigen a `entrega.html`. No borrar `f.html` mientras haya mensajes viejos circulando.
 - **Respaldo:** el repositorio es el respaldo del código. La tabla `respuestas` es temporal (se puede limpiar).
 - Cada cambio se anota en `CHANGELOG.md` y en el manual que corresponda.
 
