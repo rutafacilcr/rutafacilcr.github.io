@@ -450,20 +450,24 @@ create table if not exists public.entregas (
 );
 alter table public.entregas enable row level security;
 
+alter table public.entregas add column if not exists recibe text;  -- 1.13: nombre de quien recibe ("… (no firmó)" si no firmó)
+
+-- La firma va como la última foto, terminada en _firma.jpg.
+drop function if exists public.registrar_entrega(text,text,text,text,double precision,double precision,double precision,timestamptz,text[]);
 create or replace function public.registrar_entrega(
   p_evidencia_id text, p_guia text, p_cliente text, p_repartidor text,
   p_lat double precision, p_lng double precision, p_precision double precision,
-  p_entregado_en timestamptz, p_fotos text[])
+  p_entregado_en timestamptz, p_fotos text[], p_recibe text default null)
 returns void language plpgsql security definer set search_path = public as $$
 begin
   perform public.rf_exigir_licencia();
-  insert into entregas (evidencia_id, guia, cliente, repartidor, lat, lng, precision_m, entregado_en, fotos, owner_id)
+  insert into entregas (evidencia_id, guia, cliente, repartidor, lat, lng, precision_m, entregado_en, fotos, owner_id, recibe)
   values (p_evidencia_id, left(p_guia,60), left(p_cliente,80), left(p_repartidor,80),
-          p_lat, p_lng, p_precision, p_entregado_en, p_fotos[1:10], auth.uid())
-  on conflict (evidencia_id) do update set fotos = excluded.fotos;
+          p_lat, p_lng, p_precision, p_entregado_en, p_fotos[1:10], auth.uid(), left(p_recibe,80))
+  on conflict (evidencia_id) do update set fotos = excluded.fotos, recibe = coalesce(excluded.recibe, entregas.recibe);
 end $$;
-revoke all on function public.registrar_entrega(text,text,text,text,double precision,double precision,double precision,timestamptz,text[]) from public;
-grant execute on function public.registrar_entrega(text,text,text,text,double precision,double precision,double precision,timestamptz,text[]) to anon, authenticated;
+revoke all on function public.registrar_entrega(text,text,text,text,double precision,double precision,double precision,timestamptz,text[],text) from public;
+grant execute on function public.registrar_entrega(text,text,text,text,double precision,double precision,double precision,timestamptz,text[],text) to anon, authenticated;
 
 -- Carpeta privada para las fotos. La app solo puede SUBIR; verlas se hace desde el panel de Supabase.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)

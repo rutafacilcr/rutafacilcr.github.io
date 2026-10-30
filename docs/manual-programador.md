@@ -156,7 +156,7 @@ rf_eventos(user_id, tipo, detalle jsonb, creado_en)
 
 ### Formulario y entregas
 
-`entregas(evidencia_id UNIQUE, guia, cliente, repartidor, lat, lng, precision_m, entregado_en, fotos text[], owner_id)`: RLS sin políticas, se escribe solo con `registrar_entrega`. Bucket `evidencias` privado con política de solo INSERT para `anon`.
+`entregas(evidencia_id UNIQUE, guia, cliente, repartidor, lat, lng, precision_m, entregado_en, fotos text[], owner_id, recibe)`: RLS sin políticas, se escribe solo con `registrar_entrega(…, p_fotos, p_recibe text default null)`. `recibe` es el nombre de quien recibe ("… (no firmó)" si no firmó); la firma va como la última foto, terminada en `_firma.jpg`. Al reenviar la misma `evidencia_id`, `recibe` solo se reemplaza si llega un valor. Bucket `evidencias` privado con política de solo INSERT para `anon`.
 
 
 ```
