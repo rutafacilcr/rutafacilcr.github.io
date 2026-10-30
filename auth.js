@@ -71,7 +71,8 @@ const CSS=`html.rf-bloq body>*:not(#rfGate){display:none!important}
 #rfGate .rfbtn.pri{background:var(--accent,#f26b1d);color:var(--accent-ink,#fff);border-color:transparent}
 #rfGate .rfbtn:disabled{opacity:.6}
 #rfGate .rfbtn.rfespera{background:var(--line,#e2dfdc);color:var(--muted,#6b6560);border-color:transparent;opacity:1;cursor:default}
-#rfGate .rflink{background:none;border:0;color:var(--accent,#f26b1d);font:inherit;font-weight:600;cursor:pointer;padding:6px 0;text-align:left}
+#rfGate .rflink{background:none;border:0;color:var(--accent,#f26b1d);font:inherit;font-weight:600;cursor:pointer;padding:6px 0;text-align:left;text-decoration:underline;text-underline-offset:2px}
+#rfGate p .rflink{padding:0;font-size:inherit}
 #rfGate .rfmsg{background:var(--surface,#fff);border:1px solid var(--line,#e2dfdc);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
 #rfGate .rferr{color:var(--bad,#b03a3a);font-weight:600;min-height:1.2em}
 #rfGate .rfmuted{color:var(--muted,#6b6560);font-size:14px}
@@ -102,7 +103,7 @@ function vEntrar(err){
     <p class="rferr" id="rfErr" role="alert">${esc(err||'')}</p>
     <button class="rfbtn pri" id="rfOk">Entrar</button>
   </form>
-  <button class="rflink" id="rfCrear">¿No tenés cuenta? Crear cuenta</button>
+  <p class="rfmuted">¿No tenés cuenta? <button class="rflink" id="rfCrear">Crear cuenta</button></p>
   <p class="rfmuted">¿Olvidaste el PIN? Pedile uno nuevo al administrador.</p>${ayuda}`);
   body.querySelector('#rfCrear').onclick=()=>vCrear();
   body.querySelector('#rfForm').onsubmit=async e=>{
