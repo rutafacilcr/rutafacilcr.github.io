@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-10-30
+- **1.13.0 · Firma y recorrido:** la prueba de entrega pide la **firma con el dedo** y el nombre de quien recibe (o marcar "No quiso firmar"); la firma se sube con las fotos. En *Ruta*, **Recorrido de hoy**: mapa (OpenStreetMap) con las entregas numeradas en el orden en que se hicieron y botón para abrirlo en Google Maps. Requiere volver a correr `supabase.sql` para guardar quién recibe.
 - **Base de datos (para la firma de entrega):** `entregas.recibe` (quién recibe) y `registrar_entrega(…, p_recibe)`. La firma se guarda como foto `_firma.jpg`. Hay que volver a correr `supabase.sql`.
 - **1.12.2:** en la pantalla de entrar, *¿No tenés cuenta? **Crear cuenta*** se ve como enlace subrayado, igual que *Escribinos por WhatsApp*. Los demás enlaces de esa pantalla también van subrayados.
 - **1.12.1:** en *Crear cuenta* los campos salen en blanco (sin el ejemplo "Victor Mena" / "8888 1234", que parecía ya escrito) y sin autocompletar; los textos de ejemplo de *Entrar* se ven más claros.

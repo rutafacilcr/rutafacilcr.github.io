@@ -117,7 +117,8 @@ Cada vez que marcás un paquete como **Entregado** se abre la pantalla **Prueba 
 1. La app toma sola la **fecha y hora** y tu **ubicación GPS** (con su precisión en metros).
 2. Tocá **📷 Tomar foto** al menos **3 veces**. Sugerencia: el paquete en la puerta, la fachada y el paquete en manos de quien recibe.
 3. Cada foto lleva un **sello** con fecha, hora, cliente, guía y coordenadas.
-4. **Confirmar entrega** solo se activa con 3 fotos y la ubicación.
+4. **Firma:** escribí el nombre de quien recibe y pedile que firme con el dedo en el recuadro blanco (**Borrar firma** si sale mal). Si no quiere firmar, marcá **No quiso firmar**: queda anotado.
+5. **Confirmar entrega** solo se activa con 3 fotos, la ubicación y la firma (o "No quiso firmar").
 
 La evidencia se guarda **en el celular** y se **sube a Supabase** como respaldo. En la lista vas a ver *📷 3 fotos · fecha · 📍 ±m · ☁️ respaldada* (o *⏳ sin subir* si no había internet: se sube sola después). Tocá **Ver evidencia** para ver las fotos y el punto en el mapa.
 
@@ -126,6 +127,10 @@ La evidencia se guarda **en el celular** y se **sube a Supabase** como respaldo.
 **Espacio:** cada entrega con 3 fotos ocupa ~0,4 MB. El plan gratis de Supabase (1 GB) alcanza para unas 2.500 entregas. Las fotos ya respaldadas se borran solas del celular a los 7 días (siguen en Supabase).
 
 **Ver los respaldos en la PC:** en Supabase, **Storage > evidencias** (fotos por fecha) y **Table Editor > entregas** (fecha, hora, GPS y lista de fotos).
+
+### Recorrido de hoy
+
+En la pestaña **Ruta**, abajo, aparece **Recorrido de hoy** en cuanto hacés la primera entrega: un mapa con cada entrega numerada (1, 2, 3…) en el orden en que la hiciste, la hora de cada una y los km aproximados. **Abrir en Google Maps** muestra el mismo recorrido allá. Se arma con el GPS de cada prueba de entrega, así que marca los puntos de entrega, no cada calle que recorriste (una página web no puede seguir el GPS con el celular bloqueado).
 
 ### Al terminar el día
 

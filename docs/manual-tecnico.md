@@ -142,6 +142,10 @@ update rf_ajustes set exigir_cuenta = false where id = 1;
   - **Liberar espacio a mano:** Supabase > **Storage** > **evidencias** > abrir la carpeta de un día viejo > seleccionar las fotos > **Download** (guardarlas en la PC) > **Delete**. Las carpetas se llaman por fecha (`AAAA-MM-DD`), así que se borran las más viejas primero. El registro en la tabla `entregas` se puede dejar: casi no ocupa.
   - En iPhone, si la app se usa desde Safari y no desde el ícono, Safari puede borrar los datos de la página tras ~7 días sin abrirla. Por eso Supabase es el respaldo oficial.
 
+### Firma (1.13.0)
+
+La firma se sube al bucket `evidencias` como `AAAA-MM-DD/<guia>_<id>_firma.jpg` (unos 5–20 KB) y va al final de `fotos` en la tabla `entregas`. El nombre de quien recibe se guarda en `entregas.recibe` (con "(no firmó)" si no quiso firmar). **Hay que volver a correr `supabase.sql`** para que exista `p_recibe`; mientras tanto la app reintenta sin ese dato y la evidencia igual se respalda.
+
 ### Límites del plan gratis
 
 500 MB de base de datos y pausa automática del proyecto tras ~1 semana sin uso. Si se pausa, el formulario deja de guardar: entrar al panel y tocar **Restore**. Cada respuesta ocupa menos de 1 KB.
@@ -188,6 +192,7 @@ Si los dos valores están vacíos, la app funciona sin formulario: los mensajes 
 | Google Maps / Waze | Navegación | Se pueden copiar las coordenadas. |
 | jsDelivr `@zxing/library 0.21.3` | Leer el código de barras de la etiqueta (solo si el navegador no trae `BarcodeDetector`, como en iPhone) | Se escribe la guía a mano. |
 | jsDelivr `tesseract.js 5.1.1` (+ núcleo WASM y datos de idioma `spa`, unos 5 MB la primera vez; luego quedan en IndexedDB del navegador) | Leer el texto de la etiqueta (OCR) | Se llenan los datos a mano. |
+| cdnjs `leaflet 1.9.4` + mosaicos de OpenStreetMap | Mapa de *Recorrido de hoy* (se carga solo al abrir *Ruta* con entregas del día) | Botón *Abrir en Google Maps*. Uso bajo, sin llave. |
 | OpenStreetMap Nominatim | Buscar un lugar por nombre cuando el link de ubicación no trae coordenadas (botón *Pegar respuesta*) | Pegar las coordenadas o un link con coordenadas. Uso bajo, sin llave. |
 | Geolocalización del navegador | Botón "Estoy en mi casa" del formulario | El cliente la manda por WhatsApp o pega un link. Requiere HTTPS (GitHub Pages ya lo da). En iPhone depende de *Ajustes > Privacidad y seguridad > Localización > Sitios web de Safari* y del permiso por sitio en Safari (*aA > Configuración del sitio web > Ubicación*), también dentro del navegador de WhatsApp. |
 

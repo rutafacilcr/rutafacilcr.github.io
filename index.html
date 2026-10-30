@@ -63,6 +63,11 @@ nav.tabs .n:empty{display:none}
 .ico-sop{flex:none;vertical-align:-3px}
 .vids{display:flex;flex-direction:column;gap:10px}
 .vids video,.vids iframe{width:100%;aspect-ratio:9/16;max-height:70vh;border:0;border-radius:10px;background:#000}
+.sig{width:100%;height:170px;border:2px dashed var(--line);border-radius:10px;background:#fff;touch-action:none;display:block}
+.sig.ok{border-style:solid;border-color:var(--ok)}
+.trackmap{height:320px;border-radius:10px;overflow:hidden;background:var(--bg);z-index:0}
+.tracklist{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px;font-size:14px}
+.tpin{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font:700 13px var(--f-body);display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)}
 .appver{text-align:center;font-size:12px;color:var(--muted);padding:28px 0 4px}
 section{display:flex;flex-direction:column;gap:16px;padding-top:18px}
 h2{font-family:var(--f-display);font-size:18px;font-weight:700;letter-spacing:-.2px;margin:0;text-wrap:balance}
@@ -248,8 +253,15 @@ details summary{cursor:pointer;font-weight:600}
     <button class="btn primary" id="routeBtn">Calcular mejor ruta</button>
   </div>
   <div id="routeOut" class="list"></div>
+  <div class="panel" id="trackPanel" hidden>
+    <h2>Recorrido de hoy</h2>
+    <p class="small muted" id="trackInfo"></p>
+    <div id="trackMap" class="trackmap" role="img" aria-label="Mapa con las entregas de hoy numeradas en orden"></div>
+    <div class="row" id="trackLinks"></div>
+    <ol class="tracklist" id="trackList"></ol>
+  </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.12.2</span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.13.0</span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -263,6 +275,11 @@ details summary{cursor:pointer;font-weight:600}
   <label class="btn" for="podCam" style="justify-content:center;text-transform:none;letter-spacing:0;font-size:15px;color:var(--ink);flex-direction:row">📷 Tomar foto</label>
   <input type="file" id="podCam" accept="image/*" capture="environment" hidden>
   <p class="small muted">Sugerencia: el paquete en la puerta, la fachada de la casa y el paquete en manos de quien recibe.</p>
+  <h3>Firma de quien recibe</h3>
+  <label>Nombre de quien recibe<input id="podRecibe" autocomplete="off" placeholder="Ej: Sofía Ramírez"></label>
+  <canvas class="sig" id="podSig" aria-label="Recuadro para firmar con el dedo"></canvas>
+  <div class="row" style="justify-content:space-between"><button class="btn sm" id="podSigClear" type="button">Borrar firma</button>
+    <label class="row small" style="font-weight:500;flex-direction:row;gap:6px"><input type="checkbox" id="podNoSig" style="width:auto"> No quiso firmar</label></div>
   <div class="row"><button class="btn primary" id="podOk" disabled>Confirmar entrega</button><button class="btn ghost" id="podCancel">Cancelar</button></div>
   <p class="small muted" id="podNeed"></p>
 </div></div>
@@ -516,7 +533,7 @@ function renderRoute(){
 }
 const fmtT=m=>{m=Math.round(m);return m<60?`${m} min`:`${Math.floor(m/60)} h ${m%60} min`};
 
-function render(){$('#exampleBar').hidden=!S.ex;renderStats();renderPk();renderMsg();renderRoute()}
+function render(){$('#exampleBar').hidden=!S.ex;renderStats();renderPk();renderMsg();renderRoute();if(typeof renderTrack==='function')renderTrack()}
 
 // ---- eventos ----
 document.querySelectorAll('nav.tabs [role=tab]').forEach(b=>b.onclick=()=>{
@@ -627,6 +644,7 @@ function openPOD(p){
   $('#podWho').textContent=`${p.nombre||''}${p.guia?' · guía '+p.guia:''}`;
   $('#podTime').textContent=fmtDT(POD.at);
   $('#podSheet').hidden=false;document.body.style.overflow='hidden';
+  $('#podRecibe').value='';$('#podNoSig').checked=false;sigInit();
   podGeo();podRender();
 }
 function closePOD(){POD=null;$('#podSheet').hidden=true;document.body.style.overflow=''}
@@ -645,8 +663,9 @@ function podRender(){
   for(let i=POD.fotos.length;i<MIN_FOTOS;i++)th.push(`<div class="ph">Foto ${i+1}</div>`);
   $('#podThumbs').innerHTML=th.join('');
   const faltan=Math.max(0,MIN_FOTOS-POD.fotos.length);
-  $('#podOk').disabled=!!faltan||!POD.geo;
-  $('#podNeed').textContent=faltan?`Faltan ${faltan} foto(s).`:(!POD.geo?'Falta la ubicación GPS.':'Todo listo.');
+  const noSig=$('#podNoSig').checked,firma=POD.signed||noSig;$('#podSig').classList.toggle('ok',!!POD.signed);
+  $('#podOk').disabled=!!faltan||!POD.geo||!firma;
+  $('#podNeed').textContent=faltan?`Faltan ${faltan} foto(s).`:(!POD.geo?'Falta la ubicación GPS.':!firma?'Falta la firma (o marcá "No quiso firmar").':'Todo listo.');
 }
 // Reduce la foto a 1024 px (~100–150 KB) y le pone un sello con fecha, hora, GPS y guía.
 function stampPhoto(file){
@@ -666,10 +685,13 @@ $('#podGeoRetry').onclick=podGeo;
 $('#podCancel').onclick=closePOD;
 $('#podOk').onclick=async()=>{
   if(!POD||POD.fotos.length<MIN_FOTOS||!POD.geo)return;
+  if(!POD.signed&&!$('#podNoSig').checked)return;
   const {p,geo,fotos,at}=POD;const id=tok()+tok();
-  const rec={id,pid:p.id,guia:p.guia,cliente:p.nombre,at,lat:geo.lat,lng:geo.lng,acc:geo.acc,fotos:fotos.map(f=>f.blob),up:false};
+  const recibe=$('#podRecibe').value.trim().slice(0,80),sinFirma=!POD.signed;
+  const firma=sinFirma?null:await sigBlob(recibe,at).catch(()=>null);
+  const rec={id,pid:p.id,guia:p.guia,cliente:p.nombre,at,lat:geo.lat,lng:geo.lng,acc:geo.acc,fotos:fotos.map(f=>f.blob),firma,recibe,sinFirma,up:false};
   try{await IDB.put(rec)}catch(err){toast('No se pudo guardar la evidencia en el celular');return}
-  p.st='entregado';p.pod={id,n:fotos.length,at,lat:geo.lat,lng:geo.lng,acc:geo.acc,up:false};
+  p.st='entregado';p.pod={id,n:fotos.length,at,lat:geo.lat,lng:geo.lng,acc:geo.acc,up:false,firma:!!firma,recibe};
   save();closePOD();render();toast(`${p.nombre}: entregado con evidencia`);
   uploadPOD(p.pod.id);
 };
@@ -682,7 +704,13 @@ async function uploadPOD(id,quiet){
     for(let i=0;i<rec.fotos.length;i++){const path=`${day}/${safe}_${id}_${i+1}.jpg`;
       const r=await fetch(`${base}/storage/v1/object/evidencias/${path}`,{method:'POST',headers:{...H,'Content-Type':'image/jpeg','x-upsert':'false'},body:rec.fotos[i]});
       if(!r.ok){const t=await r.text();if(!/duplicate|already exists/i.test(t))throw new Error(r.status+' '+t.slice(0,80))}paths.push(path)}
-    const r=await fetch(`${base}/rest/v1/rpc/registrar_entrega`,{method:'POST',headers:{...H,'Content-Type':'application/json'},body:JSON.stringify({p_evidencia_id:id,p_guia:rec.guia||'',p_cliente:rec.cliente||'',p_repartidor:S.yo||'',p_lat:rec.lat,p_lng:rec.lng,p_precision:rec.acc,p_entregado_en:new Date(rec.at).toISOString(),p_fotos:paths})});
+    if(rec.firma){const path=`${day}/${safe}_${id}_firma.jpg`;
+      const r=await fetch(`${base}/storage/v1/object/evidencias/${path}`,{method:'POST',headers:{...H,'Content-Type':'image/jpeg','x-upsert':'false'},body:rec.firma});
+      if(!r.ok){const t=await r.text();if(!/duplicate|already exists/i.test(t))throw new Error(r.status+' '+t.slice(0,80))}paths.push(path)}
+    const args={p_evidencia_id:id,p_guia:rec.guia||'',p_cliente:rec.cliente||'',p_repartidor:S.yo||'',p_lat:rec.lat,p_lng:rec.lng,p_precision:rec.acc,p_entregado_en:new Date(rec.at).toISOString(),p_fotos:paths},recibe=(rec.recibe||'')+(rec.sinFirma?' (no firmó)':'');
+    const rpc=a=>fetch(`${base}/rest/v1/rpc/registrar_entrega`,{method:'POST',headers:{...H,'Content-Type':'application/json'},body:JSON.stringify(a)});
+    let r=await rpc(recibe?{...args,p_recibe:recibe}:args);
+    if(!r.ok&&recibe&&[300,400,404].includes(r.status))r=await rpc(args); // base sin p_recibe todavía
     if(!r.ok)throw new Error(r.status+' '+(await r.text()).slice(0,80));
     rec.up=true;await IDB.put(rec);if(p){p.pod.up=true;save();render()}if(!quiet)toast('☁️ Evidencia respaldada');return true;
   }catch(err){if(!quiet)toast('Evidencia guardada en el celular. Se sube cuando haya internet ('+err.message+')');return false}
@@ -691,13 +719,14 @@ async function uploadPending(){for(const p of S.pk)if(p.pod&&!p.pod.up)await upl
 // Libera espacio del celular: borra las fotos que ya están respaldadas en Supabase hace más de LOCAL_DIAS días.
 const LOCAL_DIAS=7;
 async function cleanLocal(){try{const d=await IDB.open();const lim=Date.now()-LOCAL_DIAS*864e5;
-  await new Promise(res=>{const t=d.transaction('ev','readwrite');const st=t.objectStore('ev');st.openCursor().onsuccess=e=>{const c=e.target.result;if(!c)return;const v=c.value;if(v.up&&v.at<lim&&v.fotos.length){v.fotos=[];c.update(v)}c.continue()};t.oncomplete=res;t.onerror=res})}catch(e){}}
+  await new Promise(res=>{const t=d.transaction('ev','readwrite');const st=t.objectStore('ev');st.openCursor().onsuccess=e=>{const c=e.target.result;if(!c)return;const v=c.value;if(v.up&&v.at<lim&&(v.fotos.length||v.firma)){v.fotos=[];v.firma=null;c.update(v)}c.continue()};t.oncomplete=res;t.onerror=res})}catch(e){}}
 async function openEvidence(p){
   const rec=await IDB.get(p.pod.id).catch(()=>null);
-  const fotos=rec?rec.fotos.map(b=>URL.createObjectURL(b)):[];
+  const fotos=rec?[...rec.fotos,...(rec.firma?[rec.firma]:[])].map(b=>URL.createObjectURL(b)):[];
   $('#evBody').innerHTML=`<p><b>${esc(p.nombre)}</b>${p.guia?' · guía '+esc(p.guia):''}</p>
     <div class="podline"><b>🕓</b><span>${fmtDT(p.pod.at)}</span></div>
     <div class="podline"><b>📍</b><span>${p.pod.lat}, ${p.pod.lng} (±${Math.round(p.pod.acc)} m) · <a href="${gmaps([p.pod.lat,p.pod.lng])}" target="_blank" rel="noopener">Ver en mapa</a></span></div>
+    ${p.pod.recibe||rec&&rec.sinFirma?`<div class="podline"><b>✍️</b><span>Recibió: ${esc(p.pod.recibe||'sin nombre')}${rec&&rec.sinFirma?' · no quiso firmar':''}</span></div>`:''}
     <div class="podline"><b>☁️</b><span>${p.pod.up?'Respaldada en Supabase':'Todavía no se subió (se intenta sola cuando hay internet)'}</span></div>
     ${fotos.length?`<div class="list">${fotos.map((u,i)=>`<img src="${u}" alt="Foto ${i+1} de la entrega" style="width:100%;border-radius:8px">`).join('')}</div>`:`<p class="small muted">${p.pod.up?'Las fotos ya no están en este celular (se borran a los '+LOCAL_DIAS+' días para ahorrar espacio). Están respaldadas en Supabase > Storage > evidencias.':'Las fotos no están en este celular.'}</p>`}`;
   $('#evSheet').hidden=false;document.body.style.overflow='hidden';
@@ -869,6 +898,56 @@ async function checkUpdate(){
 }
 checkUpdate();document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdate()});
 if(location.search.includes('v=')&&!location.search.includes('t='))history.replaceState(null,'',location.pathname); // limpia ?v= del link
+
+// ===== Firma con el dedo =====
+function sigInit(){
+  const c=$('#podSig'),r=c.getBoundingClientRect(),k=Math.min(2,window.devicePixelRatio||1);
+  c.width=Math.round((r.width||340)*k);c.height=Math.round((r.height||170)*k);
+  const x=c.getContext('2d');x.setTransform(k,0,0,k,0,0);x.lineWidth=2.6;x.lineCap=x.lineJoin='round';x.strokeStyle='#111';
+  if(POD)POD.signed=false;
+}
+(()=>{const c=$('#podSig');let last=null,len=0;
+  const pt=e=>{const r=c.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]};
+  c.addEventListener('pointerdown',e=>{if(!POD)return;c.setPointerCapture(e.pointerId);last=pt(e);e.preventDefault()});
+  c.addEventListener('pointermove',e=>{if(!last)return;const p=pt(e),x=c.getContext('2d');x.beginPath();x.moveTo(...last);x.lineTo(...p);x.stroke();len+=Math.hypot(p[0]-last[0],p[1]-last[1]);last=p;
+    if(len>40&&POD&&!POD.signed){POD.signed=true;$('#podNoSig').checked=false;podRender()}});
+  const up=()=>{last=null};c.addEventListener('pointerup',up);c.addEventListener('pointercancel',up);
+  $('#podSigClear').onclick=()=>{len=0;sigInit();podRender()};
+  $('#podNoSig').onchange=()=>podRender();
+})();
+// La firma se guarda como JPEG con fondo blanco y un sello (el bucket solo acepta JPEG).
+function sigBlob(recibe,at){
+  const c=$('#podSig'),o=document.createElement('canvas');o.width=c.width;o.height=c.height+36;const x=o.getContext('2d');
+  x.fillStyle='#fff';x.fillRect(0,0,o.width,o.height);x.drawImage(c,0,0);x.fillStyle='#555';x.font='600 16px system-ui,sans-serif';
+  x.fillText(`Recibió: ${recibe||'-'} · ${fmtDT(at)}`,10,o.height-12);
+  return new Promise((res,rej)=>o.toBlob(b=>b?res(b):rej(new Error('firma')),'image/jpeg',.7));
+}
+
+// ===== Recorrido de hoy: entregas numeradas en el orden en que se hicieron =====
+const LIB_MAP='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js',CSS_MAP='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
+let TMAP=null;
+const sameDay=(a,b)=>new Date(a).toDateString()===new Date(b).toDateString();
+function trackStops(){return S.pk.filter(p=>p.pod&&p.pod.lat!=null&&sameDay(p.pod.at,Date.now())).sort((a,b)=>a.pod.at-b.pod.at)}
+async function renderTrack(){
+  const st=trackStops(),panel=$('#trackPanel');panel.hidden=!st.length;if(!st.length||$('#v-ruta').hidden)return;
+  const pts=st.map(p=>[p.pod.lat,p.pod.lng]);let km=0;for(let i=1;i<pts.length;i++)km+=hav(pts[i-1],pts[i]);
+  $('#trackInfo').textContent=`${st.length} entrega(s) · de ${fmtT2(st[0].pod.at)} a ${fmtT2(st[st.length-1].pod.at)} · ${km.toFixed(1)} km aprox. entre entregas`;
+  $('#trackList').innerHTML=st.map(p=>`<li><b>${esc(p.nombre||'')}</b> · ${fmtT2(p.pod.at)}${p.guia?` · <span class="mono">${esc(p.guia)}</span>`:''}</li>`).join('');
+  const legs=[];for(let i=0;i<pts.length;i+=10){const seg=pts.slice(Math.max(0,i-1),i+10),f=x=>x.join(',');if(seg.length<2&&legs.length)break;
+    legs.push(seg.length===1?gmaps(seg[0]):`https://www.google.com/maps/dir/?api=1&origin=${f(seg[0])}&destination=${f(seg[seg.length-1])}${seg.length>2?'&waypoints='+seg.slice(1,-1).map(f).join('%7C'):''}`)}
+  $('#trackLinks').innerHTML=legs.map((l,i)=>`<a class="btn sm road" href="${l}" target="_blank" rel="noopener">Abrir en Google Maps${legs.length>1?' '+(i+1):''}</a>`).join('');
+  try{
+    if(!document.querySelector('link[data-leaflet]')){const l=document.createElement('link');l.rel='stylesheet';l.href=CSS_MAP;l.dataset.leaflet=1;document.head.appendChild(l)}
+    await loadScript(LIB_MAP);
+    if(!TMAP){TMAP=L.map('trackMap',{zoomControl:true,attributionControl:true});L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(TMAP);TMAP.layer=L.layerGroup().addTo(TMAP)}
+    TMAP.layer.clearLayers();
+    L.polyline(pts,{color:getComputedStyle(document.documentElement).getPropertyValue('--road').trim()||'#1f2125',weight:3,dashArray:'6 6'}).addTo(TMAP.layer);
+    st.forEach((p,i)=>L.marker(pts[i],{icon:L.divIcon({className:'',html:`<div class="tpin">${i+1}</div>`,iconSize:[28,28],iconAnchor:[14,14]})}).bindPopup(`<b>${i+1}. ${esc(p.nombre||'')}</b><br>${fmtT2(p.pod.at)}${p.guia?'<br>'+esc(p.guia):''}`).addTo(TMAP.layer));
+    TMAP.invalidateSize();pts.length>1?TMAP.fitBounds(pts,{padding:[30,30]}):TMAP.setView(pts[0],16);
+  }catch(e){$('#trackMap').innerHTML='<p class="small muted" style="padding:12px">No se pudo cargar el mapa. Usá <b>Abrir en Google Maps</b>.</p>'}
+}
+const fmtT2=t=>new Date(t).toLocaleTimeString('es-CR',{hour:'numeric',minute:'2-digit'});
+document.querySelector('[data-tab="ruta"]').addEventListener('click',()=>requestAnimationFrame(renderTrack));
 
 if(!load()){S.pk=EXAMPLE.map(mkPkg);S.ex=true;S.pk[0].st='confirmado';S.pk[2].st='confirmado';S.pk[1].sent=true}
 if(!S.hora)S.hora='08:00';

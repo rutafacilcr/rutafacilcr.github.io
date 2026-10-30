@@ -112,6 +112,8 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - Mínimo `MIN_FOTOS = 3`. *Confirmar* se habilita con 3 fotos + GPS.
 - Guardado local: IndexedDB `rutafacil-evidencias`, store `ev` → `{id, pid, guia, cliente, at, lat, lng, acc, fotos:[Blob], up}`. En el paquete queda `p.pod = {id, n, at, lat, lng, acc, up}`.
 - Subida: `uploadPOD(id)` sube cada foto a `storage/v1/object/evidencias/<día>/<guia>_<id>_<n>.jpg` y luego llama `registrar_entrega`. Si falla, queda `up:false` y `uploadPending()` reintenta cada 60 s y al tocar *Revisar respuestas ahora*.
+- **Firma:** `<canvas id="podSig">` con eventos `pointer*` (`touch-action:none`). `POD.signed` pasa a `true` después de 40 px de trazo. `sigBlob()` exporta JPEG 0.7 con fondo blanco y sello "Recibió: … · fecha" (el bucket solo acepta JPEG). En IndexedDB: `rec.firma` (Blob), `rec.recibe`, `rec.sinFirma`; en el paquete `p.pod.firma` y `p.pod.recibe`. `uploadPOD` sube la firma como `_firma.jpg` al final de `p_fotos` y manda `p_recibe`; si el RPC responde 300/400/404 (base sin `p_recibe`) reintenta sin él.
+- **Recorrido de hoy:** `trackStops()` toma los paquetes con `pod` de hoy ordenados por hora; `renderTrack()` carga Leaflet (`LIB_MAP`/`CSS_MAP`) solo si hay entregas y la pestaña *Ruta* está visible, dibuja marcadores `.tpin` numerados y una línea punteada, y arma links de Google Maps en tramos de 10.
 - `openEvidence(p)` muestra fotos (desde IndexedDB), hora, GPS y estado del respaldo.
 
 ## 3d. Cuentas (`auth.js`)
