@@ -11,6 +11,7 @@ const KS='rutafacil-sesion',KD='rutafacil-dispositivo',KC='rutafacil-cuenta';
 const DOMINIO='rutafacilcr.github.io';   // correo interno: <8 dígitos>@rutafacilcr.github.io (nunca se le manda nada)
 const OFFLINE_DIAS=3;                     // sin internet, la app abre con la última revisión buena hasta 3 días
 const REVISAR_MIN=15;
+const SOPORTE=String(C.soporte||'62700666').replace(/\D/g,'');   // WhatsApp de soporte (config.js: soporte)
 
 const ls={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},
   set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
@@ -85,7 +86,9 @@ function montar(){
 }
 function bloquear(){document.documentElement.classList.add('rf-bloq');if(document.body){montar();gate.hidden=false}}
 function vista(html){bloquear();body.innerHTML=html;const f=body.querySelector('input');if(f&&!('ontouchstart' in window))f.focus()}
-const contacto=c=>c&&c.sinpe?`<a class="rfbtn" href="https://wa.me/506${tel8(c.sinpe)}" target="_blank" rel="noopener">Escribir al administrador por WhatsApp</a>`:'';
+const waSoporte=t=>`https://wa.me/506${SOPORTE}?text=${encodeURIComponent(t||'Hola, necesito ayuda con RutaFácil')}`;
+const contacto=()=>`<a class="rfbtn" href="${waSoporte()}" target="_blank" rel="noopener">Escribir a soporte por WhatsApp</a>`;
+const ayuda=`<p class="rfmuted">¿Necesitás ayuda? <a href="${waSoporte()}" target="_blank" rel="noopener" style="color:var(--accent,#f26b1d);font-weight:600">Escribinos por WhatsApp al ${SOPORTE.replace(/(\d{4})(\d{4})/,'$1 $2')}</a></p>`;
 const pagar=c=>c&&c.sinpe?`<p>Pagá <b>${colones(c.precio)}</b> por SINPE Móvil al <b class="rfpago">${esc(c.sinpe)}</b> con el detalle <b class="rfpago">RF ${esc(c.telefono)}</b> y avisale al administrador.</p>`:`<p>Escribile al administrador para activarla.</p>`;
 
 function vEntrar(err){
@@ -97,7 +100,7 @@ function vEntrar(err){
     <button class="rfbtn pri" id="rfOk">Entrar</button>
   </form>
   <button class="rflink" id="rfCrear">¿No tenés cuenta? Crear cuenta</button>
-  <p class="rfmuted">¿Olvidaste el PIN? Pedile uno nuevo al administrador.</p>`);
+  <p class="rfmuted">¿Olvidaste el PIN? Pedile uno nuevo al administrador.</p>${ayuda}`);
   body.querySelector('#rfCrear').onclick=()=>vCrear();
   body.querySelector('#rfForm').onsubmit=async e=>{
     e.preventDefault();const t=tel8(body.querySelector('#rfTel').value),pin=body.querySelector('#rfPin').value.trim(),er=body.querySelector('#rfErr'),b=body.querySelector('#rfOk');
@@ -119,7 +122,7 @@ function vCrear(){
     <p class="rferr" id="rfErr" role="alert"></p>
     <button class="rfbtn pri" id="rfOk">Crear cuenta</button>
   </form>
-  <button class="rflink" id="rfVolver">Ya tengo cuenta: entrar</button>`);
+  <button class="rflink" id="rfVolver">Ya tengo cuenta: entrar</button>${ayuda}`);
   body.querySelector('#rfVolver').onclick=()=>vEntrar();
   body.querySelector('#rfForm').onsubmit=async e=>{
     e.preventDefault();const q=s=>body.querySelector(s);const nom=q('#rfNom').value.trim(),t=tel8(q('#rfTel').value),pin=q('#rfPin').value.trim(),er=q('#rfErr'),b=q('#rfOk');
@@ -150,7 +153,7 @@ function vEstado(c){
   body.querySelector('#rfSalir').onclick=()=>salir();
 }
 function vError(msg){
-  vista(`<div class="rfmsg"><h2>No se pudo revisar tu cuenta</h2><p>${esc(msg)}</p><p class="rfmuted">Revisá que tengás internet.</p></div><button class="rfbtn pri" id="rfRev">Intentar de nuevo</button><button class="rflink" id="rfSalir">Salir de la cuenta</button>`);
+  vista(`<div class="rfmsg"><h2>No se pudo revisar tu cuenta</h2><p>${esc(msg)}</p><p class="rfmuted">Revisá que tengás internet.</p></div>${ayuda}<button class="rfbtn pri" id="rfRev">Intentar de nuevo</button><button class="rflink" id="rfSalir">Salir de la cuenta</button>`);
   body.querySelector('#rfRev').onclick=()=>revisar(true);body.querySelector('#rfSalir').onclick=()=>salir();
 }
 
