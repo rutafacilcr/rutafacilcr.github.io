@@ -21,6 +21,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.10.0 | — | Avisos de cuentas nuevas por WhatsApp y correo; aviso de activación al repartidor |
 
 ## 2026-10-30
+- **Videos de ayuda:** seis videos cortos (menos de 1 min c/u, verticales, con voz y subtítulos) en `videos/` y listados en `videos.json`, para *Soporte > Videos*: entrar, cargar paquetes, mensajes, pegar respuesta, ruta y prueba de entrega.
 - **1.10.0 · Avisos de cuentas:** cuando alguien crea cuenta o pide usar otro teléfono, al administrador le llega un WhatsApp (CallMeBot) y un correo (Resend), los dos gratis, configurables en *Panel > Ajustes*. Al activar, renovar o reactivar, el panel ofrece *Avisarle por WhatsApp* con el mensaje listo. La pantalla de espera del repartidor revisa cada minuto y la app se abre sola al activarse. Hay que volver a correr `supabase.sql`.
 - **1.9.0:** *Soporte* pasa a la barra de abajo, a la par de *Ruta*, con el ícono de audífonos; sale del encabezado.
 - **1.8.3:** el botón de Soporte y los enlaces de ayuda de la pantalla de entrar llevan un ícono de audífonos con micrófono (estilo call center) en vez de ❓.

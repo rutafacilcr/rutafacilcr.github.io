@@ -146,7 +146,14 @@ Tocá la etiqueta de color para pasar al siguiente estado.
 
 ## 4. Problemas comunes
 
-**Ayuda:** tocá **Soporte** (el ícono de audífonos) (arriba a la derecha, o *Soporte* al final de la pantalla). Ahí podés escribirnos por WhatsApp al **6270-0666** (el mensaje ya lleva tu versión de la app) y ver los **videos** de cómo se usa cada parte.
+**Ayuda:** tocá **Soporte** (el ícono de audífonos, abajo a la par de *Ruta*, o *Soporte* al final de la pantalla). Ahí podés escribirnos por WhatsApp al **6270-0666** (el mensaje ya lleva tu versión de la app) y ver los **videos** de cómo se usa cada parte:
+
+1. Entrar a la app (crear cuenta, número y PIN, soporte)
+2. Cargar los paquetes (escanear etiquetas, subir el Excel)
+3. Avisar por WhatsApp (mensaje y formulario)
+4. Pegar la respuesta del cliente
+5. Armar la ruta (horarios, Google Maps y Waze, voy en camino)
+6. Prueba de entrega (GPS y 3 fotos)
 
 **¿Qué versión tengo?** Bajá hasta el final de cualquier pestaña: dice *RutaFácil CR · versión 1.8.1*. Se lee **mayor.menor.corrección**: el primer número cambia con cambios grandes, el segundo con funciones nuevas y el tercero con arreglos.
 

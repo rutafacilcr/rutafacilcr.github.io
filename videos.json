@@ -1,1 +1,38 @@
-[]
+[
+ {
+  "titulo": "1. Entrar a la app",
+  "url": "videos/01-entrar.mp4",
+  "dur": "1:06",
+  "desc": "Crear tu cuenta, entrar con número y PIN, y pedir soporte."
+ },
+ {
+  "titulo": "2. Cargar los paquetes",
+  "url": "videos/02-cargar-paquetes.mp4",
+  "dur": "1:01",
+  "desc": "Escanear etiquetas con la cámara o subir el Excel."
+ },
+ {
+  "titulo": "3. Avisar por WhatsApp",
+  "url": "videos/03-mensajes.mp4",
+  "dur": "0:52",
+  "desc": "Mandar el mensaje a cada cliente y el formulario."
+ },
+ {
+  "titulo": "4. Pegar la respuesta del cliente",
+  "url": "videos/04-pegar-respuesta.mp4",
+  "dur": "0:46",
+  "desc": "Sacar la hora y la ubicación de lo que el cliente contestó."
+ },
+ {
+  "titulo": "5. Armar la ruta",
+  "url": "videos/05-ruta.mp4",
+  "dur": "0:58",
+  "desc": "Calcular el mejor orden respetando los horarios."
+ },
+ {
+  "titulo": "6. Prueba de entrega",
+  "url": "videos/06-prueba-de-entrega.mp4",
+  "dur": "0:55",
+  "desc": "Marcar entregado con GPS y 3 fotos."
+ }
+]

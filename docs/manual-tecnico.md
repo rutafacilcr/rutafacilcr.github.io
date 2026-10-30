@@ -193,7 +193,7 @@ Si los dos valores están vacíos, la app funciona sin formulario: los mensajes 
 
 ## 6. Mantenimiento
 
-- **Videos de ayuda:** se suben como MP4 a `videos/` (verticales 720p, idealmente menos de 25 MB cada uno; GitHub rechaza archivos de más de 100 MB) y se listan en `videos.json`: `[{"titulo","url","dur","desc"}]`. `url` puede ser relativa (`videos/01-entrar.mp4`) o un link de YouTube (se muestra embebido). Con la lista vacía, la app dice "Pronto vas a ver aquí los videos".
+- **Videos de ayuda:** se suben como MP4 a `videos/` (verticales 720p, idealmente menos de 25 MB cada uno; GitHub rechaza archivos de más de 100 MB) y se listan en `videos.json`: `[{"titulo","url","dur","desc"}]`. `url` puede ser relativa (`videos/01-entrar.mp4`) o un link de YouTube (se muestra embebido). Con la lista vacía, la app dice "Pronto vas a ver aquí los videos". Los seis videos actuales se grabaron con Playwright sobre la app real con datos de ejemplo y la cuenta simulada (no tocan Supabase), voz Piper `es_MX-claude-high` y subtítulos; el guion y los scripts para regrabarlos cuando cambie la app están en la carpeta del proyecto (`rutafacil/video/fuente-v2/`).
 - **WhatsApp de soporte:** constante `SOPORTE_WA` en `index.html` (`50662700666`).
 - **Ícono de soporte (1.8.3):** SVG en línea dentro de `index.html` y `auth.js`; no hay archivo de imagen que subir ni caché extra.
 
