@@ -17,8 +17,10 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.7.1 | — | Mensajes más claros al entrar |
 | 1.8.0 | — | Botón de Soporte con WhatsApp y videos de ayuda |
 | 1.8.1 | — | Soporte por WhatsApp en la pantalla de entrar |
+| 1.8.3 | — | Ícono de audífonos (call center) en Soporte |
 
 ## 2026-10-30
+- **1.8.3:** el botón de Soporte y los enlaces de ayuda de la pantalla de entrar llevan un ícono de audífonos con micrófono (estilo call center) en vez de ❓.
 - **1.8.2:** arreglo de diseño: en *Paquetes*, la línea de evidencia (📷 fotos · Ver evidencia) ya no aprieta la tarjeta del paquete.
 - **1.8.1:** la pantalla de entrar, crear cuenta y los avisos de cuenta llevan el enlace *¿Necesitás ayuda? Escribinos por WhatsApp* al soporte (6270 0666, se puede cambiar con `soporte` en `config.js`). Los botones de contacto de cuenta vencida, suspendida o teléfono pendiente también van a ese número.
 - **1.8.0 · Soporte:** botón *❓ Soporte* arriba (y en el pie) con WhatsApp directo al 6270-0666 y los videos de cómo se usa la app (lista en `videos.json`).

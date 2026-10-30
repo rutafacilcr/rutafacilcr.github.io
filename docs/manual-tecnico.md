@@ -188,6 +188,7 @@ Si los dos valores están vacíos, la app funciona sin formulario: los mensajes 
 
 - **Videos de ayuda:** se suben como MP4 a `videos/` (verticales 720p, idealmente menos de 25 MB cada uno; GitHub rechaza archivos de más de 100 MB) y se listan en `videos.json`: `[{"titulo","url","dur","desc"}]`. `url` puede ser relativa (`videos/01-entrar.mp4`) o un link de YouTube (se muestra embebido). Con la lista vacía, la app dice "Pronto vas a ver aquí los videos".
 - **WhatsApp de soporte:** constante `SOPORTE_WA` en `index.html` (`50662700666`).
+- **Ícono de soporte (1.8.3):** SVG en línea dentro de `index.html` y `auth.js`; no hay archivo de imagen que subir ni caché extra.
 
 - **Versión:** se muestra al final de la app, chiquita: *RutaFácil CR · versión 1.8.1*. Se usa versionado semántico **mayor.menor.corrección**: *mayor* sube con cambios grandes que obligan a reinstalar o migrar datos, *menor* con funciones nuevas y *corrección* con arreglos o ajustes visuales. Al publicar se cambia el número en `index.html` y `admin.html` (`#appVer`) y se anota en `CHANGELOG.md`. Sirve para confirmar si un celular ya tiene la versión nueva.
 
