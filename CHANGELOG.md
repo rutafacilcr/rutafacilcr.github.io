@@ -21,6 +21,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.10.0 | — | Avisos de cuentas nuevas por WhatsApp y correo; aviso de activación al repartidor |
 
 ## 2026-10-30
+- **1.10.3:** el botón *Cerrar* de Soporte pasa a naranja con texto blanco en negrita, igual que *Guardar ajustes* del panel.
 - **1.10.2:** el botón *Cerrar* de Soporte queda fijo abajo, siempre a la vista aunque haya muchos videos.
 - **1.10.1:** el botón *Cerrar* de Soporte ahora es un botón grafito de ancho completo, bien visible.
 - **Videos de ayuda:** seis videos cortos (menos de 1 min c/u, verticales, con voz y subtítulos) en `videos/` y listados en `videos.json`, para *Soporte > Videos*: entrar, cargar paquetes, mensajes, pegar respuesta, ruta y prueba de entrega.
