@@ -21,6 +21,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.10.0 | — | Avisos de cuentas nuevas por WhatsApp y correo; aviso de activación al repartidor |
 
 ## 2026-10-30
+- **1.11.1:** el botón *Cerrar* de Soporte pasa arriba, junto al título, compacto y con el mismo estilo que *Guardar ajustes*.
 - **1.11.0:** aviso *Hay una versión nueva · Actualizar* cuando se publica un cambio y el celular sigue con la versión vieja en caché.
 - **1.10.4:** el botón *Cerrar* de Soporte queda pequeño y centrado (tamaño de *Guardar ajustes*), siempre visible abajo.
 - **1.10.3:** el botón *Cerrar* de Soporte pasa a naranja con texto blanco en negrita, igual que *Guardar ajustes* del panel.

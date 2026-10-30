@@ -100,7 +100,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - Ícono: SVG en línea de audífonos con micrófono (`stroke=currentColor`, clase `.ico-sop`), sin archivos ni librerías; toma el color del texto. El mismo trazo va en `ayuda` y `contacto()` de `auth.js`.
 - Botón `#supTab` (cuarto botón de `nav.tabs`, ícono `.ico-sop`, sin `role=tab`: abre la hoja y no cambia de pestaña; el manejador de pestañas filtra `nav.tabs [role=tab]`) y enlace `#supPie` en el pie → `openSupport()` abre `#supSheet`.
 - WhatsApp: `wa.me/SOPORTE_WA` con texto que incluye la versión (`#appVer`).
-- Videos: `fetch('videos.json',{cache:'no-cache'})`; si la URL es de YouTube usa un `<iframe>` de youtube-nocookie, si no un `<video controls playsinline preload=metadata>`. Al cerrar (`#supClose`, `.btn.primary` naranja del tamaño de *Guardar ajustes*, centrado y con `position:sticky` abajo, siempre visible) se pausan y se vacía la lista para no gastar datos.
+- Videos: `fetch('videos.json',{cache:'no-cache'})`; si la URL es de YouTube usa un `<iframe>` de youtube-nocookie, si no un `<video controls playsinline preload=metadata>`. Al cerrar (`#supClose`, arriba a la derecha junto al título; mismo tamaño que `.btn.pri` del panel: 14 px, 8×12 px de relleno, radio 8 px) se pausan y se vacía la lista para no gastar datos.
 - El pie también lo usa `auth.js` (`.rfcuenta`, cuenta y Salir): el enlace de soporte va al inicio del pie para no tocar ese bloque.
 
 ## 3b. Prueba de entrega
