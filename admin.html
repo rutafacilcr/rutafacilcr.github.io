@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Panel RutaFácil</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#1f2125">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap">
+<script src="config.js"></script>
+<script>window.RF_AUTH_ADMIN=true</script>
+<script src="auth.js"></script>
+<style>
+/* Panel del administrador: mismos tokens que index.html */
+:root{
+  --bg:#f5f5f4; --surface:#ffffff; --ink:#1c1917; --muted:#6b6560; --line:#e2dfdc;
+  --accent:#f26b1d; --accent-ink:#ffffff; --road:#1f2125; --road-ink:#ffffff;
+  --ok:#2f8a4e; --ok-bg:#e3f3e8; --warn:#b5651d; --warn-bg:#fbecdc; --bad:#b03a3a; --bad-bg:#f8e1e1; --info-bg:#e6eef6; --info:#2d5d8a;
+  --f-display:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121315; --surface:#1b1d21; --ink:#ececeb; --muted:#a8a4a0; --line:#2e3137;
+  --accent:#f5803a; --accent-ink:#1f2125; --road:#1f2125; --road-ink:#ffffff;
+  --ok:#6cc98b; --ok-bg:#183326; --warn:#e9a463; --warn-bg:#3a2816; --bad:#ec8a8a; --bad-bg:#3a1c1c; --info-bg:#1a2a3a; --info:#8db8e3;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121315; --surface:#1b1d21; --ink:#ececeb; --muted:#a8a4a0; --line:#2e3137;
+  --accent:#f5803a; --accent-ink:#1f2125; --road:#1f2125; --road-ink:#ffffff;
+  --ok:#6cc98b; --ok-bg:#183326; --warn:#e9a463; --warn-bg:#3a2816; --bad:#ec8a8a; --bad-bg:#3a1c1c; --info-bg:#1a2a3a; --info:#8db8e3;
+  color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:760px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left,0px)) 48px}
+header.top{background:var(--road);color:var(--road-ink);border-bottom:3px solid var(--accent)}
+header.top .wrap{padding-block:18px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header.top a{color:var(--road-ink);font-size:14px}
+h1{font-family:var(--f-display);font-weight:800;font-size:24px;margin:0;line-height:1.1}
+h1 span{color:var(--accent)}
+h2{font-family:var(--f-display);font-size:18px;margin:0}
+h3{font-size:16px;margin:0}
+p{margin:0}
+section{display:flex;flex-direction:column;gap:12px;padding-top:20px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.muted{color:var(--muted)}.small{font-size:13px}.mono{font-family:var(--f-mono)}
+label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600}
+input,select{font:inherit;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:inherit;min-width:0}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.btn{font:inherit;font-weight:600;font-size:14px;padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:inherit;cursor:pointer}
+.btn.pri{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.btn.bad{color:var(--bad)}
+.btn:disabled{opacity:.6}
+.chip{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--info-bg);color:var(--info)}
+.chip.ok{background:var(--ok-bg);color:var(--ok)}.chip.warn{background:var(--warn-bg);color:var(--warn)}.chip.bad{background:var(--bad-bg);color:var(--bad)}
+.alerta{background:var(--warn-bg);color:var(--ink);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.filtros{display:flex;gap:6px;flex-wrap:wrap}
+.filtros button{font:inherit;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer}
+.filtros button[aria-pressed="true"]{background:var(--road);color:var(--road-ink);border-color:var(--road)}
+.toggle{flex-direction:row;align-items:center;gap:10px;font-size:15px}
+.toggle input{width:20px;height:20px}
+.ev{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:6px 0;font-size:14px}
+.ev:last-child{border-bottom:0}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--road);color:var(--road-ink);padding:10px 16px;border-radius:999px;font-size:14px;z-index:50;max-width:calc(100% - 32px)}
+.appver{text-align:center;font-size:12px;color:var(--muted);padding:28px 0 4px}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div style="display:flex;gap:12px;align-items:center"><img src="icon-192.png" alt="" width="40" height="40" style="border-radius:10px"><h1>Panel Ruta<span>Fácil</span></h1></div>
+  <a href="./">Ir a la app</a>
+</div></header>
+<main class="wrap">
+
+<section aria-labelledby="t-resumen">
+  <h2 id="t-resumen" hidden>Resumen</h2>
+  <div class="grid" id="resumen"></div>
+</section>
+
+<section aria-labelledby="t-cuentas">
+  <div class="row" style="justify-content:space-between"><h2 id="t-cuentas">Cuentas</h2><button class="btn" id="recargar">Actualizar</button></div>
+  <input id="buscar" placeholder="Buscar por nombre o número" aria-label="Buscar cuenta">
+  <div class="filtros" id="filtros">
+    <button data-f="todas" aria-pressed="true">Todas</button>
+    <button data-f="atender" aria-pressed="false">Por atender</button>
+    <button data-f="vencer" aria-pressed="false">Vencen en 5 días</button>
+    <button data-f="vencidas" aria-pressed="false">Vencidas</button>
+    <button data-f="suspendidas" aria-pressed="false">Suspendidas</button>
+  </div>
+  <div id="lista" style="display:flex;flex-direction:column;gap:10px"></div>
+</section>
+
+<section aria-labelledby="t-ajustes">
+  <h2 id="t-ajustes">Ajustes</h2>
+  <div class="panel">
+    <label class="toggle"><input type="checkbox" id="a-exigir"> Exigir cuenta activa</label>
+    <p class="small muted">Apagado: la app pide entrar, pero el servidor todavía responde a la versión vieja sin cuenta. Encendelo cuando todos tengan la versión nueva: desde ahí, sin cuenta al día y en su teléfono aprobado no se leen respuestas de clientes ni se suben evidencias.</p>
+    <div class="grid">
+      <label>Número SINPE Móvil<input id="a-sinpe" inputmode="numeric" placeholder="6270 0666"></label>
+      <label>Precio por mes (₡)<input id="a-precio" type="number" min="0" step="500"></label>
+      <label>Días de gracia<input id="a-gracia" type="number" min="0" max="30"></label>
+    </div>
+    <div class="row"><button class="btn pri" id="a-guardar">Guardar ajustes</button></div>
+  </div>
+</section>
+
+<section aria-labelledby="t-fotos">
+  <h2 id="t-fotos">Fotos de entrega</h2>
+  <div class="panel">
+    <p class="small muted">El plan gratis de Supabase tiene 1 GB. Cada entrega ocupa unos 0,4 MB, así que conviene borrar las fotos viejas cada mes. Las fotos se guardan por día.</p>
+    <div class="row"><button class="btn" id="f-calc">Calcular espacio usado</button><span id="f-uso" class="small"></span></div>
+    <div class="row"><label style="flex-direction:row;align-items:center;gap:8px">Borrar fotos de más de <input id="f-dias" type="number" min="7" value="30" style="width:80px"> días</label><button class="btn bad" id="f-borrar">Borrar</button></div>
+  </div>
+</section>
+
+<section aria-labelledby="t-alertas">
+  <h2 id="t-alertas">Movimientos recientes</h2>
+  <div class="panel" id="eventos"></div>
+</section>
+
+<footer class="appver">RutaFácil CR · panel · versión <span id="appVer">1.7.0</span></footer>
+</main>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const colones=n=>'₡'+Number(n||0).toLocaleString('es-CR');
+const fecha=d=>d?new Date(d).toLocaleDateString('es-CR',{day:'numeric',month:'short',year:'numeric'}):'—';
+const fechaHora=d=>d?new Date(d).toLocaleString('es-CR',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}):'—';
+const tel=t=>String(t||'').replace(/(\d{4})(\d{4})/,'$1 $2');
+const dias=d=>d?Math.ceil((new Date(d)-Date.now())/864e5):null;
+function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2600)}
+let CU=[],AJ={precio:5000,sinpe:'',dias_gracia:3,exigir_cuenta:false},FIL='todas';
+
+const EVENTO={cuenta_nueva:'Cuenta nueva',telefono_nuevo:'Pidió usar otro teléfono',telefono_aprobado:'Teléfono aprobado',telefono_rechazado:'Teléfono rechazado',telefono_liberado:'Teléfono liberado',renovada:'Pago registrado',estado:'Cambio de estado',pin:'PIN nuevo'};
+
+function estadoDe(c){
+  if(c.rol==='admin')return ['Administrador','ok'];
+  if(c.estado==='suspendido')return ['Suspendida','bad'];
+  if(c.estado==='pendiente'||!c.vence_en)return ['Sin activar','warn'];
+  const d=dias(c.vence_en);
+  if(d<-AJ.dias_gracia)return ['Vencida','bad'];
+  if(d<0)return ['En gracia','warn'];
+  if(d<=5)return [`Vence en ${d} día${d===1?'':'s'}`,'warn'];
+  return ['Al día','ok'];
+}
+function filtrar(c){
+  const q=$('#buscar').value.trim().toLowerCase();
+  if(q&&!(c.nombre||'').toLowerCase().includes(q)&&!(c.telefono||'').includes(q.replace(/\D/g,'')||'@@'))return false;
+  const d=dias(c.vence_en);
+  if(FIL==='atender')return c.pendiente||(c.rol!=='admin'&&c.estado==='pendiente');
+  if(FIL==='vencer')return c.rol!=='admin'&&c.estado==='activo'&&d!==null&&d>=0&&d<=5;
+  if(FIL==='vencidas')return c.rol!=='admin'&&c.estado==='activo'&&d!==null&&d<0;
+  if(FIL==='suspendidas')return c.estado==='suspendido';
+  return true;
+}
+function pintar(){
+  const activos=CU.filter(c=>c.rol!=='admin'&&c.estado==='activo'&&dias(c.vence_en)>=0).length;
+  const atender=CU.filter(c=>c.pendiente||(c.rol!=='admin'&&c.estado==='pendiente')).length;
+  $('#resumen').innerHTML=[['Cuentas',CU.filter(c=>c.rol!=='admin').length],['Al día',activos],['Por atender',atender],['Ingreso del mes',colones(activos*AJ.precio)]]
+    .map(([k,v])=>`<div class="panel" style="gap:2px"><span class="small muted">${k}</span><b style="font-size:22px">${v}</b></div>`).join('');
+  const L=CU.filter(filtrar);
+  $('#lista').innerHTML=L.length?L.map(c=>{const [e,k]=estadoDe(c);const p=c.ultimo_pago;return `<article class="panel" data-id="${c.id}">
+    <div class="row" style="justify-content:space-between"><h3>${esc(c.nombre||'(sin nombre)')}</h3><span class="chip ${k}">${e}</span></div>
+    <p class="small"><a class="mono" href="https://wa.me/506${esc(c.telefono)}" target="_blank" rel="noopener">${tel(c.telefono)}</a>
+      · ${c.rol==='admin'?'sin vencimiento':'vence '+fecha(c.vence_en)} · último uso ${fechaHora(c.ultimo_acceso)}${c.con_telefono?'':' · <b>sin teléfono asignado</b>'}</p>
+    ${p?`<p class="small muted">Último pago: ${colones(p.monto)} por ${p.dias} días, ${fecha(p.fecha)}${p.referencia?' · '+esc(p.referencia):''}</p>`:''}
+    ${c.pendiente?`<div class="alerta"><p class="small"><b>Pide usar otro teléfono</b> (desde el ${fechaHora(c.pendiente_desde)}). Aprobalo solo si ${esc((c.nombre||'').split(' ')[0])} te confirmó que cambió de celular; el teléfono anterior se cierra.</p>
+      <div class="row"><button class="btn pri" data-a="aprobar">Aprobar teléfono nuevo</button><button class="btn" data-a="rechazar">Rechazar</button></div></div>`:''}
+    ${c.rol==='admin'?'':`<div class="row">
+      <button class="btn pri" data-a="pago">Registrar pago</button>
+      ${c.estado==='pendiente'?'<button class="btn" data-a="prueba">Dar 14 días de prueba</button>':''}
+      ${c.estado==='suspendido'?'<button class="btn" data-a="reactivar">Reactivar</button>':'<button class="btn bad" data-a="suspender">Suspender</button>'}
+      <button class="btn" data-a="pin">PIN nuevo</button>
+      <button class="btn" data-a="nombre">Cambiar nombre</button>
+      ${c.con_telefono?'<button class="btn" data-a="liberar">Liberar teléfono</button>':''}
+    </div>`}
+  </article>`}).join(''):`<p class="muted">No hay cuentas en esta vista.</p>`;
+}
+async function cargar(){
+  try{
+    const [cu,ev,aj]=await Promise.all([RF_AUTH.rpc('rf_admin_cuentas'),RF_AUTH.rpc('rf_admin_eventos'),RF_AUTH.rpc('rf_admin_ajustes',{p_exigir:null,p_sinpe:null,p_precio:null,p_gracia:null})]);
+    CU=cu||[];AJ=aj||AJ;
+    $('#a-exigir').checked=!!AJ.exigir_cuenta;$('#a-sinpe').value=AJ.sinpe||'';$('#a-precio').value=AJ.precio;$('#a-gracia').value=AJ.dias_gracia;
+    $('#eventos').innerHTML=(ev||[]).length?ev.map(e=>`<div class="ev"><span>${esc(EVENTO[e.tipo]||e.tipo)} · <b>${esc(e.nombre||'')}</b>${e.detalle&&e.detalle.monto!=null?' · '+colones(e.detalle.monto):''}${e.detalle&&e.detalle.estado?' · '+esc(e.detalle.estado):''}</span><span class="muted small">${fechaHora(e.creado_en)}</span></div>`).join(''):'<p class="muted small">Sin movimientos.</p>';
+    pintar();
+  }catch(e){toast('No se pudo cargar: '+e.message)}
+}
+async function hacer(fn,args,ok){try{await RF_AUTH.rpc(fn,args);toast(ok);await cargar()}catch(e){toast('No se pudo: '+e.message)}}
+
+$('#lista').addEventListener('click',async e=>{
+  const b=e.target.closest('button[data-a]');if(!b)return;
+  const id=b.closest('[data-id]').dataset.id,c=CU.find(x=>x.id===id),a=b.dataset.a,nom=c.nombre||c.telefono;
+  if(a==='aprobar')return hacer('rf_admin_telefono',{p_id:id,p_accion:'aprobar'},'Teléfono aprobado');
+  if(a==='rechazar')return hacer('rf_admin_telefono',{p_id:id,p_accion:'rechazar'},'Cambio rechazado');
+  if(a==='liberar'){if(confirm(`¿Liberar el teléfono de ${nom}? El próximo celular donde entre quedará aprobado.`))hacer('rf_admin_telefono',{p_id:id,p_accion:'liberar'},'Teléfono liberado');return}
+  if(a==='prueba')return hacer('rf_admin_renovar',{p_id:id,p_dias:14,p_monto:0,p_referencia:'Prueba gratis'},'14 días de prueba activados');
+  if(a==='suspender'){if(confirm(`¿Suspender la cuenta de ${nom}? Deja de funcionar de inmediato.`))hacer('rf_admin_estado',{p_id:id,p_estado:'suspendido'},'Cuenta suspendida');return}
+  if(a==='reactivar')return hacer('rf_admin_estado',{p_id:id,p_estado:'activo'},'Cuenta reactivada');
+  if(a==='pago'){
+    const monto=prompt(`Monto recibido de ${nom} (₡):`,AJ.precio);if(monto===null)return;
+    const d=prompt('¿Cuántos días cubre?','30');if(d===null)return;
+    const ref=prompt('Referencia del SINPE (opcional):','')??'';
+    return hacer('rf_admin_renovar',{p_id:id,p_dias:parseInt(d,10)||30,p_monto:parseInt(String(monto).replace(/\D/g,''),10)||0,p_referencia:ref},'Pago registrado');
+  }
+  if(a==='pin'){
+    const pin=Array.from(crypto.getRandomValues(new Uint8Array(6)),x=>x%10).join('');
+    if(!confirm(`El PIN nuevo de ${nom} será ${pin}. ¿Seguir? Después se lo mandás por WhatsApp.`))return;
+    try{await RF_AUTH.rpc('rf_admin_pin',{p_id:id,p_pin:pin});prompt('PIN cambiado. Copiá y mandale este mensaje:',`Tu PIN nuevo de RutaFácil es ${pin}`)}catch(x){toast('No se pudo: '+x.message)}
+    return;
+  }
+  if(a==='nombre'){const n=prompt('Nombre (así lo ven sus clientes):',c.nombre||'');if(n&&n.trim())hacer('rf_admin_nombre',{p_id:id,p_nombre:n.trim()},'Nombre cambiado');return}
+});
+$('#filtros').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;FIL=b.dataset.f;document.querySelectorAll('#filtros button').forEach(x=>x.setAttribute('aria-pressed',x===b));pintar()});
+$('#buscar').addEventListener('input',pintar);
+$('#recargar').onclick=cargar;
+$('#a-guardar').onclick=async()=>{
+  try{AJ=await RF_AUTH.rpc('rf_admin_ajustes',{p_exigir:$('#a-exigir').checked,p_sinpe:$('#a-sinpe').value.replace(/\D/g,''),p_precio:parseInt($('#a-precio').value,10)||0,p_gracia:parseInt($('#a-gracia').value,10)||0});toast('Ajustes guardados');pintar()}
+  catch(e){toast('No se pudo: '+e.message)}
+};
+
+// ---- Fotos en Supabase Storage (carpeta evidencias/AAAA-MM-DD/...) ----
+async function storage(path,body,method='POST'){
+  const C=RF_CONFIG,r=await fetch(C.supabaseUrl.replace(/\/$/,'')+'/storage/v1/'+path,{method,headers:{...(await RF_AUTH.headers()),'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const j=await r.json().catch(()=>null);if(!r.ok)throw new Error((j&&(j.message||j.error))||('error '+r.status));return j;
+}
+async function listar(prefix){const out=[];for(let off=0;;off+=1000){const j=await storage('object/list/evidencias',{prefix,limit:1000,offset:off,sortBy:{column:'name',order:'asc'}});out.push(...j);if(j.length<1000)return out}}
+async function carpetas(){return (await listar('')).filter(x=>!x.id&&/^\d{4}-\d{2}-\d{2}$/.test(x.name)).map(x=>x.name)}
+$('#f-calc').onclick=async()=>{
+  const b=$('#f-calc');b.disabled=true;$('#f-uso').textContent='Calculando…';
+  try{const ds=await carpetas();let n=0,bytes=0;for(const d of ds){const fs=await listar(d);n+=fs.length;bytes+=fs.reduce((s,f)=>s+((f.metadata&&f.metadata.size)||0),0)}
+    $('#f-uso').textContent=`${n} fotos en ${ds.length} días · ${(bytes/1048576).toFixed(0)} MB de 1024 MB`}
+  catch(e){$('#f-uso').textContent='No se pudo: '+e.message}finally{b.disabled=false}
+};
+$('#f-borrar').onclick=async()=>{
+  const n=Math.max(7,parseInt($('#f-dias').value,10)||30),lim=new Date(Date.now()-n*864e5).toISOString().slice(0,10);
+  if(!confirm(`¿Borrar de Supabase todas las fotos de entregas anteriores al ${lim}? No se pueden recuperar.`))return;
+  const b=$('#f-borrar');b.disabled=true;
+  try{const ds=(await carpetas()).filter(d=>d<lim);let tot=0;
+    for(const d of ds){const fs=(await listar(d)).filter(f=>f.id).map(f=>`${d}/${f.name}`);for(let i=0;i<fs.length;i+=500){await storage('object/evidencias',{prefixes:fs.slice(i,i+500)},'DELETE');tot+=Math.min(500,fs.length-i)}}
+    toast(`${tot} fotos borradas`);$('#f-uso').textContent=''}
+  catch(e){toast('No se pudo borrar: '+e.message)}finally{b.disabled=false}
+};
+
+RF_AUTH.listo.then(c=>{if(c&&c.rol==='admin')cargar();else if(!RF_AUTH.on)$('#lista').innerHTML='<p class="muted">Falta configurar Supabase en config.js.</p>'});
+</script>
+</body>
+</html>

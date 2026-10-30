@@ -20,6 +20,10 @@ La app se maneja con tres pestañas en la barra de abajo: **Paquetes**, **Mensaj
 
 Funciona desde el celular, se puede instalar como ícono en la pantalla de inicio y no necesita servidor propio.
 
+## Cuentas
+
+Desde la versión 1.7.0 cada repartidor entra con **su número de teléfono y un PIN de 6 números**. La cuenta queda atada a un solo celular: si alguien la abre en otro, el administrador tiene que aprobar el cambio. El administrador activa, renueva (pagos por SINPE Móvil) o suspende cuentas desde el **panel** (`admin.html`). Así la app no se puede pasar entre compañeros ni usar sin una cuenta al día.
+
 ## Documentación
 
 - [Manual de usuario](docs/manual-usuario.md): cómo usar la app día a día.
@@ -34,8 +38,10 @@ Funciona desde el celular, se puede instalar como ícono en la pantalla de inici
 | `index.html` | La app del repartidor (todo en un archivo). |
 | `entrega.html` | Formulario que llena el cliente (se manda en un segundo mensaje). |
 | `f.html` | Redirige links viejos a `entrega.html`. |
+| `auth.js` | Cuentas: pantalla de entrada (número + PIN), un teléfono por cuenta y estado de la mensualidad. |
+| `admin.html` | Panel del administrador: cuentas, pagos, cambios de teléfono, ajustes y limpieza de fotos. |
 | `config.js` | Dirección y llave pública de Supabase. |
-| `supabase.sql` | Crea la tabla y las funciones del formulario en Supabase. |
+| `supabase.sql` | Crea en Supabase las cuentas, el formulario, las pruebas de entrega y sus reglas de acceso. |
 | `plantilla-paquetes.xlsx` | Plantilla de Excel para la lista de paquetes. |
 | `manifest.json`, `logo.svg`, `*.png` | Logo (pin con paquete) e íconos para instalar la app en el celular. |
 
@@ -45,4 +51,4 @@ Paleta *Grafito y naranja* con el logo **pin con paquete**. Marca propia: la app
 
 ## Estado
 
-Versión piloto en uso por el autor. Hecha en HTML, CSS y JavaScript sin frameworks, publicada con GitHub Pages y Supabase (plan gratis).
+Versión piloto en uso por el autor, con cuentas de usuario listas para venderla por suscripción. Hecha en HTML, CSS y JavaScript sin frameworks, publicada con GitHub Pages y Supabase (plan gratis).

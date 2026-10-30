@@ -19,6 +19,25 @@ Guía para el repartidor. No hace falta saber de computadoras.
 
 Vas a ver el pin naranja con el paquete sobre fondo grafito. Después abrí siempre la app desde el ícono **RutaFácil**. En iPhone, el ícono guarda sus datos aparte de Safari.
 
+**Importante:** instalá el ícono **antes** de crear la cuenta o entrar. En iPhone, Safari y el ícono cuentan como teléfonos distintos.
+
+### Tu cuenta
+
+La app pide entrar con **tu número de teléfono** y un **PIN de 6 números**.
+
+1. **Crear cuenta** (solo la primera vez): tocá *¿No tenés cuenta? Crear cuenta*, escribí tu nombre (así te ven los clientes en los mensajes), tu número de WhatsApp y elegí un PIN. No uses PIN fáciles como 111111 o 123456.
+2. **Activación:** la cuenta queda *esperando activación*. Pagá la mensualidad por **SINPE Móvil** al número que muestra la pantalla, con el detalle **RF + tu número** (ej. *RF 88887777*), y avisale al administrador por WhatsApp. Cuando la active, tocá **Revisar de nuevo**.
+3. **Los días siguientes** la app abre sola. Si te pide entrar, poné tu número y PIN.
+
+Reglas de la cuenta:
+
+- **Es personal y funciona en un solo teléfono.** Si entrás en otro celular, ese queda *esperando aprobación* hasta que el administrador lo apruebe; cuando lo aprueba, el teléfono anterior se cierra.
+- **Tu nombre** en los mensajes sale de la cuenta y no se cambia en *Mensajes*. Si está mal escrito, pedile al administrador que lo corrija.
+- **Sin internet** la app sigue abriendo hasta 3 días con la última revisión.
+- **Mensualidad:** al final de la app dice *al día hasta el …*. Si vence, tenés unos días de gracia (lo dice en rojo) y después la app se bloquea hasta que pagués.
+- **¿Olvidaste el PIN?** Pedile uno nuevo al administrador por WhatsApp.
+- **Salir:** al final de la app, **Salir**. Tu lista de paquetes se queda en el celular.
+
 ---
 
 ## 2. Rutina diaria
@@ -126,14 +145,19 @@ Tocá la etiqueta de color para pasar al siguiente estado.
 
 ## 4. Problemas comunes
 
-**¿Qué versión tengo?** Bajá hasta el final de cualquier pestaña: dice *RutaFácil CR · versión 1.6.2*. Se lee **mayor.menor.corrección**: el primer número cambia con cambios grandes, el segundo con funciones nuevas y el tercero con arreglos.
+**¿Qué versión tengo?** Bajá hasta el final de cualquier pestaña: dice *RutaFácil CR · versión 1.7.0*. Se lee **mayor.menor.corrección**: el primer número cambia con cambios grandes, el segundo con funciones nuevas y el tercero con arreglos.
 
 
-**¿Veo los colores o el ícono viejo?** El celular guarda la versión anterior. Cerrá la app por completo (deslizala hacia arriba) y abrila de nuevo; al final de la pestaña tiene que decir la versión nueva (ej. *versión 1.6.2*). Si el ícono sigue viejo, borrá el acceso directo y agregalo otra vez desde https://rutafacilcr.github.io/.
+**¿Veo los colores o el ícono viejo?** El celular guarda la versión anterior. Cerrá la app por completo (deslizala hacia arriba) y abrila de nuevo; al final de la pestaña tiene que decir la versión nueva (ej. *versión 1.7.0*). Si el ícono sigue viejo, borrá el acceso directo y agregalo otra vez desde https://rutafacilcr.github.io/.
 
 
 | Problema | Qué hacer |
 |---|---|
+| "Número o PIN incorrecto" | Revisá el número (8 dígitos) y el PIN. Si no lo recordás, pedile uno nuevo al administrador. |
+| "Esta cuenta está en otro teléfono" | Tu cuenta ya está aprobada en otro celular. Si cambiaste de teléfono, avisale al administrador para que apruebe este. |
+| "La cuenta se pasó a otro teléfono" | El administrador aprobó otro celular y este se cerró. Si fue un error, escribile. |
+| "Tu cuenta espera activación" o "Tu mensualidad venció" | Pagá por SINPE Móvil con el detalle que dice la pantalla, avisale al administrador y tocá **Revisar de nuevo**. |
+| "No se pudo revisar tu cuenta" | No hay internet. Si la cuenta se revisó bien en los últimos 3 días, la app abre igual. |
 | No abre WhatsApp | Revisá que el teléfono tenga 8 dígitos. Si dice "Teléfono inválido", corregilo con **Editar**. |
 | El mensaje sale desde otro número | WhatsApp usa la cuenta abierta en ese celular. |
 | La ubicación no se detecta | Usá el link largo o las coordenadas, no el link corto. |
@@ -146,3 +170,22 @@ Tocá la etiqueta de color para pasar al siguiente estado.
 | No llegan las respuestas | Revisá el internet y tocá **Revisar respuestas ahora**. El cliente tiene que tocar **Enviar** en el formulario. |
 | Desapareció mi lista | Abriste la app en otro navegador o desde Safari en vez del ícono. |
 | El link viejo (victormenav…/RutafacilCR) no abre | La app se mudó a https://rutafacilcr.github.io/. Instalá el ícono de nuevo desde ahí. |
+
+---
+
+## 5. Para el administrador
+
+El panel está en https://rutafacilcr.github.io/admin.html (o **Panel**, al final de la app, si tu cuenta es de administrador).
+
+| Para | Hacé esto |
+|---|---|
+| Activar a alguien que pagó | **Registrar pago**: monto, días que cubre (30) y referencia del SINPE. Si ya estaba al día, los días se suman al vencimiento. |
+| Dar prueba gratis | **Dar 14 días de prueba** (solo en cuentas sin activar). |
+| Aprobar un cambio de celular | En la cuenta sale el aviso naranja *Pide usar otro teléfono*. Aprobalo solo si la persona te confirmó que cambió de celular; si no, **Rechazar**: probablemente le pasó el PIN a alguien. |
+| Cortar el acceso | **Suspender**. Funciona de inmediato. **Reactivar** lo devuelve. |
+| PIN olvidado | **PIN nuevo** genera uno al azar; copiá el mensaje y mandáselo por WhatsApp. |
+| Ver quién atender | Filtro **Por atender** (cuentas sin activar y cambios de teléfono) y **Vencen en 5 días**. |
+| Liberar espacio de fotos | **Fotos de entrega** > **Calcular espacio usado** y **Borrar** las de más de 30 días. |
+
+En **Ajustes** van el número SINPE que ven los repartidores, el precio, los días de gracia y el interruptor **Exigir cuenta activa** (ver manual técnico).
+

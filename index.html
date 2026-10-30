@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="config.js"></script>
+<script src="auth.js"></script>
 <style>
 /* Layout: one mobile-first column, sticky tab bar, three steps (Paquetes, Mensajes, Ruta) */
 :root{
@@ -243,7 +244,7 @@ details summary{cursor:pointer;font-weight:600}
   </div>
   <div id="routeOut" class="list"></div>
 </section>
-<footer class="appver">RutaFácil CR · versión <span id="appVer">1.6.2</span></footer>
+<footer class="appver">RutaFácil CR · versión <span id="appVer">1.7.0</span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -557,7 +558,7 @@ async function syncResp(manual){
   if(!FORM_ON||!S.pk.length)return;
   const C=RF_CONFIG;$('#syncInfo').textContent='Revisando…';
   try{
-    const r=await fetch(C.supabaseUrl.replace(/\/$/,'')+'/rest/v1/rpc/leer_respuestas',{method:'POST',headers:{'Content-Type':'application/json',apikey:C.supabaseAnonKey,...(C.supabaseAnonKey.startsWith('eyJ')?{Authorization:'Bearer '+C.supabaseAnonKey}:{})},body:JSON.stringify({p_tokens:S.pk.map(p=>p.tok)})});
+    const r=await fetch(C.supabaseUrl.replace(/\/$/,'')+'/rest/v1/rpc/leer_respuestas',{method:'POST',headers:{'Content-Type':'application/json',...(await RF_AUTH.headers())},body:JSON.stringify({p_tokens:S.pk.map(p=>p.tok)})});
     if(!r.ok)throw new Error(r.status+' '+(await r.text()).slice(0,80));
     const rows=await r.json();let nuevos=0;
     for(const row of rows){const p=S.pk.find(x=>x.tok===row.token);if(!p)continue;
@@ -663,7 +664,7 @@ $('#podOk').onclick=async()=>{
 async function uploadPOD(id,quiet){
   if(!FORM_ON)return false;
   const p=S.pk.find(x=>x.pod&&x.pod.id===id);const rec=await IDB.get(id).catch(()=>null);if(!rec||rec.up)return true;
-  const C=RF_CONFIG,base=C.supabaseUrl.replace(/\/$/,''),H={apikey:C.supabaseAnonKey,...(C.supabaseAnonKey.startsWith('eyJ')?{Authorization:'Bearer '+C.supabaseAnonKey}:{})};
+  const C=RF_CONFIG,base=C.supabaseUrl.replace(/\/$/,''),H=await RF_AUTH.headers();
   try{
     const day=new Date(rec.at).toISOString().slice(0,10),safe=(rec.guia||rec.pid||'paquete').replace(/[^\w-]/g,'_');const paths=[];
     for(let i=0;i<rec.fotos.length;i++){const path=`${day}/${safe}_${id}_${i+1}.jpg`;
@@ -840,8 +841,13 @@ S.pk.forEach(p=>{if(!p.tok)p.tok=tok()});
 if([DEF_COORD,DEF_COORD_F,...OLD_COORD_F].includes(S.coord)){S.coord=DEF_SIMPLE;$('#m-coord').value=S.coord}
 save();
 render();
+// Cuentas (auth.js): el nombre del dueño de la cuenta firma los mensajes y la sincronización espera a que la cuenta esté abierta.
+const usarCuenta=c=>{if(!c||!c.nombre)return;S.yo=c.nombre;$('#m-yo').value=S.yo;$('#m-yo').readOnly=true;$('#m-yo').title='Sale de tu cuenta';save();renderMsg()};
+document.addEventListener('rf-cuenta',e=>usarCuenta(e.detail));
+RF_AUTH.listo.then(c=>{usarCuenta(c);
 if(FORM_ON){ // formulario como segundo mensaje: el primero nunca lleva link
 $('#syncPanel').hidden=false;$('#syncBtn').onclick=()=>{syncResp(true);uploadPending()};syncResp();uploadPending();setInterval(()=>{if(!document.hidden){syncResp();uploadPending()}},60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncResp()})}
+});
 </script>
 </body>
 </html>

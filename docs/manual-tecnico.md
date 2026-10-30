@@ -5,22 +5,24 @@ Cómo está montada la app, cómo se publica y cómo se mantiene.
 ## 1. Arquitectura
 
 ```
-Celular del repartidor                 Celular del cliente
-┌──────────────────────┐               ┌──────────────────┐
-│ index.html (app)     │               │ entrega.html     │
-│ datos: localStorage  │               │ (formulario)     │
-└──────┬───────────────┘               └────────┬─────────┘
-       │ leer_respuestas(tokens)                │ enviar_respuesta(token, ...)
-       ▼                                        ▼
-            ┌───────────────────────────────────────┐
-            │ Supabase (Postgres + API REST)         │
-            │ tabla respuestas + 2 funciones RPC     │
-            └───────────────────────────────────────┘
+Celular del repartidor          Celular del cliente      Administrador
+┌──────────────────────┐        ┌──────────────────┐     ┌──────────────┐
+│ index.html + auth.js │        │ entrega.html     │     │ admin.html   │
+│ datos: localStorage  │        │ (formulario)     │     │ + auth.js    │
+└──────┬───────────────┘        └────────┬─────────┘     └──────┬───────┘
+       │ entrar (número + PIN)           │ enviar_respuesta      │ rf_admin_*
+       │ rf_mi_cuenta, leer_respuestas,  │ (sin cuenta)          │
+       │ registrar_entrega, fotos        │                       │
+       ▼                                 ▼                       ▼
+            ┌────────────────────────────────────────────────────┐
+            │ Supabase: Auth + Postgres (API REST) + Storage      │
+            │ cuentas rf_*, respuestas, entregas, evidencias      │
+            └────────────────────────────────────────────────────┘
 Hosting de los archivos: GitHub Pages (repo rutafacilcr/rutafacilcr.github.io, rama main)
 Servicios externos sin cuenta: wa.me (WhatsApp), Google Maps, Waze
 ```
 
-- No hay servidor propio. Todo el código corre en el navegador.
+- No hay servidor propio. Todo el código corre en el navegador; las reglas de acceso (cuentas, teléfono aprobado, mensualidad) se aplican en Supabase.
 - La lista de paquetes vive en `localStorage` del navegador (clave `rutafacil-cr-v1`).
 - En Supabase se guardan las respuestas del formulario y las **pruebas de entrega** (tabla `entregas` + fotos en Storage, carpeta `evidencias`).
 - **Escanear etiquetas** corre todo en el celular: no manda fotos ni datos a ningún servidor y no tiene costo. Las librerías se bajan solo al usar el escáner.
@@ -66,14 +68,62 @@ Servicios externos sin cuenta: wa.me (WhatsApp), Google Maps, Waze
 - **secret / service_role** y **contraseña de la base:** nunca van en el repositorio ni se comparten. Las guarda el dueño del proyecto.
 - Con llaves `sb_publishable_` la app manda solo el header `apikey`. Con llaves JWT antiguas (`eyJ…`) manda además `Authorization: Bearer`.
 
+### Cuentas y licencias (Fase 1a, versión 1.7.0)
+
+Cada repartidor entra con su número de teléfono + un PIN de 6 números. Por dentro es una cuenta de **Supabase Auth** con correo interno `<8 dígitos>@rutafacilcr.github.io` (nunca se le manda correo) y el PIN como contraseña. Costo: **cero** (plan gratis).
+
+**Puesta en marcha (una sola vez, en este orden):**
+
+1. **SQL Editor** > pegar todo `supabase.sql` > **Run**. Crea `rf_ajustes`, `rf_perfiles`, `rf_pagos`, `rf_eventos` y sus funciones. No borra nada y no corta la versión vieja: mientras *Exigir cuenta activa* esté apagado, todo sigue respondiendo sin cuenta.
+2. **Authentication > Sign In / Providers > Email**: dejar **Enable Email provider** encendido, **Confirm email apagado** (si queda encendido, la cuenta se crea pero no puede entrar) y **Allow new users to sign up** encendido. La longitud mínima de contraseña debe ser 6 (es la de fábrica).
+3. Publicar la versión 1.7.0 (merge a `main`).
+4. Abrir la app, **Crear cuenta** con el número del administrador.
+5. **SQL Editor**: `update public.rf_perfiles set rol = 'admin', estado = 'activo' where telefono = '62700666';` (el número de 8 dígitos con que se creó la cuenta).
+6. Abrir `https://rutafacilcr.github.io/admin.html` > **Ajustes**: número SINPE, precio, días de gracia > **Guardar ajustes**.
+7. Cuando todos los celulares tengan la 1.7.0 y su cuenta: encender **Exigir cuenta activa**.
+
+**Qué protege cada pieza:**
+
+| Pieza | Protege | Dónde |
+|---|---|---|
+| Número + PIN | Que la app no se use sin cuenta | `auth.js` (pantalla) + Supabase Auth |
+| Un teléfono por cuenta | Pasarse el PIN entre compañeros: el segundo celular queda *pendiente* y el administrador decide | `rf_mi_cuenta` guarda el teléfono y la **sesión** aprobada (`sesion_id` = `session_id` del token) |
+| Mensualidad y estado | Usarla sin pagar o suspendida | `rf_licencia_ok()`: estado activo + `vence_en` + días de gracia |
+| Reglas en el servidor | Saltarse la pantalla de entrada | Con *Exigir cuenta activa*, `leer_respuestas`, `registrar_entrega` y la subida de fotos solo responden a una cuenta al día **desde su sesión aprobada** |
+| Panel | Solo el administrador | Funciones `rf_admin_*` revisan `rol = 'admin'` |
+
+**Límites conocidos (para fases siguientes):**
+
+- El código de la app es público (repo público en GitHub Pages gratis). Alguien podría copiar la página y quitar la pantalla de entrada; tendría la lista y la ruta, pero **sin** respuestas del formulario, sin respaldo de evidencias y sin actualizaciones. Lo cierra la Fase 1b: repo privado + pasar la ruta al servidor.
+- Sin código por WhatsApp/SMS, el número no se verifica al crear la cuenta. Por eso las cuentas nacen **sin activar** y el administrador decide; la prueba gratis se da a mano.
+- Supabase Auth limita intentos de entrada por IP, lo que frena adivinar PIN. Si alguien insiste, se le cambia el PIN desde el panel.
+- Si se borran los datos del navegador, el celular cuenta como teléfono nuevo y hay que aprobarlo.
+
+**Consultas útiles:**
+
+```sql
+-- Cuentas y vencimientos
+select nombre, telefono, rol, estado, vence_en, ultimo_acceso, dispositivo_pendiente is not null as pide_cambio
+from rf_perfiles order by creado_en desc;
+
+-- Pagos del mes
+select p.nombre, g.monto, g.dias, g.referencia, g.creado_en
+from rf_pagos g join rf_perfiles p on p.id = g.user_id
+where g.creado_en >= date_trunc('month', now()) order by g.creado_en desc;
+
+-- Volver a dejar todo abierto (emergencia)
+update rf_ajustes set exigir_cuenta = false where id = 1;
+```
+
 ### Prueba de entrega (Storage)
 
 - `supabase.sql` crea la tabla `entregas`, la función `registrar_entrega` y el bucket **privado** `evidencias` (solo JPEG, máx. 2 MB por foto).
-- La app solo puede **subir** fotos (política `rutafacil subir evidencias`). Verlas o descargarlas se hace desde el panel: **Storage > evidencias**. Las fotos se guardan como `AAAA-MM-DD/<guia>_<id>_<n>.jpg`.
+- La app solo puede **subir** fotos (política `rutafacil subir evidencias`; con *Exigir cuenta activa*, solo desde una cuenta al día). El administrador puede listarlas y borrarlas (políticas `rutafacil admin ve/borra evidencias`); verlas o descargarlas se hace desde el panel de Supabase: **Storage > evidencias**. Las fotos se guardan como `AAAA-MM-DD/<guia>_<id>_<n>.jpg`.
 - **Espacio:** cada foto pesa ~100–150 KB (1024 px, JPEG 65 %), unos 0,3–0,45 MB por entrega con 3 fotos.
   - Supabase gratis: **1 GB de Storage** → unas **2.200–3.300 entregas**. Con 30 entregas por día, unos 2,5 a 3,5 meses. La tabla `entregas` ocupa menos de 1 KB por entrega: los 500 MB de base de datos no son problema.
   - Celular: las fotos respaldadas se borran del celular a los **7 días** (`LOCAL_DIAS`). Queda el registro (fecha, GPS, cantidad de fotos) y las fotos siguen en Supabase.
   - Supabase avisa por correo al acercarse al límite. Opciones: descargar y borrar fotos viejas (ver *Consultas útiles*) o pasar a **Pro** (25 USD/mes, 100 GB).
+  - **Liberar espacio desde el panel de RutaFácil:** `admin.html` > *Fotos de entrega* > **Calcular espacio usado** y **Borrar** las de más de N días (mínimo 7). Borra los archivos con la API de Storage; el registro en `entregas` queda.
   - **Liberar espacio a mano:** Supabase > **Storage** > **evidencias** > abrir la carpeta de un día viejo > seleccionar las fotos > **Download** (guardarlas en la PC) > **Delete**. Las carpetas se llaman por fecha (`AAAA-MM-DD`), así que se borran las más viejas primero. El registro en la tabla `entregas` se puede dejar: casi no ocupa.
   - En iPhone, si la app se usa desde Safari y no desde el ícono, Safari puede borrar los datos de la página tras ~7 días sin abrirla. Por eso Supabase es el respaldo oficial.
 
@@ -126,7 +176,7 @@ Si los dos valores están vacíos, la app funciona sin formulario: los mensajes 
 
 ## 6. Mantenimiento
 
-- **Versión:** se muestra al final de la app, chiquita: *RutaFácil CR · versión 1.6.2*. Se usa versionado semántico **mayor.menor.corrección**: *mayor* sube con cambios grandes que obligan a reinstalar o migrar datos, *menor* con funciones nuevas y *corrección* con arreglos o ajustes visuales. Al publicar se cambia el número en `index.html` (`#appVer`) y se anota en `CHANGELOG.md`. Sirve para confirmar si un celular ya tiene la versión nueva.
+- **Versión:** se muestra al final de la app, chiquita: *RutaFácil CR · versión 1.7.0*. Se usa versionado semántico **mayor.menor.corrección**: *mayor* sube con cambios grandes que obligan a reinstalar o migrar datos, *menor* con funciones nuevas y *corrección* con arreglos o ajustes visuales. Al publicar se cambia el número en `index.html` y `admin.html` (`#appVer`) y se anota en `CHANGELOG.md`. Sirve para confirmar si un celular ya tiene la versión nueva.
 
 - **Cambiar textos o mensajes por defecto:** `index.html`, constantes `DEF_COORD`, `DEF_COORD_F` y `DEF_CAMINO`.
 - **Cambiar horarios del formulario:** `entrega.html`, arreglo `SLOTS`.
@@ -136,4 +186,8 @@ Si los dos valores están vacíos, la app funciona sin formulario: los mensajes 
 
 ## 7. Plan futuro (no implementado)
 
-Login por teléfono, licencias por suscripción y un dispositivo por cuenta, en el **mismo** proyecto de Supabase (tablas propuestas: `perfiles`, `dispositivos`, `pagos`). La columna `respuestas.owner_id` ya existe para ligar respuestas a cada repartidor cuando haya login.
+- **Fase 1b:** código de verificación por WhatsApp o SMS al crear la cuenta y al cambiar de teléfono (Twilio o API de WhatsApp de Meta; tiene costo por mensaje).
+- **Repo privado:** GitHub Team (~4 USD/mes, mantiene `rutafacilcr.github.io`) o Cloudflare Pages (gratis, cambia el link). Con eso se puede ofuscar el código publicado.
+- **Ruta e importación en el servidor** (Supabase Edge Functions): que una copia de la página no sirva sin cuenta.
+- **Play Store** con TWA o Capacitor cuando haya clientes pagando.
+- `respuestas.owner_id` sigue sin usarse: hoy cada respuesta se protege con su token.
