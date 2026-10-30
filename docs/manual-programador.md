@@ -14,7 +14,7 @@ Para quien vaya a modificar el código o el diseño.
 | Bloque | Contenido |
 |---|---|
 | `<style>` | Tokens de diseño (`:root`) y componentes. |
-| `header.top` + `nav.tabs` | Encabezado y pestañas *1 Paquetes / 2 Mensajes / 3 Ruta*. |
+| `header.top` + `nav.tabs` | Encabezado y barra de pestañas fija abajo (*Paquetes / Mensajes / Ruta*), cada una con ícono SVG en línea y texto. `#n-pk` es el globito con la cantidad de paquetes. |
 | `#v-paquetes` | Importación, formulario manual, lista. |
 | `#v-mensajes` | Plantillas de mensaje, panel de respuestas (`#syncPanel`), lista de clientes. |
 | `#v-ruta` | Parámetros de ruta y resultado (`#routeOut`). |
@@ -154,6 +154,7 @@ Antes era Barlow Condensed en mayúsculas; se cambió porque se veía menos prof
 - `.chip.st-*`: etiqueta de estado. Tocarla rota el estado.
 - `.pkg`: tarjeta de paquete con número grande a la izquierda.
 - `.stop` + `.dot`: línea de ruta punteada naranja entre paradas.
+- `nav.tabs`: barra inferior fija tipo app (fondo `--surface`, activa en `--accent` con raya arriba). Respeta `safe-area-inset-bottom` del iPhone; `main.wrap` deja 96 px abajo y el `.toast` sube a 84 px para no taparse.
 - `.sheet`: hojas que suben desde abajo (prueba de entrega, pegar respuesta, evidencia, escanear etiquetas).
 - `.toast`: confirmación breve abajo (encima de las hojas).
 

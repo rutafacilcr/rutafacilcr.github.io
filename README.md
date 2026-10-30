@@ -8,6 +8,8 @@ Herramienta web para repartidores de paquetes en Costa Rica. Cargás la lista de
 
 ## Qué hace
 
+La app se maneja con tres pestañas en la barra de abajo: **Paquetes**, **Mensajes** y **Ruta**.
+
 | Paso | Qué resuelve |
 |---|---|
 | **1. Paquetes** | Escanea la etiqueta de cada paquete con la cámara (guía por código de barras; nombre, teléfono y dirección por lectura de texto, gratis y dentro del celular). También importa desde Excel, CSV o copiando y pegando, o se agrega a mano. Acepta links de Google Maps / Waze y saca las coordenadas solo. |

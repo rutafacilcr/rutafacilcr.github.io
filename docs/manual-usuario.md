@@ -23,7 +23,9 @@ Vas a ver el pin naranja con el paquete sobre fondo grafito. Después abrí siem
 
 ## 2. Rutina diaria
 
-### Día antes: cargar paquetes (pestaña **1 Paquetes**)
+La app tiene tres pestañas en la **barra de abajo**: **Paquetes** (📦, con un globito que dice cuántos hay), **Mensajes** (💬) y **Ruta**. La pestaña en la que estás se marca en naranja.
+
+### Día antes: cargar paquetes (pestaña **Paquetes**)
 
 La primera vez vas a ver datos de ejemplo: tocá **Borrar ejemplo**.
 
@@ -47,7 +49,7 @@ Columnas: `nombre`, `telefono`, `direccion`, `ubicacion`, `guia`, `nota`.
 - **Ubicación:** pegá el link completo que manda el cliente (`https://maps.google.com/?q=...`), un link de Waze o las coordenadas (`9.99,-84.11`). Debajo sale en verde **✓ Coordenadas detectadas**. Los links cortos tipo `maps.app.goo.gl` no se leen: abrilos primero y copiá el link largo.
 - Cada paquete muestra **● Ubicación lista** o **○ Falta ubicación**.
 
-### Día antes: avisar a los clientes (pestaña **2 Mensajes**)
+### Día antes: avisar a los clientes (pestaña **Mensajes**)
 
 1. Poné **tu nombre** y revisá el texto del mensaje (se puede editar).
 2. En cada cliente tocá **Abrir WhatsApp** > **Enviar** > volvé a la app.
@@ -57,7 +59,7 @@ Columnas: `nombre`, `telefono`, `direccion`, `ubicacion`, `guia`, `nota`.
 6. Lo que llene **entra solo** a la app (revisa cada minuto, o tocá **Revisar respuestas ahora**) y queda **Confirmado** con 🕓 horario y 🏠 señas.
 7. **Cuando el cliente responde por el chat (lo más común):** en WhatsApp mantené presionado su mensaje (la hora, la ubicación o los dos seleccionados) > **Copiar**. En la app tocá **📋 Pegar respuesta** en ese cliente. La app saca sola la **hora** y la **ubicación** y lo deja **Confirmado**. Si el iPhone pregunta "Permitir pegar", tocá **Permitir**. Si la ubicación no se puede copiar del chat, abrila, tocá **Compartir** > **Copiar** y volvé a tocar **📋 Pegar respuesta**.
 
-Los tres mensajes (primer mensaje, formulario y "voy en camino") se pueden editar en **2 Mensajes**.
+Los tres mensajes (primer mensaje, formulario y "voy en camino") se pueden editar en **Mensajes**.
 
 **Para que los clientes confíen más:**
 - Usá **WhatsApp Business** con foto de perfil, nombre (ej. "Victor · Entregas Temu") y descripción.
@@ -66,7 +68,7 @@ Los tres mensajes (primer mensaje, formulario y "voy en camino") se pueden edita
 
 Variables que podés usar en los mensajes: `{nombre}` `{guia}` `{direccion}` `{fecha}` `{yo}` `{eta}` `{formulario}` (este último va en el mensaje del formulario). Si cambiás el mensaje y quitás `{formulario}`, la app agrega el link del formulario al final sola. El cuadro del mensaje crece para mostrar el texto completo.
 
-### Día de entrega (pestaña **3 Ruta**)
+### Día de entrega (pestaña **Ruta**)
 
 1. **Punto de salida:** pegá las coordenadas o el link de donde salís, o tocá **📍 Usar mi ubicación actual** (pone tu ubicación y la hora de ahora). En Google Maps, dejá el dedo presionado sobre el lugar y copiá los números.
 2. **Hora de salida:** a qué hora arrancás (ej. 8:00 am).
@@ -104,7 +106,7 @@ La evidencia se guarda **en el celular** y se **sube a Supabase** como respaldo.
 
 ### Al terminar el día
 
-**1 Paquetes** > **Vaciar lista** (tocá dos veces para confirmar). Antes, revisá que todas las evidencias digan **☁️ respaldada**: al vaciar la lista, la evidencia queda en Supabase.
+**Paquetes** > **Vaciar lista** (tocá dos veces para confirmar). Antes, revisá que todas las evidencias digan **☁️ respaldada**: al vaciar la lista, la evidencia queda en Supabase.
 
 ---
 
