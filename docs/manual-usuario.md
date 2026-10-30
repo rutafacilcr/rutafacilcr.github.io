@@ -146,7 +146,7 @@ Tocá la etiqueta de color para pasar al siguiente estado.
 
 ## 4. Problemas comunes
 
-**Ayuda:** tocá **❓ Soporte** (arriba a la derecha, o *Soporte* al final de la pantalla). Ahí podés escribirnos por WhatsApp al **6270-0666** (el mensaje ya lleva tu versión de la app) y ver los **videos** de cómo se usa cada parte.
+**Ayuda:** tocá **Soporte** (el ícono de audífonos) (arriba a la derecha, o *Soporte* al final de la pantalla). Ahí podés escribirnos por WhatsApp al **6270-0666** (el mensaje ya lleva tu versión de la app) y ver los **videos** de cómo se usa cada parte.
 
 **¿Qué versión tengo?** Bajá hasta el final de cualquier pestaña: dice *RutaFácil CR · versión 1.8.1*. Se lee **mayor.menor.corrección**: el primer número cambia con cambios grandes, el segundo con funciones nuevas y el tercero con arreglos.
 

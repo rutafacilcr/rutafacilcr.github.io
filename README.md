@@ -26,7 +26,7 @@ Desde la versión 1.7.0 cada repartidor entra con **su número de teléfono y un
 
 ## Soporte
 
-Dentro de la app, el botón **❓ Soporte** abre WhatsApp con soporte (+506 6270-0666) y los videos de cómo se usa.
+Dentro de la app, el botón **Soporte** (ícono de audífonos) abre WhatsApp con soporte (+506 6270-0666) y los videos de cómo se usa.
 
 ## Documentación
 
