@@ -15,7 +15,7 @@ const SOPORTE=String(C.soporte||'62700666').replace(/\D/g,'');   // WhatsApp de 
 
 const ls={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},
   set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
-let ses=ls.get(KS),dev=ls.get(KD),cuenta=null,abierta=false,ultimaRev=0;
+let ses=ls.get(KS),dev=ls.get(KD),cuenta=null,abierta=false,esperando=false,ultimaRev=0;
 if(!dev){const a=new Uint8Array(16);crypto.getRandomValues(a);dev=[...a].map(x=>x.toString(16).padStart(2,'0')).join('');ls.set(KD,dev)}
 const tel8=t=>{let d=String(t||'').replace(/\D/g,'');if(d.length===11&&d.startsWith('506'))d=d.slice(3);return d};
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -69,11 +69,13 @@ const CSS=`html.rf-bloq body>*:not(#rfGate){display:none!important}
 #rfGate .rfbtn{font:inherit;font-weight:700;font-size:16px;padding:13px 16px;border-radius:10px;border:1px solid var(--line,#e2dfdc);background:var(--surface,#fff);color:inherit;cursor:pointer;text-align:center;text-decoration:none}
 #rfGate .rfbtn.pri{background:var(--accent,#f26b1d);color:var(--accent-ink,#fff);border-color:transparent}
 #rfGate .rfbtn:disabled{opacity:.6}
+#rfGate .rfbtn.rfespera{background:var(--line,#e2dfdc);color:var(--muted,#6b6560);border-color:transparent;opacity:1;cursor:default}
 #rfGate .rflink{background:none;border:0;color:var(--accent,#f26b1d);font:inherit;font-weight:600;cursor:pointer;padding:6px 0;text-align:left}
 #rfGate .rfmsg{background:var(--surface,#fff);border:1px solid var(--line,#e2dfdc);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
 #rfGate .rferr{color:var(--bad,#b03a3a);font-weight:600;min-height:1.2em}
 #rfGate .rfmuted{color:var(--muted,#6b6560);font-size:14px}
 #rfGate .rfpago{font-family:var(--f-mono,monospace);font-size:15px}
+#rfGate .rflisto{border-color:var(--ok,#2f8a4e);background:var(--ok-bg,#e3f3e8)}
 .rfcuenta a{color:inherit;text-decoration:underline;cursor:pointer}`;
 
 let gate,body;
@@ -146,11 +148,21 @@ function vEstado(c){
   else if(c.dispositivo==='pendiente')h=`<h2>Esta cuenta está en otro teléfono</h2><p>Cada cuenta funciona en un solo teléfono. Ya le avisamos al administrador: cuando apruebe el cambio, tocá <b>Revisar de nuevo</b>.</p>${contacto(c)}`;
   else if(c.dispositivo==='cerrado')h=`<h2>La cuenta se pasó a otro teléfono</h2><p>Este teléfono se cerró porque la cuenta se aprobó en otro. Si fue un error, escribile al administrador.</p>${contacto(c)}`;
   else if(c.estado==='suspendido')h=`<h2>Cuenta suspendida</h2><p>Escribile al administrador para saber más.</p>${contacto(c)}`;
-  else if(c.estado==='pendiente')h=`<h2>Hola, ${esc((c.nombre||'').split(' ')[0])}</h2><p>Tu cuenta está creada y espera activación. Cuando la activemos, esta pantalla se abre sola y te avisamos por WhatsApp.</p>${pagar(c)}${contacto(c)}`;
+  else if(c.estado==='pendiente')h=`<h2>Hola, ${esc((c.nombre||'').split(' ')[0])}</h2><p>Tu cuenta está creada y espera activación. Cuando la activemos, el botón de abajo se pone naranja y te avisamos por WhatsApp.</p>${pagar(c)}${contacto(c)}`;
   else h=`<h2>Tu mensualidad venció</h2><p>Venció el ${fecha(c.vence_en)}.</p>${pagar(c)}${contacto(c)}`;
-  vista(`<div class="rfmsg">${h}</div><button class="rfbtn pri" id="rfRev">Revisar de nuevo</button><button class="rflink" id="rfSalir">Salir de la cuenta</button>`);
-  body.querySelector('#rfRev').onclick=()=>revisar(true);
+  // Pendiente, vencida o teléfono por aprobar: depende del administrador. El botón queda gris y la app
+  // revisa sola cada minuto; al activarse se pone naranja (vListo).
+  const espera=!ADMIN&&(c.dispositivo==='pendiente'||(c.dispositivo==='ok'&&c.estado!=='suspendido'));
+  esperando=espera;
+  vista(`<div class="rfmsg">${h}</div>${espera
+    ?`<button class="rfbtn rfespera" disabled>⏳ ${c.dispositivo==='pendiente'?'Esperando aprobación':'Esperando activación'}</button><p class="rfmuted" style="text-align:center">Se revisa sola cada minuto.</p>`
+    :'<button class="rfbtn pri" id="rfRev">Revisar de nuevo</button>'}<button class="rflink" id="rfSalir">Salir de la cuenta</button>`);
+  const rv=body.querySelector('#rfRev');if(rv)rv.onclick=()=>revisar(true);
   body.querySelector('#rfSalir').onclick=()=>salir();
+}
+function vListo(c){
+  vista(`<div class="rfmsg rflisto"><h2>✅ Cuenta habilitada</h2><p>¡Listo, ${esc((c.nombre||'').split(' ')[0])}! Tu cuenta ya está activa${c.vence_en?' hasta el '+fecha(c.vence_en):''}.</p></div><button class="rfbtn pri" id="rfEntrar">Entrar</button>`);
+  body.querySelector('#rfEntrar').onclick=()=>{esperando=false;abrir(c)};
 }
 function vError(msg){
   vista(`<div class="rfmsg"><h2>No se pudo revisar tu cuenta</h2><p>${esc(msg)}</p><p class="rfmuted">Revisá que tengás internet.</p></div>${ayuda}<button class="rfbtn pri" id="rfRev">Intentar de nuevo</button><button class="rflink" id="rfSalir">Salir de la cuenta</button>`);
@@ -179,7 +191,7 @@ async function revisar(manual){
   try{
     const c=await rpc('rf_mi_cuenta',{p_dispositivo:dev});
     ls.set(KC,{c,at:Date.now()});
-    if(sirve(c))abrir(c);else{abierta=false;vEstado(c)}
+    if(sirve(c)){if(esperando&&!abierta)vListo(c);else abrir(c)}else{abierta=false;vEstado(c)}
   }catch(e){
     if(e.status===404||e.code==='PGRST202'){abrir(null,'Cuentas sin activar en Supabase (falta correr supabase.sql).');return}
     if(e.status===401||e.code==='PGRST301'||/sin sesión|JWT/i.test(e.message)){ses=null;ls.del(KS);ls.del(KC);abierta=false;vEntrar('Tu sesión venció. Entrá de nuevo.');return}

@@ -41,6 +41,9 @@ Reglas de la cuenta:
 
 ---
 
+
+**Mientras esperás la activación** el botón de abajo está gris y dice *⏳ Esperando activación*. No tenés que tocar nada: la app revisa sola cada minuto. Cuando el administrador activa tu cuenta, sale *✅ Cuenta habilitada* y el botón se pone naranja: tocá **Entrar**.
+
 ## 2. Rutina diaria
 
 La app tiene tres pestañas en la **barra de abajo**: **Paquetes** (📦, con un globito que dice cuántos hay), **Mensajes** (💬) y **Ruta**, más el botón **Soporte** (🎧) que abre la ayuda. La pestaña en la que estás se marca en naranja.
