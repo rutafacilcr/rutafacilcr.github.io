@@ -146,7 +146,7 @@ function vEstado(c){
   else if(c.dispositivo==='pendiente')h=`<h2>Esta cuenta está en otro teléfono</h2><p>Cada cuenta funciona en un solo teléfono. Ya le avisamos al administrador: cuando apruebe el cambio, tocá <b>Revisar de nuevo</b>.</p>${contacto(c)}`;
   else if(c.dispositivo==='cerrado')h=`<h2>La cuenta se pasó a otro teléfono</h2><p>Este teléfono se cerró porque la cuenta se aprobó en otro. Si fue un error, escribile al administrador.</p>${contacto(c)}`;
   else if(c.estado==='suspendido')h=`<h2>Cuenta suspendida</h2><p>Escribile al administrador para saber más.</p>${contacto(c)}`;
-  else if(c.estado==='pendiente')h=`<h2>Hola, ${esc((c.nombre||'').split(' ')[0])}</h2><p>Tu cuenta está creada y espera activación.</p>${pagar(c)}${contacto(c)}`;
+  else if(c.estado==='pendiente')h=`<h2>Hola, ${esc((c.nombre||'').split(' ')[0])}</h2><p>Tu cuenta está creada y espera activación. Cuando la activemos, esta pantalla se abre sola y te avisamos por WhatsApp.</p>${pagar(c)}${contacto(c)}`;
   else h=`<h2>Tu mensualidad venció</h2><p>Venció el ${fecha(c.vence_en)}.</p>${pagar(c)}${contacto(c)}`;
   vista(`<div class="rfmsg">${h}</div><button class="rfbtn pri" id="rfRev">Revisar de nuevo</button><button class="rflink" id="rfSalir">Salir de la cuenta</button>`);
   body.querySelector('#rfRev').onclick=()=>revisar(true);
@@ -204,5 +204,7 @@ if(!rapido)document.documentElement.classList.add('rf-bloq');
 const arrancar=()=>{montar();if(rapido){abrir(k.c);revisar()}else{vista(`<p class="rfmuted">Revisando tu cuenta…</p>`);revisar()}};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',arrancar);else arrancar();
 setInterval(()=>{if(!document.hidden&&ses)revisar()},REVISAR_MIN*60000);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ses&&Date.now()-ultimaRev>5*60000)revisar()});
+// Mientras la cuenta espera activación (o aprobación del teléfono), se revisa cada minuto: al activarla, la app abre sola.
+setInterval(()=>{if(!document.hidden&&ses&&!abierta)revisar()},60000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ses&&(!abierta||Date.now()-ultimaRev>5*60000))revisar()});
 })();

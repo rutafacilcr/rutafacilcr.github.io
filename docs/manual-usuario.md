@@ -191,5 +191,9 @@ El panel está en https://rutafacilcr.github.io/admin.html (o **Panel**, al fina
 | Ver quién atender | Filtro **Por atender** (cuentas sin activar y cambios de teléfono) y **Vencen en 5 días**. |
 | Liberar espacio de fotos | **Fotos de entrega** > **Calcular espacio usado** y **Borrar** las de más de 30 días. |
 
+**Avisos:** cuando alguien crea cuenta (o pide usar otro teléfono) te llega un WhatsApp y un correo con su nombre y número. Se configuran una vez en **Ajustes > Avisos cuando alguien crea cuenta** (pasos en el manual técnico) y con **Mandarme una prueba** revisás que lleguen.
+
+**Avisarle al repartidor:** al tocar **Registrar pago**, **Dar 14 días de prueba** o **Reactivar**, abajo sale **Avisarle por WhatsApp** con el mensaje ya escrito (*tu cuenta ya está activa hasta el…*). Tocalo y en WhatsApp solo tocás Enviar. Aunque no le escribás, si la persona tiene la app abierta en la pantalla de espera, se le abre sola en menos de un minuto.
+
 En **Ajustes** van el número SINPE que ven los repartidores, el precio, los días de gracia y el interruptor **Exigir cuenta activa** (ver manual técnico).
 
