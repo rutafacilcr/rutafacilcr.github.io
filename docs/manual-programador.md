@@ -195,7 +195,7 @@ Antes era Barlow Condensed en mayúsculas; se cambió porque se veía menos prof
 
 - `.btn` (`.primary` naranja, `.road` grafito, `.wa` WhatsApp, `.sm`, `.ghost`, `.danger`).
 - `.chip.st-*`: etiqueta de estado. Tocarla rota el estado.
-- `.pkg`: tarjeta de paquete con número grande a la izquierda.
+- `.pkg`: tarjeta de paquete (grilla de 2 columnas) con número grande a la izquierda. Todo bloque nuevo dentro de la tarjeta va en `grid-column:2` (como `.actions` y `.ev`), si no cae bajo el número y aprieta el contenido.
 - `.stop` + `.dot`: línea de ruta punteada naranja entre paradas.
 - `nav.tabs`: barra inferior fija tipo app (fondo `--surface`, activa en `--accent` con raya arriba). Respeta `safe-area-inset-bottom` del iPhone; `main.wrap` deja 96 px abajo y el `.toast` sube a 84 px para no taparse.
 - `.sheet`: hojas que suben desde abajo (prueba de entrega, pegar respuesta, evidencia, escanear etiquetas).

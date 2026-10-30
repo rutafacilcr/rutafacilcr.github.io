@@ -130,6 +130,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);outline-
 .podline{display:flex;gap:8px;align-items:flex-start;font-size:14px}
 .podline b{min-width:22px}
 .ev{font-size:12.5px;color:var(--ok);font-weight:600}
+.pkg .ev{grid-column:2} /* sin esto cae en la columna del número y aprieta la tarjeta */
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:14px;z-index:40;max-width:calc(100% - 32px)}
 details summary{cursor:pointer;font-weight:600}
 .empty{text-align:center;padding:28px 12px;color:var(--muted);border:2px dashed var(--line);border-radius:10px}
@@ -248,7 +249,7 @@ details summary{cursor:pointer;font-weight:600}
   </div>
   <div id="routeOut" class="list"></div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.8.1</span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.8.2</span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
