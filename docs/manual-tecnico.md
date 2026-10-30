@@ -34,7 +34,7 @@ Servicios externos sin cuenta: wa.me (WhatsApp), Google Maps, Waze
 - Pages: **Settings > Pages > Deploy from a branch > main / (root)**.
 - URL pública: https://rutafacilcr.github.io/. Al ser el repo `<organización>.github.io`, la app queda en la raíz del dominio.
 - Cada push a `main` dispara el workflow automático *pages-build-deployment* (1 a 2 minutos). Se revisa en la pestaña **Actions**.
-- Los celulares pueden tener la versión anterior en caché. Cerrar y volver a abrir la app la actualiza.
+- Los celulares pueden tener la versión anterior en caché: GitHub Pages manda el HTML con `Cache-Control: max-age=600` (10 min). No hay service worker. La app compara su versión con la publicada (`checkUpdate()`, al abrir y al volver a la app) y, si cambió, muestra *Actualizar*, que recarga con `?v=<versión>` para saltarse el caché.
 
 ### Mudanza a la organización (30-oct-2026)
 

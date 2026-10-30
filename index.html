@@ -249,7 +249,7 @@ details summary{cursor:pointer;font-weight:600}
   </div>
   <div id="routeOut" class="list"></div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.10.4</span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.11.0</span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -857,6 +857,19 @@ async function openSupport(){
 function closeSupport(){$('#supSheet').hidden=true;document.body.style.overflow='';$('#supVids').querySelectorAll('video').forEach(v=>v.pause());$('#supVids').innerHTML=''}
 // supTab abre la hoja, no es una pestaña
 $('#supTab').onclick=openSupport;$('#supPie').onclick=e=>{e.preventDefault();openSupport()};$('#supClose').onclick=closeSupport;
+
+// ===== Aviso de versión nueva =====
+// GitHub Pages deja el HTML en caché hasta 10 min y el celular a veces más. Se compara la versión publicada
+// con la abierta y, si cambió, se ofrece recargar con ?v= para saltarse el caché.
+async function checkUpdate(){
+  try{const r=await fetch('index.html?v='+Date.now(),{cache:'no-store'});if(!r.ok)return;
+    const m=(await r.text()).match(/id="appVer">([\d.]+)</);const cur=$('#appVer').textContent;
+    if(m&&m[1]!==cur&&!$('#updBar')){const b=document.createElement('div');b.id='updBar';b.className='notice';b.style.cssText='position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:35;display:flex;gap:10px;align-items:center;justify-content:space-between;box-shadow:0 4px 14px rgba(0,0,0,.2)';
+      b.innerHTML=`<span>Hay una versión nueva (${esc(m[1])}).</span><button class="btn primary sm" type="button" style="font-weight:700;border-radius:10px">Actualizar</button>`;
+      b.querySelector('button').onclick=()=>location.replace(location.pathname+'?v='+m[1]);document.body.appendChild(b)}}catch(e){}
+}
+checkUpdate();document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdate()});
+if(location.search.includes('v=')&&!location.search.includes('t='))history.replaceState(null,'',location.pathname); // limpia ?v= del link
 
 if(!load()){S.pk=EXAMPLE.map(mkPkg);S.ex=true;S.pk[0].st='confirmado';S.pk[2].st='confirmado';S.pk[1].sent=true}
 if(!S.hora)S.hora='08:00';

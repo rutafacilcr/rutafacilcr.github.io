@@ -234,6 +234,8 @@ No hay pruebas automáticas en el repositorio. Antes de cada push:
 
 ## 7. Convenciones
 
+- **Aviso de actualización:** `checkUpdate()` busca `id="appVer">x.y.z<` en `index.html` publicado; por eso el número de versión debe seguir en ese formato.
+
 - **Versión:** semántica `mayor.menor.corrección` en `#appVer` (pie de `index.html` y de `admin.html`). Subirla en cada publicación y anotarla en `CHANGELOG.md`.
 
 - Textos en español de Costa Rica (voseo en la app del repartidor, usted en el formulario del cliente).

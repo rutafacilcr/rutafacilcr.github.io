@@ -146,6 +146,8 @@ Tocá la etiqueta de color para pasar al siguiente estado.
 
 ## 4. Problemas comunes
 
+**¿No ves la versión nueva?** Cuando se publica un cambio, la app muestra abajo *Hay una versión nueva · **Actualizar***: tocalo. Si no sale, cerrá la app por completo y abrila otra vez. GitHub puede tardar hasta 10 minutos en entregar la versión nueva.
+
 **Ayuda:** tocá **Soporte** (el ícono de audífonos, abajo a la par de *Ruta*, o *Soporte* al final de la pantalla). Ahí podés escribirnos por WhatsApp al **6270-0666** (el mensaje ya lleva tu versión de la app) y ver los **videos** de cómo se usa cada parte:
 
 1. Entrar a la app (crear cuenta, número y PIN, soporte)
