@@ -167,6 +167,8 @@ window.RF_CONFIG = {
 };
 ```
 
+Opcional: `soporte: '62700666'` cambia el WhatsApp de soporte que muestra la pantalla de entrar (`auth.js`); si falta, usa 62700666.
+
 Si los dos valores están vacíos, la app funciona sin formulario: los mensajes no llevan link y no aparece el panel de respuestas.
 
 ## 5. Dependencias externas
@@ -184,7 +186,7 @@ Si los dos valores están vacíos, la app funciona sin formulario: los mensajes 
 
 ## 6. Mantenimiento
 
-- **Versión:** se muestra al final de la app, chiquita: *RutaFácil CR · versión 1.7.1*. Se usa versionado semántico **mayor.menor.corrección**: *mayor* sube con cambios grandes que obligan a reinstalar o migrar datos, *menor* con funciones nuevas y *corrección* con arreglos o ajustes visuales. Al publicar se cambia el número en `index.html` y `admin.html` (`#appVer`) y se anota en `CHANGELOG.md`. Sirve para confirmar si un celular ya tiene la versión nueva.
+- **Versión:** se muestra al final de la app, chiquita: *RutaFácil CR · versión 1.7.2*. Se usa versionado semántico **mayor.menor.corrección**: *mayor* sube con cambios grandes que obligan a reinstalar o migrar datos, *menor* con funciones nuevas y *corrección* con arreglos o ajustes visuales. Al publicar se cambia el número en `index.html` y `admin.html` (`#appVer`) y se anota en `CHANGELOG.md`. Sirve para confirmar si un celular ya tiene la versión nueva.
 
 - **Cambiar textos o mensajes por defecto:** `index.html`, constantes `DEF_COORD`, `DEF_COORD_F` y `DEF_CAMINO`.
 - **Cambiar horarios del formulario:** `entrega.html`, arreglo `SLOTS`.

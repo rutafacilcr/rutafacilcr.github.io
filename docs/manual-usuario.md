@@ -36,6 +36,7 @@ Reglas de la cuenta:
 - **Sin internet** la app sigue abriendo hasta 3 días con la última revisión.
 - **Mensualidad:** al final de la app dice *al día hasta el …*. Si vence, tenés unos días de gracia (lo dice en rojo) y después la app se bloquea hasta que pagués.
 - **¿Olvidaste el PIN?** Pedile uno nuevo al administrador por WhatsApp.
+- **¿Necesitás ayuda?** En la pantalla de entrar está el enlace *Escribinos por WhatsApp* (soporte: 6270 0666).
 - **Salir:** al final de la app, **Salir**. Tu lista de paquetes se queda en el celular.
 
 ---
@@ -145,10 +146,10 @@ Tocá la etiqueta de color para pasar al siguiente estado.
 
 ## 4. Problemas comunes
 
-**¿Qué versión tengo?** Bajá hasta el final de cualquier pestaña: dice *RutaFácil CR · versión 1.7.1*. Se lee **mayor.menor.corrección**: el primer número cambia con cambios grandes, el segundo con funciones nuevas y el tercero con arreglos.
+**¿Qué versión tengo?** Bajá hasta el final de cualquier pestaña: dice *RutaFácil CR · versión 1.7.2*. Se lee **mayor.menor.corrección**: el primer número cambia con cambios grandes, el segundo con funciones nuevas y el tercero con arreglos.
 
 
-**¿Veo los colores o el ícono viejo?** El celular guarda la versión anterior. Cerrá la app por completo (deslizala hacia arriba) y abrila de nuevo; al final de la pestaña tiene que decir la versión nueva (ej. *versión 1.7.1*). Si el ícono sigue viejo, borrá el acceso directo y agregalo otra vez desde https://rutafacilcr.github.io/.
+**¿Veo los colores o el ícono viejo?** El celular guarda la versión anterior. Cerrá la app por completo (deslizala hacia arriba) y abrila de nuevo; al final de la pestaña tiene que decir la versión nueva (ej. *versión 1.7.2*). Si el ícono sigue viejo, borrá el acceso directo y agregalo otra vez desde https://rutafacilcr.github.io/.
 
 
 | Problema | Qué hacer |
