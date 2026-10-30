@@ -93,6 +93,13 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - *Guardar* abre la cámara **dentro del mismo toque** (iPhone no deja abrirla después de un `await`) y agrega con `mkPkg()`. Las fotos de etiqueta no se guardan.
 - Prueba local: las CDN están bloqueadas en el sandbox; se instalan los paquetes con npm y Playwright sirve los archivos interceptando las URL de jsDelivr. Las etiquetas de prueba se generan con JsBarcode.
 
+## 3d. Soporte
+
+- Botón `#supBtn` en el encabezado y enlace `#supPie` en el pie → `openSupport()` abre `#supSheet`.
+- WhatsApp: `wa.me/SOPORTE_WA` con texto que incluye la versión (`#appVer`).
+- Videos: `fetch('videos.json',{cache:'no-cache'})`; si la URL es de YouTube usa un `<iframe>` de youtube-nocookie, si no un `<video controls playsinline preload=metadata>`. Al cerrar se pausan y se vacía la lista para no gastar datos.
+- El pie también lo usa `auth.js` (`.rfcuenta`, cuenta y Salir): el enlace de soporte va al inicio del pie para no tocar ese bloque.
+
 ## 3b. Prueba de entrega
 
 - Al pasar un paquete a **entregado** (botón o etiqueta de estado) se abre `#podSheet` con `openPOD(p)`. Nunca se pone `st='entregado'` sin evidencia.
