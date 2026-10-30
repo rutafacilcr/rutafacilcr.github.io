@@ -17,7 +17,7 @@ Guía para el repartidor. No hace falta saber de computadoras.
 - **iPhone (Safari):** abrí el link > botón **Compartir** > **Agregar a pantalla de inicio** > **Agregar**.
 - **Android (Chrome):** abrí el link > menú **⋮** > **Agregar a la pantalla principal** (o **Instalar app**).
 
-Después abrí siempre la app desde el ícono **RutaFácil**. En iPhone, el ícono guarda sus datos aparte de Safari.
+Vas a ver el pin naranja con el paquete sobre fondo grafito. Después abrí siempre la app desde el ícono **RutaFácil**. En iPhone, el ícono guarda sus datos aparte de Safari.
 
 ---
 
@@ -123,6 +123,9 @@ Tocá la etiqueta de color para pasar al siguiente estado.
 ---
 
 ## 4. Problemas comunes
+
+**¿Veo los colores o el ícono viejo?** El celular guarda la versión anterior. Cerrá la app por completo (deslizala hacia arriba) y abrila de nuevo; el encabezado debe decir la versión nueva (ej. `v30-oct-a`). Si el ícono sigue viejo, borrá el acceso directo y agregalo otra vez desde https://rutafacilcr.github.io/.
+
 
 | Problema | Qué hacer |
 |---|---|

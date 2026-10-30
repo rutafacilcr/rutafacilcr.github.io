@@ -35,7 +35,11 @@ Funciona desde el celular, se puede instalar como ícono en la pantalla de inici
 | `config.js` | Dirección y llave pública de Supabase. |
 | `supabase.sql` | Crea la tabla y las funciones del formulario en Supabase. |
 | `plantilla-paquetes.xlsx` | Plantilla de Excel para la lista de paquetes. |
-| `manifest.json`, `*.png` | Ícono y datos para instalar la app en el celular. |
+| `manifest.json`, `logo.svg`, `*.png` | Logo (pin con paquete) e íconos para instalar la app en el celular. |
+
+## Diseño
+
+Paleta *Grafito y naranja* con el logo **pin con paquete**. Marca propia: la app no usa logos de Temu ni de otras empresas.
 
 ## Estado
 

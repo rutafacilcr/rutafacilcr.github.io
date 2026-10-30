@@ -123,40 +123,55 @@ respuestas(id, token UNIQUE, guia, horario, senas, recibe, lat, lng,
 
 ## 5. Sistema de diseño
 
-**Concepto:** señalización vial. Verde carretera de fondo, amarillo de demarcación como acento y tipografía condensada como de rótulo.
+**Concepto (desde 30-oct, paleta B "Grafito y naranja"):** sobrio y profesional, como una app de envíos. Encabezado grafito, naranja solo para la acción principal y títulos en tipo normal (sin mayúsculas). Se eligió entre tres paletas (A azul marino, B grafito y naranja, C verde azulado).
 
 ### Colores (tokens en `:root`, con versión oscura)
 
-| Token | Claro | Uso |
-|---|---|---|
-| `--road` | `#1f4d46` | Encabezado, pestañas, botones principales de ruta. |
-| `--accent` | `#e8a317` | Acción principal, borde de pestañas, línea de ruta. |
-| `--bg` / `--surface` | `#f3f5f4` / `#ffffff` | Fondo / tarjetas. |
-| `--ink` / `--muted` | `#15302c` / `#5b6f6b` | Texto. |
-| `--wa` | `#1f9d55` | Solo botones de WhatsApp. |
-| `--ok` `--warn` `--bad` | verde / naranja / rojo | Estados. No se usan como acento. |
+| Token | Claro | Oscuro | Uso |
+|---|---|---|---|
+| `--road` | `#1f2125` | `#1f2125` | Encabezado, pestañas, botones de ruta, números de parada. |
+| `--accent` / `--accent-ink` | `#f26b1d` / `#ffffff` | `#f5803a` / `#1f2125` | Acción principal, borde de pestañas, línea de ruta, "Fácil" del título. |
+| `--bg` / `--surface` | `#f5f5f4` / `#ffffff` | `#121315` / `#1b1d21` | Fondo / tarjetas. |
+| `--ink` / `--muted` / `--line` | `#1c1917` / `#6b6560` / `#e2dfdc` | `#ececeb` / `#a8a4a0` / `#2e3137` | Texto y bordes. |
+| `--wa` | `#1f9d55` | `#3cc37a` | Solo botones de WhatsApp. |
+| `--ok` `--warn` `--bad` | verde / naranja / rojo | | Estados. No se usan como acento. |
 
-Modo oscuro: `@media (prefers-color-scheme: dark)` redefine los mismos tokens. Nunca poner colores fijos en componentes.
+Modo oscuro: `@media (prefers-color-scheme: dark)` redefine los mismos tokens. Nunca poner colores fijos en componentes. `entrega.html` usa los mismos tokens.
 
 ### Tipografía
 
 | Rol | Fuente | Uso |
 |---|---|---|
-| Display | Barlow Condensed 600/700, mayúsculas | Títulos, pestañas, números de parada. |
+| Display (`--f-display`) | Public Sans 700–800, tipo oración | Títulos, pestañas, números grandes. |
 | Texto | Public Sans 400–700 | Todo lo demás. |
 | Datos | JetBrains Mono 500 | Teléfonos, guías, coordenadas, km. |
 
+Antes era Barlow Condensed en mayúsculas; se cambió porque se veía menos profesional.
+
 ### Componentes
 
-- `.btn` (`.primary` amarillo, `.road` verde, `.wa` WhatsApp, `.sm`, `.ghost`, `.danger`).
+- `.btn` (`.primary` naranja, `.road` grafito, `.wa` WhatsApp, `.sm`, `.ghost`, `.danger`).
 - `.chip.st-*`: etiqueta de estado. Tocarla rota el estado.
 - `.pkg`: tarjeta de paquete con número grande a la izquierda.
-- `.stop` + `.dot`: línea de ruta punteada amarilla entre paradas.
-- `.toast`: confirmación breve abajo.
+- `.stop` + `.dot`: línea de ruta punteada naranja entre paradas.
+- `.sheet`: hojas que suben desde abajo (prueba de entrega, pegar respuesta, evidencia, escanear etiquetas).
+- `.toast`: confirmación breve abajo (encima de las hojas).
 
-### Ícono
+### Logo e íconos
 
-Pin amarillo con caja al final de una ruta punteada, sobre degradado verde. Archivos: `apple-touch-icon.png` (180), `icon-192.png`, `icon-512.png`, `favicon.png` (32). Se generan desde un SVG de 512 px.
+**Pin con paquete:** pin naranja (ubicación y ruta) con una caja blanca (la entrega) y líneas de velocidad (rapidez), sobre grafito. Grilla de 512 px.
+
+| Color | Hex |
+|---|---|
+| Grafito (fondo) | `#1f2125` |
+| Grafito claro (brillo, 55 %) | `#2e3137` |
+| Naranja (pin) | `#f26b1d` |
+| Naranja oscuro (cinta) | `#c9520f` |
+| Blanco (caja, líneas) | `#ffffff` |
+
+Archivos: `logo.svg` (fuente maestra; los PNG se regeneran desde él), `icon-192.png`, `icon-512.png`, `icon-maskable-512.png` (Android, contenido al 80 %), `apple-touch-icon.png` (180, sin transparencia) y `favicon-32.png`. El logo también va en el encabezado de la app.
+
+**No usar logos ni marcas de terceros** (Temu u otras): puede traer problemas legales, sobre todo si la app se vende. "Temu" solo aparece en el texto de los mensajes.
 
 ## 6. Cómo probar
 

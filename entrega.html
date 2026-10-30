@@ -7,31 +7,31 @@
 <meta property="og:title" content="RutaFácil · Su entrega">
 <meta property="og:image" content="https://rutafacilcr.github.io/icon-512.png">
 <meta property="og:type" content="website">
-<link rel="icon" type="image/png" href="favicon.png">
-<meta name="theme-color" content="#1f4d46">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Public+Sans:wght@400;500;600;700&display=swap">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<meta name="theme-color" content="#1f2125">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap">
 <script src="config.js"></script>
 <style>
 :root{
-  --bg:#f3f5f4; --surface:#ffffff; --ink:#15302c; --muted:#5b6f6b; --line:#d6dedb;
-  --accent:#e8a317; --accent-ink:#2a1d00; --road:#1f4d46; --road-ink:#ffffff;
+  --bg:#f5f5f4; --surface:#ffffff; --ink:#1c1917; --muted:#6b6560; --line:#e2dfdc;
+  --accent:#f26b1d; --accent-ink:#ffffff; --road:#1f2125; --road-ink:#ffffff;
   --ok:#2f8a4e; --ok-bg:#e3f3e8; --bad:#b03a3a; --bad-bg:#f8e1e1;
-  --f-display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --f-display:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 @media (prefers-color-scheme: dark){:root{
-  --bg:#0f1716; --surface:#172221; --ink:#e4ecea; --muted:#9db0ac; --line:#2b3a38;
-  --accent:#f0b43a; --road:#2c6b61; --ok:#6cc98b; --ok-bg:#183326; --bad:#ec8a8a; --bad-bg:#3a1c1c; color-scheme:dark}}
+  --bg:#121315; --surface:#1b1d21; --ink:#ececeb; --muted:#a8a4a0; --line:#2e3137;
+  --accent:#f5803a; --road:#1f2125; --ok:#6cc98b; --ok-bg:#183326; --bad:#ec8a8a; --bad-bg:#3a1c1c; color-scheme:dark}}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5}
 header{background:var(--road);color:var(--road-ink);border-bottom:4px solid var(--accent);padding:calc(18px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px))}
 header .in,main{max-width:560px;margin:0 auto}
-h1{font-family:var(--f-display);font-size:30px;line-height:1.05;margin:0;text-transform:uppercase;letter-spacing:.4px}
+h1{font-family:var(--f-display);font-size:26px;font-weight:800;line-height:1.1;margin:0;letter-spacing:-.3px}
 header p{margin:6px 0 0;opacity:.9;font-size:15px}
 main{padding:18px max(16px,env(safe-area-inset-right,0px)) calc(120px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
-h2{font-family:var(--f-display);font-size:21px;margin:0;text-transform:uppercase;letter-spacing:.4px}
+h2{font-family:var(--f-display);font-size:18px;margin:0;letter-spacing:-.2px}
 .hint{font-size:14px;color:var(--muted);margin:0}
 .chips{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .chip{font:inherit;font-size:15px;font-weight:600;padding:12px 8px;border-radius:9px;border:2px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
@@ -50,7 +50,7 @@ input:focus,textarea:focus{outline:2px solid var(--accent);border-color:transpar
 .btn.loc[aria-pressed="true"]{background:var(--road);color:var(--road-ink)}
 details summary{cursor:pointer}
 .done{text-align:center;padding:32px 16px}
-.done .big{font-family:var(--f-display);font-size:34px;color:var(--ok);text-transform:uppercase}
+.done .big{font-family:var(--f-display);font-size:28px;font-weight:800;color:var(--ok)}
 </style>
 </head>
 <body>

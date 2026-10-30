@@ -34,6 +34,16 @@ Servicios externos sin cuenta: wa.me (WhatsApp), Google Maps, Waze
 - Cada push a `main` dispara el workflow automático *pages-build-deployment* (1 a 2 minutos). Se revisa en la pestaña **Actions**.
 - Los celulares pueden tener la versión anterior en caché. Cerrar y volver a abrir la app la actualiza.
 
+### Mudanza a la organización (30-oct-2026)
+
+- **Por qué:** el link viejo (`victormenav.github.io/RutafacilCR`) mostraba el nombre del dueño. Un dominio propio (ej. subdominio de infolinkcr.com) se descartó.
+- **Qué se hizo:** se creó la organización gratis **rutafacilcr** en GitHub, se transfirió el repo y se renombró a `rutafacilcr.github.io`. Se instaló la app de Claude en la organización y se activó Pages (main / root).
+- **Efectos:** el link viejo dejó de funcionar. El navegador guarda los datos por dirección, así que en la dirección nueva la lista del celular arranca vacía y hay que reinstalar el ícono. Las evidencias ya subidas siguen en Supabase (no cambió nada allá). Los links de formulario mandados antes de la mudanza ya no abren.
+
+### Logo e íconos
+
+`favicon-32.png` y `apple-touch-icon.png` se referencian con `<link>` en `index.html` y `entrega.html`; `icon-192.png`, `icon-512.png` e `icon-maskable-512.png` en `manifest.json` (`theme_color` y `background_color` `#1f2125`). Tras cambiar el ícono, el celular puede guardar el viejo: quitar el acceso directo y volverlo a agregar.
+
 ## 3. Supabase
 
 | Dato | Valor |

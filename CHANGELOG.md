@@ -1,6 +1,7 @@
 # Historial de cambios
 
 ## 2026-10-30
+- **Nuevo diseño (v30-oct-a):** paleta *Grafito y naranja* y títulos sin mayúsculas en la app y el formulario. Nuevo logo: pin con paquete en grafito y naranja; íconos de app 192, 512, maskable y iPhone, y logo en el encabezado.
 - **Nueva dirección:** la app se mudó a la organización de GitHub *rutafacilcr* y ahora vive en https://rutafacilcr.github.io/ (sin el nombre del dueño en el link). El link viejo deja de funcionar y la lista del celular arranca vacía en la dirección nueva.
 
 ## 2026-10-29
