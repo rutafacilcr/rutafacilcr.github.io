@@ -1,5 +1,8 @@
 # Historial de cambios
 
+## 2026-10-30
+- **Nueva dirección:** la app se mudó a la organización de GitHub *rutafacilcr* y ahora vive en https://rutafacilcr.github.io/ (sin el nombre del dueño en el link). El link viejo deja de funcionar y la lista del celular arranca vacía en la dirección nueva.
+
 ## 2026-10-29
 - **Ruta con horarios (v29-oct-l):** la ruta respeta el horario que confirmó cada cliente (8 a 10 am, 2 a 4 pm, en la tarde, después de las 3…). Nueva *Hora de salida*, hora estimada de llegada por parada, aviso ⚠ si alguna quedaría fuera de horario y botón *Usar mi ubicación actual* para recalcular a media ruta. Optimización con 2-opt y reubicación de tramos, probada con 70 paradas.
 - **Escanear etiquetas (v29-oct-k):** en *1 Paquetes*, foto a la etiqueta (o varias fotos de la galería): la guía sale del código de barras y nombre, teléfono y dirección se leen con OCR gratis dentro del celular (Tesseract.js). Se revisa y se guarda en serie; avisa si la guía ya está en la lista. La foto se endereza sola y no se guarda.

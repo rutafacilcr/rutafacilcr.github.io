@@ -2,7 +2,7 @@
 
 Guía para el repartidor. No hace falta saber de computadoras.
 
-**Link de la app:** https://victormenav.github.io/RutafacilCR/
+**Link de la app:** https://rutafacilcr.github.io/
 
 ---
 
@@ -137,4 +137,4 @@ Tocá la etiqueta de color para pasar al siguiente estado.
 | "No encontré hora ni ubicación" | Lo que copiaste no traía ninguna de las dos. Copiá el mensaje con la hora o el link de la ubicación. |
 | No llegan las respuestas | Revisá el internet y tocá **Revisar respuestas ahora**. El cliente tiene que tocar **Enviar** en el formulario. |
 | Desapareció mi lista | Abriste la app en otro navegador o desde Safari en vez del ícono. |
-| El link da error 404 | Escribilo con mayúsculas: `RutafacilCR`. |
+| El link viejo (victormenav…/RutafacilCR) no abre | La app se mudó a https://rutafacilcr.github.io/. Instalá el ícono de nuevo desde ahí. |

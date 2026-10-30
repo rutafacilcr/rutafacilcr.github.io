@@ -16,7 +16,7 @@ Celular del repartidor                 Celular del cliente
             │ Supabase (Postgres + API REST)         │
             │ tabla respuestas + 2 funciones RPC     │
             └───────────────────────────────────────┘
-Hosting de los archivos: GitHub Pages (repo victormenav/RutafacilCR, rama main)
+Hosting de los archivos: GitHub Pages (repo rutafacilcr/rutafacilcr.github.io, rama main)
 Servicios externos sin cuenta: wa.me (WhatsApp), Google Maps, Waze
 ```
 
@@ -28,9 +28,9 @@ Servicios externos sin cuenta: wa.me (WhatsApp), Google Maps, Waze
 
 ## 2. Publicación (GitHub Pages)
 
-- Repositorio: https://github.com/victormenav/RutafacilCR
+- Repositorio: https://github.com/rutafacilcr/rutafacilcr.github.io (organización gratis *rutafacilcr*; antes era victormenav/RutafacilCR)
 - Pages: **Settings > Pages > Deploy from a branch > main / (root)**.
-- URL pública: https://victormenav.github.io/RutafacilCR/ (**sensible a mayúsculas**).
+- URL pública: https://rutafacilcr.github.io/. Al ser el repo `<organización>.github.io`, la app queda en la raíz del dominio.
 - Cada push a `main` dispara el workflow automático *pages-build-deployment* (1 a 2 minutos). Se revisa en la pestaña **Actions**.
 - Los celulares pueden tener la versión anterior en caché. Cerrar y volver a abrir la app la actualiza.
 
