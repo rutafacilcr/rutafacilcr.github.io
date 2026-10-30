@@ -25,7 +25,7 @@ Vas a ver el pin naranja con el paquete sobre fondo grafito. Después abrí siem
 
 La app pide entrar con **tu número de teléfono** y un **PIN de 6 números**.
 
-1. **Crear cuenta** (solo la primera vez): tocá *¿No tenés cuenta? Crear cuenta*, escribí tu nombre (así te ven los clientes en los mensajes), tu número de WhatsApp y elegí un PIN. No uses PIN fáciles como 111111 o 123456.
+1. **Crear cuenta** (solo la primera vez): tocá *¿No tenés cuenta? Crear cuenta*, escribí tu nombre (así te ven los clientes en los mensajes), tu número de WhatsApp y elegí un PIN (los campos salen en blanco). No uses PIN fáciles como 111111 o 123456.
 2. **Activación:** la cuenta queda *esperando activación*. Pagá la mensualidad por **SINPE Móvil** al número que muestra la pantalla, con el detalle **RF + tu número** (ej. *RF 88887777*), y avisale al administrador por WhatsApp. Cuando la active, tocá **Revisar de nuevo**.
 3. **Los días siguientes** la app abre sola. Si te pide entrar, poné tu número y PIN.
 
