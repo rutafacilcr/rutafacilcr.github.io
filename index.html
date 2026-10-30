@@ -60,6 +60,10 @@ nav.tabs button[aria-selected="true"]{color:var(--accent);border-top-color:var(-
 nav.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 nav.tabs .n{position:absolute;top:4px;left:calc(50% + 8px);min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-family:var(--f-mono);font-size:11px;line-height:18px;text-align:center}
 nav.tabs .n:empty{display:none}
+.supbtn{background:rgba(255,255,255,.14);color:var(--road-ink);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:5px 12px;font:600 13px var(--f-body);cursor:pointer}
+.supbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.vids{display:flex;flex-direction:column;gap:10px}
+.vids video,.vids iframe{width:100%;aspect-ratio:9/16;max-height:70vh;border:0;border-radius:10px;background:#000}
 .appver{text-align:center;font-size:12px;color:var(--muted);padding:28px 0 4px}
 section{display:flex;flex-direction:column;gap:16px;padding-top:18px}
 h2{font-family:var(--f-display);font-size:18px;font-weight:700;letter-spacing:-.2px;margin:0;text-wrap:balance}
@@ -139,7 +143,7 @@ details summary{cursor:pointer;font-weight:600}
 
 <header class="top"><div class="wrap">
   <div style="display:flex;gap:12px;align-items:center"><img src="icon-192.png" alt="" width="44" height="44" style="border-radius:10px;flex:none"><div><h1>Ruta<span>Fácil</span> CR</h1><p class="sub">Paquetes, mensajes de WhatsApp y ruta del día</p></div></div>
-  <span class="daypill" id="daypill"></span>
+  <div style="display:flex;gap:8px;align-items:center"><span class="daypill" id="daypill"></span><button class="supbtn" id="supBtn" type="button">❓ Soporte</button></div>
 </div></header>
 <nav class="tabs"><div class="wrap" role="tablist">
   <button role="tab" id="tab-paquetes" aria-selected="true" data-tab="paquetes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg>Paquetes<span class="n" id="n-pk"></span></button>
@@ -244,7 +248,7 @@ details summary{cursor:pointer;font-weight:600}
   </div>
   <div id="routeOut" class="list"></div>
 </section>
-<footer class="appver">RutaFácil CR · versión <span id="appVer">1.7.1</span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.8.0</span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -296,6 +300,14 @@ details summary{cursor:pointer;font-weight:600}
     <button class="btn sm ghost" id="scanSkip" hidden>Descartar</button>
     <button class="btn ghost" id="scanEnd">Terminar</button>
   </div>
+</div></div>
+<div class="sheet" id="supSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="supTitle">
+  <h2 id="supTitle">Soporte</h2>
+  <p class="small muted">¿Algo no funciona o tenés una duda? Escribinos por WhatsApp.</p>
+  <a class="btn wa" id="supWa" target="_blank" rel="noopener" style="justify-content:center">💬 Escribir a soporte por WhatsApp</a>
+  <h3>Videos: cómo se usa la app</h3>
+  <div class="vids" id="supVids"><p class="small muted">Cargando…</p></div>
+  <button class="btn ghost" id="supClose">Cerrar</button>
 </div></div>
 <div class="toast" id="toast" hidden></div>
 
@@ -827,6 +839,22 @@ $('#scanSave').onclick=()=>{
   S.pk.push(mkPkg(v));S.route=null;save();render();SCAN.n++;toast(`Guardado (${SCAN.n})`);
   scanNext();
 };
+
+// ===== Soporte: WhatsApp y videos (lista en videos.json) =====
+const SOPORTE_WA='50662700666';
+async function openSupport(){
+  $('#supSheet').hidden=false;document.body.style.overflow='hidden';
+  $('#supWa').href=`https://wa.me/${SOPORTE_WA}?text=${encodeURIComponent(`Hola, necesito ayuda con RutaFácil (versión ${$('#appVer').textContent}).`)}`;
+  const box=$('#supVids');
+  try{const r=await fetch('videos.json',{cache:'no-cache'});const v=r.ok?await r.json():[];
+    box.innerHTML=v.length?v.map(x=>{const yt=(x.url||'').match(/(?:youtu\.be\/|v=|shorts\/|embed\/)([\w-]{11})/);
+      return `<div><b>${esc(x.titulo||'Video')}</b>${x.dur?` <span class="small muted">· ${esc(x.dur)}</span>`:''}${x.desc?`<div class="small muted">${esc(x.desc)}</div>`:''}
+      ${yt?`<iframe src="https://www.youtube-nocookie.com/embed/${yt[1]}" title="${esc(x.titulo||'Video')}" allowfullscreen loading="lazy"></iframe>`:`<video src="${esc(x.url)}" controls playsinline preload="metadata"></video>`}</div>`}).join('')
+      :'<p class="small muted">Pronto vas a ver aquí los videos. Mientras tanto, escribinos por WhatsApp.</p>'}
+  catch(e){box.innerHTML='<p class="small muted">No se pudieron cargar los videos. Revisá el internet.</p>'}
+}
+function closeSupport(){$('#supSheet').hidden=true;document.body.style.overflow='';$('#supVids').querySelectorAll('video').forEach(v=>v.pause());$('#supVids').innerHTML=''}
+$('#supBtn').onclick=openSupport;$('#supPie').onclick=e=>{e.preventDefault();openSupport()};$('#supClose').onclick=closeSupport;
 
 if(!load()){S.pk=EXAMPLE.map(mkPkg);S.ex=true;S.pk[0].st='confirmado';S.pk[2].st='confirmado';S.pk[1].sent=true}
 if(!S.hora)S.hora='08:00';

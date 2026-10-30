@@ -24,6 +24,10 @@ Funciona desde el celular, se puede instalar como ícono en la pantalla de inici
 
 Desde la versión 1.7.0 cada repartidor entra con **su número de teléfono y un PIN de 6 números**. La cuenta queda atada a un solo celular: si alguien la abre en otro, el administrador tiene que aprobar el cambio. El administrador activa, renueva (pagos por SINPE Móvil) o suspende cuentas desde el **panel** (`admin.html`). Así la app no se puede pasar entre compañeros ni usar sin una cuenta al día.
 
+## Soporte
+
+Dentro de la app, el botón **❓ Soporte** abre WhatsApp con soporte (+506 6270-0666) y los videos de cómo se usa.
+
 ## Documentación
 
 - [Manual de usuario](docs/manual-usuario.md): cómo usar la app día a día.
@@ -40,6 +44,7 @@ Desde la versión 1.7.0 cada repartidor entra con **su número de teléfono y un
 | `f.html` | Redirige links viejos a `entrega.html`. |
 | `auth.js` | Cuentas: pantalla de entrada (número + PIN), un teléfono por cuenta y estado de la mensualidad. |
 | `admin.html` | Panel del administrador: cuentas, pagos, cambios de teléfono, ajustes y limpieza de fotos. |
+| `videos.json`, `videos/` | Lista de videos de ayuda que muestra el botón Soporte. |
 | `config.js` | Dirección y llave pública de Supabase. |
 | `supabase.sql` | Crea en Supabase las cuentas, el formulario, las pruebas de entrega y sus reglas de acceso. |
 | `plantilla-paquetes.xlsx` | Plantilla de Excel para la lista de paquetes. |
