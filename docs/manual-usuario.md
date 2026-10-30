@@ -43,7 +43,7 @@ Reglas de la cuenta:
 
 ## 2. Rutina diaria
 
-La app tiene tres pestañas en la **barra de abajo**: **Paquetes** (📦, con un globito que dice cuántos hay), **Mensajes** (💬) y **Ruta**. La pestaña en la que estás se marca en naranja.
+La app tiene tres pestañas en la **barra de abajo**: **Paquetes** (📦, con un globito que dice cuántos hay), **Mensajes** (💬) y **Ruta**, más el botón **Soporte** (🎧) que abre la ayuda. La pestaña en la que estás se marca en naranja.
 
 ### Día antes: cargar paquetes (pestaña **Paquetes**)
 

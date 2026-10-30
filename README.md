@@ -8,7 +8,7 @@ Herramienta web para repartidores de paquetes en Costa Rica. Cargás la lista de
 
 ## Qué hace
 
-La app se maneja con tres pestañas en la barra de abajo: **Paquetes**, **Mensajes** y **Ruta**.
+La app se maneja con tres pestañas en la barra de abajo (**Paquetes**, **Mensajes** y **Ruta**) más el botón **Soporte**.
 
 | Paso | Qué resuelve |
 |---|---|

@@ -20,6 +20,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.8.3 | — | Ícono de audífonos (call center) en Soporte |
 
 ## 2026-10-30
+- **1.9.0:** *Soporte* pasa a la barra de abajo, a la par de *Ruta*, con el ícono de audífonos; sale del encabezado.
 - **1.8.3:** el botón de Soporte y los enlaces de ayuda de la pantalla de entrar llevan un ícono de audífonos con micrófono (estilo call center) en vez de ❓.
 - **1.8.2:** arreglo de diseño: en *Paquetes*, la línea de evidencia (📷 fotos · Ver evidencia) ya no aprieta la tarjeta del paquete.
 - **1.8.1:** la pantalla de entrar, crear cuenta y los avisos de cuenta llevan el enlace *¿Necesitás ayuda? Escribinos por WhatsApp* al soporte (6270 0666, se puede cambiar con `soporte` en `config.js`). Los botones de contacto de cuenta vencida, suspendida o teléfono pendiente también van a ese número.
