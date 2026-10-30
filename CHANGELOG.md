@@ -14,8 +14,10 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.6.0 | v30-oct-a | Dirección nueva, paleta grafito y naranja, logo |
 | 1.6.1 | v30-oct-b | Pestañas abajo |
 | 1.7.0 | — | Cuentas con número + PIN, un teléfono por cuenta y panel del administrador |
+| 1.7.1 | — | Mensajes más claros al entrar |
 
 ## 2026-10-30
+- **1.7.1:** al entrar, si el número no tiene cuenta la app sugiere *Crear cuenta*, y si la cuenta no está confirmada dice que falta apagar *Confirm email* en Supabase (antes decía solo "Número o PIN incorrecto").
 - **1.7.0 · Cuentas (Fase 1a):** la app pide entrar con número de teléfono y PIN de 6 números (`auth.js`). Cada cuenta funciona en un solo celular: otro teléfono queda esperando aprobación y, al aprobarlo, el anterior se cierra. Pantallas de cuenta sin activar, vencida, suspendida y teléfono pendiente, con los datos para pagar por SINPE Móvil. El nombre de la cuenta firma los mensajes. Sin internet abre hasta 3 días con la última revisión. Nuevo **panel del administrador** (`admin.html`): cuentas, pagos, prueba de 14 días, suspender, aprobar teléfonos, PIN nuevo, ajustes y borrado de fotos viejas para no pasarse del plan gratis. En Supabase (`supabase.sql`): tablas `rf_ajustes`, `rf_perfiles`, `rf_pagos`, `rf_eventos`; con **Exigir cuenta activa**, `leer_respuestas`, `registrar_entrega` y la subida de fotos solo responden a una cuenta al día desde su teléfono aprobado. Requiere correr de nuevo `supabase.sql` y apagar *Confirm email* en Supabase (ver manual técnico).
 - **1.6.2:** la versión sale del encabezado y pasa al final de la app con numeración profesional (mayor.menor.corrección).
 - **Pestañas abajo (v30-oct-b):** *Paquetes*, *Mensajes* y *Ruta* pasan a una barra fija abajo, con ícono y sin números, como una app. Un globito naranja muestra cuántos paquetes hay.

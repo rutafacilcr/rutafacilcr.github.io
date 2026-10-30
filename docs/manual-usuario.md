@@ -145,15 +145,16 @@ Tocá la etiqueta de color para pasar al siguiente estado.
 
 ## 4. Problemas comunes
 
-**¿Qué versión tengo?** Bajá hasta el final de cualquier pestaña: dice *RutaFácil CR · versión 1.7.0*. Se lee **mayor.menor.corrección**: el primer número cambia con cambios grandes, el segundo con funciones nuevas y el tercero con arreglos.
+**¿Qué versión tengo?** Bajá hasta el final de cualquier pestaña: dice *RutaFácil CR · versión 1.7.1*. Se lee **mayor.menor.corrección**: el primer número cambia con cambios grandes, el segundo con funciones nuevas y el tercero con arreglos.
 
 
-**¿Veo los colores o el ícono viejo?** El celular guarda la versión anterior. Cerrá la app por completo (deslizala hacia arriba) y abrila de nuevo; al final de la pestaña tiene que decir la versión nueva (ej. *versión 1.7.0*). Si el ícono sigue viejo, borrá el acceso directo y agregalo otra vez desde https://rutafacilcr.github.io/.
+**¿Veo los colores o el ícono viejo?** El celular guarda la versión anterior. Cerrá la app por completo (deslizala hacia arriba) y abrila de nuevo; al final de la pestaña tiene que decir la versión nueva (ej. *versión 1.7.1*). Si el ícono sigue viejo, borrá el acceso directo y agregalo otra vez desde https://rutafacilcr.github.io/.
 
 
 | Problema | Qué hacer |
 |---|---|
-| "Número o PIN incorrecto" | Revisá el número (8 dígitos) y el PIN. Si no lo recordás, pedile uno nuevo al administrador. |
+| "Número o PIN incorrecto" | Revisá el número (8 dígitos) y el PIN. Si es tu primera vez, tocá **Crear cuenta**. Si no recordás el PIN, pedile uno nuevo al administrador. |
+| "Falta un ajuste en Supabase" | Avisale al administrador: tiene que apagar *Confirm email* (ver manual técnico). |
 | "Esta cuenta está en otro teléfono" | Tu cuenta ya está aprobada en otro celular. Si cambiaste de teléfono, avisale al administrador para que apruebe este. |
 | "La cuenta se pasó a otro teléfono" | El administrador aprobó otro celular y este se cerró. Si fue un error, escribile. |
 | "Tu cuenta espera activación" o "Tu mensualidad venció" | Pagá por SINPE Móvil con el detalle que dice la pantalla, avisale al administrador y tocá **Revisar de nuevo**. |
