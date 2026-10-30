@@ -105,7 +105,7 @@ function vEntrar(err){
     if(!/^\d{6}$/.test(pin)){er.textContent='El PIN tiene 6 números';return}
     b.disabled=true;b.textContent='Entrando…';er.textContent='';
     try{guardar(await authReq('token?grant_type=password',{email:t+'@'+DOMINIO,password:pin}));await revisar(true)}
-    catch(x){b.disabled=false;b.textContent='Entrar';er.textContent=x.status===400?'Número o PIN incorrecto':'No se pudo entrar: '+x.message}
+    catch(x){b.disabled=false;b.textContent='Entrar';er.textContent=/confirm/i.test(x.message+x.code)?'Tu cuenta existe, pero falta un ajuste en Supabase (desactivar "Confirm email"). Avisale al administrador.':x.status===400?'Número o PIN incorrecto. Si es tu primera vez, tocá Crear cuenta.':'No se pudo entrar: '+x.message}
   };
 }
 function vCrear(){

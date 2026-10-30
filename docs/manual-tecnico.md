@@ -102,6 +102,14 @@ Cada repartidor entra con su número de teléfono + un PIN de 6 números. Por de
 **Consultas útiles:**
 
 ```sql
+-- Confirmar una cuenta creada mientras "Confirm email" estaba encendido
+update auth.users set email_confirmed_at = now() where email = '88887777@rutafacilcr.github.io';
+
+-- Cambiar el número de una cuenta (ej. se escribió mal al crearla)
+update auth.users set email = '<nuevo>@rutafacilcr.github.io', raw_user_meta_data = raw_user_meta_data || '{"telefono":"<nuevo>"}' where email = '<viejo>@rutafacilcr.github.io';
+update auth.identities set identity_data = identity_data || '{"email":"<nuevo>@rutafacilcr.github.io"}' where provider = 'email' and identity_data->>'email' = '<viejo>@rutafacilcr.github.io';
+update rf_perfiles set telefono = '<nuevo>' where telefono = '<viejo>';
+
 -- Cuentas y vencimientos
 select nombre, telefono, rol, estado, vence_en, ultimo_acceso, dispositivo_pendiente is not null as pide_cambio
 from rf_perfiles order by creado_en desc;
@@ -176,7 +184,7 @@ Si los dos valores están vacíos, la app funciona sin formulario: los mensajes 
 
 ## 6. Mantenimiento
 
-- **Versión:** se muestra al final de la app, chiquita: *RutaFácil CR · versión 1.7.0*. Se usa versionado semántico **mayor.menor.corrección**: *mayor* sube con cambios grandes que obligan a reinstalar o migrar datos, *menor* con funciones nuevas y *corrección* con arreglos o ajustes visuales. Al publicar se cambia el número en `index.html` y `admin.html` (`#appVer`) y se anota en `CHANGELOG.md`. Sirve para confirmar si un celular ya tiene la versión nueva.
+- **Versión:** se muestra al final de la app, chiquita: *RutaFácil CR · versión 1.7.1*. Se usa versionado semántico **mayor.menor.corrección**: *mayor* sube con cambios grandes que obligan a reinstalar o migrar datos, *menor* con funciones nuevas y *corrección* con arreglos o ajustes visuales. Al publicar se cambia el número en `index.html` y `admin.html` (`#appVer`) y se anota en `CHANGELOG.md`. Sirve para confirmar si un celular ya tiene la versión nueva.
 
 - **Cambiar textos o mensajes por defecto:** `index.html`, constantes `DEF_COORD`, `DEF_COORD_F` y `DEF_CAMINO`.
 - **Cambiar horarios del formulario:** `entrega.html`, arreglo `SLOTS`.
