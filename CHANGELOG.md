@@ -18,8 +18,10 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.8.0 | — | Botón de Soporte con WhatsApp y videos de ayuda |
 | 1.8.1 | — | Soporte por WhatsApp en la pantalla de entrar |
 | 1.8.3 | — | Ícono de audífonos (call center) en Soporte |
+| 1.10.0 | — | Avisos de cuentas nuevas por WhatsApp y correo; aviso de activación al repartidor |
 
 ## 2026-10-30
+- **1.10.0 · Avisos de cuentas:** cuando alguien crea cuenta o pide usar otro teléfono, al administrador le llega un WhatsApp (CallMeBot) y un correo (Resend), los dos gratis, configurables en *Panel > Ajustes*. Al activar, renovar o reactivar, el panel ofrece *Avisarle por WhatsApp* con el mensaje listo. La pantalla de espera del repartidor revisa cada minuto y la app se abre sola al activarse. Hay que volver a correr `supabase.sql`.
 - **1.9.0:** *Soporte* pasa a la barra de abajo, a la par de *Ruta*, con el ícono de audífonos; sale del encabezado.
 - **1.8.3:** el botón de Soporte y los enlaces de ayuda de la pantalla de entrar llevan un ícono de audífonos con micrófono (estilo call center) en vez de ❓.
 - **1.8.2:** arreglo de diseño: en *Paquetes*, la línea de evidencia (📷 fotos · Ver evidencia) ya no aprieta la tarjeta del paquete.

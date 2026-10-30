@@ -82,6 +82,13 @@ Cada repartidor entra con su número de teléfono + un PIN de 6 números. Por de
 6. Abrir `https://rutafacilcr.github.io/admin.html` > **Ajustes**: número SINPE, precio, días de gracia > **Guardar ajustes**.
 7. Cuando todos los celulares tengan la 1.7.0 y su cuenta: encender **Exigir cuenta activa**.
 
+8. Avisos de cuentas nuevas (versión 1.10.0, gratis). Las llaves se guardan desde el Panel en la tabla `rf_avisos` (nunca en el repositorio ni de vuelta al navegador). Usa la extensión **pg_net** de Supabase, que `supabase.sql` activa sola.
+   - **WhatsApp (CallMeBot):** en el WhatsApp del administrador, agregar el contacto de CallMeBot que indica https://www.callmebot.com/blog/free-api-whatsapp-messages/ y mandarle `I allow callmebot to send me messages`. Contesta con un *apikey*. Solo manda mensajes a ese mismo número (sirve para avisarle al administrador, no a los repartidores).
+   - **Correo (Resend):** crear cuenta gratis en https://resend.com **con el mismo correo donde se quieren recibir los avisos** (sin dominio propio, Resend solo deja mandar al correo de la cuenta). **API Keys > Create API Key** (permiso *Sending access*), copiar la llave `re_…`. Plan gratis: 3.000 correos al mes.
+   - Panel > **Ajustes > Avisos cuando alguien crea cuenta**: número, llave de CallMeBot, correo, llave de Resend > **Guardar avisos** > **Mandarme una prueba**.
+   - Si un aviso falla, la cuenta se crea igual y en *Movimientos recientes* sale **Aviso no enviado**. Detalle de cada envío: SQL `select * from net._http_response order by created desc limit 10;`.
+   - Mensaje automático **al repartidor** por WhatsApp: no hay forma gratis (requiere la API de WhatsApp Business de Meta, con costo por mensaje y verificación de empresa). Por eso el Panel deja el mensaje listo para enviar con un toque, y la app del repartidor revisa cada minuto mientras espera y se abre sola.
+
 **Qué protege cada pieza:**
 
 | Pieza | Protege | Dónde |

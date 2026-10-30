@@ -50,7 +50,7 @@ create table if not exists public.rf_pagos (
 create table if not exists public.rf_eventos (
   id         bigint generated always as identity primary key,
   user_id    uuid references public.rf_perfiles(id) on delete cascade,
-  tipo       text not null,   -- cuenta_nueva | telefono_nuevo | telefono_aprobado | telefono_rechazado | telefono_liberado | renovada | estado | pin
+  tipo       text not null,   -- cuenta_nueva | telefono_nuevo | aviso_error | telefono_aprobado | telefono_rechazado | telefono_liberado | renovada | estado | pin
   detalle    jsonb not null default '{}',
   creado_en  timestamptz not null default now()
 );
@@ -258,6 +258,92 @@ begin
      order by e.creado_en desc limit 60) x), '[]'::json);
 end $$;
 
+-- ---------------------------------------------------------------------
+-- Avisos a Victor (1.10.0): cuando alguien crea cuenta o pide usar otro
+-- teléfono, la base le manda un WhatsApp (CallMeBot, gratis, solo a su propio
+-- número) y un correo (Resend, plan gratis). Las llaves se guardan desde el
+-- Panel (Ajustes > Avisos) y nunca vuelven al navegador ni van al repositorio.
+-- Si falta una llave, ese aviso simplemente no sale; la cuenta se crea igual.
+-- ---------------------------------------------------------------------
+create extension if not exists pg_net;
+
+create table if not exists public.rf_avisos (
+  id            int primary key default 1 check (id = 1),
+  whatsapp      text not null default '',   -- 8 dígitos del administrador
+  callmebot_key text not null default '',
+  correo        text not null default '',
+  resend_key    text not null default ''
+);
+insert into public.rf_avisos (id) values (1) on conflict (id) do nothing;
+alter table public.rf_avisos enable row level security;
+
+create or replace function public.rf_avisar_admin(p_asunto text, p_texto text)
+returns void language plpgsql security definer set search_path = public as $$
+declare a rf_avisos;
+begin
+  select * into a from rf_avisos where id = 1;
+  if not found then return; end if;
+  begin
+    if a.whatsapp <> '' and a.callmebot_key <> '' then
+      perform net.http_get('https://api.callmebot.com/whatsapp.php',
+        jsonb_build_object('phone', '+506' || a.whatsapp, 'text', p_texto, 'apikey', a.callmebot_key));
+    end if;
+    if a.correo <> '' and a.resend_key <> '' then
+      perform net.http_post('https://api.resend.com/emails',
+        jsonb_build_object('from', 'RutaFácil <onboarding@resend.dev>', 'to', jsonb_build_array(a.correo),
+                           'subject', p_asunto, 'text', p_texto),
+        '{}'::jsonb,
+        jsonb_build_object('Authorization', 'Bearer ' || a.resend_key, 'Content-Type', 'application/json'));
+    end if;
+  exception when others then
+    insert into rf_eventos (tipo, detalle) values ('aviso_error', json_build_object('error', sqlerrm)::jsonb);
+  end;
+end $$;
+
+create or replace function public.rf_evento_aviso()
+returns trigger language plpgsql security definer set search_path = public as $$
+declare p rf_perfiles; quien text; panel text := 'https://rutafacilcr.github.io/admin.html';
+begin
+  select * into p from rf_perfiles where id = new.user_id;
+  quien := coalesce(nullif(p.nombre,''), '(sin nombre)') || ' · ' || coalesce(p.telefono,'');
+  if new.tipo = 'cuenta_nueva' then
+    perform rf_avisar_admin('RutaFácil: cuenta nueva por activar',
+      'RutaFácil: cuenta nueva de ' || quien || '. Activala en el Panel cuando pague: ' || panel);
+  elsif new.tipo = 'telefono_nuevo' then
+    perform rf_avisar_admin('RutaFácil: pide usar otro teléfono',
+      'RutaFácil: ' || quien || ' pide usar la cuenta en otro teléfono. Aprobalo o rechazalo en el Panel: ' || panel);
+  end if;
+  return new;
+end $$;
+drop trigger if exists rf_evento_aviso on public.rf_eventos;
+create trigger rf_evento_aviso after insert on public.rf_eventos
+  for each row when (new.tipo in ('cuenta_nueva','telefono_nuevo'))
+  execute function public.rf_evento_aviso();
+
+-- Lee (todo null) o cambia los avisos. Las llaves solo se escriben: se devuelve si hay una guardada.
+-- Texto vacío ('') borra el valor; null lo deja como está.
+create or replace function public.rf_admin_avisos(p_whatsapp text, p_callmebot_key text, p_correo text, p_resend_key text)
+returns json language plpgsql security definer set search_path = public as $$
+declare a rf_avisos;
+begin
+  perform public.rf_admin_check();
+  update rf_avisos set
+    whatsapp      = case when p_whatsapp is null then whatsapp else left(regexp_replace(p_whatsapp,'\D','','g'),8) end,
+    callmebot_key = case when p_callmebot_key is null then callmebot_key else left(trim(p_callmebot_key),80) end,
+    correo        = case when p_correo is null then correo else left(trim(p_correo),120) end,
+    resend_key    = case when p_resend_key is null then resend_key else left(trim(p_resend_key),120) end
+   where id = 1 returning * into a;
+  return json_build_object('whatsapp', a.whatsapp, 'correo', a.correo,
+    'callmebot', a.callmebot_key <> '', 'resend', a.resend_key <> '');
+end $$;
+
+create or replace function public.rf_admin_probar_avisos()
+returns void language plpgsql security definer set search_path = public as $$
+begin
+  perform public.rf_admin_check();
+  perform rf_avisar_admin('RutaFácil: prueba de avisos', 'RutaFácil: prueba de avisos. Si te llegó esto, los avisos de cuentas nuevas funcionan.');
+end $$;
+
 revoke all on function public.rf_perfil_nuevo() from public, anon, authenticated;
 revoke all on function public.rf_es_admin() from public;
 revoke all on function public.rf_licencia_ok() from public;
@@ -272,6 +358,10 @@ revoke all on function public.rf_admin_pin(uuid,text) from public;
 revoke all on function public.rf_admin_nombre(uuid,text) from public;
 revoke all on function public.rf_admin_ajustes(boolean,text,int,int) from public;
 revoke all on function public.rf_admin_eventos() from public;
+revoke all on function public.rf_avisar_admin(text,text) from public, anon, authenticated;
+revoke all on function public.rf_evento_aviso() from public, anon, authenticated;
+revoke all on function public.rf_admin_avisos(text,text,text,text) from public;
+revoke all on function public.rf_admin_probar_avisos() from public;
 grant execute on function public.rf_licencia_ok() to anon, authenticated;
 grant execute on function public.rf_exigir_licencia() to anon, authenticated;
 grant execute on function public.rf_es_admin() to authenticated;
@@ -285,6 +375,8 @@ grant execute on function public.rf_admin_pin(uuid,text) to authenticated;
 grant execute on function public.rf_admin_nombre(uuid,text) to authenticated;
 grant execute on function public.rf_admin_ajustes(boolean,text,int,int) to authenticated;
 grant execute on function public.rf_admin_eventos() to authenticated;
+grant execute on function public.rf_admin_avisos(text,text,text,text) to authenticated;
+grant execute on function public.rf_admin_probar_avisos() to authenticated;
 
 -- Para hacerse administrador (una sola vez, después de crear la cuenta en la app):
 --   update public.rf_perfiles set rol = 'admin', estado = 'activo' where telefono = '62700666';

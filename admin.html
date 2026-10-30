@@ -66,6 +66,11 @@ input,select{font:inherit;padding:9px 11px;border:1px solid var(--line);border-r
 .toggle input{width:20px;height:20px}
 .ev{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:6px 0;font-size:14px}
 .ev:last-child{border-bottom:0}
+.avisar{position:fixed;left:16px;right:16px;bottom:16px;z-index:51;max-width:480px;margin:0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--road);color:var(--road-ink);padding:12px 14px;border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.avisar[hidden]{display:none}
+.avisar #avisar-t{flex:1 1 100%;font-weight:600}
+.avisar .btn{text-decoration:none}
+.avisar #avisar-x{background:transparent;color:inherit;border-color:rgba(255,255,255,.35)}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--road);color:var(--road-ink);padding:10px 16px;border-radius:999px;font-size:14px;z-index:50;max-width:calc(100% - 32px)}
 .appver{text-align:center;font-size:12px;color:var(--muted);padding:28px 0 4px}
 </style>
@@ -107,6 +112,17 @@ input,select{font:inherit;padding:9px 11px;border:1px solid var(--line);border-r
     </div>
     <div class="row"><button class="btn pri" id="a-guardar">Guardar ajustes</button></div>
   </div>
+  <div class="panel">
+    <h3>Avisos cuando alguien crea cuenta</h3>
+    <p class="small muted">Te llega un WhatsApp y un correo cuando alguien crea cuenta o pide usar otro teléfono. Los dos servicios son gratis; los pasos para sacar cada llave están en el manual técnico. Las llaves no se vuelven a mostrar: dejá el campo vacío para no cambiarlas.</p>
+    <div class="grid">
+      <label>Tu WhatsApp<input id="v-wa" inputmode="numeric" placeholder="6270 0666"></label>
+      <label>Llave de CallMeBot <span class="small muted" id="v-cm-ok"></span><input id="v-cm" autocomplete="off" placeholder="la que te manda CallMeBot"></label>
+      <label>Tu correo<input id="v-correo" type="email" placeholder="tu@correo.com"></label>
+      <label>Llave de Resend <span class="small muted" id="v-re-ok"></span><input id="v-re" autocomplete="off" placeholder="re_…"></label>
+    </div>
+    <div class="row"><button class="btn pri" id="v-guardar">Guardar avisos</button><button class="btn" id="v-probar">Mandarme una prueba</button></div>
+  </div>
 </section>
 
 <section aria-labelledby="t-fotos">
@@ -123,9 +139,10 @@ input,select{font:inherit;padding:9px 11px;border:1px solid var(--line);border-r
   <div class="panel" id="eventos"></div>
 </section>
 
-<footer class="appver">RutaFácil CR · panel · versión <span id="appVer">1.9.0</span></footer>
+<footer class="appver">RutaFácil CR · panel · versión <span id="appVer">1.10.0</span></footer>
 </main>
 <div class="toast" id="toast" hidden></div>
+<div class="avisar" id="avisar" hidden role="status"><span id="avisar-t"></span> <a class="btn pri" id="avisar-wa" target="_blank" rel="noopener">Avisarle por WhatsApp</a> <button class="btn" id="avisar-x">Ahora no</button></div>
 
 <script>
 const $=s=>document.querySelector(s);
@@ -138,7 +155,7 @@ const dias=d=>d?Math.ceil((new Date(d)-Date.now())/864e5):null;
 function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2600)}
 let CU=[],AJ={precio:5000,sinpe:'',dias_gracia:3,exigir_cuenta:false},FIL='todas';
 
-const EVENTO={cuenta_nueva:'Cuenta nueva',telefono_nuevo:'Pidió usar otro teléfono',telefono_aprobado:'Teléfono aprobado',telefono_rechazado:'Teléfono rechazado',telefono_liberado:'Teléfono liberado',renovada:'Pago registrado',estado:'Cambio de estado',pin:'PIN nuevo'};
+const EVENTO={cuenta_nueva:'Cuenta nueva',telefono_nuevo:'Pidió usar otro teléfono',telefono_aprobado:'Teléfono aprobado',telefono_rechazado:'Teléfono rechazado',telefono_liberado:'Teléfono liberado',renovada:'Pago registrado',estado:'Cambio de estado',pin:'PIN nuevo',aviso_error:'Aviso no enviado'};
 
 function estadoDe(c){
   if(c.rol==='admin')return ['Administrador','ok'];
@@ -192,7 +209,17 @@ async function cargar(){
     pintar();
   }catch(e){toast('No se pudo cargar: '+e.message)}
 }
-async function hacer(fn,args,ok){try{await RF_AUTH.rpc(fn,args);toast(ok);await cargar()}catch(e){toast('No se pudo: '+e.message)}}
+// Al activar o renovar, ofrece mandarle al mensajero el aviso por WhatsApp ya escrito (un toque en Enviar).
+function ofrecerAviso(c,nuevo){
+  const v=(CU.find(x=>x.id===c.id)||c).vence_en,nom=(c.nombre||'').split(' ')[0];
+  const txt=nuevo?`Hola ${nom}, tu cuenta de RutaFácil ya está activa hasta el ${fecha(v)}. Abrí la app (rutafacilcr.github.io) y, si sigue en espera, tocá Revisar de nuevo.`
+                 :`Hola ${nom}, recibimos tu pago. Tu cuenta de RutaFácil queda al día hasta el ${fecha(v)}. ¡Gracias!`;
+  $('#avisar-t').textContent=nuevo?`Cuenta de ${nom} activa.`:`Pago de ${nom} registrado.`;
+  $('#avisar-wa').href=`https://wa.me/506${c.telefono}?text=${encodeURIComponent(txt)}`;
+  $('#toast').hidden=true;$('#avisar').hidden=false;
+}
+$('#avisar-x').onclick=$('#avisar-wa').onclick=()=>setTimeout(()=>$('#avisar').hidden=true,300);
+async function hacer(fn,args,ok){try{await RF_AUTH.rpc(fn,args);toast(ok);await cargar();return true}catch(e){toast('No se pudo: '+e.message);return false}}
 
 $('#lista').addEventListener('click',async e=>{
   const b=e.target.closest('button[data-a]');if(!b)return;
@@ -200,14 +227,16 @@ $('#lista').addEventListener('click',async e=>{
   if(a==='aprobar')return hacer('rf_admin_telefono',{p_id:id,p_accion:'aprobar'},'Teléfono aprobado');
   if(a==='rechazar')return hacer('rf_admin_telefono',{p_id:id,p_accion:'rechazar'},'Cambio rechazado');
   if(a==='liberar'){if(confirm(`¿Liberar el teléfono de ${nom}? El próximo celular donde entre quedará aprobado.`))hacer('rf_admin_telefono',{p_id:id,p_accion:'liberar'},'Teléfono liberado');return}
-  if(a==='prueba')return hacer('rf_admin_renovar',{p_id:id,p_dias:14,p_monto:0,p_referencia:'Prueba gratis'},'14 días de prueba activados');
+  if(a==='prueba'){if(await hacer('rf_admin_renovar',{p_id:id,p_dias:14,p_monto:0,p_referencia:'Prueba gratis'},'14 días de prueba activados'))ofrecerAviso(c,true);return}
   if(a==='suspender'){if(confirm(`¿Suspender la cuenta de ${nom}? Deja de funcionar de inmediato.`))hacer('rf_admin_estado',{p_id:id,p_estado:'suspendido'},'Cuenta suspendida');return}
-  if(a==='reactivar')return hacer('rf_admin_estado',{p_id:id,p_estado:'activo'},'Cuenta reactivada');
+  if(a==='reactivar'){if(await hacer('rf_admin_estado',{p_id:id,p_estado:'activo'},'Cuenta reactivada'))ofrecerAviso(c,true);return}
   if(a==='pago'){
     const monto=prompt(`Monto recibido de ${nom} (₡):`,AJ.precio);if(monto===null)return;
     const d=prompt('¿Cuántos días cubre?','30');if(d===null)return;
     const ref=prompt('Referencia del SINPE (opcional):','')??'';
-    return hacer('rf_admin_renovar',{p_id:id,p_dias:parseInt(d,10)||30,p_monto:parseInt(String(monto).replace(/\D/g,''),10)||0,p_referencia:ref},'Pago registrado');
+    const nuevo=c.estado!=='activo'||dias(c.vence_en)<0;
+    if(await hacer('rf_admin_renovar',{p_id:id,p_dias:parseInt(d,10)||30,p_monto:parseInt(String(monto).replace(/\D/g,''),10)||0,p_referencia:ref},'Pago registrado'))ofrecerAviso(c,nuevo);
+    return;
   }
   if(a==='pin'){
     const pin=Array.from(crypto.getRandomValues(new Uint8Array(6)),x=>x%10).join('');
@@ -224,6 +253,16 @@ $('#a-guardar').onclick=async()=>{
   try{AJ=await RF_AUTH.rpc('rf_admin_ajustes',{p_exigir:$('#a-exigir').checked,p_sinpe:$('#a-sinpe').value.replace(/\D/g,''),p_precio:parseInt($('#a-precio').value,10)||0,p_gracia:parseInt($('#a-gracia').value,10)||0});toast('Ajustes guardados');pintar()}
   catch(e){toast('No se pudo: '+e.message)}
 };
+
+// ---- Avisos a Victor (WhatsApp con CallMeBot, correo con Resend) ----
+function pintarAvisos(v){if(!v)return;$('#v-wa').value=v.whatsapp||'';$('#v-correo').value=v.correo||'';
+  $('#v-cm-ok').textContent=v.callmebot?'(guardada ✓)':'';$('#v-re-ok').textContent=v.resend?'(guardada ✓)':'';$('#v-cm').value=$('#v-re').value=''}
+$('#v-guardar').onclick=async()=>{
+  const k=x=>x.trim()||null;
+  try{pintarAvisos(await RF_AUTH.rpc('rf_admin_avisos',{p_whatsapp:$('#v-wa').value,p_callmebot_key:k($('#v-cm').value),p_correo:$('#v-correo').value,p_resend_key:k($('#v-re').value)}));toast('Avisos guardados')}
+  catch(e){toast('No se pudo: '+e.message)}
+};
+$('#v-probar').onclick=async()=>{try{await RF_AUTH.rpc('rf_admin_probar_avisos');toast('Prueba enviada: revisá WhatsApp y correo en un minuto')}catch(e){toast('No se pudo: '+e.message)}};
 
 // ---- Fotos en Supabase Storage (carpeta evidencias/AAAA-MM-DD/...) ----
 async function storage(path,body,method='POST'){
@@ -248,7 +287,7 @@ $('#f-borrar').onclick=async()=>{
   catch(e){toast('No se pudo borrar: '+e.message)}finally{b.disabled=false}
 };
 
-RF_AUTH.listo.then(c=>{if(c&&c.rol==='admin')cargar();else if(!RF_AUTH.on)$('#lista').innerHTML='<p class="muted">Falta configurar Supabase en config.js.</p>'});
+RF_AUTH.listo.then(c=>{if(c&&c.rol==='admin'){cargar();RF_AUTH.rpc('rf_admin_avisos',{p_whatsapp:null,p_callmebot_key:null,p_correo:null,p_resend_key:null}).then(pintarAvisos).catch(()=>{})}else if(!RF_AUTH.on)$('#lista').innerHTML='<p class="muted">Falta configurar Supabase en config.js.</p>'});
 </script>
 </body>
 </html>
