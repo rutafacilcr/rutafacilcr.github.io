@@ -185,6 +185,8 @@ No hay pruebas automáticas en el repositorio. Antes de cada push:
 
 ## 7. Convenciones
 
+- **Versión:** semántica `mayor.menor.corrección` en `#appVer` (pie de `index.html`). Subirla en cada publicación y anotarla en `CHANGELOG.md`.
+
 - Textos en español de Costa Rica (voseo en la app del repartidor, usted en el formulario del cliente).
 - Commits en español, en imperativo ("Agregar…", "Corregir…").
 - Cada cambio actualiza: `CHANGELOG.md` y los manuales afectados (`README.md`, `docs/`).

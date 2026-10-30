@@ -126,7 +126,7 @@ Si los dos valores están vacíos, la app funciona sin formulario: los mensajes 
 
 ## 6. Mantenimiento
 
-- **Versión visible:** el encabezado de la app muestra la versión (ej. `v29-oct-c`). Al publicar un cambio se actualiza ese texto en `index.html`, así se puede confirmar si un celular tiene la versión nueva.
+- **Versión:** se muestra al final de la app, chiquita: *RutaFácil CR · versión 1.6.2*. Se usa versionado semántico **mayor.menor.corrección**: *mayor* sube con cambios grandes que obligan a reinstalar o migrar datos, *menor* con funciones nuevas y *corrección* con arreglos o ajustes visuales. Al publicar se cambia el número en `index.html` (`#appVer`) y se anota en `CHANGELOG.md`. Sirve para confirmar si un celular ya tiene la versión nueva.
 
 - **Cambiar textos o mensajes por defecto:** `index.html`, constantes `DEF_COORD`, `DEF_COORD_F` y `DEF_CAMINO`.
 - **Cambiar horarios del formulario:** `entrega.html`, arreglo `SLOTS`.

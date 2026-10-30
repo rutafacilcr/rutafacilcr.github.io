@@ -1,6 +1,21 @@
 # Historial de cambios
 
+Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usaban etiquetas por fecha; equivalencias:
+
+| Versión | Etiqueta vieja | Qué trajo |
+|---|---|---|
+| 1.0.0 | v29-oct-a … f | App base: paquetes, mensajes, ruta, formulario, mensaje corto sin link |
+| 1.1.0 | v29-oct-g | Formulario como segundo mensaje |
+| 1.2.0 | v29-oct-h | Prueba de entrega (GPS, fotos, Supabase) |
+| 1.3.0 | v29-oct-i | Pegar respuesta |
+| 1.3.1 | v29-oct-j | Fotos más livianas y limpieza local |
+| 1.4.0 | v29-oct-k | Escanear etiquetas |
+| 1.5.0 | v29-oct-l | Ruta con horarios |
+| 1.6.0 | v30-oct-a | Dirección nueva, paleta grafito y naranja, logo |
+| 1.6.1 | v30-oct-b | Pestañas abajo |
+
 ## 2026-10-30
+- **1.6.2:** la versión sale del encabezado y pasa al final de la app con numeración profesional (mayor.menor.corrección).
 - **Pestañas abajo (v30-oct-b):** *Paquetes*, *Mensajes* y *Ruta* pasan a una barra fija abajo, con ícono y sin números, como una app. Un globito naranja muestra cuántos paquetes hay.
 - **Nuevo diseño (v30-oct-a):** paleta *Grafito y naranja* y títulos sin mayúsculas en la app y el formulario. Nuevo logo: pin con paquete en grafito y naranja; íconos de app 192, 512, maskable y iPhone, y logo en el encabezado.
 - **Nueva dirección:** la app se mudó a la organización de GitHub *rutafacilcr* y ahora vive en https://rutafacilcr.github.io/ (sin el nombre del dueño en el link). El link viejo deja de funcionar y la lista del celular arranca vacía en la dirección nueva.

@@ -59,6 +59,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent);border-top-color:var(-
 nav.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 nav.tabs .n{position:absolute;top:4px;left:calc(50% + 8px);min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-family:var(--f-mono);font-size:11px;line-height:18px;text-align:center}
 nav.tabs .n:empty{display:none}
+.appver{text-align:center;font-size:12px;color:var(--muted);padding:28px 0 4px}
 section{display:flex;flex-direction:column;gap:16px;padding-top:18px}
 h2{font-family:var(--f-display);font-size:18px;font-weight:700;letter-spacing:-.2px;margin:0;text-wrap:balance}
 h3{font-size:14px;margin:0;font-weight:700}
@@ -136,7 +137,7 @@ details summary{cursor:pointer;font-weight:600}
 <body>
 
 <header class="top"><div class="wrap">
-  <div style="display:flex;gap:12px;align-items:center"><img src="icon-192.png" alt="" width="44" height="44" style="border-radius:10px;flex:none"><div><h1>Ruta<span>Fácil</span> CR</h1><p class="sub">Paquetes, mensajes de WhatsApp y ruta del día · <span class="mono" style="font-size:11px;opacity:.8">v30-oct-b</span></p></div></div>
+  <div style="display:flex;gap:12px;align-items:center"><img src="icon-192.png" alt="" width="44" height="44" style="border-radius:10px;flex:none"><div><h1>Ruta<span>Fácil</span> CR</h1><p class="sub">Paquetes, mensajes de WhatsApp y ruta del día</p></div></div>
   <span class="daypill" id="daypill"></span>
 </div></header>
 <nav class="tabs"><div class="wrap" role="tablist">
@@ -242,6 +243,7 @@ details summary{cursor:pointer;font-weight:600}
   </div>
   <div id="routeOut" class="list"></div>
 </section>
+<footer class="appver">RutaFácil CR · versión <span id="appVer">1.6.2</span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
