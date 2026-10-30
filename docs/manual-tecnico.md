@@ -132,7 +132,7 @@ update rf_ajustes set exigir_cuenta = false where id = 1;
 
 ### Prueba de entrega (Storage)
 
-- `supabase.sql` crea la tabla `entregas`, la función `registrar_entrega` y el bucket **privado** `evidencias` (solo JPEG, máx. 2 MB por foto).
+- `supabase.sql` crea la tabla `entregas`, la función `registrar_entrega` y el bucket **privado** `evidencias` (solo JPEG, máx. 2 MB por foto). Desde la firma de entrega hay columna `recibe` y `registrar_entrega` acepta `p_recibe`: **volver a correr `supabase.sql`** (si no, la app reintenta sin el nombre y la firma igual se guarda como foto).
 - La app solo puede **subir** fotos (política `rutafacil subir evidencias`; con *Exigir cuenta activa*, solo desde una cuenta al día). El administrador puede listarlas y borrarlas (políticas `rutafacil admin ve/borra evidencias`); verlas o descargarlas se hace desde el panel de Supabase: **Storage > evidencias**. Las fotos se guardan como `AAAA-MM-DD/<guia>_<id>_<n>.jpg`.
 - **Espacio:** cada foto pesa ~100–150 KB (1024 px, JPEG 65 %), unos 0,3–0,45 MB por entrega con 3 fotos.
   - Supabase gratis: **1 GB de Storage** → unas **2.200–3.300 entregas**. Con 30 entregas por día, unos 2,5 a 3,5 meses. La tabla `entregas` ocupa menos de 1 KB por entrega: los 500 MB de base de datos no son problema.
