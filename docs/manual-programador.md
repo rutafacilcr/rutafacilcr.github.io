@@ -4,6 +4,8 @@ Para quien vaya a modificar el código o el diseño.
 
 ## 1. Principios
 
+- **Celular primero y responsive (regla de Victor, 30-oct):** todo se diseña para 360–400 px y se prueba a ese ancho. Botones de tamaño normal (no de ancho completo salvo la acción principal de una pantalla), áreas de toque de al menos 40 px y nada de scroll horizontal.
+
 - **Sin build ni frameworks.** HTML, CSS y JavaScript plano. Se edita el archivo y se hace push.
 - **Un archivo por pantalla:** `index.html` (app del repartidor), `entrega.html` (formulario del cliente; `f.html` solo redirige links viejos) y `admin.html` (panel). CSS y JS van dentro de cada archivo. La única pieza compartida es `auth.js` (cuentas).
 - **Celular primero:** se diseña para 400 px de ancho y se agranda hasta 760 px.
@@ -98,7 +100,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - Ícono: SVG en línea de audífonos con micrófono (`stroke=currentColor`, clase `.ico-sop`), sin archivos ni librerías; toma el color del texto. El mismo trazo va en `ayuda` y `contacto()` de `auth.js`.
 - Botón `#supTab` (cuarto botón de `nav.tabs`, ícono `.ico-sop`, sin `role=tab`: abre la hoja y no cambia de pestaña; el manejador de pestañas filtra `nav.tabs [role=tab]`) y enlace `#supPie` en el pie → `openSupport()` abre `#supSheet`.
 - WhatsApp: `wa.me/SOPORTE_WA` con texto que incluye la versión (`#appVer`).
-- Videos: `fetch('videos.json',{cache:'no-cache'})`; si la URL es de YouTube usa un `<iframe>` de youtube-nocookie, si no un `<video controls playsinline preload=metadata>`. Al cerrar (`#supClose`, `.btn.primary` naranja como *Guardar ajustes* del panel, de ancho completo y `position:sticky` abajo, siempre visible) se pausan y se vacía la lista para no gastar datos.
+- Videos: `fetch('videos.json',{cache:'no-cache'})`; si la URL es de YouTube usa un `<iframe>` de youtube-nocookie, si no un `<video controls playsinline preload=metadata>`. Al cerrar (`#supClose`, `.btn.primary` naranja del tamaño de *Guardar ajustes*, centrado y con `position:sticky` abajo, siempre visible) se pausan y se vacía la lista para no gastar datos.
 - El pie también lo usa `auth.js` (`.rfcuenta`, cuenta y Salir): el enlace de soporte va al inicio del pie para no tocar ese bloque.
 
 ## 3b. Prueba de entrega
