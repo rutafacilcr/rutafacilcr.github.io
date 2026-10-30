@@ -5,7 +5,7 @@ Para quien vaya a modificar el código o el diseño.
 ## 1. Principios
 
 - **Sin build ni frameworks.** HTML, CSS y JavaScript plano. Se edita el archivo y se hace push.
-- **Un archivo por pantalla:** `index.html` (app del repartidor) y `entrega.html` (formulario del cliente; `f.html` solo redirige links viejos). CSS y JS van dentro de cada archivo.
+- **Un archivo por pantalla:** `index.html` (app del repartidor), `entrega.html` (formulario del cliente; `f.html` solo redirige links viejos) y `admin.html` (panel). CSS y JS van dentro de cada archivo. La única pieza compartida es `auth.js` (cuentas).
 - **Celular primero:** se diseña para 400 px de ancho y se agranda hasta 760 px.
 - **Funciona sin backend:** si `config.js` está vacío, todo lo que no sea el formulario sigue funcionando.
 
@@ -104,7 +104,42 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - Subida: `uploadPOD(id)` sube cada foto a `storage/v1/object/evidencias/<día>/<guia>_<id>_<n>.jpg` y luego llama `registrar_entrega`. Si falla, queda `up:false` y `uploadPending()` reintenta cada 60 s y al tocar *Revisar respuestas ahora*.
 - `openEvidence(p)` muestra fotos (desde IndexedDB), hora, GPS y estado del respaldo.
 
+## 3d. Cuentas (`auth.js`)
+
+Se carga después de `config.js` en `index.html` y `admin.html`. Sin Supabase en `config.js` no hace nada (`RF_AUTH.on = false`, `listo` resuelve `null`).
+
+- **Sin librerías:** habla con Supabase Auth por REST (`/auth/v1/signup`, `/auth/v1/token?grant_type=password|refresh_token`, `/auth/v1/logout`).
+- **Correo interno:** `<8 dígitos>@rutafacilcr.github.io`; el PIN (6 números) es la contraseña. `tel8()` quita `506` y lo que no sea número.
+- **localStorage:** `rutafacil-sesion` (tokens), `rutafacil-dispositivo` (id aleatorio de 32 hex del celular, se crea una vez), `rutafacil-cuenta` (última respuesta buena de `rf_mi_cuenta` + hora).
+- **Bloqueo:** agrega la clase `rf-bloq` a `<html>` (oculta todo menos `#rfGate`) y pinta la pantalla en `#rfGate`. Si hay una revisión buena de menos de 3 días (`OFFLINE_DIAS`), abre de una vez y revisa por detrás; así funciona sin internet.
+- **Revisión:** `revisar()` llama `rf_mi_cuenta(p_dispositivo)` al abrir, cada 15 min con la app visible y al volver a la app (si pasaron 5 min). Si la cuenta deja de servir, bloquea de nuevo. Un 404 de la función (SQL sin correr) abre la app con aviso en el pie.
+- **Vistas:** `vEntrar`, `vCrear`, `vEstado` (pendiente de activación, vencida, suspendida, teléfono pendiente o cerrado) y `vError`.
+- **API `window.RF_AUTH`:** `on`, `listo` (promesa con la cuenta), `cuenta`, `headers()` (async: `apikey` + `Authorization: Bearer <token>` renovando el token si vence en menos de 1 min; sin sesión, los headers anónimos de antes), `rpc(fn, args)`, `revisar(manual)`, `salir()`, `dispositivo`. Al abrir dispara el evento `rf-cuenta` en `document`.
+- **En `index.html`:** `syncResp()` y `uploadPOD()` usan `await RF_AUTH.headers()`. La sincronización arranca dentro de `RF_AUTH.listo.then(...)`. `usarCuenta(c)` pone `S.yo = c.nombre` y deja `#m-yo` de solo lectura.
+- **`admin.html`:** define `window.RF_AUTH_ADMIN = true` antes de `auth.js` (exige `rol = 'admin'`). Lista cuentas (`rf_admin_cuentas`), movimientos (`rf_admin_eventos`) y ajustes (`rf_admin_ajustes` con nulos = solo leer). Acciones: `rf_admin_renovar`, `rf_admin_estado`, `rf_admin_telefono` (`aprobar|rechazar|liberar`), `rf_admin_pin` (PIN aleatorio de 6 dígitos), `rf_admin_nombre`. Fotos: `storage/v1/object/list/evidencias` por carpeta de día y `DELETE storage/v1/object/evidencias` con `prefixes` (de 500 en 500).
+
 ## 4. Base de datos y seguridad (`supabase.sql`)
+
+### Cuentas
+
+```
+rf_ajustes(id=1, exigir_cuenta, sinpe, precio, dias_gracia)
+rf_perfiles(id → auth.users, nombre, telefono, rol mensajero|admin, estado pendiente|activo|suspendido,
+            vence_en, dispositivo, dispositivo_anterior, dispositivo_pendiente, pendiente_desde,
+            sesion_id, ultimo_acceso, creado_en)
+rf_pagos(user_id, monto, dias, referencia, creado_por, creado_en)
+rf_eventos(user_id, tipo, detalle jsonb, creado_en)
+```
+
+- RLS activado **sin políticas** en las cuatro; todo pasa por funciones `security definer`.
+- Trigger `rf_perfil_nuevo` en `auth.users`: crea el perfil `pendiente` con `nombre` y `telefono` de `raw_user_meta_data`.
+- `rf_mi_cuenta(p_dispositivo)`: primer teléfono → queda aprobado; mismo teléfono → actualiza `sesion_id` con `auth.jwt()->>'session_id'`; teléfono anterior → `cerrado`; otro → `pendiente` (+ evento). El admin no queda atado a un teléfono.
+- `rf_licencia_ok()`: `true` si `exigir_cuenta` está apagado; si no, admin, o estado activo + `vence_en + dias_gracia > now()` + `sesion_id` igual al de la llamada. `rf_exigir_licencia()` lanza `RF_CUENTA: …` si no.
+- `leer_respuestas` y `registrar_entrega` (ahora plpgsql) llaman `rf_exigir_licencia()`; `registrar_entrega` guarda `owner_id = auth.uid()`. La política de subida a `evidencias` usa `rf_licencia_ok()`.
+- Aprobar un teléfono pone `sesion_id = null`: la sesión vieja deja de pasar al instante y la nueva se registra en su siguiente `rf_mi_cuenta`.
+- `rf_admin_pin` cambia `auth.users.encrypted_password` con `extensions.crypt(pin, gen_salt('bf'))` (bcrypt, el mismo formato de Supabase Auth).
+
+### Formulario y entregas
 
 `entregas(evidencia_id UNIQUE, guia, cliente, repartidor, lat, lng, precision_m, entregado_en, fotos text[], owner_id)`: RLS sin políticas, se escribe solo con `registrar_entrega`. Bucket `evidencias` privado con política de solo INSERT para `anon`.
 
@@ -119,7 +154,7 @@ respuestas(id, token UNIQUE, guia, horario, senas, recibe, lat, lng,
   - `enviar_respuesta(...)`: insert o update por token, con textos recortados.
   - `leer_respuestas(p_tokens text[])`: devuelve solo los tokens pedidos (máximo 300).
 - El token aleatorio (12 caracteres, alfabeto de 32 → 60 bits) funciona como contraseña de cada respuesta.
-- **Al agregar login:** llenar `owner_id`, cambiar `leer_respuestas` para filtrar por `auth.uid()` y exigir suscripción vigente.
+- `leer_respuestas` ya exige cuenta (ver *Cuentas*). Pendiente: llenar `respuestas.owner_id` para filtrar también por dueño.
 
 ## 5. Sistema de diseño
 
@@ -178,14 +213,15 @@ Archivos: `logo.svg` (fuente maestra; los PNG se regeneran desde él), `icon-192
 
 No hay pruebas automáticas en el repositorio. Antes de cada push:
 
-1. Servir la carpeta local (`python3 -m http.server`) y abrir a 400 px de ancho.
+1. Servir la carpeta local (`python3 -m http.server`) y abrir a 400 px de ancho. Con Supabase en `config.js` aparece la pantalla de entrada; para probar sin servidor se pueden simular las respuestas de `/auth/v1/*` y `/rest/v1/rpc/*` con `page.route()` de Playwright.
 2. Revisar la consola sin errores.
 3. Flujo completo: importar, editar con link de Maps, abrir mensaje, calcular ruta.
 4. Formulario: abrir el link desde **Ver mensaje**, enviar y tocar **Revisar respuestas ahora**.
+5. Cuentas: `supabase.sql` se probó en un Postgres 16 local con stubs mínimos de Supabase (`auth.users`, `auth.uid()`, `auth.jwt()` leyendo `request.jwt.claims`, `storage.objects`, `extensions.pgcrypto`, roles `anon`/`authenticated`): correr el script dos veces y recorrer crear cuenta → activar → segundo teléfono pendiente → aprobar → teléfono viejo cerrado → anónimo rechazado con *exigir* encendido.
 
 ## 7. Convenciones
 
-- **Versión:** semántica `mayor.menor.corrección` en `#appVer` (pie de `index.html`). Subirla en cada publicación y anotarla en `CHANGELOG.md`.
+- **Versión:** semántica `mayor.menor.corrección` en `#appVer` (pie de `index.html` y de `admin.html`). Subirla en cada publicación y anotarla en `CHANGELOG.md`.
 
 - Textos en español de Costa Rica (voseo en la app del repartidor, usted en el formulario del cliente).
 - Commits en español, en imperativo ("Agregar…", "Corregir…").
