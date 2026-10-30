@@ -65,6 +65,7 @@ const CSS=`html.rf-bloq body>*:not(#rfGate){display:none!important}
 #rfGate p{margin:0;line-height:1.45}
 #rfGate label{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:14px}
 #rfGate input{font:inherit;font-size:17px;padding:12px 14px;border:1px solid var(--line,#e2dfdc);border-radius:10px;background:var(--surface,#fff);color:inherit}
+#rfGate input::placeholder{color:var(--muted,#6b6560);opacity:.45}
 #rfGate input:focus{outline:2px solid var(--accent,#f26b1d);outline-offset:1px}
 #rfGate .rfbtn{font:inherit;font-weight:700;font-size:16px;padding:13px 16px;border-radius:10px;border:1px solid var(--line,#e2dfdc);background:var(--surface,#fff);color:inherit;cursor:pointer;text-align:center;text-decoration:none}
 #rfGate .rfbtn.pri{background:var(--accent,#f26b1d);color:var(--accent-ink,#fff);border-color:transparent}
@@ -116,10 +117,10 @@ function vEntrar(err){
 function vCrear(){
   vista(`<h2>Crear cuenta</h2>
   <form id="rfForm" class="rfbox" style="gap:14px" novalidate>
-    <label>Tu nombre (así lo ven tus clientes)<input id="rfNom" autocomplete="name" maxlength="60" placeholder="Victor Mena" required></label>
-    <label>Tu número de WhatsApp<input id="rfTel" inputmode="numeric" autocomplete="username" placeholder="8888 1234" maxlength="12" required></label>
-    <label>Elegí un PIN de 6 números<input id="rfPin" type="password" inputmode="numeric" autocomplete="new-password" maxlength="6" placeholder="••••••" required></label>
-    <label>Repetí el PIN<input id="rfPin2" type="password" inputmode="numeric" autocomplete="new-password" maxlength="6" placeholder="••••••" required></label>
+    <label>Tu nombre (así lo ven tus clientes)<input id="rfNom" autocomplete="off" maxlength="60" required></label>
+    <label>Tu número de WhatsApp<input id="rfTel" inputmode="numeric" autocomplete="off" maxlength="12" required></label>
+    <label>Elegí un PIN de 6 números<input id="rfPin" type="password" inputmode="numeric" autocomplete="new-password" maxlength="6" required></label>
+    <label>Repetí el PIN<input id="rfPin2" type="password" inputmode="numeric" autocomplete="new-password" maxlength="6" required></label>
     <p class="rfmuted">La cuenta es personal y queda en este teléfono. Si la abrís en otro, el administrador tiene que aprobar el cambio.</p>
     <p class="rferr" id="rfErr" role="alert"></p>
     <button class="rfbtn pri" id="rfOk">Crear cuenta</button>

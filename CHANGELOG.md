@@ -20,8 +20,10 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.8.3 | — | Ícono de audífonos (call center) en Soporte |
 | 1.10.0 | — | Avisos de cuentas nuevas por WhatsApp y correo; aviso de activación al repartidor |
 | 1.12.0 | — | Botón *Esperando activación* que se habilita al activar la cuenta |
+| 1.12.1 | — | *Crear cuenta* con los campos en blanco |
 
 ## 2026-10-30
+- **1.12.1:** en *Crear cuenta* los campos salen en blanco (sin el ejemplo "Victor Mena" / "8888 1234", que parecía ya escrito) y sin autocompletar; los textos de ejemplo de *Entrar* se ven más claros.
 - **1.12.0 · Espera de activación:** en la pantalla de cuenta pendiente, vencida o con teléfono por aprobar, el botón *Revisar de nuevo* pasa a ser gris y deshabilitado (*⏳ Esperando activación*). La app revisa sola cada minuto y, cuando el administrador activa la cuenta, muestra *✅ Cuenta habilitada* con el botón naranja **Entrar**.
 - **1.11.1:** el botón *Cerrar* de Soporte pasa arriba, junto al título, compacto y con el mismo estilo que *Guardar ajustes*.
 - **1.11.0:** aviso *Hay una versión nueva · Actualizar* cuando se publica un cambio y el celular sigue con la versión vieja en caché.
