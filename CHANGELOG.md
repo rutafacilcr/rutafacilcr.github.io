@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-10-31
+- **1.14.1:** en *Mensajes* se puede escribir *Tu nombre* (antes quedaba bloqueado con el nombre de la cuenta y en iPhone no salía el teclado). Si se borra, vuelve el nombre de la cuenta.
 - **1.14.0 · Elegir el mensaje:** en *Mensajes*, cada cliente tiene botones **1. Coordinar · 2. Formulario · 3. En camino** para elegir cuál mandar; la vista previa, *Abrir WhatsApp* y *Copiar* usan el elegido. Antes *Abrir WhatsApp* siempre mandaba el primero. Se quita el botón aparte *📝 Mandar formulario*.
 
 ## 2026-10-30

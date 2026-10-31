@@ -32,7 +32,7 @@ La app pide entrar con **tu número de teléfono** y un **PIN de 6 números**.
 Reglas de la cuenta:
 
 - **Es personal y funciona en un solo teléfono.** Si entrás en otro celular, ese queda *esperando aprobación* hasta que el administrador lo apruebe; cuando lo aprueba, el teléfono anterior se cierra.
-- **Tu nombre** en los mensajes sale de la cuenta y no se cambia en *Mensajes*. Si está mal escrito, pedile al administrador que lo corrija.
+- **Tu nombre** en los mensajes sale de la cuenta, pero lo podés cambiar en *Mensajes* (por ejemplo, solo el primer nombre). Si borrás el campo, vuelve el nombre de la cuenta.
 - **Sin internet** la app sigue abriendo hasta 3 días con la última revisión.
 - **Mensualidad:** al final de la app dice *al día hasta el …*. Si vence, tenés unos días de gracia (lo dice en rojo) y después la app se bloquea hasta que pagués.
 - **¿Olvidaste el PIN?** Pedile uno nuevo al administrador por WhatsApp.

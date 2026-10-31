@@ -215,7 +215,7 @@ details summary{cursor:pointer;font-weight:600}
   <div class="panel">
     <h2>Tu mensaje</h2>
     <div class="grid2">
-      <label>Tu nombre<input id="m-yo" placeholder="Victor"></label>
+      <label>Tu nombre<input id="m-yo" placeholder="Victor" autocomplete="name"></label>
       <label>Día de entrega<input id="m-fecha"></label>
     </div>
     <label>Mensaje para coordinar (día antes)<textarea id="m-coord"></textarea></label>
@@ -265,7 +265,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.14.0</span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.14.1</span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -972,7 +972,9 @@ if([DEF_COORD,DEF_COORD_F,...OLD_COORD_F].includes(S.coord)){S.coord=DEF_SIMPLE;
 save();
 render();
 // Cuentas (auth.js): el nombre del dueño de la cuenta firma los mensajes y la sincronización espera a que la cuenta esté abierta.
-const usarCuenta=c=>{if(!c||!c.nombre)return;S.yo=c.nombre;$('#m-yo').value=S.yo;$('#m-yo').readOnly=true;$('#m-yo').title='Sale de tu cuenta';save();renderMsg()};
+// El nombre de la cuenta es el de fábrica; si el repartidor escribe otro, se respeta (S.yoPropio). Vacío = vuelve al de la cuenta.
+const usarCuenta=c=>{if(!c||!c.nombre||S.yoPropio)return;S.yo=c.nombre;$('#m-yo').value=S.yo;save();renderMsg()};
+$('#m-yo').addEventListener('input',e=>{S.yoPropio=!!e.target.value.trim();save()});
 document.addEventListener('rf-cuenta',e=>usarCuenta(e.detail));
 RF_AUTH.listo.then(c=>{usarCuenta(c);
 if(FORM_ON){ // formulario como segundo mensaje: el primero nunca lleva link
