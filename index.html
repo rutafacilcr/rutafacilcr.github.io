@@ -213,27 +213,27 @@ details summary{cursor:pointer;font-weight:600}
 <!-- MENSAJES -->
 <section id="v-mensajes" hidden>
   <div class="panel">
-    <h2>Tu mensaje</h2>
     <div class="grid2">
       <label>Tu nombre<input id="m-yo" placeholder="Victor" autocomplete="name"></label>
       <label>Día de entrega<input id="m-fecha"></label>
     </div>
-    <label>Mensaje para coordinar (día antes)<textarea id="m-coord"></textarea></label>
-    <label>Mensaje con el formulario (se manda aparte, después de que el cliente conteste)<textarea id="m-form"></textarea></label>
-    <label>Mensaje "voy en camino"<textarea id="m-camino"></textarea></label>
-    <p class="small muted">Variables: <span class="mono">{nombre} {guia} {direccion} {fecha} {yo} {eta} {formulario}</span></p>
-  </div>
-  <div class="panel" id="syncPanel" hidden>
-    <div class="row" style="justify-content:space-between"><h3>Respuestas del formulario</h3><span class="small muted" id="syncInfo"></span></div>
-    <p class="small">El primer mensaje va sin link. Cuando el cliente te conteste, elegí <b>2. Formulario</b> en ese cliente y tocá <b>Abrir WhatsApp</b>: le llega un segundo mensaje corto con el link. Lo que llene entra solo a la lista y queda <b>Confirmado</b>.</p>
-        <button class="btn road" id="syncBtn">Revisar respuestas ahora</button>
-  </div>
-  <div class="panel">
-    <h3>Cómo funciona</h3>
-    <p class="small">Cada botón verde abre WhatsApp con el chat del cliente y el mensaje ya escrito. Solo tocás <b>Enviar</b>, volvés aquí y seguís con el siguiente. Marcá cada cliente según lo que responda.</p>
+    <p class="small muted">En cada cliente elegí el mensaje (<b>1. Coordinar</b>, <b>2. Formulario</b> o <b>3. En camino</b>) y tocá <b>Abrir WhatsApp</b>. Solo tocás <b>Enviar</b>, volvés aquí y seguís con el siguiente.</p>
   </div>
   <div class="row" style="justify-content:space-between"><h2>Clientes</h2><span class="small muted" id="sentCount"></span></div>
   <div class="list" id="msgList"></div>
+  <div class="panel" id="syncPanel" hidden>
+    <div class="row" style="justify-content:space-between"><h3>Respuestas del formulario</h3><span class="small muted" id="syncInfo"></span></div>
+    <p class="small">El primer mensaje va sin link. Cuando el cliente te conteste, elegí <b>2. Formulario</b> en ese cliente: le llega un segundo mensaje corto con el link. Lo que llene entra solo a la lista y queda <b>Confirmado</b>.</p>
+    <button class="btn road" id="syncBtn">Revisar respuestas ahora</button>
+  </div>
+  <!-- Plantillas plegadas: se usan poco y el mensaje se elige en cada cliente -->
+  <details class="panel" id="tplPanel">
+    <summary>✏️ Editar textos de los mensajes</summary>
+    <label>1. Coordinar (día antes, sin links)<textarea id="m-coord"></textarea></label>
+    <label>2. Formulario (después de que el cliente conteste)<textarea id="m-form"></textarea></label>
+    <label>3. Voy en camino<textarea id="m-camino"></textarea></label>
+    <p class="small muted">Variables: <span class="mono">{nombre} {guia} {direccion} {fecha} {yo} {eta} {formulario}</span></p>
+  </details>
 </section>
 
 <!-- RUTA -->
@@ -265,7 +265,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.14.1</span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.15.0</span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -966,6 +966,7 @@ $('#m-fecha').placeholder=tomorrow();
 const grow=el=>{el.style.height='auto';el.style.height=el.scrollHeight+2+'px'};
 ['#m-coord','#m-form','#m-camino'].forEach(id=>{const el=$(id);el.addEventListener('input',()=>grow(el));requestAnimationFrame(()=>grow(el))});
 document.querySelector('[data-tab="mensajes"]').addEventListener('click',()=>requestAnimationFrame(()=>['#m-coord','#m-form','#m-camino'].forEach(id=>grow($(id)))));
+$('#tplPanel').addEventListener('toggle',()=>['#m-coord','#m-form','#m-camino'].forEach(id=>grow($(id))));
 $('#daypill').textContent='Entrega: '+tomorrow();
 S.pk.forEach(p=>{if(!p.tok)p.tok=tok()});
 if([DEF_COORD,DEF_COORD_F,...OLD_COORD_F].includes(S.coord)){S.coord=DEF_SIMPLE;$('#m-coord').value=S.coord}

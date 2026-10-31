@@ -56,6 +56,7 @@ Paquete = {
 | `formLink(p)` | Arma `entrega?t=&n=` (corto a propósito: links largos dan desconfianza). |
 | `coordText(p)` | Texto del primer mensaje. Siempre quita las líneas con `{formulario}`: el primer mensaje nunca lleva links. |
 | `#m-yo` / `S.yoPropio` | El nombre que firma los mensajes. `usarCuenta()` pone el nombre de la cuenta solo si el repartidor no escribió uno propio (`S.yoPropio`); vaciar el campo lo devuelve al de la cuenta. Antes de 1.14.1 el campo quedaba `readOnly` y en iPhone no salía el teclado. |
+| `#tplPanel` | `<details>` plegado al final de Mensajes con las plantillas `#m-coord`, `#m-form`, `#m-camino`. Al abrirlo (`toggle`) se recalcula la altura de los cuadros con `grow()`. Orden de la pestaña: nombre y fecha → Clientes → Respuestas del formulario → plantillas. |
 | `msgOpts()` | Mensajes que se pueden elegir en cada cliente: `coord`, `form` (solo si `config.js` tiene Supabase) y `camino`. |
 | `msgSel(p)` | Mensaje elegido (`p.msgSel`); si no hay, propone `coord` y, ya enviado, `form`. |
 | `msgText(p, k)` | Texto del mensaje `k`: `coordText`, `S.form` (`DEF_FORM`, con `{formulario}`) o `S.camino` con `{eta}` de `routeEta(p)`. Lo usan la vista previa, **Abrir WhatsApp** (`data-k`) y **Copiar**. |

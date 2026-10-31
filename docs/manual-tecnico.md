@@ -142,6 +142,10 @@ update rf_ajustes set exigir_cuenta = false where id = 1;
   - **Liberar espacio a mano:** Supabase > **Storage** > **evidencias** > abrir la carpeta de un día viejo > seleccionar las fotos > **Download** (guardarlas en la PC) > **Delete**. Las carpetas se llaman por fecha (`AAAA-MM-DD`), así que se borran las más viejas primero. El registro en la tabla `entregas` se puede dejar: casi no ocupa.
   - En iPhone, si la app se usa desde Safari y no desde el ícono, Safari puede borrar los datos de la página tras ~7 días sin abrirla. Por eso Supabase es el respaldo oficial.
 
+### Mensajes reordenada (1.15.0)
+
+Solo `index.html`. Las plantillas quedan guardadas igual en el celular (`S.coord`, `S.form`, `S.camino`); solo cambian de lugar.
+
 ### Nombre editable en Mensajes (1.14.1)
 
 Solo `index.html`. El nombre de la cuenta (`rf_perfiles.nombre`) se usa de fábrica; el repartidor lo puede cambiar en su celular sin tocar la cuenta.

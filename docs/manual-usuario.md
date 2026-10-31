@@ -74,7 +74,7 @@ Columnas: `nombre`, `telefono`, `direccion`, `ubicacion`, `guia`, `nota`.
 
 ### Día antes: avisar a los clientes (pestaña **Mensajes**)
 
-1. Poné **tu nombre** y revisá el texto del mensaje (se puede editar).
+1. Arriba revisá **tu nombre** y el **día de entrega**. Debajo sale la lista de clientes.
 2. En cada cliente tocá **Abrir WhatsApp** > **Enviar** > volvé a la app.
 3. **Primer mensaje, sin links:** *"Hola Sofía, soy Victor, le llevo su paquete de Temu el viernes. ¿A qué hora le queda bien recibirlo? Si puede, mándeme su ubicación por aquí 📍 ¡Gracias!"*
 4. **Cuando el cliente conteste**, en ese cliente elegí **2. Formulario** (arriba del texto) y tocá **Abrir WhatsApp**. Le llega un segundo mensaje corto: *"Gracias Sofía. Para no fallarle con la entrega, ¿me ayuda marcando aquí su hora y las señas de la casa? Es 1 minuto: …"*. Como ya habló con vos, confía más en el link.
@@ -86,7 +86,7 @@ Columnas: `nombre`, `telefono`, `direccion`, `ubicacion`, `guia`, `nota`.
 
 **Si WhatsApp abre con un texto viejo:** WhatsApp guarda el borrador de un mensaje que no se envió y a veces lo muestra en vez del nuevo. Borrá ese texto en el chat, volvé a la app y tocá **Abrir WhatsApp** otra vez.
 
-Los tres mensajes (primer mensaje, formulario y "voy en camino") se pueden editar en **Mensajes**.
+Los textos de los tres mensajes se editan al final de **Mensajes**, en **✏️ Editar textos de los mensajes** (viene cerrado para que no estorbe).
 
 **Para que los clientes confíen más:**
 - Usá **WhatsApp Business** con foto de perfil, nombre (ej. "Victor · Entregas Temu") y descripción.
