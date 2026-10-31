@@ -90,7 +90,7 @@ Los textos de los tres mensajes se editan al final de **Mensajes**, en **✏️ 
 
 **Para que los clientes confíen más:**
 - Usá **WhatsApp Business** con foto de perfil, nombre (ej. "Victor · Entregas Temu") y descripción.
-- El link solo se manda a quien ya contestó, y la vista previa en WhatsApp es sobria: solo el texto "RutaFácil · Su entrega", sin logo. (Los mensajes que ya se mandaron antes pueden seguir mostrando el logo; los nuevos salen sin él.)
+- El link solo se manda a quien ya contestó, y la vista previa en WhatsApp es sobria: solo el link, sin tarjeta ni logo. (Los mensajes que ya se mandaron antes pueden seguir mostrando la tarjeta; los nuevos salen sin ella.)
 - Con un dominio propio el link se vería más corto y confiable (pendiente de decidir).
 
 Variables que podés usar en los mensajes: `{nombre}` `{guia}` `{direccion}` `{fecha}` `{yo}` `{eta}` `{formulario}` (este último va en el mensaje del formulario). Si cambiás el mensaje y quitás `{formulario}`, la app agrega el link del formulario al final sola. El cuadro del mensaje crece para mostrar el texto completo.

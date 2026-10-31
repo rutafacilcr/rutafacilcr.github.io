@@ -73,7 +73,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 - GitHub Pages sirve `entrega.html` también como `/entrega` (sin extensión).
 - Parámetros de URL: `t` (token, obligatorio, ≥12) y `n` (nombre). Acepta también `g` (guía) e `y` (repartidor) de links viejos.
-- Vista previa sobria: solo `og:title` ("RutaFácil · Su entrega") sin `og:image` (desde 1.15.2): la vista previa en WhatsApp sale solo con texto, sin logo. Sin descripción: textos como "no pide pagos" generaban desconfianza.
+- Sin vista previa (1.15.3): no lleva `og:image`, `og:title` ni `<title>` ni `og:title` en el HTML (el título "RutaFácil · Su entrega" se pone con JS), para que WhatsApp no arme tarjeta de vista previa. Sin descripción: textos como "no pide pagos" generaban desconfianza.
 - Envía con `POST /rest/v1/rpc/enviar_respuesta`. Volver a enviar actualiza la respuesta (upsert por token).
 - Ubicación, en este orden en pantalla: (1) *Se la mando por WhatsApp*, (2) pegar link, (3) GPS dentro de un `<details>`, porque en iPhone suele estar bloqueado.
 - Detalle del GPS:

@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-10-31
+- **1.15.3:** el link del formulario sale en WhatsApp sin tarjeta de vista previa (sin logo ni título), solo el texto con el link.
 - **1.15.2:** la vista previa del formulario en WhatsApp sale sin logo, solo con el título *RutaFácil · Su entrega*.
 - **1.15.1:** la vista previa del formulario en WhatsApp muestra el logo pequeño al lado del título en vez de una portada grande (`og-mini.png`, 160 px).
 - **1.15.0 · Mensajes más limpia:** arriba quedan solo el nombre y el día de entrega, y luego la lista de clientes. Los textos de los mensajes pasan al final, plegados en *✏️ Editar textos de los mensajes*. Se quita el cuadro *Cómo funciona* (la explicación queda en una línea arriba).

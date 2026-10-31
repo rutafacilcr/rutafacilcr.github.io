@@ -44,7 +44,7 @@ Servicios externos sin cuenta: wa.me (WhatsApp), Google Maps, Waze
 
 ### Logo e íconos
 
-`entrega.html` no lleva `og:image`, para que la vista previa en WhatsApp salga sin logo. Si algún día se pone una imagen, usar un nombre de archivo nuevo, porque WhatsApp guarda en caché la imagen vieja.
+`entrega.html` no lleva `og:image`, `og:title` ni `<title>` en el HTML (el título de la pestaña se pone con JS), para que WhatsApp no muestre tarjeta de vista previa. Si algún día se pone una imagen, usar un nombre de archivo nuevo, porque WhatsApp guarda en caché la imagen vieja.
 
 `favicon-32.png` y `apple-touch-icon.png` se referencian con `<link>` en `index.html` y `entrega.html`; `icon-192.png`, `icon-512.png` e `icon-maskable-512.png` en `manifest.json` (`theme_color` y `background_color` `#1f2125`). Tras cambiar el ícono, el celular puede guardar el viejo: quitar el acceso directo y volverlo a agregar.
 
