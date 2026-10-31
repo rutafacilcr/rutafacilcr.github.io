@@ -68,6 +68,9 @@ nav.tabs .n:empty{display:none}
 .trackmap{height:320px;border-radius:10px;overflow:hidden;background:var(--bg);z-index:0}
 .tracklist{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px;font-size:14px}
 .tpin{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font:700 13px var(--f-body);display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.msgsel{grid-column:2;display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.msgsel button{font:600 12px var(--f-body);padding:5px 6px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;min-height:32px}
+.msgsel button[aria-checked="true"]{background:var(--road);color:var(--road-ink);border-color:var(--road)}
 .appver{text-align:center;font-size:12px;color:var(--muted);padding:28px 0 4px}
 section{display:flex;flex-direction:column;gap:16px;padding-top:18px}
 h2{font-family:var(--f-display);font-size:18px;font-weight:700;letter-spacing:-.2px;margin:0;text-wrap:balance}
@@ -135,6 +138,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);outline-
 .podline b{min-width:22px}
 .ev{font-size:12.5px;color:var(--ok);font-weight:600}
 .pkg .ev{grid-column:2} /* sin esto cae en la columna del número y aprieta la tarjeta */
+.pkg>details{grid-column:2;min-width:0}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:14px;z-index:40;max-width:calc(100% - 32px)}
 details summary{cursor:pointer;font-weight:600}
 .empty{text-align:center;padding:28px 12px;color:var(--muted);border:2px dashed var(--line);border-radius:10px}
@@ -221,7 +225,7 @@ details summary{cursor:pointer;font-weight:600}
   </div>
   <div class="panel" id="syncPanel" hidden>
     <div class="row" style="justify-content:space-between"><h3>Respuestas del formulario</h3><span class="small muted" id="syncInfo"></span></div>
-    <p class="small">El primer mensaje va sin link. Cuando el cliente te conteste, tocá <b>📝 Mandar formulario</b> en ese cliente: le llega un segundo mensaje corto con el link. Lo que llene entra solo a la lista y queda <b>Confirmado</b>.</p>
+    <p class="small">El primer mensaje va sin link. Cuando el cliente te conteste, elegí <b>2. Formulario</b> en ese cliente y tocá <b>Abrir WhatsApp</b>: le llega un segundo mensaje corto con el link. Lo que llene entra solo a la lista y queda <b>Confirmado</b>.</p>
         <button class="btn road" id="syncBtn">Revisar respuestas ahora</button>
   </div>
   <div class="panel">
@@ -261,7 +265,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.13.0</span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.14.0</span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -428,17 +432,22 @@ function renderPk(){
     <div class="actions"><button class="btn sm primary" data-act="paste" data-id="${p.id}">📋 Pegar respuesta</button><button class="btn sm" data-act="edit" data-id="${p.id}">Editar</button>${c?`<a class="btn sm" href="${waze(c)}" target="_blank" rel="noopener">Waze</a><a class="btn sm" href="${gmaps(c)}" target="_blank" rel="noopener">Maps</a>`:''}<button class="btn sm ghost danger" data-act="del" data-id="${p.id}">Quitar</button></div>
   </div>`}).join('');
 }
+// Mensajes que se pueden mandar a cada cliente desde la pestaña Mensajes.
+function msgOpts(){return [['coord','1. Coordinar'],...(FORM_ON?[['form','2. Formulario']]:[]),['camino',FORM_ON?'3. En camino':'2. En camino']]}
+function msgSel(p){const ok=msgOpts().map(o=>o[0]);if(ok.includes(p.msgSel))return p.msgSel;return !p.sent?'coord':(FORM_ON&&!p.formSent?'form':'coord')}
+function msgText(p,k){k=k||msgSel(p);return k==='form'?fill(S.form,p):k==='camino'?fill(S.camino,p,{eta:routeEta(p)}):coordText(p)}
+function routeEta(p){const R=S.route;if(!R||!R.ids.includes(p.id))return '15';const vel=+S.vel||25;let prev=R.start;for(const id of R.ids){const q=S.pk.find(x=>x.id===id);const c=q&&parseCoord(q.ubic);if(!c)continue;if(id===p.id)return String(Math.round(hav(prev,c)/vel*60)+2);prev=c}return '15'}
 function renderMsg(){
   const L=$('#msgList');
   $('#sentCount').textContent=S.pk.length?`${S.pk.filter(p=>p.sent).length} de ${S.pk.length} enviados`:'';
   if(!S.pk.length){L.innerHTML='<div class="empty">Agregá paquetes en el paso 1 para preparar los mensajes.</div>';return}
-  L.innerHTML=S.pk.map((p,i)=>{const txt=coordText(p);const l=waLink(p,txt);return `<div class="pkg">
+  L.innerHTML=S.pk.map((p,i)=>{const sel=msgSel(p),txt=msgText(p,sel);const l=waLink(p,txt);return `<div class="pkg">
     <div class="num">${i+1}</div>
     <div class="name">${esc(p.nombre)} ${stChip(p)} ${p.sent?'<span class="small muted">✓ mensaje abierto</span>':''}${p.formSent?'<span class="small muted">· formulario enviado</span>':''}</div>
     <div class="addr"><span class="mono">${esc(p.tel||'sin teléfono')}</span>${p.resp?' <span class="small" style="color:var(--ok);font-weight:600">✓ llenó el formulario</span>':''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
+    <div class="msgsel" role="radiogroup" aria-label="Qué mensaje mandar">${msgOpts().map(([k,t])=>`<button type="button" role="radio" aria-checked="${k===sel}" data-act="msgsel" data-k="${k}" data-id="${p.id}">${t}</button>`).join('')}</div>
     <details class="small"><summary>Ver mensaje</summary><div class="preview">${esc(txt)}</div></details>
-    <div class="actions">${l?`<a class="btn wa" href="${l}" target="_blank" rel="noopener" data-act="sent" data-id="${p.id}">Abrir WhatsApp</a>`:'<span class="small" style="color:var(--bad)">Teléfono inválido, corregilo en Paquetes</span>'}
-      ${FORM_ON&&l?`<a class="btn sm" href="${waLink(p,fill(S.form,p))}" target="_blank" rel="noopener" data-act="formsent" data-id="${p.id}">📝 Mandar formulario</a>`:''}
+    <div class="actions">${l?`<a class="btn wa" href="${l}" target="_blank" rel="noopener" data-act="sent" data-k="${sel}" data-id="${p.id}">Abrir WhatsApp</a>`:'<span class="small" style="color:var(--bad)">Teléfono inválido, corregilo en Paquetes</span>'}
       <button class="btn sm primary" data-act="paste" data-id="${p.id}">📋 Pegar respuesta</button>
       <button class="btn sm" data-act="copy" data-id="${p.id}">Copiar texto</button>
       <button class="btn sm" data-act="set" data-st="confirmado" data-id="${p.id}">Confirmó</button>
@@ -548,9 +557,9 @@ document.addEventListener('click',async e=>{
   else if(a==='set'&&p){if(el.dataset.st==='entregado'&&p.st!=='entregado'){openPOD(p);return}p.st=el.dataset.st;toast(`${p.nombre}: ${SLABEL[p.st]}`)}
   else if(a==='ev'&&p){openEvidence(p);return}
   else if(a==='paste'&&p){pasteReply(p);return}
-  else if(a==='sent'&&p){p.sent=true;save();setTimeout(render,300);return}
-  else if(a==='formsent'&&p){p.formSent=true;save();setTimeout(render,300);return}
-  else if(a==='copy'&&p){const t=coordText(p);try{await navigator.clipboard.writeText(t);toast('Mensaje copiado')}catch(err){const d=el.closest('.pkg').querySelector('details');d.open=true;const r=document.createRange();r.selectNodeContents(d.querySelector('.preview'));getSelection().removeAllRanges();getSelection().addRange(r);toast('Texto seleccionado, copialo')}return}
+  else if(a==='sent'&&p){const k=el.dataset.k||'coord';if(k==='coord')p.sent=true;else if(k==='form')p.formSent=true;else p.caminoSent=true;delete p.msgSel;save();setTimeout(render,300);return}
+  else if(a==='msgsel'&&p){p.msgSel=el.dataset.k;save();renderMsg();return}
+  else if(a==='copy'&&p){const t=msgText(p);try{await navigator.clipboard.writeText(t);toast('Mensaje copiado')}catch(err){const d=el.closest('.pkg').querySelector('details');d.open=true;const r=document.createRange();r.selectNodeContents(d.querySelector('.preview'));getSelection().removeAllRanges();getSelection().addRange(r);toast('Texto seleccionado, copialo')}return}
   else if(a==='del'&&p){S.pk=S.pk.filter(x=>x!==p);S.route=null;toast('Paquete quitado')}
   else if(a==='edit'&&p){editId=p.id;$('#f-nombre').value=p.nombre;$('#f-tel').value=p.tel;$('#f-dir').value=p.dir;$('#f-ubic').value=p.ubic;$('#f-guia').value=p.guia;$('#f-nota').value=p.nota||'';$('#formPanel').open=true;$('#formTitle').textContent='Editar paquete';$('#saveBtn').textContent='Guardar cambios';$('#cancelEdit').hidden=false;$('#formPanel').scrollIntoView({behavior:'smooth'});
     document.querySelector('[data-tab="paquetes"]').click();setTimeout(()=>$('#formPanel').scrollIntoView(),50);return}

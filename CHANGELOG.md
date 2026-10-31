@@ -23,6 +23,9 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.1 | — | *Crear cuenta* con los campos en blanco |
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
+## 2026-10-31
+- **1.14.0 · Elegir el mensaje:** en *Mensajes*, cada cliente tiene botones **1. Coordinar · 2. Formulario · 3. En camino** para elegir cuál mandar; la vista previa, *Abrir WhatsApp* y *Copiar* usan el elegido. Antes *Abrir WhatsApp* siempre mandaba el primero. Se quita el botón aparte *📝 Mandar formulario*.
+
 ## 2026-10-30
 - **1.13.0 · Firma y recorrido:** la prueba de entrega pide la **firma con el dedo** y el nombre de quien recibe (o marcar "No quiso firmar"); la firma se sube con las fotos. En *Ruta*, **Recorrido de hoy**: mapa (OpenStreetMap) con las entregas numeradas en el orden en que se hicieron y botón para abrirlo en Google Maps. Requiere volver a correr `supabase.sql` para guardar quién recibe.
 - **Base de datos (para la firma de entrega):** `entregas.recibe` (quién recibe) y `registrar_entrega(…, p_recibe)`. La firma se guarda como foto `_firma.jpg`. Hay que volver a correr `supabase.sql`.

@@ -142,6 +142,10 @@ update rf_ajustes set exigir_cuenta = false where id = 1;
   - **Liberar espacio a mano:** Supabase > **Storage** > **evidencias** > abrir la carpeta de un día viejo > seleccionar las fotos > **Download** (guardarlas en la PC) > **Delete**. Las carpetas se llaman por fecha (`AAAA-MM-DD`), así que se borran las más viejas primero. El registro en la tabla `entregas` se puede dejar: casi no ocupa.
   - En iPhone, si la app se usa desde Safari y no desde el ícono, Safari puede borrar los datos de la página tras ~7 días sin abrirla. Por eso Supabase es el respaldo oficial.
 
+### Selector de mensajes (1.14.0)
+
+Solo cambia `index.html`; no hay que tocar Supabase ni `config.js`. Si `config.js` no tiene Supabase, el selector muestra solo *Coordinar* y *Voy en camino*.
+
 ### Firma (1.13.0)
 
 La firma se sube al bucket `evidencias` como `AAAA-MM-DD/<guia>_<id>_firma.jpg` (unos 5–20 KB) y va al final de `fotos` en la tabla `entregas`. El nombre de quien recibe se guarda en `entregas.recibe` (con "(no firmó)" si no quiso firmar). **Hay que volver a correr `supabase.sql`** para que exista `p_recibe`; mientras tanto la app reintenta sin ese dato y la evidencia igual se respalda.
