@@ -146,7 +146,7 @@ update rf_ajustes set exigir_cuenta = false where id = 1;
 
 ### Excel del día (1.17.0)
 
-Solo `index.html`. Usa SheetJS 0.18.5, que ya se carga desde cdnjs para importar Excel; el archivo se arma en el celular.
+Solo `index.html`. Usa SheetJS 0.18.5, que ya se carga desde cdnjs para importar Excel; el archivo se arma en el celular. En iPhone (1.17.1) sale por el menú de compartir; una página web no puede escribir directo en una carpeta del iPhone, el usuario elige *Guardar en Archivos*.
 
 ### Nombres con tildes (1.16.2)
 
