@@ -144,6 +144,10 @@ update rf_ajustes set exigir_cuenta = false where id = 1;
   - **Liberar espacio a mano:** Supabase > **Storage** > **evidencias** > abrir la carpeta de un día viejo > seleccionar las fotos > **Download** (guardarlas en la PC) > **Delete**. Las carpetas se llaman por fecha (`AAAA-MM-DD`), así que se borran las más viejas primero. El registro en la tabla `entregas` se puede dejar: casi no ocupa.
   - En iPhone, si la app se usa desde Safari y no desde el ícono, Safari puede borrar los datos de la página tras ~7 días sin abrirla. Por eso Supabase es el respaldo oficial.
 
+### Excel del día (1.17.0)
+
+Solo `index.html`. Usa SheetJS 0.18.5, que ya se carga desde cdnjs para importar Excel; el archivo se arma en el celular.
+
 ### Nombres con tildes (1.16.2)
 
 Solo `index.html`. Al abrir la app se corrigen solos los nombres ya guardados en el celular.

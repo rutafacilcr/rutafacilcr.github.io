@@ -222,8 +222,8 @@ details summary{cursor:pointer;font-weight:600}
       <label>Día de entrega<input id="m-fecha"></label>
     </div>
     <p class="small muted">En cada cliente elegí el mensaje (<b>1. Coordinar</b>, <b>2. Formulario</b> o <b>3. En camino</b>) y tocá <b>Abrir WhatsApp</b>. Solo tocás <b>Enviar</b>, volvés aquí y seguís con el siguiente.</p>
-    <div class="vcfrow"><label>Prefijo<input id="m-pref" maxlength="8" placeholder="TM" autocomplete="off"></label><button class="btn sm primary" id="vcfBtn" type="button">📇 Guardar contactos del día</button></div>
-    <p class="small muted">Guarda a todos los clientes en tus contactos como <b id="vcfEj">TM-Nombre-pedido</b> (el pedido es la guía), para que en WhatsApp salga el nombre cuando te contesten.</p>
+    <div class="vcfrow"><label>Prefijo<input id="m-pref" maxlength="8" placeholder="TM" autocomplete="off"></label><button class="btn sm primary" id="vcfBtn" type="button">📇 Guardar contactos del día</button><button class="btn sm" id="xlsBtn" type="button">📊 Bajar Excel del día</button></div>
+    <p class="small muted">Guarda a todos los clientes en tus contactos como <b id="vcfEj">TM-Nombre-pedido</b> (el pedido es la guía), para que en WhatsApp salga el nombre cuando te contesten. <b>Bajar Excel del día</b> llena la plantilla de Excel con nombre, teléfono, dirección, ubicación, guía, nota y fecha de ingreso de cada cliente.</p>
     <p class="small" id="vcfIos" hidden style="background:var(--warn-bg);border-radius:8px;padding:10px 12px">En iPhone: elegí <b>Guardar en Archivos</b>. Después abrí la app <b>Archivos</b>, tocá <b>contactos-….vcf</b> y luego <b>Agregar los N contactos</b> &gt; <b>Crear contactos nuevos</b>. (Si lo abrís directo desde Safari, el iPhone solo agrega el primero.)</p>
   </div>
   <div class="row" style="justify-content:space-between"><h2>Clientes</h2><span class="small muted" id="sentCount"></span></div>
@@ -273,7 +273,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.16.2</span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.17.0</span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -373,8 +373,11 @@ function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 // Nombre limpio: Mayúscula Inicial con tildes (\w no incluye á/ñ y partía "Chavarría" en "ChavarríA") y sin guiones o puntos sueltos al inicio/final.
 const cleanName=s=>String(s||'').replace(/\p{L}+/gu,w=>w[0].toUpperCase()+w.slice(1).toLowerCase()).replace(/^[\s\-–—·.,;:|]+|[\s\-–—·.,;:|]+$/g,'').replace(/\s{2,}/g,' ');
 // Repara nombres guardados con el error viejo (minúscula con tilde seguida de mayúscula).
-const fixOldName=p=>{if(p&&/[áéíóúüñ]\p{Lu}|^[\s\-–·.]/u.test(p.nombre||''))p.nombre=cleanName(p.nombre)};
-function load(){try{const r=localStorage.getItem(KEY);if(r){S={...S,...JSON.parse(r)};(S.pk||[]).forEach(fixOldName);return true}}catch(e){}return false}
+// tidyName: solo arregla lo roto (mayúscula pegada después de minúscula, guiones sueltos) sin tocar "de", "del", etc.
+const tidyName=s=>String(s||'').replace(/(\p{Ll})(\p{Lu}+)/gu,(m,a,b)=>a+b.toLowerCase()).replace(/^[\s\-–—·.,;:|]+|[\s\-–—·.,;:|]+$/g,'').replace(/\s{2,}/g,' ');
+const fixOldName=p=>{if(p&&/[áéíóúüñ]\p{Lu}|^[\s\-–·.]/u.test(p.nombre||''))p.nombre=tidyName(p.nombre)};
+function load(){try{const r=localStorage.getItem(KEY);if(r){S={...S,...JSON.parse(r)};(S.pk||[]).forEach(p=>{fixOldName(p);if(!p.ing)p.ing=Date.now()}); // ing = fecha en que se agregó (los viejos quedan con la fecha de esta actualización)
+return true}}catch(e){}return false}
 function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2200)}
 
 function parseCoord(s){
@@ -391,7 +394,7 @@ function phoneWA(p){
   if(d.length===8)d='506'+d;
   return d.length>=10?d:'';
 }
-function mkPkg(a){const p={id:uid(),nombre:(a[0]||'').trim(),tel:(a[1]||'').trim(),dir:(a[2]||'').trim(),ubic:(a[3]||'').trim(),guia:(a[4]||'').trim(),nota:(a[5]||'').trim(),st:'pendiente',sent:false,tok:tok(),horario:'',senas:''};
+function mkPkg(a){const p={id:uid(),ing:Date.now(),nombre:(a[0]||'').trim(),tel:(a[1]||'').trim(),dir:(a[2]||'').trim(),ubic:(a[3]||'').trim(),guia:(a[4]||'').trim(),nota:(a[5]||'').trim(),st:'pendiente',sent:false,tok:tok(),horario:'',senas:''};
   const c=parseCoord(p.ubic)||parseCoord(p.dir);if(c)p.ubic=c.join(','); // deja solo las coordenadas aunque peguen el link completo
   return p}
 
@@ -603,7 +606,7 @@ $('#routeBtn').onclick=calcRoute;
 if(S.pref==null)S.pref='TM';
 const vcfEsc=s=>String(s).replace(/\\/g,'\\\\').replace(/[,;]/g,m=>'\\'+m).replace(/\r?\n/g,' ');
 // Nombre del contacto: TM-Nombre-pedido (sin guía queda TM-Nombre; varias guías del mismo teléfono van juntas con /)
-const vcfName=(p,guias)=>{const pre=(S.pref||'').trim(),g=(guias||[p.guia]).filter(Boolean).join('/');return [pre,cleanName(p.nombre)||'Cliente',g].filter(Boolean).join('-')};
+const vcfName=(p,guias)=>{const pre=(S.pref||'').trim(),g=(guias||[p.guia]).filter(Boolean).join('/');return [pre,tidyName(p.nombre)||'Cliente',g].filter(Boolean).join('-')};
 const IOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 async function saveContacts(){
   const by=new Map(),cards=[];
@@ -621,6 +624,18 @@ async function saveContacts(){
   setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},5000);toast(`${cards.length} contactos listos para guardar`);
 }
 $('#vcfBtn').onclick=saveContacts;
+// Excel del día: mismas columnas que plantilla-paquetes.xlsx (se puede volver a importar) + "contacto" (TM-Nombre-pedido).
+function saveExcel(){
+  if(!window.XLSX){toast('No se pudo cargar Excel. Revisá el internet y probá de nuevo.');return}
+  const pk=S.pk.filter(p=>p.nombre||p.tel);if(!pk.length){toast('No hay clientes en la lista');return}
+  const fIng=t=>t?new Date(t).toLocaleDateString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric'}):'';
+  const rows=[['nombre','telefono','direccion','ubicacion','guia','nota','fecha ingreso','contacto'],
+    ...pk.map(p=>{const d=String(p.tel||'').replace(/\D/g,'');return [tidyName(p.nombre),d.length===11&&d.startsWith('506')?d.slice(3):d,p.dir||'',p.ubic||'',p.guia||'',p.nota||'',fIng(p.ing),vcfName(p)]})];
+  const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=[{wch:28},{wch:11},{wch:40},{wch:22},{wch:20},{wch:24},{wch:13},{wch:40}];
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Paquetes');
+  XLSX.writeFile(wb,`paquetes-${new Date().toISOString().slice(0,10)}.xlsx`);toast(`Excel con ${pk.length} clientes`);
+}
+$('#xlsBtn').onclick=saveExcel;
 $('#m-pref').addEventListener('input',()=>{$('#vcfEj').textContent=vcfName({nombre:'Nombre',guia:'pedido'})});
 $('#m-buscar').addEventListener('input',()=>renderMsg());
 $('#r-here').onclick=()=>{const b=$('#r-here');if(!navigator.geolocation){toast('Este navegador no da la ubicación');return}b.textContent='Buscando…';

@@ -90,6 +90,8 @@ Columnas: `nombre`, `telefono`, `direccion`, `ubicacion`, `guia`, `nota`.
 - Los nombres salen bien escritos aunque el escáner los haya leído con mayúsculas raras (*Chavarría*, no *ChavarríA*) o con un guion al inicio.
 - Si un cliente tiene varios paquetes con el mismo teléfono, queda un solo contacto con las guías juntas (*TM-Sofía-PO1/PO2*).
 
+**Bajar Excel del día:** en *Mensajes*, el botón **📊 Bajar Excel del día** baja la plantilla de Excel llena con todos los clientes: nombre, teléfono, dirección, ubicación, guía, nota, **fecha ingreso** (el día en que se agregó el cliente a la app) y **contacto** (*TM-Nombre-pedido*). Sirve de respaldo y se puede volver a cargar en *Paquetes > Importar*. Los clientes que ya estaban antes de la versión 1.17.0 quedan con la fecha del día en que se actualizó la app.
+
 **Buscar un cliente:** arriba de la lista hay un buscador. Sirve por nombre, guía o los últimos dígitos del teléfono, para saber de quién es un número que te escribe.
 
 **Si WhatsApp abre con un texto viejo:** WhatsApp guarda el borrador de un mensaje que no se envió y a veces lo muestra en vez del nuevo. Borrá ese texto en el chat, volvé a la app y tocá **Abrir WhatsApp** otra vez.
