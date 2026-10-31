@@ -87,6 +87,7 @@ Columnas: `nombre`, `telefono`, `direccion`, `ubicacion`, `guia`, `nota`.
 **Guardar contactos del día:** en *Mensajes*, arriba, tocá **📇 Guardar contactos del día**. Baja un archivo con todos los clientes con el nombre **TM-Nombre-pedido** (el pedido es la guía; si no tiene guía queda *TM-Nombre*). Así, cuando te contesten, WhatsApp muestra quién es. El prefijo *TM* se puede cambiar en la casilla **Prefijo**.
 - **iPhone:** en el menú de compartir elegí **Guardar en Archivos**. Abrí la app **Archivos**, tocá el archivo *contactos-….vcf* > **Agregar los N contactos** > **Crear contactos nuevos**. Ojo: si el archivo se abre directo desde Safari, el iPhone solo agrega el primer contacto.
 - **Android:** abrí el archivo descargado y elegí **Contactos** para importarlos.
+- Los nombres salen bien escritos aunque el escáner los haya leído con mayúsculas raras (*Chavarría*, no *ChavarríA*) o con un guion al inicio.
 - Si un cliente tiene varios paquetes con el mismo teléfono, queda un solo contacto con las guías juntas (*TM-Sofía-PO1/PO2*).
 
 **Buscar un cliente:** arriba de la lista hay un buscador. Sirve por nombre, guía o los últimos dígitos del teléfono, para saber de quién es un número que te escribe.

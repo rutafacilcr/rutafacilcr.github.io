@@ -273,7 +273,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.16.1</span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.16.2</span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -370,7 +370,11 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const uid=()=>Math.random().toString(36).slice(2,9);
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
-function load(){try{const r=localStorage.getItem(KEY);if(r){S={...S,...JSON.parse(r)};return true}}catch(e){}return false}
+// Nombre limpio: Mayúscula Inicial con tildes (\w no incluye á/ñ y partía "Chavarría" en "ChavarríA") y sin guiones o puntos sueltos al inicio/final.
+const cleanName=s=>String(s||'').replace(/\p{L}+/gu,w=>w[0].toUpperCase()+w.slice(1).toLowerCase()).replace(/^[\s\-–—·.,;:|]+|[\s\-–—·.,;:|]+$/g,'').replace(/\s{2,}/g,' ');
+// Repara nombres guardados con el error viejo (minúscula con tilde seguida de mayúscula).
+const fixOldName=p=>{if(p&&/[áéíóúüñ]\p{Lu}|^[\s\-–·.]/u.test(p.nombre||''))p.nombre=cleanName(p.nombre)};
+function load(){try{const r=localStorage.getItem(KEY);if(r){S={...S,...JSON.parse(r)};(S.pk||[]).forEach(fixOldName);return true}}catch(e){}return false}
 function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2200)}
 
 function parseCoord(s){
@@ -599,7 +603,7 @@ $('#routeBtn').onclick=calcRoute;
 if(S.pref==null)S.pref='TM';
 const vcfEsc=s=>String(s).replace(/\\/g,'\\\\').replace(/[,;]/g,m=>'\\'+m).replace(/\r?\n/g,' ');
 // Nombre del contacto: TM-Nombre-pedido (sin guía queda TM-Nombre; varias guías del mismo teléfono van juntas con /)
-const vcfName=(p,guias)=>{const pre=(S.pref||'').trim(),g=(guias||[p.guia]).filter(Boolean).join('/');return [pre,(p.nombre||'').trim()||'Cliente',g].filter(Boolean).join('-')};
+const vcfName=(p,guias)=>{const pre=(S.pref||'').trim(),g=(guias||[p.guia]).filter(Boolean).join('/');return [pre,cleanName(p.nombre)||'Cliente',g].filter(Boolean).join('-')};
 const IOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 async function saveContacts(){
   const by=new Map(),cards=[];
@@ -856,7 +860,7 @@ function parseLabel(text,codes){
     const rest=clean(m[2]);if(rest.replace(/[^A-Za-zÁ-ú]/g,'').length>=4&&!L_ADDR.test(rest)){r.nombre=rest;ni=i}
     else if(lines[i+1]&&!L_SENDER.test(lines[i+1])){const nx=clean(lines[i+1]);if(nx.length>=4&&!L_ADDR.test(nx)){r.nombre=nx;ni=i+1}}}
   if(!r.nombre){const i=lines.findIndex(l=>/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ.' ]{5,40}$/.test(l)&&l.trim().split(' ').length>=2&&l.split(' ').length<=5&&!L_SENDER.test(l)&&!L_ADDR.test(l)&&!L_NAME.test(l));if(i>-1){r.nombre=lines[i];ni=i}}
-  r.nombre=r.nombre.replace(/\b\w+/g,w=>w[0].toUpperCase()+w.slice(1).toLowerCase());
+  r.nombre=cleanName(r.nombre);
   const dl=[];
   lines.forEach((l,i)=>{if(i===ni||L_SENDER.test(l))return;
     const kw=/^(direcci[oó]n|address|se[nñ]as)\s*[:.]?\s*$/i.test(l);
