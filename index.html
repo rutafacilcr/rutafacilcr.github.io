@@ -91,6 +91,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);outline-
 .btn:hover{border-color:var(--muted)}
 .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.off{opacity:.55} /* incompleto: se puede tocar y dice qué falta */
 .btn.road{background:var(--road);color:var(--road-ink);border-color:var(--road)}
 .btn.wa{background:var(--wa);color:#fff;border-color:var(--wa)}
 .btn.ghost{background:none}
@@ -265,7 +266,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.15.3</span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.15.4</span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -284,8 +285,8 @@ details summary{cursor:pointer;font-weight:600}
   <canvas class="sig" id="podSig" aria-label="Recuadro para firmar con el dedo"></canvas>
   <div class="row" style="justify-content:space-between"><button class="btn sm" id="podSigClear" type="button">Borrar firma</button>
     <label class="row small" style="font-weight:500;flex-direction:row;gap:6px"><input type="checkbox" id="podNoSig" style="width:auto"> No quiso firmar</label></div>
-  <div class="row"><button class="btn primary" id="podOk" disabled>Confirmar entrega</button><button class="btn ghost" id="podCancel">Cancelar</button></div>
-  <p class="small muted" id="podNeed"></p>
+  <p class="small" id="podNeed" style="font-weight:600"></p>
+  <div class="row"><button class="btn primary" id="podOk">Confirmar entrega</button><button class="btn ghost" id="podCancel">Cancelar</button></div>
 </div></div>
 <div class="sheet" id="pasteSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="pasteTitle">
   <h2 id="pasteTitle">Pegar respuesta</h2>
@@ -673,7 +674,8 @@ function podRender(){
   $('#podThumbs').innerHTML=th.join('');
   const faltan=Math.max(0,MIN_FOTOS-POD.fotos.length);
   const noSig=$('#podNoSig').checked,firma=POD.signed||noSig;$('#podSig').classList.toggle('ok',!!POD.signed);
-  $('#podOk').disabled=!!faltan||!POD.geo||!firma;
+  // El botón nunca se deshabilita: al tocarlo dice qué falta (en iPhone un botón gris parecía "no funciona").
+  const listo=!faltan&&!!POD.geo&&firma;$('#podOk').classList.toggle('off',!listo);$('#podNeed').style.color=listo?'var(--ok)':'var(--bad)';
   $('#podNeed').textContent=faltan?`Faltan ${faltan} foto(s).`:(!POD.geo?'Falta la ubicación GPS.':!firma?'Falta la firma (o marcá "No quiso firmar").':'Todo listo.');
 }
 // Reduce la foto a 1024 px (~100–150 KB) y le pone un sello con fecha, hora, GPS y guía.
@@ -693,9 +695,15 @@ $('#podThumbs').onclick=e=>{const b=e.target.closest('[data-del]');if(!b||!POD)r
 $('#podGeoRetry').onclick=podGeo;
 $('#podCancel').onclick=closePOD;
 $('#podOk').onclick=async()=>{
-  if(!POD||POD.fotos.length<MIN_FOTOS||!POD.geo)return;
-  if(!POD.signed&&!$('#podNoSig').checked)return;
-  const {p,geo,fotos,at}=POD;const id=tok()+tok();
+  if(!POD)return;const ver=s=>{const el=$(s);el.scrollIntoView({behavior:'smooth',block:'center'})};
+  if(POD.fotos.length<MIN_FOTOS){toast(`Faltan ${MIN_FOTOS-POD.fotos.length} foto(s)`);ver('#podThumbs');return}
+  if(!POD.signed&&!$('#podNoSig').checked){toast('Falta la firma, o marcá "No quiso firmar"');ver('#podSig');return}
+  if(!POD.geo){
+    if($('#podGeoRetry').hidden){toast('Esperando la ubicación GPS…');ver('#podGeo');return}
+    if(!confirm('No se pudo obtener la ubicación GPS. ¿Confirmar la entrega sin GPS?'))return}
+  const btn=$('#podOk');btn.disabled=true;
+  try{
+  const {p,fotos,at}=POD,geo=POD.geo||{lat:null,lng:null,acc:null};const id=tok()+tok();
   const recibe=$('#podRecibe').value.trim().slice(0,80),sinFirma=!POD.signed;
   const firma=sinFirma?null:await sigBlob(recibe,at).catch(()=>null);
   const rec={id,pid:p.id,guia:p.guia,cliente:p.nombre,at,lat:geo.lat,lng:geo.lng,acc:geo.acc,fotos:fotos.map(f=>f.blob),firma,recibe,sinFirma,up:false};
@@ -703,6 +711,7 @@ $('#podOk').onclick=async()=>{
   p.st='entregado';p.pod={id,n:fotos.length,at,lat:geo.lat,lng:geo.lng,acc:geo.acc,up:false,firma:!!firma,recibe};
   save();closePOD();render();toast(`${p.nombre}: entregado con evidencia`);
   uploadPOD(p.pod.id);
+  }catch(err){toast('No se pudo confirmar: '+(err&&err.message||err))}finally{btn.disabled=false}
 };
 async function uploadPOD(id,quiet){
   if(!FORM_ON)return false;
@@ -734,7 +743,7 @@ async function openEvidence(p){
   const fotos=rec?[...rec.fotos,...(rec.firma?[rec.firma]:[])].map(b=>URL.createObjectURL(b)):[];
   $('#evBody').innerHTML=`<p><b>${esc(p.nombre)}</b>${p.guia?' · guía '+esc(p.guia):''}</p>
     <div class="podline"><b>🕓</b><span>${fmtDT(p.pod.at)}</span></div>
-    <div class="podline"><b>📍</b><span>${p.pod.lat}, ${p.pod.lng} (±${Math.round(p.pod.acc)} m) · <a href="${gmaps([p.pod.lat,p.pod.lng])}" target="_blank" rel="noopener">Ver en mapa</a></span></div>
+    <div class="podline"><b>📍</b><span>${p.pod.lat!=null?`${p.pod.lat}, ${p.pod.lng} (±${Math.round(p.pod.acc)} m) · <a href="${gmaps([p.pod.lat,p.pod.lng])}" target="_blank" rel="noopener">Ver en mapa</a>`:'Sin GPS (no se pudo obtener)'}</span></div>
     ${p.pod.recibe||rec&&rec.sinFirma?`<div class="podline"><b>✍️</b><span>Recibió: ${esc(p.pod.recibe||'sin nombre')}${rec&&rec.sinFirma?' · no quiso firmar':''}</span></div>`:''}
     <div class="podline"><b>☁️</b><span>${p.pod.up?'Respaldada en Supabase':'Todavía no se subió (se intenta sola cuando hay internet)'}</span></div>
     ${fotos.length?`<div class="list">${fotos.map((u,i)=>`<img src="${u}" alt="Foto ${i+1} de la entrega" style="width:100%;border-radius:8px">`).join('')}</div>`:`<p class="small muted">${p.pod.up?'Las fotos ya no están en este celular (se borran a los '+LOCAL_DIAS+' días para ahorrar espacio). Están respaldadas en Supabase > Storage > evidencias.':'Las fotos no están en este celular.'}</p>`}`;
@@ -913,15 +922,16 @@ function sigInit(){
   const c=$('#podSig'),r=c.getBoundingClientRect(),k=Math.min(2,window.devicePixelRatio||1);
   c.width=Math.round((r.width||340)*k);c.height=Math.round((r.height||170)*k);
   const x=c.getContext('2d');x.setTransform(k,0,0,k,0,0);x.lineWidth=2.6;x.lineCap=x.lineJoin='round';x.strokeStyle='#111';
-  if(POD)POD.signed=false;
+  if(POD)POD.signed=false;c.dispatchEvent(new Event('sigreset'));
 }
 (()=>{const c=$('#podSig');let last=null,len=0;
   const pt=e=>{const r=c.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]};
   c.addEventListener('pointerdown',e=>{if(!POD)return;c.setPointerCapture(e.pointerId);last=pt(e);e.preventDefault()});
   c.addEventListener('pointermove',e=>{if(!last)return;const p=pt(e),x=c.getContext('2d');x.beginPath();x.moveTo(...last);x.lineTo(...p);x.stroke();len+=Math.hypot(p[0]-last[0],p[1]-last[1]);last=p;
     if(len>40&&POD&&!POD.signed){POD.signed=true;$('#podNoSig').checked=false;podRender()}});
+  c.addEventListener('sigreset',()=>{len=0;last=null}); // cada entrega empieza con la firma en cero
   const up=()=>{last=null};c.addEventListener('pointerup',up);c.addEventListener('pointercancel',up);
-  $('#podSigClear').onclick=()=>{len=0;sigInit();podRender()};
+  $('#podSigClear').onclick=()=>{sigInit();podRender()};
   $('#podNoSig').onchange=()=>podRender();
 })();
 // La firma se guarda como JPEG con fondo blanco y un sello (el bucket solo acepta JPEG).

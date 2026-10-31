@@ -57,6 +57,7 @@ Paquete = {
 | `coordText(p)` | Texto del primer mensaje. Siempre quita las líneas con `{formulario}`: el primer mensaje nunca lleva links. |
 | `#m-yo` / `S.yoPropio` | El nombre que firma los mensajes. `usarCuenta()` pone el nombre de la cuenta solo si el repartidor no escribió uno propio (`S.yoPropio`); vaciar el campo lo devuelve al de la cuenta. Antes de 1.14.1 el campo quedaba `readOnly` y en iPhone no salía el teclado. |
 | `#tplPanel` | `<details>` plegado al final de Mensajes con las plantillas `#m-coord`, `#m-form`, `#m-camino`. Al abrirlo (`toggle`) se recalcula la altura de los cuadros con `grow()`. Orden de la pestaña: nombre y fecha → Clientes → Respuestas del formulario → plantillas. |
+| `#podOk` | Nunca queda `disabled` mientras falte algo: con la clase `.off` se ve tenue y al tocarlo avisa qué falta y hace scroll. Si el GPS falló (`#podGeoRetry` visible) pide `confirm()` y guarda la entrega con `lat/lng/acc = null` (la ficha dice *Sin GPS* y no sale en *Recorrido de hoy*). Errores al guardar se muestran en un toast. `sigInit()` también reinicia el largo del trazo (evento `sigreset`). |
 | `msgOpts()` | Mensajes que se pueden elegir en cada cliente: `coord`, `form` (solo si `config.js` tiene Supabase) y `camino`. |
 | `msgSel(p)` | Mensaje elegido (`p.msgSel`); si no hay, propone `coord` y, ya enviado, `form`. |
 | `msgText(p, k)` | Texto del mensaje `k`: `coordText`, `S.form` (`DEF_FORM`, con `{formulario}`) o `S.camino` con `{eta}` de `routeEta(p)`. Lo usan la vista previa, **Abrir WhatsApp** (`data-k`) y **Copiar**. |
