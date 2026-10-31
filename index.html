@@ -274,7 +274,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.18.0</span><span id="nubeInfo"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.18.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -1074,9 +1074,11 @@ async function nubeSync(){
         if(g&&g.ok){S.dirty=false;S.syncVer=g.version;S.baseIds=S.pk.map(p=>p.id);saveLocal();break}
         nubeMezclar(g.datos||{});nubeAplicar(g.version);S.dirty=true}}
     nubeMsg('☁️ al día');
-  }catch(e){nubeMsg(e.status===404?'':'☁️ sin conexión');if(e.status===404||/rf_lista/.test(e.message||''))NUBE.on=false}
+  }catch(e){const falta=e.status===404||/rf_lista|PGRST202|could not find/i.test(e.message||'');
+    nubeMsg(falta?'☁️ sin activar: falta correr supabase.sql':e.status===401||e.status===403?'☁️ sin permiso: '+(e.message||''):'☁️ sin conexión, toque para reintentar')}
   finally{NUBE.busy=false}
 }
+$('#nubeInfo').onclick=()=>{if(NUBE.on){nubeMsg('☁️ sincronizando…');nubeSync()}};
 function nubeSoon(){if(!NUBE.on)return;clearTimeout(NUBE.t);NUBE.t=setTimeout(nubeSync,2500)}
 RF_AUTH.listo.then(c=>{usarCuenta(c);
 if(FORM_ON&&c){NUBE.on=true;nubeSync();setInterval(()=>{if(!document.hidden)nubeSync()},60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)nubeSync()})}

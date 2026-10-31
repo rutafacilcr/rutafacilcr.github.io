@@ -74,7 +74,7 @@ Columnas: `nombre`, `telefono`, `direccion`, `ubicacion`, `guia`, `nota`.
 
 ### Los mismos paquetes en el teléfono y en la PC
 
-Desde la versión 1.18.0 la lista se guarda en tu cuenta. Si entrás con tu número y PIN en el teléfono y en la PC, ves los mismos paquetes, y lo que cambiás en uno aparece en el otro en menos de un minuto (o al volver a la app). Abajo, en el pie, dice **☁️ al día** cuando está sincronizado.
+Desde la versión 1.18.0 la lista se guarda en tu cuenta. Si entrás con tu número y PIN en el teléfono y en la PC, ves los mismos paquetes, y lo que cambiás en uno aparece en el otro en menos de un minuto (o al volver a la app). Abajo, en el pie, dice **☁️ al día** cuando está sincronizado. Si dice **☁️ sin activar**, falta que el administrador corra `supabase.sql`; si dice **sin conexión**, tocalo para reintentar.
 
 - La primera vez, el aparato que ya tiene paquetes los sube; en el otro aparato aparecen solos.
 - Las fotos de evidencia no se copian: se ven en el teléfono donde se tomaron y quedan respaldadas en Supabase.

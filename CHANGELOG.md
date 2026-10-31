@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-10-31
+- **1.18.1:** el pie muestra el estado de la nube (*al día*, *sin activar: falta correr supabase.sql*, *sin conexión*) y se toca para sincronizar.
 - **1.18.0 · Lista en la nube:** los paquetes y los textos de los mensajes se guardan en la cuenta (Supabase) y se ven iguales en el teléfono y en la PC. Lo nuevo y lo borrado en un aparato pasa al otro. Hay que volver a correr `supabase.sql` (tabla `rf_listas`, funciones `rf_lista_leer` y `rf_lista_guardar`).
 - **1.17.1:** en iPhone, *Bajar Excel del día* abre el menú de compartir para guardarlo en *Archivos* en la carpeta *RutaFacilCR*, con los pasos en pantalla.
 - **1.17.0 · Excel del día:** en *Mensajes*, **📊 Bajar Excel del día** baja la plantilla de paquetes llena con todos los clientes, más las columnas *fecha ingreso* (cuándo se agregó cada cliente) y *contacto* (*TM-Nombre-pedido*). Los nombres en contactos y Excel ya no cambian *de*/*del* a mayúscula.

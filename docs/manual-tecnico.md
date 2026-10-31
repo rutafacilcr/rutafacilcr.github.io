@@ -146,7 +146,7 @@ update rf_ajustes set exigir_cuenta = false where id = 1;
 
 ### Lista en la nube (1.18.0)
 
-**Hay que volver a correr `supabase.sql`** (SQL Editor > New query > pegar todo > Run). Crea la tabla `rf_listas` (un registro JSON por cuenta, con RLS y sin políticas) y las funciones `rf_lista_leer()` y `rf_lista_guardar(p_datos, p_version)`, que llaman `rf_exigir_licencia()` y solo responden a una sesión con cuenta. Mientras no se corra, la app sigue funcionando solo en el aparato (no muestra error).
+**Hay que volver a correr `supabase.sql`** (SQL Editor > New query > pegar todo > Run). Crea la tabla `rf_listas` (un registro JSON por cuenta, con RLS y sin políticas) y las funciones `rf_lista_leer()` y `rf_lista_guardar(p_datos, p_version)`, que llaman `rf_exigir_licencia()` y solo responden a una sesión con cuenta. Mientras no se corra, la app sigue funcionando solo en el aparato y el pie dice *☁️ sin activar: falta correr supabase.sql*.
 
 - Se guardan los paquetes y los textos de los mensajes, no las fotos de evidencia (siguen en el celular y en el bucket `evidencias`).
 - Con *Exigir cuenta activa*, un repartidor solo puede usar un teléfono a la vez; el administrador puede entrar desde varios aparatos.
