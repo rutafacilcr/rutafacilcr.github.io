@@ -274,7 +274,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.17.1</span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.18.0</span><span id="nubeInfo"></span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -370,7 +370,9 @@ let editId=null;
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const uid=()=>Math.random().toString(36).slice(2,9);
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const NUBE={on:false,t:null,busy:false}; // lista en la nube (ver nubeSync)
+function save(){S.dirty=true;saveLocal();if(NUBE.on)nubeSoon()}
 // Nombre limpio: Mayúscula Inicial con tildes (\w no incluye á/ñ y partía "Chavarría" en "ChavarríA") y sin guiones o puntos sueltos al inicio/final.
 const cleanName=s=>String(s||'').replace(/\p{L}+/gu,w=>w[0].toUpperCase()+w.slice(1).toLowerCase()).replace(/^[\s\-–—·.,;:|]+|[\s\-–—·.,;:|]+$/g,'').replace(/\s{2,}/g,' ');
 // Repara nombres guardados con el error viejo (minúscula con tilde seguida de mayúscula).
@@ -1042,10 +1044,42 @@ save();
 render();
 // Cuentas (auth.js): el nombre del dueño de la cuenta firma los mensajes y la sincronización espera a que la cuenta esté abierta.
 // El nombre de la cuenta es el de fábrica; si el repartidor escribe otro, se respeta (S.yoPropio). Vacío = vuelve al de la cuenta.
-const usarCuenta=c=>{if(!c||!c.nombre||S.yoPropio)return;S.yo=c.nombre;$('#m-yo').value=S.yo;save();renderMsg()};
+const usarCuenta=c=>{if(!c||!c.nombre||S.yoPropio)return;S.yo=c.nombre;$('#m-yo').value=S.yo;saveLocal();renderMsg()};
 $('#m-yo').addEventListener('input',e=>{S.yoPropio=!!e.target.value.trim();save()});
 document.addEventListener('rf-cuenta',e=>usarCuenta(e.detail));
+// ===== Lista en la nube: los mismos paquetes en el teléfono y en la PC (rf_lista_leer / rf_lista_guardar) =====
+// S.syncVer = última versión de la nube que vio este aparato; S.baseIds = ids que había en ese momento
+// (sirven para saber qué se borró en un lado y qué es nuevo). S.dirty = hay cambios sin subir.
+const NUBE_KEYS=['pk','coord','form','camino','pref','fecha','hora','start','vel','min','ret','route'];
+const nubeMsg=t=>{const el=$('#nubeInfo');if(el)el.textContent=t?' · '+t:''};
+function nubeDatos(){const d={};NUBE_KEYS.forEach(k=>{if(S[k]!==undefined)d[k]=S[k]});if(S.ex)d.pk=[];return d}
+function nubeMezclar(srv){
+  const base=new Set(S.baseIds||[]),loc=S.ex?[]:S.pk,sMap=new Map((srv.pk||[]).map(p=>[p.id,p])),lIds=new Set(loc.map(p=>p.id)),out=[];
+  for(const p of loc){if(sMap.has(p.id))out.push(S.dirty?p:sMap.get(p.id));else if(!base.has(p.id))out.push(p)} // solo local: nuevo aquí, o se borró en el otro aparato
+  for(const p of srv.pk||[])if(!lIds.has(p.id)&&!base.has(p.id))out.push(p);                                   // solo nube: nuevo allá, o se borró aquí
+  if(!S.dirty)NUBE_KEYS.forEach(k=>{if(k!=='pk'&&srv[k]!==undefined)S[k]=srv[k]});
+  S.pk=out;S.ex=false;
+}
+function nubeAplicar(ver){S.syncVer=ver;S.baseIds=S.pk.map(p=>p.id);S.pk.forEach(p=>{if(!p.tok)p.tok=tok();fixOldName(p)});saveLocal();
+  ['#m-coord','#m-form','#m-camino','#m-pref','#m-fecha','#r-start','#r-hora','#r-vel','#r-min'].forEach(id=>{const el=$(id),k={'#m-coord':'coord','#m-form':'form','#m-camino':'camino','#m-pref':'pref','#m-fecha':'fecha','#r-start':'start','#r-hora':'hora','#r-vel':'vel','#r-min':'min'}[id];if(el&&document.activeElement!==el)el.value=S[k]??''});
+  $('#r-return').checked=!!S.ret;render()}
+async function nubeSync(){
+  if(!NUBE.on||NUBE.busy)return;NUBE.busy=true;
+  try{
+    const r=await RF_AUTH.rpc('rf_lista_leer',{});const srv=r&&r.datos;
+    if(srv&&r.version!==S.syncVer){const first=S.syncVer==null,hadLocal=!S.ex&&S.pk.length>0,dirty=!!S.dirty;nubeMezclar(srv);nubeAplicar(r.version);S.dirty=dirty||(first&&hadLocal)}
+    else if(!srv&&S.syncVer==null)S.dirty=!S.ex&&S.pk.length>0;  // nube vacía: la primera vez se sube lo de este aparato
+    if(S.dirty&&!S.ex){
+      for(let i=0;i<3;i++){const g=await RF_AUTH.rpc('rf_lista_guardar',{p_datos:nubeDatos(),p_version:S.syncVer||0});
+        if(g&&g.ok){S.dirty=false;S.syncVer=g.version;S.baseIds=S.pk.map(p=>p.id);saveLocal();break}
+        nubeMezclar(g.datos||{});nubeAplicar(g.version);S.dirty=true}}
+    nubeMsg('☁️ al día');
+  }catch(e){nubeMsg(e.status===404?'':'☁️ sin conexión');if(e.status===404||/rf_lista/.test(e.message||''))NUBE.on=false}
+  finally{NUBE.busy=false}
+}
+function nubeSoon(){if(!NUBE.on)return;clearTimeout(NUBE.t);NUBE.t=setTimeout(nubeSync,2500)}
 RF_AUTH.listo.then(c=>{usarCuenta(c);
+if(FORM_ON&&c){NUBE.on=true;nubeSync();setInterval(()=>{if(!document.hidden)nubeSync()},60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)nubeSync()})}
 if(FORM_ON){ // formulario como segundo mensaje: el primero nunca lleva link
 $('#syncPanel').hidden=false;$('#syncBtn').onclick=()=>{syncResp(true);uploadPending()};syncResp();uploadPending();setInterval(()=>{if(!document.hidden){syncResp();uploadPending()}},60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncResp()})}
 });

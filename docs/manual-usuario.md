@@ -72,6 +72,14 @@ Columnas: `nombre`, `telefono`, `direccion`, `ubicacion`, `guia`, `nota`.
 - **Ubicación:** pegá el link completo que manda el cliente (`https://maps.google.com/?q=...`), un link de Waze o las coordenadas (`9.99,-84.11`). Debajo sale en verde **✓ Coordenadas detectadas**. Los links cortos tipo `maps.app.goo.gl` no se leen: abrilos primero y copiá el link largo.
 - Cada paquete muestra **● Ubicación lista** o **○ Falta ubicación**.
 
+### Los mismos paquetes en el teléfono y en la PC
+
+Desde la versión 1.18.0 la lista se guarda en tu cuenta. Si entrás con tu número y PIN en el teléfono y en la PC, ves los mismos paquetes, y lo que cambiás en uno aparece en el otro en menos de un minuto (o al volver a la app). Abajo, en el pie, dice **☁️ al día** cuando está sincronizado.
+
+- La primera vez, el aparato que ya tiene paquetes los sube; en el otro aparato aparecen solos.
+- Las fotos de evidencia no se copian: se ven en el teléfono donde se tomaron y quedan respaldadas en Supabase.
+- Si no hay internet, la app sigue funcionando y sincroniza cuando vuelve la señal.
+
 ### Día antes: avisar a los clientes (pestaña **Mensajes**)
 
 1. Arriba revisá **tu nombre** y el **día de entrega**. Debajo sale la lista de clientes.

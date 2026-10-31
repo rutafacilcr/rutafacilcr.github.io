@@ -469,6 +469,54 @@ end $$;
 revoke all on function public.registrar_entrega(text,text,text,text,double precision,double precision,double precision,timestamptz,text[],text) from public;
 grant execute on function public.registrar_entrega(text,text,text,text,double precision,double precision,double precision,timestamptz,text[],text) to anon, authenticated;
 
+-- =====================================================================
+-- Lista sincronizada (1.18.0). Agregado 2026-10-31.
+-- La lista de paquetes y los textos de los mensajes de cada cuenta, para verlos
+-- igual en el teléfono y en la PC. Un registro por cuenta (JSON). Sin políticas:
+-- solo se lee y escribe con las funciones rf_lista_* (que exigen licencia).
+-- =====================================================================
+create table if not exists public.rf_listas (
+  owner_id    uuid primary key references auth.users(id) on delete cascade,
+  datos       jsonb not null default '{}'::jsonb,
+  version     bigint not null default 0,
+  actualizado timestamptz not null default now()
+);
+alter table public.rf_listas enable row level security;
+
+create or replace function public.rf_lista_leer()
+returns json language plpgsql security definer set search_path = public as $$
+declare l rf_listas;
+begin
+  perform public.rf_exigir_licencia();
+  if auth.uid() is null then raise exception 'RF_CUENTA: sin sesión'; end if;
+  select * into l from rf_listas where owner_id = auth.uid();
+  if not found then return json_build_object('version', 0, 'datos', null); end if;
+  return json_build_object('version', l.version, 'datos', l.datos, 'actualizado', l.actualizado);
+end $$;
+
+-- Guarda solo si nadie guardó una versión más nueva (p_version = la última que vio este aparato).
+-- Si hay una más nueva devuelve ok=false con esos datos, y la app las mezcla y vuelve a guardar.
+create or replace function public.rf_lista_guardar(p_datos jsonb, p_version bigint)
+returns json language plpgsql security definer set search_path = public as $$
+declare l rf_listas;
+begin
+  perform public.rf_exigir_licencia();
+  if auth.uid() is null then raise exception 'RF_CUENTA: sin sesión'; end if;
+  if octet_length(p_datos::text) > 2000000 then raise exception 'RF_LISTA: la lista es demasiado grande'; end if;
+  select * into l from rf_listas where owner_id = auth.uid() for update;
+  if found and l.version <> coalesce(p_version, 0) then
+    return json_build_object('ok', false, 'version', l.version, 'datos', l.datos);
+  end if;
+  insert into rf_listas (owner_id, datos, version, actualizado) values (auth.uid(), p_datos, 1, now())
+  on conflict (owner_id) do update set datos = excluded.datos, version = rf_listas.version + 1, actualizado = now()
+  returning * into l;
+  return json_build_object('ok', true, 'version', l.version);
+end $$;
+revoke all on function public.rf_lista_leer() from public, anon;
+revoke all on function public.rf_lista_guardar(jsonb, bigint) from public, anon;
+grant execute on function public.rf_lista_leer() to authenticated;
+grant execute on function public.rf_lista_guardar(jsonb, bigint) to authenticated;
+
 -- Carpeta privada para las fotos. La app solo puede SUBIR; verlas se hace desde el panel de Supabase.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('evidencias', 'evidencias', false, 2097152, array['image/jpeg'])
