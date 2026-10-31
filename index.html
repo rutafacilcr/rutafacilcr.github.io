@@ -68,6 +68,9 @@ nav.tabs .n:empty{display:none}
 .trackmap{height:320px;border-radius:10px;overflow:hidden;background:var(--bg);z-index:0}
 .tracklist{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px;font-size:14px}
 .tpin{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font:700 13px var(--f-body);display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.vcfrow{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
+.vcfrow label{flex:0 0 72px;width:72px;min-width:0}
+.vcfrow .btn{min-height:46px}
 .msgsel{grid-column:2;display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
 .msgsel button{font:600 12px var(--f-body);padding:5px 6px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;min-height:32px}
 .msgsel button[aria-checked="true"]{background:var(--road);color:var(--road-ink);border-color:var(--road)}
@@ -219,8 +222,11 @@ details summary{cursor:pointer;font-weight:600}
       <label>Día de entrega<input id="m-fecha"></label>
     </div>
     <p class="small muted">En cada cliente elegí el mensaje (<b>1. Coordinar</b>, <b>2. Formulario</b> o <b>3. En camino</b>) y tocá <b>Abrir WhatsApp</b>. Solo tocás <b>Enviar</b>, volvés aquí y seguís con el siguiente.</p>
+    <div class="vcfrow"><label>Prefijo<input id="m-pref" maxlength="8" placeholder="TM" autocomplete="off"></label><button class="btn sm primary" id="vcfBtn" type="button">📇 Guardar contactos del día</button></div>
+    <p class="small muted">Guarda a todos los clientes en tus contactos como <b id="vcfEj">TM-Nombre-pedido</b> (el pedido es la guía), para que en WhatsApp salga el nombre cuando te contesten.</p>
   </div>
   <div class="row" style="justify-content:space-between"><h2>Clientes</h2><span class="small muted" id="sentCount"></span></div>
+  <input id="m-buscar" type="search" placeholder="🔍 Buscar por nombre, teléfono o guía" autocomplete="off" aria-label="Buscar cliente">
   <div class="list" id="msgList"></div>
   <div class="panel" id="syncPanel" hidden>
     <div class="row" style="justify-content:space-between"><h3>Respuestas del formulario</h3><span class="small muted" id="syncInfo"></span></div>
@@ -266,7 +272,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.15.4</span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.16.0</span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -442,7 +448,10 @@ function renderMsg(){
   const L=$('#msgList');
   $('#sentCount').textContent=S.pk.length?`${S.pk.filter(p=>p.sent).length} de ${S.pk.length} enviados`:'';
   if(!S.pk.length){L.innerHTML='<div class="empty">Agregá paquetes en el paso 1 para preparar los mensajes.</div>';return}
-  L.innerHTML=S.pk.map((p,i)=>{const sel=msgSel(p),txt=msgText(p,sel);const l=waLink(p,txt);return `<div class="pkg">
+  const q=($('#m-buscar').value||'').trim().toLowerCase(),qd=q.replace(/\D/g,'');
+  // Buscar: por nombre o guía, o por los últimos dígitos del teléfono (sirve para ver de quién es un número que contesta)
+  const hit=p=>!q||(p.nombre||'').toLowerCase().includes(q)||(p.guia||'').toLowerCase().includes(q)||(qd.length>=3&&String(p.tel||'').replace(/\D/g,'').includes(qd.slice(-8)));
+  L.innerHTML=S.pk.map((p,i)=>{const sel=msgSel(p),txt=msgText(p,sel);const l=waLink(p,txt);return `<div class="pkg"${hit(p)?'':' style="display:none"'}>
     <div class="num">${i+1}</div>
     <div class="name">${esc(p.nombre)} ${stChip(p)} ${p.sent?'<span class="small muted">✓ mensaje abierto</span>':''}${p.formSent?'<span class="small muted">· formulario enviado</span>':''}</div>
     <div class="addr"><span class="mono">${esc(p.tel||'sin teléfono')}</span>${p.resp?' <span class="small" style="color:var(--ok);font-weight:600">✓ llenó el formulario</span>':''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
@@ -585,6 +594,24 @@ $('#clearExample').onclick=()=>{S.pk=[];S.ex=false;S.route=null;save();render()}
 $('#clearAll').onclick=e=>{const b=e.currentTarget;if(b.dataset.c){S.pk=[];S.ex=false;S.route=null;save();render();b.textContent='Vaciar lista';delete b.dataset.c}else{b.dataset.c=1;b.textContent='¿Seguro? Tocá otra vez';setTimeout(()=>{b.textContent='Vaciar lista';delete b.dataset.c},3000)}};
 const bind=(sel,k,num)=>{const el=$(sel);el.value=S[k]??'';el.addEventListener(el.type==='checkbox'?'change':'input',()=>{S[k]=el.type==='checkbox'?el.checked:(num?+el.value:el.value);save();if(['coord','form','yo','fecha'].includes(k))renderMsg()})};
 $('#routeBtn').onclick=calcRoute;
+// ---- Contactos del día: un .vcf con todos los clientes como "TM-Nombre" ----
+if(S.pref==null)S.pref='TM';
+const vcfEsc=s=>String(s).replace(/\\/g,'\\\\').replace(/[,;]/g,m=>'\\'+m).replace(/\r?\n/g,' ');
+// Nombre del contacto: TM-Nombre-pedido (sin guía queda TM-Nombre; varias guías del mismo teléfono van juntas con /)
+const vcfName=(p,guias)=>{const pre=(S.pref||'').trim(),g=(guias||[p.guia]).filter(Boolean).join('/');return [pre,(p.nombre||'').trim()||'Cliente',g].filter(Boolean).join('-')};
+function saveContacts(){
+  const by=new Map(),cards=[];
+  for(const p of S.pk){const d=phoneWA(p.tel);if(!d)continue;if(!by.has(d))by.set(d,{p,g:[]});if(p.guia)by.get(d).g.push(p.guia.trim())}
+  for(const [d,{p,g}] of by){const n=vcfEsc(vcfName(p,g));
+    cards.push(['BEGIN:VCARD','VERSION:3.0','FN:'+n,'N:;'+n+';;;','TEL;TYPE=CELL:+'+d,'END:VCARD'].join('\r\n'))}
+  if(!cards.length){toast('No hay clientes con teléfono válido');return}
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([cards.join('\r\n')+'\r\n'],{type:'text/vcard'}));
+  a.download=`contactos-${new Date().toISOString().slice(0,10)}.vcf`;document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},5000);toast(`${cards.length} contactos listos para guardar`);
+}
+$('#vcfBtn').onclick=saveContacts;
+$('#m-pref').addEventListener('input',()=>{$('#vcfEj').textContent=vcfName({nombre:'Nombre',guia:'pedido'})});
+$('#m-buscar').addEventListener('input',()=>renderMsg());
 $('#r-here').onclick=()=>{const b=$('#r-here');if(!navigator.geolocation){toast('Este navegador no da la ubicación');return}b.textContent='Buscando…';
   navigator.geolocation.getCurrentPosition(g=>{S.start=g.coords.latitude.toFixed(6)+','+g.coords.longitude.toFixed(6);$('#r-start').value=S.start;
     const d=new Date();S.hora=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');$('#r-hora').value=S.hora;save();b.textContent='📍 Usar mi ubicación actual';toast('Listo: salida desde aquí y ahora')},
@@ -970,7 +997,7 @@ document.querySelector('[data-tab="ruta"]').addEventListener('click',()=>request
 
 if(!load()){S.pk=EXAMPLE.map(mkPkg);S.ex=true;S.pk[0].st='confirmado';S.pk[2].st='confirmado';S.pk[1].sent=true}
 if(!S.hora)S.hora='08:00';
-bind('#m-yo','yo');bind('#m-fecha','fecha');bind('#m-coord','coord');bind('#m-camino','camino');bind('#m-form','form');bind('#r-start','start');bind('#r-hora','hora');bind('#r-vel','vel',1);bind('#r-min','min',1);bind('#r-filter','filter');
+bind('#m-pref','pref');$('#vcfEj').textContent=vcfName({nombre:'Nombre',guia:'pedido'});bind('#m-yo','yo');bind('#m-fecha','fecha');bind('#m-coord','coord');bind('#m-camino','camino');bind('#m-form','form');bind('#r-start','start');bind('#r-hora','hora');bind('#r-vel','vel',1);bind('#r-min','min',1);bind('#r-filter','filter');
 $('#r-return').checked=!!S.ret;$('#r-return').onchange=e=>{S.ret=e.target.checked;save()};
 $('#m-fecha').placeholder=tomorrow();
 const grow=el=>{el.style.height='auto';el.style.height=el.scrollHeight+2+'px'};

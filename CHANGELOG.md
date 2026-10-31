@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-10-31
+- **1.16.0 · Contactos del día:** en *Mensajes*, **📇 Guardar contactos del día** baja un `.vcf` con todos los clientes como *TM-Nombre-pedido* (prefijo editable) para importarlos de una vez en iPhone o Android. Nuevo buscador de clientes por nombre, guía o teléfono.
 - **1.15.4:** *Confirmar entrega* ya no queda gris sin explicación: al tocarlo dice qué falta (fotos, firma o ubicación) y lleva a esa parte. Si el GPS no responde, permite confirmar sin GPS. Errores al guardar se muestran en pantalla.
 - **1.15.3:** el link del formulario sale en WhatsApp sin tarjeta de vista previa (sin logo ni título), solo el texto con el link.
 - **1.15.2:** la vista previa del formulario en WhatsApp sale sin logo, solo con el título *RutaFácil · Su entrega*.

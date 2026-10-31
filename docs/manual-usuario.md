@@ -84,6 +84,13 @@ Columnas: `nombre`, `telefono`, `direccion`, `ubicacion`, `guia`, `nota`.
 
 **Elegir qué mensaje mandar:** cada cliente tiene arriba los botones **1. Coordinar**, **2. Formulario** y **3. En camino** (sin Supabase solo salen *1. Coordinar* y *2. En camino*). El que está en oscuro es el que se va a mandar: la vista previa, **Abrir WhatsApp** y **Copiar** usan ese mensaje. La app propone sola el siguiente (después del primero, el formulario), pero podés tocar cualquiera.
 
+**Guardar contactos del día:** en *Mensajes*, arriba, tocá **📇 Guardar contactos del día**. Baja un archivo con todos los clientes con el nombre **TM-Nombre-pedido** (el pedido es la guía; si no tiene guía queda *TM-Nombre*). Así, cuando te contesten, WhatsApp muestra quién es. El prefijo *TM* se puede cambiar en la casilla **Prefijo**.
+- **iPhone:** tocá **Descargar** (o abrí el archivo en *Descargas*) > **Agregar los N contactos** > **Crear contactos nuevos**.
+- **Android:** abrí el archivo descargado y elegí **Contactos** para importarlos.
+- Si un cliente tiene varios paquetes con el mismo teléfono, queda un solo contacto con las guías juntas (*TM-Sofía-PO1/PO2*).
+
+**Buscar un cliente:** arriba de la lista hay un buscador. Sirve por nombre, guía o los últimos dígitos del teléfono, para saber de quién es un número que te escribe.
+
 **Si WhatsApp abre con un texto viejo:** WhatsApp guarda el borrador de un mensaje que no se envió y a veces lo muestra en vez del nuevo. Borrá ese texto en el chat, volvé a la app y tocá **Abrir WhatsApp** otra vez.
 
 Los textos de los tres mensajes se editan al final de **Mensajes**, en **✏️ Editar textos de los mensajes** (viene cerrado para que no estorbe).
