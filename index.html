@@ -224,6 +224,7 @@ details summary{cursor:pointer;font-weight:600}
     <p class="small muted">En cada cliente elegí el mensaje (<b>1. Coordinar</b>, <b>2. Formulario</b> o <b>3. En camino</b>) y tocá <b>Abrir WhatsApp</b>. Solo tocás <b>Enviar</b>, volvés aquí y seguís con el siguiente.</p>
     <div class="vcfrow"><label>Prefijo<input id="m-pref" maxlength="8" placeholder="TM" autocomplete="off"></label><button class="btn sm primary" id="vcfBtn" type="button">📇 Guardar contactos del día</button></div>
     <p class="small muted">Guarda a todos los clientes en tus contactos como <b id="vcfEj">TM-Nombre-pedido</b> (el pedido es la guía), para que en WhatsApp salga el nombre cuando te contesten.</p>
+    <p class="small" id="vcfIos" hidden style="background:var(--warn-bg);border-radius:8px;padding:10px 12px">En iPhone: elegí <b>Guardar en Archivos</b>. Después abrí la app <b>Archivos</b>, tocá <b>contactos-….vcf</b> y luego <b>Agregar los N contactos</b> &gt; <b>Crear contactos nuevos</b>. (Si lo abrís directo desde Safari, el iPhone solo agrega el primero.)</p>
   </div>
   <div class="row" style="justify-content:space-between"><h2>Clientes</h2><span class="small muted" id="sentCount"></span></div>
   <input id="m-buscar" type="search" placeholder="🔍 Buscar por nombre, teléfono o guía" autocomplete="off" aria-label="Buscar cliente">
@@ -272,7 +273,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.16.0</span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.16.1</span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -599,14 +600,20 @@ if(S.pref==null)S.pref='TM';
 const vcfEsc=s=>String(s).replace(/\\/g,'\\\\').replace(/[,;]/g,m=>'\\'+m).replace(/\r?\n/g,' ');
 // Nombre del contacto: TM-Nombre-pedido (sin guía queda TM-Nombre; varias guías del mismo teléfono van juntas con /)
 const vcfName=(p,guias)=>{const pre=(S.pref||'').trim(),g=(guias||[p.guia]).filter(Boolean).join('/');return [pre,(p.nombre||'').trim()||'Cliente',g].filter(Boolean).join('-')};
-function saveContacts(){
+const IOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+async function saveContacts(){
   const by=new Map(),cards=[];
   for(const p of S.pk){const d=phoneWA(p.tel);if(!d)continue;if(!by.has(d))by.set(d,{p,g:[]});if(p.guia)by.get(d).g.push(p.guia.trim())}
   for(const [d,{p,g}] of by){const n=vcfEsc(vcfName(p,g));
     cards.push(['BEGIN:VCARD','VERSION:3.0','FN:'+n,'N:;'+n+';;;','TEL;TYPE=CELL:+'+d,'END:VCARD'].join('\r\n'))}
   if(!cards.length){toast('No hay clientes con teléfono válido');return}
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([cards.join('\r\n')+'\r\n'],{type:'text/vcard'}));
-  a.download=`contactos-${new Date().toISOString().slice(0,10)}.vcf`;document.body.appendChild(a);a.click();
+  const name=`contactos-${new Date().toISOString().slice(0,10)}.vcf`,blob=new Blob([cards.join('\r\n')+'\r\n'],{type:'text/vcard'});
+  // En iPhone, Safari abre el .vcf y solo ofrece el PRIMER contacto. Por eso se comparte el archivo:
+  // "Guardar en Archivos" y abrirlo desde Archivos muestra "Agregar los N contactos".
+  if(IOS&&navigator.canShare){const file=new File([blob],name,{type:'text/vcard'});
+    if(navigator.canShare({files:[file]})){try{await navigator.share({files:[file]});$('#vcfIos').hidden=false;return}catch(e){if(e&&e.name==='AbortError'){$('#vcfIos').hidden=false;return}}}}
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=name;document.body.appendChild(a);a.click();if(IOS)$('#vcfIos').hidden=false;
   setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},5000);toast(`${cards.length} contactos listos para guardar`);
 }
 $('#vcfBtn').onclick=saveContacts;

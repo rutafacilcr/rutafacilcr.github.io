@@ -146,7 +146,7 @@ update rf_ajustes set exigir_cuenta = false where id = 1;
 
 ### Contactos del día (1.16.0)
 
-Solo `index.html`; el `.vcf` se arma en el celular, no pasa por Supabase ni por ningún servidor.
+Solo `index.html`; el `.vcf` se arma en el celular, no pasa por Supabase ni por ningún servidor. En iPhone (1.16.1) se entrega con el menú de compartir (Web Share con archivos, iOS 15+), porque Safari solo importa el primer contacto de un `.vcf`.
 
 ### Confirmar entrega (1.15.4)
 
