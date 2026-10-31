@@ -44,6 +44,8 @@ Servicios externos sin cuenta: wa.me (WhatsApp), Google Maps, Waze
 
 ### Logo e íconos
 
+`og-mini.png` (160 × 160) es la imagen de la vista previa del formulario en WhatsApp (`og:image` de `entrega.html`); si se cambia, usar un nombre de archivo nuevo, porque WhatsApp guarda en caché la imagen vieja.
+
 `favicon-32.png` y `apple-touch-icon.png` se referencian con `<link>` en `index.html` y `entrega.html`; `icon-192.png`, `icon-512.png` e `icon-maskable-512.png` en `manifest.json` (`theme_color` y `background_color` `#1f2125`). Tras cambiar el ícono, el celular puede guardar el viejo: quitar el acceso directo y volverlo a agregar.
 
 ## 3. Supabase
