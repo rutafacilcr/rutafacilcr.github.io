@@ -146,6 +146,8 @@ update rf_ajustes set exigir_cuenta = false where id = 1;
 
 ### Ordenar desde aquí (1.20.0) y orden automático (1.20.1)
 
+Pie con derechos (1.27.1): texto fijo en `index.html` y `admin.html`.
+
 Lupa (1.27.0): búsqueda local en el celular, no consulta a ningún servidor.
 
 Orden de botones (1.26.4): solo cambia el diseño, no hay cambios de datos.

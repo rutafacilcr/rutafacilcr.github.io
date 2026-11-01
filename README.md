@@ -61,3 +61,5 @@ Paleta *Grafito y naranja* con el logo **pin con paquete**. Marca propia: la app
 ## Estado
 
 Versión piloto en uso por el autor, con cuentas de usuario listas para venderla por suscripción. Hecha en HTML, CSS y JavaScript sin frameworks, publicada con GitHub Pages y Supabase (plan gratis).
+
+© 2026. InfolinkCR todos los derechos reservados.
