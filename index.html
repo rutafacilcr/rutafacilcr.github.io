@@ -67,6 +67,19 @@ nav.tabs .n:empty{display:none}
 .sig.ok{border-style:solid;border-color:var(--ok)}
 .trackmap{height:320px;border-radius:10px;overflow:hidden;background:var(--bg);z-index:0}
 .tracklist{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px;font-size:14px}
+.enthead{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.entmap{position:sticky;top:0;z-index:5;height:42vh;min-height:220px;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--surface)}
+.epin{width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#d7261e;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center}
+.epin b{transform:rotate(45deg);color:#fff;font:700 12px var(--f-body)}
+.epin.ok{background:var(--ok)}.epin.sel{background:var(--accent);width:36px;height:36px}
+.estop{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;cursor:pointer}
+.estop.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.estop.ok{opacity:.6}
+.estop .n{width:30px;height:30px;border-radius:50%;background:#d7261e;color:#fff;font:700 13px var(--f-body);display:flex;align-items:center;justify-content:center;grid-row:span 2}
+.estop.ok .n{background:var(--ok)}.estop .n.no{background:var(--muted)}
+.estop .dir{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.estop.sel .dir{-webkit-line-clamp:unset}
+.estop .acts{grid-column:2;display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
 .tpin{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font:700 13px var(--f-body);display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)}
 .vcfrow{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
 .vcfrow label{flex:0 0 72px;width:72px;min-width:0}
@@ -162,6 +175,7 @@ details summary{cursor:pointer;font-weight:600}
   <button role="tab" id="tab-paquetes" aria-selected="true" data-tab="paquetes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg>Paquetes<span class="n" id="n-pk"></span></button>
   <button role="tab" id="tab-mensajes" aria-selected="false" data-tab="mensajes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>Mensajes</button>
   <button role="tab" id="tab-ruta" aria-selected="false" data-tab="ruta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h8.5a3.5 3.5 0 0 0 0-7h-9a3.5 3.5 0 0 1 0-7H16"/></svg>Ruta</button>
+  <button role="tab" id="tab-entrega" aria-selected="false" data-tab="entrega"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21z"/><path d="m9 9.5 2 2 4-4"/></svg>Entrega</button>
   <button type="button" id="supTab" aria-haspopup="dialog"><svg class="ico-sop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2.5" y="13" width="4" height="6" rx="1.5"/><rect x="17.5" y="13" width="4" height="6" rx="1.5"/><path d="M19.5 19c0 1.7-1.8 2.5-4.5 2.5h-2"/></svg>Soporte</button>
 </div></nav>
 
@@ -245,6 +259,16 @@ details summary{cursor:pointer;font-weight:600}
   </details>
 </section>
 
+<!-- ENTREGA: ruta del día desde el Excel "Ruta AAAA-MM-DD" (mapa arriba, paradas abajo) -->
+<section id="v-entrega" hidden>
+  <div class="enthead">
+    <label class="btn sm primary" for="entFile">📂 Cargar ruta</label><input type="file" id="entFile" accept=".xlsx,.xls,.csv" hidden>
+    <span class="small muted" id="entInfo"></span>
+  </div>
+  <div class="entmap" id="entMap" hidden></div>
+  <div class="list" id="entList"></div>
+</section>
+
 <!-- RUTA -->
 <section id="v-ruta" hidden>
   <div class="panel">
@@ -274,7 +298,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.18.4</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.19.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -571,12 +595,12 @@ function renderRoute(){
 }
 const fmtT=m=>{m=Math.round(m);return m<60?`${m} min`:`${Math.floor(m/60)} h ${m%60} min`};
 
-function render(){$('#exampleBar').hidden=!S.ex;renderStats();renderPk();renderMsg();renderRoute();if(typeof renderTrack==='function')renderTrack()}
+function render(){$('#exampleBar').hidden=!S.ex;renderStats();renderPk();renderMsg();renderRoute();if(typeof renderTrack==='function')renderTrack();if(typeof renderEnt==='function'&&!$('#v-entrega').hidden)renderEnt()}
 
 // ---- eventos ----
 document.querySelectorAll('nav.tabs [role=tab]').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('nav.tabs [role=tab]').forEach(x=>x.setAttribute('aria-selected',x===b));
-  ['paquetes','mensajes','ruta'].forEach(t=>$('#v-'+t).hidden=t!==b.dataset.tab);
+  ['paquetes','mensajes','ruta','entrega'].forEach(t=>$('#v-'+t).hidden=t!==b.dataset.tab);
   window.scrollTo({top:0});
 });
 document.addEventListener('click',async e=>{
@@ -1059,10 +1083,64 @@ render();
 const usarCuenta=c=>{if(!c||!c.nombre||S.yoPropio)return;S.yo=c.nombre;$('#m-yo').value=S.yo;saveLocal();renderMsg()};
 $('#m-yo').addEventListener('input',e=>{S.yoPropio=!!e.target.value.trim();save()});
 document.addEventListener('rf-cuenta',e=>usarCuenta(e.detail));
+// ===== Entrega: carga el Excel "Ruta AAAA-MM-DD" (hoja "Ruta ordenada") y muestra mapa + paradas =====
+// S.ent = {nombre, at, stops:[{n, nombre, tel, dir, guia, nota, c:[lat,lng]|null, waze, done}]}
+let EMAP=null,ESEL=-1;
+async function entCargar(file){
+  if(!window.XLSX){toast('No se pudo cargar el lector de Excel');return}
+  const wb=XLSX.read(await file.arrayBuffer());const ws=wb.Sheets['Ruta ordenada']||wb.Sheets[wb.SheetNames[0]];
+  const ref=XLSX.utils.decode_range(ws['!ref']||'A1');const cell=(r,c)=>ws[XLSX.utils.encode_cell({r,c})];
+  const val=(r,c)=>{const x=cell(r,c);return x?String(x.w??x.v??'').trim():''},link=(r,c)=>{const x=cell(r,c);return x&&x.l&&x.l.Target||''};
+  const H=[];for(let c=ref.s.c;c<=ref.e.c;c++)H.push(val(ref.s.r,c).toLowerCase());
+  const col=re=>H.findIndex(h=>re.test(h));
+  const C={n:col(/^orden|^#|parada/),nombre:col(/nombre|cliente/),tel:col(/tel|cel/),dir:col(/direc|señas/),guia:col(/gu[ií]a|pedido/),nota:col(/nota/),ubic:col(/ubic|maps|coord/),waze:col(/waze/)};
+  if(C.nombre<0){toast('No encontré la columna "nombre" en el archivo');return}
+  const stops=[];
+  for(let r=ref.s.r+1;r<=ref.e.r;r++){const g=k=>C[k]<0?'':val(r,C[k]+ref.s.c);if(!g('nombre')&&!g('tel'))continue;
+    const u=C.ubic<0?'':(link(r,C.ubic+ref.s.c)||g('ubic')),wz=C.waze<0?'':link(r,C.waze+ref.s.c);const c=parseCoord(u)||parseCoord(wz)||null;
+    stops.push({n:/^\d+$/.test(g('n'))?+g('n'):null,nombre:tidyName(g('nombre')),tel:g('tel'),dir:g('dir'),guia:g('guia'),nota:g('nota'),c,waze:wz,done:false})}
+  if(!stops.length){toast('El archivo no trae paradas');return}
+  let k=0;stops.forEach(s=>{if(s.c&&s.n==null)s.n=null});stops.sort((a,b)=>(a.c?0:1)-(b.c?0:1)||(a.n??1e9)-(b.n??1e9));stops.forEach(s=>{if(s.c)s.n=++k});
+  S.ent={nombre:file.name.replace(/\.[^.]+$/,''),at:Date.now(),stops};ESEL=-1;save();renderEnt();toast(`${stops.length} paradas cargadas`);
+}
+const entPkg=s=>S.pk.find(p=>(s.guia&&p.guia&&p.guia.replace(/\s/g,'')===s.guia.replace(/\s/g,''))||(s.tel&&phoneWA(p.tel)&&phoneWA(p.tel)===phoneWA(s.tel)));
+const entDone=s=>{const p=entPkg(s);return s.done||(p&&p.st==='entregado')};
+async function renderEnt(){
+  const E=S.ent,LI=$('#entList'),hoy='Ruta '+new Date().toLocaleDateString('en-CA');
+  if(!E||!E.stops||!E.stops.length){$('#entMap').hidden=true;$('#entInfo').textContent=`Cargá el archivo de hoy: "${hoy}.xlsx"`;LI.innerHTML='<div class="empty">Tocá <b>📂 Cargar ruta</b> y elegí el Excel de la ruta del día. Arriba sale el mapa con las paradas en orden y abajo la lista: tocá una parada para verla en el mapa e ir con Waze o Google Maps.</div>';return}
+  const ok=E.stops.filter(entDone).length,conC=E.stops.filter(s=>s.c);
+  $('#entInfo').innerHTML=`<b>${esc(E.nombre)}</b> · ${ok} de ${E.stops.length} entregadas${E.nombre!==hoy?' · <span style="color:var(--bad)">no es la de hoy</span>':''}`;
+  LI.innerHTML=E.stops.map((s,i)=>{const d=entDone(s),p=entPkg(s),nav=s.c?`https://www.google.com/maps/dir/?api=1&destination=${s.c[0]},${s.c[1]}&travelmode=driving`:'',wz=s.waze||(s.c?`https://waze.com/ul?ll=${s.c[0]},${s.c[1]}&navigate=yes`:''),wa=phoneWA(s.tel);
+    return `<div class="estop${d?' ok':''}${i===ESEL?' sel':''}" data-ei="${i}"><div class="n${s.c?'':' no'}">${s.c?s.n:'?'}</div>
+    <div><b>${esc(s.nombre)}</b>${d?' <span class="small" style="color:var(--ok);font-weight:700">✓ entregado</span>':''}<div class="small muted dir">${s.c?'':'<b>Sin ubicación</b> · '}${esc(s.dir||'')}</div>${s.nota?`<div class="small">📝 ${esc(s.nota)}</div>`:''}</div>
+    <div class="acts">${wz?`<a class="btn sm primary" href="${wz}" target="_blank" rel="noopener">🚗 Waze</a>`:''}${nav?`<a class="btn sm" href="${nav}" target="_blank" rel="noopener">🗺️ Maps</a>`:''}${wa?`<a class="btn sm" href="https://wa.me/${wa}" target="_blank" rel="noopener">WhatsApp</a>`:''}
+      ${d?'':`<button class="btn sm" type="button" data-eok="${i}">${p?'✓ Entregar':'✓ Entregado'}</button>`}</div></div>`}).join('');
+  $('#entMap').hidden=!conC.length;if(!conC.length||$('#v-entrega').hidden)return;
+  try{
+    if(!document.querySelector('link[data-leaflet]')){const l=document.createElement('link');l.rel='stylesheet';l.href=CSS_MAP;l.dataset.leaflet=1;document.head.appendChild(l)}
+    await loadScript(LIB_MAP);
+    if(!EMAP){EMAP=L.map('entMap');L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(EMAP);EMAP.layer=L.layerGroup().addTo(EMAP);EMAP.fitted=null}
+    EMAP.layer.clearLayers();EMAP.mk={};
+    L.polyline(conC.map(s=>s.c),{color:'#29b6f6',weight:4,opacity:.85}).addTo(EMAP.layer);
+    E.stops.forEach((s,i)=>{if(!s.c)return;const m=L.marker(s.c,{icon:L.divIcon({className:'',html:`<div class="epin${entDone(s)?' ok':''}${i===ESEL?' sel':''}"><b>${s.n}</b></div>`,iconSize:[30,30],iconAnchor:[15,30]}),zIndexOffset:i===ESEL?1000:0})
+      .on('click',()=>entSel(i,true)).bindPopup(`<b>${s.n}. ${esc(s.nombre)}</b>`).addTo(EMAP.layer);EMAP.mk[i]=m});
+    EMAP.invalidateSize();if(EMAP.fitted!==E.at){EMAP.fitBounds(conC.map(s=>s.c),{padding:[24,24]});EMAP.fitted=E.at}
+  }catch(e){$('#entMap').innerHTML='<p class="small muted" style="padding:12px">No se pudo cargar el mapa. Usá los botones de Waze o Maps.</p>'}
+}
+// Tocar una parada: la marca y centra el mapa; tocar un pin: baja a esa parada en la lista.
+function entSel(i,desdeMapa){ESEL=i;const s=S.ent.stops[i];renderEnt().then(()=>{
+  if(s.c&&EMAP){EMAP.setView(s.c,Math.max(EMAP.getZoom(),16));EMAP.mk[i]&&EMAP.mk[i].openPopup()}
+  if(desdeMapa){const el=document.querySelector(`[data-ei="${i}"]`);el&&el.scrollIntoView({behavior:'smooth',block:'center'})}})}
+$('#entFile').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)entCargar(f).catch(()=>toast('No se pudo leer ese archivo'))};
+$('#entList').addEventListener('click',e=>{
+  const b=e.target.closest('[data-eok]');if(b){const s=S.ent.stops[+b.dataset.eok],p=entPkg(s);if(p&&p.st!=='entregado'){openPOD(p);return}s.done=true;save();renderEnt();return}
+  if(e.target.closest('a'))return;const c=e.target.closest('[data-ei]');if(c)entSel(+c.dataset.ei)});
+document.querySelector('[data-tab="entrega"]').addEventListener('click',()=>requestAnimationFrame(renderEnt));
+
 // ===== Lista en la nube: los mismos paquetes en el teléfono y en la PC (rf_lista_leer / rf_lista_guardar) =====
 // S.syncVer = última versión de la nube que vio este aparato; S.baseIds = ids que había en ese momento
 // (sirven para saber qué se borró en un lado y qué es nuevo). S.dirty = hay cambios sin subir.
-const NUBE_KEYS=['pk','coord','form','camino','pref','fecha','hora','start','vel','min','ret','route'];
+const NUBE_KEYS=['ent','pk','coord','form','camino','pref','fecha','hora','start','vel','min','ret','route'];
 const nubeMsg=t=>{const el=$('#nubeInfo');if(el)el.textContent=t?' · '+t:''};
 function nubeDatos(){const d={};NUBE_KEYS.forEach(k=>{if(S[k]!==undefined)d[k]=S[k]});if(S.ex)d.pk=[];return d}
 function nubeMezclar(srv){

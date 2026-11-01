@@ -72,6 +72,17 @@ Columnas: `nombre`, `telefono`, `direccion`, `ubicacion`, `guia`, `nota`.
 - **Ubicación:** pegá el link completo que manda el cliente (`https://maps.google.com/?q=...`), un link de Waze o las coordenadas (`9.99,-84.11`). Debajo sale en verde **✓ Coordenadas detectadas**. Los links cortos tipo `maps.app.goo.gl` no se leen: abrilos primero y copiá el link largo.
 - Cada paquete muestra **● Ubicación lista** o **○ Falta ubicación**.
 
+### Día de entrega (pestaña **Entrega**)
+
+1. Tocá **Entrega** en la barra de abajo (entre *Ruta* y *Soporte*).
+2. Tocá **📂 Cargar ruta** y elegí el Excel del día, por ejemplo **Ruta 2026-11-01.xlsx** (en iPhone está en la app *Archivos*, carpeta *RutaFacilCR*). Si el archivo no es el de hoy, la app lo avisa en rojo.
+3. La pantalla queda en dos partes: **arriba el mapa** con las paradas numeradas en el orden de la ruta y la línea del recorrido; **abajo la lista** de paradas.
+4. Tocá una parada para verla en el mapa (se pone naranja y se acerca). Tocá un pin del mapa para bajar a esa parada.
+5. En cada parada: **🚗 Waze** o **🗺️ Maps** te llevan al punto, **WhatsApp** abre el chat del cliente y **✓ Entregar** abre la prueba de entrega (fotos y firma) si el paquete está en tu lista; si no, la marca como entregada. Las entregadas pasan a verde.
+6. Las paradas **sin ubicación** van al final, sin pin.
+
+La ruta cargada se guarda en tu cuenta: si la cargás en la PC, aparece también en el teléfono.
+
 ### Los mismos paquetes en el teléfono y en la PC
 
 Desde la versión 1.18.0 la lista se guarda en tu cuenta. Si entrás con tu número y PIN en el teléfono y en la PC, ves los mismos paquetes, y lo que cambiás en uno aparece en el otro en menos de un minuto (o al volver a la app). Abajo, en el pie, dice **☁️ al día** cuando está sincronizado. Si dice **☁️ sin activar**, falta que el administrador corra `supabase.sql`; si dice **sin conexión**, tocalo para reintentar.
