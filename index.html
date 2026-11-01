@@ -304,7 +304,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.20.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.20.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -1110,6 +1110,7 @@ async function entCargar(file){
   if(!stops.length){toast('El archivo no trae paradas');return}
   let k=0;stops.forEach(s=>{if(s.c&&s.n==null)s.n=null});stops.sort((a,b)=>(a.c?0:1)-(b.c?0:1)||(a.n??1e9)-(b.n??1e9));stops.forEach(s=>{if(s.c)s.n=++k});
   S.ent={nombre:file.name.replace(/\.[^.]+$/,''),at:Date.now(),stops};ESEL=-1;save();renderEnt();if(NUBE.on)nubeSync(true).then(()=>toast(S.dirty?'La ruta queda en este aparato; se sube cuando haya internet':'Ruta subida a la nube ☁️'));toast(`${stops.length} paradas cargadas`);
+  EAUTO=false;if(EPOS&&EPOS.acc<500){EAUTO=true;entOrdenar(EPOS.c,'donde estás')}else entVigilar(); // se ordena sola desde tu punto apenas haya GPS
 }
 const entPkg=s=>S.pk.find(p=>(s.guia&&p.guia&&p.guia.replace(/\s/g,'')===s.guia.replace(/\s/g,''))||(s.tel&&phoneWA(p.tel)&&phoneWA(p.tel)===phoneWA(s.tel)));
 const entDone=s=>{const p=entPkg(s);return s.done||(p&&p.st==='entregado')};
@@ -1143,11 +1144,13 @@ function entSel(i,desdeMapa){ESEL=i;const s=S.ent.stops[i];renderEnt().then(()=>
   if(s.c&&EMAP){EMAP.setView(s.c,Math.max(EMAP.getZoom(),16));EMAP.mk[i]&&EMAP.mk[i].openPopup()}
   if(desdeMapa){const el=document.querySelector(`[data-ei="${i}"]`);el&&el.scrollIntoView({behavior:'smooth',block:'center'})}})}
 // ---- Punto actual (azul) y reordenar desde donde estoy ----
-let EPOS=null,EWATCH=null;
+let EPOS=null,EWATCH=null,EAUTO=false;
 function entMe(){if(!EMAP||!window.L)return;const c=EPOS?EPOS.c:null;
   if(!c){if(EMAP.me){EMAP.removeLayer(EMAP.me);EMAP.me=null}return}
   if(!EMAP.me)EMAP.me=L.marker(c,{icon:L.divIcon({className:'',html:'<div class="mepos"></div>',iconSize:[18,18],iconAnchor:[9,9]}),zIndexOffset:2000,interactive:false}).addTo(EMAP);else EMAP.me.setLatLng(c)}
-const gpsOk=g=>{EPOS={c:[+g.coords.latitude.toFixed(6),+g.coords.longitude.toFixed(6)],acc:g.coords.accuracy};$('#entGps').textContent=`📍 Estás aquí (±${Math.round(EPOS.acc)} m)`;entMe()};
+const gpsOk=g=>{EPOS={c:[+g.coords.latitude.toFixed(6),+g.coords.longitude.toFixed(6)],acc:g.coords.accuracy};$('#entGps').textContent=`📍 Estás aquí (±${Math.round(EPOS.acc)} m)`;entMe();
+  // La primera vez que el GPS responde, si la ruta no se ordenó desde cerca de aquí, se ordena sola desde tu punto
+  if(!EAUTO&&S.ent&&EPOS.acc<500){EAUTO=true;if(!S.ent.inicio||hav(S.ent.inicio,EPOS.c)>0.8)entOrdenar(EPOS.c,'donde estás')}};
 const gpsFail=e=>{$('#entGps').innerHTML=e&&e.code===1?'Ubicación bloqueada. En iPhone: <b>Ajustes</b> &gt; <b>Privacidad</b> &gt; <b>Localización</b> &gt; <b>Sitios web de Safari</b> &gt; <b>Al usar la app</b>. O usá <b>🎯 Elegir en el mapa</b>.':'No se pudo obtener la ubicación. Usá <b>🎯 Elegir en el mapa</b>.'};
 function entVigilar(){if(EWATCH!=null||!navigator.geolocation)return;try{EWATCH=navigator.geolocation.watchPosition(gpsOk,gpsFail,{enableHighAccuracy:true,maximumAge:15000,timeout:30000})}catch(e){}}
 // Reordena las paradas que faltan con optimize() (la misma de Ruta), desde start; respeta el horario del cliente si el paquete está en la lista.
@@ -1160,7 +1163,7 @@ function entOrdenar(start,desde){
   if(EMAP)EMAP.fitted=null;save();renderEnt().then(()=>{if(EMAP)EMAP.fitBounds([start,...pend.map(s=>s.c)],{padding:[24,24]})});
   toast(`Ruta ordenada desde ${desde} (${pend.length} paradas)`);if(NUBE.on)nubeSoon();
 }
-$('#entAqui').onclick=()=>{if(!navigator.geolocation){gpsFail();return}$('#entGps').textContent='Buscando tu ubicación…';
+$('#entAqui').onclick=()=>{if(!navigator.geolocation){gpsFail();return}EAUTO=true;$('#entGps').textContent='Buscando tu ubicación…';
   navigator.geolocation.getCurrentPosition(g=>{gpsOk(g);entOrdenar(EPOS.c,'tu ubicación');entVigilar()},
     e=>{if(e.code===1)return gpsFail(e);navigator.geolocation.getCurrentPosition(g=>{gpsOk(g);entOrdenar(EPOS.c,'tu ubicación')},gpsFail,{enableHighAccuracy:false,timeout:20000,maximumAge:120000})},
     {enableHighAccuracy:true,timeout:15000,maximumAge:30000})};

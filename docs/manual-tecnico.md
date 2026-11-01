@@ -144,7 +144,9 @@ update rf_ajustes set exigir_cuenta = false where id = 1;
   - **Liberar espacio a mano:** Supabase > **Storage** > **evidencias** > abrir la carpeta de un día viejo > seleccionar las fotos > **Download** (guardarlas en la PC) > **Delete**. Las carpetas se llaman por fecha (`AAAA-MM-DD`), así que se borran las más viejas primero. El registro en la tabla `entregas` se puede dejar: casi no ocupa.
   - En iPhone, si la app se usa desde Safari y no desde el ícono, Safari puede borrar los datos de la página tras ~7 días sin abrirla. Por eso Supabase es el respaldo oficial.
 
-### Ordenar desde aquí (1.20.0)
+### Ordenar desde aquí (1.20.0) y orden automático (1.20.1)
+
+Desde la 1.20.1, la primera lectura de GPS con precisión menor a 500 m (por carga de página o al cargar un archivo) reordena sola si `S.ent.inicio` falta o está a más de 800 m. Distancias en línea recta ×1,35, sin tráfico.
 
 Solo `index.html`. Usa el GPS del navegador (pide permiso la primera vez; en iPhone hay que permitir la ubicación a Safari) y la misma optimización de *Ruta*, todo en el celular, gratis.
 
