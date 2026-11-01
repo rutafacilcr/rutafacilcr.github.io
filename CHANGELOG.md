@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-01
+- **1.27.0 · Lupa en Entrega:** debajo del resumen de la ruta (arriba del mapa) hay un buscador. Escribís parte del nombre (sin importar tildes), el teléfono o la guía y te lleva a esa parada en el mapa y en la lista; Enter pasa a la siguiente si hay varias.
 - **1.26.4 · Botones ordenados:** cada parada muestra en la primera fila Waze, Maps y WhatsApp; en la segunda el tiempo estimado; en la tercera Evidencia, Co-out y Entregado, en una sola línea.
 - **1.26.3 · Co-out en todas:** el botón **📲 Co-out** sale en todas las paradas de *Entrega*, junto a WhatsApp.
 - **1.26.2 · Etiqueta sin recargar:** si la ruta se cargó antes de la 1.25.0, la etiqueta toma lo que dice la ubicación del paquete en *Paquetes* (por ejemplo "Aplicacion" = Co-out).

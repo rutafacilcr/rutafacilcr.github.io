@@ -83,6 +83,7 @@ nav.tabs .n:empty{display:none}
 .eub{font:600 11px var(--f-body);border:1px dashed var(--muted);border-radius:999px;padding:1px 8px;background:transparent;color:var(--muted);cursor:pointer;vertical-align:1px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .entrow #entGps{flex:0 1 auto}.entrow{flex-basis:100%;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.enttot{text-align:right;font-size:12px;line-height:1.35;color:var(--ink,inherit)}.enttot:empty{display:none}
 .estop .eeta{flex-basis:100%;font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}.estop .eeta:empty{display:none}
+.entbus{display:flex;align-items:center;gap:8px;margin:2px 0 10px}.entbus input{flex:1;min-width:0;font-size:16px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:inherit}
 .estop .acts2{flex-basis:100%;display:flex;gap:5px;flex-wrap:nowrap}.estop .acts2 .btn{padding-left:6px;padding-right:6px;font-size:12.5px;white-space:nowrap}
 .estop .acts{grid-column:2;display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
 .tpin{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font:700 13px var(--f-body);display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)}
@@ -275,6 +276,7 @@ details summary{cursor:pointer;font-weight:600}
     <button class="btn sm" id="entPick" type="button">🎯 Elegir en el mapa</button>
     <div class="entrow"><span class="small muted" id="entGps"></span><span class="enttot" id="entTot"></span></div>
   </div>
+  <div class="entbus" id="entBus" hidden><input type="search" id="entBuscar" placeholder="🔍 Buscar cliente, teléfono o guía" autocomplete="off" enterkeyhint="search"><span class="small muted" id="entBusN"></span></div>
   <div class="entmap" id="entMap" hidden></div>
   <div class="list" id="entList"></div>
 </section>
@@ -308,7 +310,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.26.4</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.27.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -1121,8 +1123,8 @@ const entDone=s=>{const p=entPkg(s);return s.done||(p&&p.st==='entregado')};
 async function renderEnt(){
   // La ruta se arma el día antes: vale la de hoy o la de mañana (fecha local del celular).
   const dia=d=>'Ruta '+new Date(Date.now()+d*864e5).toLocaleDateString('en-CA'),hoy=dia(0),man=dia(1);const E=S.ent,LI=$('#entList');
-  if(!E||!E.stops||!E.stops.length){$('#entMap').hidden=true;$('#entTools').hidden=true;$('#entInfo').textContent=`Cargá el archivo de la ruta ("${hoy}.xlsx" o "${man}.xlsx")`;LI.innerHTML='<div class="empty">Tocá <b>📂 Cargar ruta</b> y elegí el Excel de la ruta del día. Arriba sale el mapa con las paradas en orden y abajo la lista: tocá una parada para verla en el mapa e ir con Waze o Google Maps.</div>';return}
-  $('#entTools').hidden=false;const ok=E.stops.filter(entDone).length,conC=E.stops.filter(s=>s.c);
+  if(!E||!E.stops||!E.stops.length){$('#entMap').hidden=true;$('#entTools').hidden=true;$('#entBus').hidden=true;$('#entInfo').textContent=`Cargá el archivo de la ruta ("${hoy}.xlsx" o "${man}.xlsx")`;LI.innerHTML='<div class="empty">Tocá <b>📂 Cargar ruta</b> y elegí el Excel de la ruta del día. Arriba sale el mapa con las paradas en orden y abajo la lista: tocá una parada para verla en el mapa e ir con Waze o Google Maps.</div>';return}
+  $('#entTools').hidden=false;$('#entBus').hidden=false;const ok=E.stops.filter(entDone).length,conC=E.stops.filter(s=>s.c);
   $('#entInfo').innerHTML=`<b>${esc(E.nombre)}</b> · ${ok} de ${E.stops.length} entregadas${![hoy,man].includes(E.nombre)?' · <span style="color:var(--bad)">no es la de hoy ni la de mañana</span>':''}`;
   LI.innerHTML=E.stops.map((s,i)=>{const d=entDone(s),p=entPkg(s),ubx=s.ub!==undefined?s.ub:(p&&p.ubic&&!parseCoord(p.ubic)?String(p.ubic):undefined),nav=s.c?`https://www.google.com/maps/dir/?api=1&destination=${s.c[0]},${s.c[1]}&travelmode=driving`:'',wz=s.waze||(s.c?`https://waze.com/ul?ll=${s.c[0]},${s.c[1]}&navigate=yes`:''),wa=phoneWA(s.tel);
     return `<div class="estop${d?' ok':''}${i===ESEL?' sel':''}" data-ei="${i}"><div class="n${s.c?'':' no'}">${s.c?s.n:'?'}</div>
@@ -1147,6 +1149,16 @@ async function renderEnt(){
 function entSel(i,desdeMapa){ESEL=i;const s=S.ent.stops[i];renderEnt().then(()=>{
   if(s.c&&EMAP){EMAP.setView(s.c,Math.max(EMAP.getZoom(),16));EMAP.mk[i]&&EMAP.mk[i].openPopup()}
   if(desdeMapa){const el=document.querySelector(`[data-ei="${i}"]`);el&&el.scrollIntoView({behavior:'smooth',block:'center'})}})}
+// Lupa: busca por nombre (sin importar tildes ni mayúsculas), teléfono o guía y lleva a esa parada; Enter pasa a la siguiente
+const sinTilde=t=>String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();let EBUS={q:'',k:-1};
+function entBuscar(sig){const q=sinTilde($('#entBuscar').value.trim()),N=$('#entBusN');if(!q||!S.ent){N.textContent='';EBUS={q:'',k:-1};return}
+  const dig=q.replace(/\D/g,''),hits=S.ent.stops.map((s,i)=>[s,i]).filter(([s])=>q.split(/\s+/).every(w=>sinTilde(s.nombre).includes(w))||(dig.length>=3&&String(s.tel||'').replace(/\D/g,'').includes(dig))||sinTilde(s.guia).includes(q)).map(x=>x[1]);
+  if(!hits.length){N.textContent='No está';return}
+  EBUS.k=sig&&EBUS.q===q?(EBUS.k+1)%hits.length:0;EBUS.q=q;const i=hits[EBUS.k];N.textContent=hits.length>1?`${EBUS.k+1}/${hits.length}`:'';
+  ESEL=i;const s=S.ent.stops[i];renderEnt().then(()=>{if(s.c&&EMAP){EMAP.setView(s.c,Math.max(EMAP.getZoom(),16));EMAP.mk[i]&&EMAP.mk[i].openPopup()}
+    const el=document.querySelector(`[data-ei="${i}"]`);el&&el.scrollIntoView({behavior:'smooth',block:'end'})})}
+let EBT;$('#entBuscar').addEventListener('input',()=>{clearTimeout(EBT);EBT=setTimeout(()=>entBuscar(false),350)});
+$('#entBuscar').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();entBuscar(true)}});
 // ---- Punto actual (azul) y reordenar desde donde estoy ----
 let EPOS=null,EWATCH=null,EAUTO=false;
 // Tiempo desde tu punto (GPS) hasta cada parada. Primero por calle con el OSRM público (gratis, sin llave);
