@@ -311,7 +311,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.29.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.30.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -489,7 +489,9 @@ function renderStats(){
 function renderPk(){
   const L=$('#pkgList');
   if(!S.pk.length){L.innerHTML='<div class="empty">Todavía no hay paquetes. Pegá tu lista arriba o agregá uno a mano.</div>';return}
-  L.innerHTML=S.pk.map((p,i)=>{const c=parseCoord(p.ubic);return `<div class="pkg">
+  // Primero los que faltan (en el orden de la lista), después los entregados y al final los devueltos
+  const rk=p=>p.st==='entregado'?1:p.st==='devuelto'?2:0;
+  L.innerHTML=S.pk.map((p,i)=>[p,i]).sort((a,b)=>rk(a[0])-rk(b[0])||a[1]-b[1]).map(([p],i)=>{const c=parseCoord(p.ubic);return `<div class="pkg">
     <div class="num">${i+1}</div>
     <div class="name">${esc(p.nombre||'(sin nombre)')} ${stChip(p)}</div>
     <div class="addr">${esc(p.dir||'Sin dirección')}${p.nota?` · <i>${esc(p.nota)}</i>`:''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>

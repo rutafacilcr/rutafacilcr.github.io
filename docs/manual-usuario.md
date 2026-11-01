@@ -261,3 +261,8 @@ En **Ajustes** van el número SINPE que ven los repartidores, el precio, los dí
 ### Devolver un paquete al almacén (1.29.0)
 
 En *Paquetes*, cada paquete tiene el botón **↩ Devuelto**. Usalo cuando el paquete no se va a entregar y vuelve al almacén, por ejemplo porque no tiene dirección. Queda con la etiqueta gris *Devuelto*, ya no entra en *Calcular mejor ruta* y arriba se cuenta en **devueltos**. Si te equivocaste, tocá **↪ Quitar devuelto** y vuelve al estado que tenía.
+
+
+### Orden de la lista de Paquetes (1.30.0)
+
+Arriba salen los paquetes que faltan (pendientes, confirmados, sin respuesta), en el orden en que los agregaste. Los **entregados** bajan al final y los **devueltos** quedan de últimos.

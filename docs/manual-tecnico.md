@@ -146,6 +146,8 @@ update rf_ajustes set exigir_cuenta = false where id = 1;
 
 ### Ordenar desde aquí (1.20.0) y orden automático (1.20.1)
 
+Orden de Paquetes (1.30.0): solo cambia cómo se muestra la lista; el orden guardado en `S.pk` y en la nube no cambia.
+
 Devuelto (1.29.0): nuevo valor `st='devuelto'` en los paquetes (con `stAntes` y `devAt`); viaja en `S.pk` por `rf_listas`, sin cambios en `supabase.sql`.
 
 Entregado en Paquetes (1.28.0, 1.29.1): `entSyncPk()` se corre al abrir la app y en cada `render()`. cambia `st` del paquete en `S.pk`, que se sincroniza con `rf_listas` como siempre. No hay cambios en `supabase.sql`.
