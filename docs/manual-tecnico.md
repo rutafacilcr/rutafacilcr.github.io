@@ -146,7 +146,7 @@ update rf_ajustes set exigir_cuenta = false where id = 1;
 
 ### Ordenar desde aquí (1.20.0) y orden automático (1.20.1)
 
-Botón Co-out (1.26.0): abre el link `shortcuts://run-shortcut?name=Co-out`. iOS no deja abrir una app cualquiera desde una página web si la app no publica su propio link, así que se pasa por un atajo de la app Atajos que el usuario crea una vez. No funciona en Android.
+Botón Co-out (1.26.0): abre el link `shortcuts://run-shortcut?name=Co-out`. iOS no deja abrir una app cualquiera desde una página web si la app no publica su propio link, así que se pasa por un atajo de la app Atajos que el usuario crea una vez. No funciona en Android. Desde la 1.26.1 también sale en las rutas viejas que no traen `s.ub`.
 
 Paradas sin ubicación (1.25.0): `entCargar` guarda el texto de la columna ubicación en `s.ub`; no cambia nada en Supabase (va dentro de `S.ent`).
 
