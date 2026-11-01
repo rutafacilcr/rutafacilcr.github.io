@@ -23,6 +23,9 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.1 | — | *Crear cuenta* con los campos en blanco |
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
+## 2026-11-01
+- **1.18.2:** en iPhone, *Guardar contactos del día* muestra primero los pasos para guardarlos todos (por Mail o Archivos) y avisa que no se toque *Contactos* en el menú, porque así solo entra el primero.
+
 ## 2026-10-31
 - **1.18.1:** el pie muestra el estado de la nube (*al día*, *sin activar: falta correr supabase.sql*, *sin conexión*) y se toca para sincronizar.
 - **1.18.0 · Lista en la nube:** los paquetes y los textos de los mensajes se guardan en la cuenta (Supabase) y se ven iguales en el teléfono y en la PC. Lo nuevo y lo borrado en un aparato pasa al otro. Hay que volver a correr `supabase.sql` (tabla `rf_listas`, funciones `rf_lista_leer` y `rf_lista_guardar`).

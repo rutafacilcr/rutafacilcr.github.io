@@ -274,7 +274,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.18.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.18.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -295,6 +295,13 @@ details summary{cursor:pointer;font-weight:600}
     <label class="row small" style="font-weight:500;flex-direction:row;gap:6px"><input type="checkbox" id="podNoSig" style="width:auto"> No quiso firmar</label></div>
   <p class="small" id="podNeed" style="font-weight:600"></p>
   <div class="row"><button class="btn primary" id="podOk">Confirmar entrega</button><button class="btn ghost" id="podCancel">Cancelar</button></div>
+</div></div>
+<div class="sheet" id="vcfSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="vcfTitle">
+  <h2 id="vcfTitle">Guardar <span id="vcfN"></span> contactos en el iPhone</h2>
+  <p class="small"><b>Importante:</b> en el menú que se abre <b>no toqués "Contactos"</b> ni la vista previa del contacto: el iPhone solo guarda el primero.</p>
+  <p class="small"><b>Opción 1 (la más fácil): Mail.</b> Elegí <b>Mail</b>, mandátelo a tu correo, abrí el correo y tocá el archivo adjunto &gt; <b>Agregar todos los contactos</b> &gt; <b>Crear contactos nuevos</b>.</p>
+  <p class="small"><b>Opción 2: Archivos.</b> Elegí <b>Guardar en Archivos</b> &gt; carpeta <b>RutaFacilCR</b> &gt; <b>Guardar</b>. Después abrí la app <b>Archivos</b>, tocá el archivo &gt; <b>Agregar todos los contactos</b>.</p>
+  <div class="row"><button class="btn primary" id="vcfGo" type="button">Continuar</button><button class="btn ghost" id="vcfCancel" type="button">Cancelar</button></div>
 </div></div>
 <div class="sheet" id="pasteSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="pasteTitle">
   <h2 id="pasteTitle">Pegar respuesta</h2>
@@ -620,13 +627,15 @@ async function saveContacts(){
   const name=`contactos-${new Date().toISOString().slice(0,10)}.vcf`,blob=new Blob([cards.join('\r\n')+'\r\n'],{type:'text/vcard'});
   // En iPhone, Safari abre el .vcf y solo ofrece el PRIMER contacto. Por eso se comparte el archivo:
   // "Guardar en Archivos" y abrirlo desde Archivos muestra "Agregar los N contactos".
+  // Antes de compartir se muestran los pasos (#vcfSheet): desde el menú, "Contactos" y la vista previa también importan solo el primero.
   if(IOS&&navigator.canShare){const file=new File([blob],name,{type:'text/vcard'});
-    if(navigator.canShare({files:[file]})){try{await navigator.share({files:[file]});$('#vcfIos').hidden=false;return}catch(e){if(e&&e.name==='AbortError'){$('#vcfIos').hidden=false;return}}}}
+    if(navigator.canShare({files:[file]})){$('#vcfN').textContent=cards.length;$('#vcfSheet').hidden=false;
+      $('#vcfGo').onclick=async()=>{$('#vcfSheet').hidden=true;try{await navigator.share({files:[file]})}catch(e){}};return}}
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download=name;document.body.appendChild(a);a.click();if(IOS)$('#vcfIos').hidden=false;
   setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},5000);toast(`${cards.length} contactos listos para guardar`);
 }
-$('#vcfBtn').onclick=saveContacts;
+$('#vcfBtn').onclick=saveContacts;$('#vcfCancel').onclick=()=>{$('#vcfSheet').hidden=true};
 // Excel del día: mismas columnas que plantilla-paquetes.xlsx (se puede volver a importar) + "contacto" (TM-Nombre-pedido).
 function saveExcel(){
   if(!window.XLSX){toast('No se pudo cargar Excel. Revisá el internet y probá de nuevo.');return}
