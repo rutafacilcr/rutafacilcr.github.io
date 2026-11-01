@@ -306,7 +306,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.24.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.24.3</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -1177,8 +1177,9 @@ function entTotal(sinPedir){const el=$('#entTot'),E=S.ent;if(!el)return;if(!E){e
   let km=0;for(let i=1;i<pts.length;i++)km+=hav(pts[i-1],pts[i]);let calle=false,maneja=km/18*60;
   if(RTOT.r&&RTOT.k===k&&RTOT.pos&&hav(RTOT.pos,ini)<=0.3){km=RTOT.r[0];maneja=Math.max(RTOT.r[1]*1.3,km/18*60);calle=true}
   const n=pend.length,lo=maneja+n*3,hi=maneja+n*5,ahora=new Date(),fin=m=>hm(ahora.getHours()*60+ahora.getMinutes()+m);
-  const corto=m=>fmtT(m).replace(' min','m').replace(' h ','h ');el.innerHTML=`<b>⏱ Ruta: ${corto(lo)} – ${corto(hi)}</b><br>🛣️ ${km.toFixed(1).replace('.',',')} km · ${n} entregas<br>Si salís ya: terminás ${fin(lo)} – ${fin(hi)}`;
+  const corto=m=>fmtT(m).replace(' min','m').replace(' h ','h ');el.innerHTML=`<b>⏱ Ruta: ${corto(lo)} – ${corto(hi)}</b><br>🛣️ ${km.toFixed(1).replace('.',',')} km · ${n} entregas<br>Inicio ${fin(0)} · fin ${fin(lo)} – ${fin(hi)}`;
   el.title=`Manejo ${fmtT(maneja)} ${calle?'por calle':'aprox. en línea recta'} + 3 a 5 min por entrega`}
+setInterval(()=>{if(S.ent&&!$('#v-entrega').hidden)entTotal(true)},60000); // la hora de inicio es la actual: se refresca cada minuto
 function entMe(){entEta();entTotal();if(!EMAP||!window.L)return;const c=EPOS?EPOS.c:null;
   if(!c){if(EMAP.me){EMAP.removeLayer(EMAP.me);EMAP.me=null}return}
   if(!EMAP.me)EMAP.me=L.marker(c,{icon:L.divIcon({className:'',html:'<div class="mepos"></div>',iconSize:[18,18],iconAnchor:[9,9]}),zIndexOffset:2000,interactive:false}).addTo(EMAP);else EMAP.me.setLatLng(c)}
