@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-01
+- **1.19.1:** arreglo de la nube: la ruta cargada en la PC no llegaba al celular porque el celular, con cambios propios pendientes, la pisaba. Ahora se mezcla parte por parte y nada se pierde.
 - **1.19.0 · Pestaña Entrega:** nueva pestaña entre *Ruta* y *Soporte*. Carga el Excel de la ruta del día (*Ruta AAAA-MM-DD.xlsx*) y muestra arriba el mapa con las paradas numeradas en orden y abajo la lista; tocar una parada la ubica en el mapa y tiene botones de Waze, Google Maps, WhatsApp y Entregar.
 - **1.18.4:** el mensaje *Voy en camino* también recuerda presentar la cédula (se agrega solo al texto guardado; se puede editar).
 - **1.18.3:** al confirmar el formulario, el cliente ve el aviso *Recuerde que para la entrega debe presentar la cédula*.

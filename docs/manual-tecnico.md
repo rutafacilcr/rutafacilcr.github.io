@@ -144,6 +144,10 @@ update rf_ajustes set exigir_cuenta = false where id = 1;
   - **Liberar espacio a mano:** Supabase > **Storage** > **evidencias** > abrir la carpeta de un día viejo > seleccionar las fotos > **Download** (guardarlas en la PC) > **Delete**. Las carpetas se llaman por fecha (`AAAA-MM-DD`), así que se borran las más viejas primero. El registro en la tabla `entregas` se puede dejar: casi no ocupa.
   - En iPhone, si la app se usa desde Safari y no desde el ícono, Safari puede borrar los datos de la página tras ~7 días sin abrirla. Por eso Supabase es el respaldo oficial.
 
+### Sincronización por partes (1.19.1)
+
+Solo `index.html`. Arregla que un aparato con cambios pendientes (o con una versión vieja) pisara datos nuevos del otro, como la ruta de *Entrega*.
+
 ### Pestaña Entrega (1.19.0)
 
 Solo `index.html`. Usa SheetJS y Leaflet (cdnjs) con mapas de OpenStreetMap, gratis. La ruta cargada viaja en la lista de la nube (`rf_listas.datos.ent`); no hace falta correr SQL nuevo.
