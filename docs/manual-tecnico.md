@@ -146,7 +146,7 @@ update rf_ajustes set exigir_cuenta = false where id = 1;
 
 ### Ordenar desde aquí (1.20.0) y orden automático (1.20.1)
 
-Total de la ruta (1.24.0, 1.24.1). La hora de fin parte de `S.hora` (8:00 por defecto), o de la hora actual si la ruta es de hoy y ya pasó esa hora. una consulta a OSRM `route/v1/driving` (`overview=false`) con tu punto y las paradas pendientes en orden. Se repite solo si cambian las pendientes o te movés más de 300 m, con un mínimo de 10 s entre consultas. Si falla, usa línea recta ×1,35.
+Total de la ruta (1.24.0): una consulta a OSRM `route/v1/driving` (`overview=false`) con tu punto y las paradas pendientes en orden. Se repite solo si cambian las pendientes o te movés más de 300 m, con un mínimo de 10 s entre consultas. Si falla, usa línea recta ×1,35.
 
 Orden por calle (1.22.0): `entOrdenar` pide a OSRM la matriz completa de tiempos (`table/v1/driving` con todas las paradas pendientes más tu punto, máximo 100 puntos y 8 s de espera). Si falla, ordena con línea recta.
 
