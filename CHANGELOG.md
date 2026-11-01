@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-01
+- **1.21.0 · Tiempo hasta cada cliente:** en *Entrega*, a la par de **✓ Entregar** sale el tiempo y la distancia aproximados desde donde estás (🚗 ~8 min · 2,1 km). Se actualiza con el GPS.
 - **1.20.1 · Se ordena sola desde tu punto:** al cargar la ruta o abrir *Entrega*, la primera vez que llega el GPS la ruta se reordena sola desde donde estás (si no se había ordenado ya desde cerca de ahí, a menos de 800 m). Antes la línea azul unía tu punto con la parada 1 del archivo aunque no fuera la más cercana.
 - **1.20.0 · Ordenar desde aquí:** en *Entrega*, el mapa muestra tu punto actual (azul) y **📍 Ordenar desde aquí** reordena las paradas que faltan desde donde estás. Si el GPS falla, **🎯 Elegir en el mapa** deja tocar el punto de partida.
 - **1.19.5:** arreglo de la ruta que no llegaba al celular: si la nube estaba en la misma versión pero sin la ruta, la laptop no la volvía a subir. Ahora la sube sola al abrir, al cargar la ruta (avisa *Ruta subida a la nube*) y al tocar ☁️; el celular baja lo último al abrir *Entrega*.

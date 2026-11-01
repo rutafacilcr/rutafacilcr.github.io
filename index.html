@@ -80,6 +80,7 @@ nav.tabs .n:empty{display:none}
 .estop.ok .n{background:var(--ok)}.estop .n.no{background:var(--muted)}
 .estop .dir{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .estop.sel .dir{-webkit-line-clamp:unset}
+.estop .eeta{align-self:center;font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}.estop .eeta:empty{display:none}
 .estop .acts{grid-column:2;display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
 .tpin{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font:700 13px var(--f-body);display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)}
 .vcfrow{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
@@ -304,7 +305,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.20.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.21.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -1124,7 +1125,7 @@ async function renderEnt(){
     return `<div class="estop${d?' ok':''}${i===ESEL?' sel':''}" data-ei="${i}"><div class="n${s.c?'':' no'}">${s.c?s.n:'?'}</div>
     <div><b>${esc(s.nombre)}</b>${d?' <span class="small" style="color:var(--ok);font-weight:700">✓ entregado</span>':''}<div class="small muted dir">${s.c?'':'<b>Sin ubicación</b> · '}${esc(s.dir||'')}</div>${s.nota?`<div class="small">📝 ${esc(s.nota)}</div>`:''}</div>
     <div class="acts">${wz?`<a class="btn sm primary" href="${wz}" target="_blank" rel="noopener">🚗 Waze</a>`:''}${nav?`<a class="btn sm" href="${nav}" target="_blank" rel="noopener">🗺️ Maps</a>`:''}${wa?`<a class="btn sm" href="https://wa.me/${wa}" target="_blank" rel="noopener">WhatsApp</a>`:''}
-      ${d?'':`<button class="btn sm" type="button" data-eok="${i}">${p?'✓ Entregar':'✓ Entregado'}</button>`}</div></div>`}).join('');
+      ${d?'':`<button class="btn sm" type="button" data-eok="${i}">${p?'✓ Entregar':'✓ Entregado'}</button>${s.c?`<span class="eeta" data-eta="${i}"></span>`:''}`}</div></div>`}).join('');
   $('#entMap').hidden=!conC.length;if(!conC.length||$('#v-entrega').hidden)return;
   try{
     if(!document.querySelector('link[data-leaflet]')){const l=document.createElement('link');l.rel='stylesheet';l.href=CSS_MAP;l.dataset.leaflet=1;document.head.appendChild(l)}
@@ -1145,7 +1146,9 @@ function entSel(i,desdeMapa){ESEL=i;const s=S.ent.stops[i];renderEnt().then(()=>
   if(desdeMapa){const el=document.querySelector(`[data-ei="${i}"]`);el&&el.scrollIntoView({behavior:'smooth',block:'center'})}})}
 // ---- Punto actual (azul) y reordenar desde donde estoy ----
 let EPOS=null,EWATCH=null,EAUTO=false;
-function entMe(){if(!EMAP||!window.L)return;const c=EPOS?EPOS.c:null;
+// Tiempo aproximado desde tu punto (GPS) hasta cada parada: línea recta ×1,35 a la velocidad de Ajustes, sin tráfico
+function entEta(){const v=+S.vel||25;document.querySelectorAll('[data-eta]').forEach(el=>{const s=S.ent&&S.ent.stops[+el.dataset.eta];if(!EPOS||!s||!s.c){el.textContent='';return}const km=hav(EPOS.c,s.c),m=Math.max(1,Math.round(km/v*60));el.textContent=`🚗 ~${fmtT(m)} · ${km<1?Math.round(km*1000)+' m':km.toFixed(1).replace('.',',')+' km'}`;el.title='Tiempo aproximado desde donde estás, sin tráfico'})}
+function entMe(){entEta();if(!EMAP||!window.L)return;const c=EPOS?EPOS.c:null;
   if(!c){if(EMAP.me){EMAP.removeLayer(EMAP.me);EMAP.me=null}return}
   if(!EMAP.me)EMAP.me=L.marker(c,{icon:L.divIcon({className:'',html:'<div class="mepos"></div>',iconSize:[18,18],iconAnchor:[9,9]}),zIndexOffset:2000,interactive:false}).addTo(EMAP);else EMAP.me.setLatLng(c)}
 const gpsOk=g=>{EPOS={c:[+g.coords.latitude.toFixed(6),+g.coords.longitude.toFixed(6)],acc:g.coords.accuracy};$('#entGps').textContent=`📍 Estás aquí (±${Math.round(EPOS.acc)} m)`;entMe();

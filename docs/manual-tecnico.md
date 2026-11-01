@@ -146,6 +146,8 @@ update rf_ajustes set exigir_cuenta = false where id = 1;
 
 ### Ordenar desde aquí (1.20.0) y orden automático (1.20.1)
 
+Tiempo a cada parada (1.21.0): se calcula en el celular (distancia en línea recta ×1,35 y `S.vel`), sin servicios externos ni costo.
+
 Desde la 1.20.1, la primera lectura de GPS con precisión menor a 500 m (por carga de página o al cargar un archivo) reordena sola si `S.ent.inicio` falta o está a más de 800 m. Distancias en línea recta ×1,35, sin tráfico.
 
 Solo `index.html`. Usa el GPS del navegador (pide permiso la primera vez; en iPhone hay que permitir la ubicación a Safari) y la misma optimización de *Ruta*, todo en el celular, gratis.
