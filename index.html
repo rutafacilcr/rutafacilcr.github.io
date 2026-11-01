@@ -80,6 +80,7 @@ nav.tabs .n:empty{display:none}
 .estop.ok .n{background:#9aa0a6}.estop .n.no{background:var(--muted)}
 .estop .dir{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .estop.sel .dir{-webkit-line-clamp:unset}
+.entrow #entGps{flex:0 1 auto}.entrow{flex-basis:100%;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.enttot{text-align:right;font-size:12px;line-height:1.35;color:var(--ink,inherit)}.enttot:empty{display:none}
 .estop .eeta{align-self:center;font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}.estop .eeta:empty{display:none}
 .estop .acts{grid-column:2;display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
 .tpin{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font:700 13px var(--f-body);display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)}
@@ -270,7 +271,7 @@ details summary{cursor:pointer;font-weight:600}
   <div class="enthead" id="entTools" hidden>
     <button class="btn sm road" id="entAqui" type="button">📍 Ordenar desde aquí</button>
     <button class="btn sm" id="entPick" type="button">🎯 Elegir en el mapa</button>
-    <span class="small muted" id="entGps"></span>
+    <div class="entrow"><span class="small muted" id="entGps"></span><span class="enttot" id="entTot"></span></div>
   </div>
   <div class="entmap" id="entMap" hidden></div>
   <div class="list" id="entList"></div>
@@ -305,7 +306,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.23.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.24.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -1163,7 +1164,22 @@ function entEta(sinPedir){
   document.querySelectorAll('[data-eta]').forEach(el=>{const s=S.ent&&S.ent.stops[+el.dataset.eta];if(!EPOS||!s||!s.c){el.textContent='';return}
     const o=fresco&&OSRM.r[ckey(s.c)],km=o?o[0]:hav(EPOS.c,s.c),base=o?o[1]*1.3:0,m=Math.max(1,Math.round(Math.max(base,km/18*60)+1));
     el.textContent=`🚗 ~${fmtT(m)} · ${km<1?Math.round(km*1000)+' m':km.toFixed(1).replace('.',',')+' km'}`;el.title=o?'Por calle (OSRM), sin tráfico':'Aproximado en línea recta, sin tráfico'})}
-function entMe(){entEta();if(!EMAP||!window.L)return;const c=EPOS?EPOS.c:null;
+// Tiempo estimado de toda la ruta: desde tu punto, por cada parada pendiente en orden, hasta la última; +3 a 5 min por entrega
+const RTOT={k:'',at:0,busy:false,r:null};
+async function osrmCadena(k,pts){RTOT.busy=true;RTOT.at=Date.now();try{const j=await (await fetch('https://router.project-osrm.org/route/v1/driving/'+pts.map(c=>c[1]+','+c[0]).join(';')+'?overview=false')).json();
+  if(j.code==='Ok'&&j.routes[0]){RTOT.k=k;RTOT.r=[j.routes[0].distance/1000,j.routes[0].duration/60];entTotal(true)}}catch(e){}finally{RTOT.busy=false}}
+function entTotal(sinPedir){const el=$('#entTot'),E=S.ent;if(!el)return;if(!E){el.textContent='';return}
+  const pend=E.stops.filter(s=>s.c&&!entDone(s)),ini=EPOS?EPOS.c:E.inicio;
+  if(!pend.length){el.innerHTML=E.stops.some(s=>s.c)?'<b>✓ Ruta terminada</b>':'';return}
+  if(!ini){el.innerHTML='<b>⏱ Ruta:</b> falta tu ubicación';return}
+  const pts=[ini,...pend.map(s=>s.c)],k=pend.map(s=>ckey(s.c)).join('|');
+  if(!sinPedir&&!RTOT.busy&&Date.now()-RTOT.at>10000&&(RTOT.k!==k||!RTOT.pos||hav(RTOT.pos,ini)>0.3)&&pts.length<=100){RTOT.pos=ini;osrmCadena(k,pts)}
+  let km=0;for(let i=1;i<pts.length;i++)km+=hav(pts[i-1],pts[i]);let calle=false,maneja=km/18*60;
+  if(RTOT.r&&RTOT.k===k&&RTOT.pos&&hav(RTOT.pos,ini)<=0.3){km=RTOT.r[0];maneja=Math.max(RTOT.r[1]*1.3,km/18*60);calle=true}
+  const n=pend.length,lo=maneja+n*3,hi=maneja+n*5,ahora=new Date(),fin=m=>hm(ahora.getHours()*60+ahora.getMinutes()+m);
+  const corto=m=>fmtT(m).replace(' min','m').replace(' h ','h ');el.innerHTML=`<b>⏱ Ruta: ${corto(lo)} – ${corto(hi)}</b><br>🛣️ ${km.toFixed(1).replace('.',',')} km · ${n} entregas<br>Terminás ${fin(lo)} – ${fin(hi)}`;
+  el.title=`Manejo ${fmtT(maneja)} ${calle?'por calle':'aprox. en línea recta'} + 3 a 5 min por entrega`}
+function entMe(){entEta();entTotal();if(!EMAP||!window.L)return;const c=EPOS?EPOS.c:null;
   if(!c){if(EMAP.me){EMAP.removeLayer(EMAP.me);EMAP.me=null}return}
   if(!EMAP.me)EMAP.me=L.marker(c,{icon:L.divIcon({className:'',html:'<div class="mepos"></div>',iconSize:[18,18],iconAnchor:[9,9]}),zIndexOffset:2000,interactive:false}).addTo(EMAP);else EMAP.me.setLatLng(c)}
 const gpsOk=g=>{EPOS={c:[+g.coords.latitude.toFixed(6),+g.coords.longitude.toFixed(6)],acc:g.coords.accuracy};$('#entGps').textContent=`📍 Estás aquí (±${Math.round(EPOS.acc)} m)`;entMe();
