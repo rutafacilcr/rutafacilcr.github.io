@@ -148,6 +148,8 @@ update rf_ajustes set exigir_cuenta = false where id = 1;
 
 Orden por calle (1.22.0): `entOrdenar` pide a OSRM la matriz completa de tiempos (`table/v1/driving` con todas las paradas pendientes más tu punto, máximo 100 puntos y 8 s de espera). Si falla, ordena con línea recta.
 
+Botón de la parada (1.22.1): dice **📸 Evidencia** (antes "Entregar"); solo cambia el texto.
+
 Tiempo a cada parada (1.21.0, 1.21.1): el celular consulta la tabla del servidor público de OSRM (`router.project-osrm.org/table/v1/driving`, gratis, sin llave, uso moderado). Hace una sola consulta con todas las paradas pendientes y la repite solo si te movés más de 150 m o pasan 2 minutos, con un mínimo de 8 s entre consultas. Si OSRM no responde, usa línea recta ×1,35. Si ese servidor deja de servir, la alternativa es montar OSRM propio; mientras tanto el respaldo sigue funcionando.
 
 Desde la 1.20.1, la primera lectura de GPS con precisión menor a 500 m (por carga de página o al cargar un archivo) reordena sola si `S.ent.inicio` falta o está a más de 800 m. Distancias en línea recta ×1,35, sin tráfico.
