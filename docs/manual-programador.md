@@ -65,6 +65,7 @@ Paquete = {
 | `p.ing` | Marca de tiempo de cuando se agregó el paquete (`mkPkg`). Los paquetes guardados antes de 1.17.0 la reciben al cargar. |
 | `tidyName(s)` | Como `cleanName` pero sin poner mayúscula a todo (respeta *de*, *del*): solo baja la mayúscula pegada a una minúscula y quita guiones sueltos. Se usa en contactos, Excel y al reparar nombres viejos. |
 | `#m-buscar` | Filtra la lista de Mensajes por nombre, guía o dígitos del teléfono (compara los últimos 8). Solo oculta tarjetas; la numeración se mantiene. |
+| `CEDULA` | Texto *Recuerde que para la entrega debe presentar la cédula.* Va en `DEF_CAMINO`; al abrir 1.18.4 se agrega una sola vez al `S.camino` guardado si no menciona la cédula (`S.cedula` marca que ya se hizo). |
 | `msgOpts()` | Mensajes que se pueden elegir en cada cliente: `coord`, `form` (solo si `config.js` tiene Supabase) y `camino`. |
 | `msgSel(p)` | Mensaje elegido (`p.msgSel`); si no hay, propone `coord` y, ya enviado, `form`. |
 | `msgText(p, k)` | Texto del mensaje `k`: `coordText`, `S.form` (`DEF_FORM`, con `{formulario}`) o `S.camino` con `{eta}` de `routeEta(p)`. Lo usan la vista previa, **Abrir WhatsApp** (`data-k`) y **Copiar**. |

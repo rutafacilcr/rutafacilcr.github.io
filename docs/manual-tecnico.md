@@ -144,9 +144,9 @@ update rf_ajustes set exigir_cuenta = false where id = 1;
   - **Liberar espacio a mano:** Supabase > **Storage** > **evidencias** > abrir la carpeta de un día viejo > seleccionar las fotos > **Download** (guardarlas en la PC) > **Delete**. Las carpetas se llaman por fecha (`AAAA-MM-DD`), así que se borran las más viejas primero. El registro en la tabla `entregas` se puede dejar: casi no ocupa.
   - En iPhone, si la app se usa desde Safari y no desde el ícono, Safari puede borrar los datos de la página tras ~7 días sin abrirla. Por eso Supabase es el respaldo oficial.
 
-### Aviso de cédula (1.18.3)
+### Aviso de cédula (1.18.3 y 1.18.4)
 
-Solo `entrega.html` (pantalla final del formulario). No toca Supabase.
+`entrega.html` (pantalla final del formulario) y el mensaje *Voy en camino* de `index.html`. No toca Supabase.
 
 ### Lista en la nube (1.18.0)
 

@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-01
+- **1.18.4:** el mensaje *Voy en camino* también recuerda presentar la cédula (se agrega solo al texto guardado; se puede editar).
 - **1.18.3:** al confirmar el formulario, el cliente ve el aviso *Recuerde que para la entrega debe presentar la cédula*.
 - **1.18.2:** en iPhone, *Guardar contactos del día* muestra primero los pasos para guardarlos todos (por Mail o Archivos) y avisa que no se toque *Contactos* en el menú, porque así solo entra el primero.
 
