@@ -311,7 +311,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.31.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.32.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -496,7 +496,7 @@ function renderPk(){
     <div class="name">${esc(p.nombre||'(sin nombre)')} ${stChip(p)}</div>
     <div class="addr">${esc(p.dir||'Sin dirección')}${p.nota?` · <i>${esc(p.nota)}</i>`:''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
     <div class="meta"><span class="mono">${esc(p.tel||'sin teléfono')}</span>${p.guia?`<span class="mono">${esc(p.guia)}</span>`:''}<span class="pin ${c?'yes':'no'}">${c?'● Ubicación lista':'○ Falta ubicación'}</span></div>${p.pod?`<div class="ev">📷 ${p.pod.n} fotos · ${fmtDT(p.pod.at)}${p.pod.lat!=null?' · 📍 ±'+Math.round(p.pod.acc)+' m':' · sin GPS'} · ${p.pod.up?'☁️ respaldada':'⏳ sin subir'} <button class="btn sm" data-act="ev" data-id="${p.id}" style="margin-left:4px">Ver evidencia</button></div>`:''}
-    <div class="actions"><button class="btn sm primary" data-act="paste" data-id="${p.id}">📋 Pegar respuesta</button><button class="btn sm" data-act="edit" data-id="${p.id}">Editar</button>${c?`<a class="btn sm" href="${waze(c)}" target="_blank" rel="noopener">Waze</a><a class="btn sm" href="${gmaps(c)}" target="_blank" rel="noopener">Maps</a>`:''}<button class="btn sm" data-act="rescan" data-id="${p.id}" title="Volver a escanear la etiqueta de este paquete">📷 Etiqueta</button><button class="btn sm" data-act="dev" data-id="${p.id}">${p.st==='devuelto'?'↪ Quitar devuelto':'↩ Devuelto'}</button><button class="btn sm ghost danger" data-act="del" data-id="${p.id}">Quitar</button></div>
+    <div class="actions"><button class="btn sm primary" data-act="paste" data-id="${p.id}">📋 Pegar respuesta</button><button class="btn sm" data-act="edit" data-id="${p.id}">Editar</button>${c?`<a class="btn sm" href="${waze(c)}" target="_blank" rel="noopener">Waze</a><a class="btn sm" href="${gmaps(c)}" target="_blank" rel="noopener">Maps</a>`:''}<button class="btn sm" data-act="rescan" data-id="${p.id}" title="Volver a escanear la etiqueta de este paquete">📷 Etiqueta</button><button class="btn sm" data-act="dev" data-id="${p.id}">${p.st==='devuelto'?'↪ Quitar devuelto':'↩ Devuelto'}</button><button class="btn sm ghost danger" data-act="del" data-id="${p.id}">Quitar</button>${phoneWA(p.tel)?`<a class="btn sm wa" href="https://wa.me/${phoneWA(p.tel)}" target="_blank" rel="noopener">WhatsApp</a>`:''}</div>
   </div>`}).join('');
 }
 // Mensajes que se pueden mandar a cada cliente desde la pestaña Mensajes.

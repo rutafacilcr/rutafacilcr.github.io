@@ -146,6 +146,8 @@ update rf_ajustes set exigir_cuenta = false where id = 1;
 
 ### Ordenar desde aquí (1.20.0) y orden automático (1.20.1)
 
+WhatsApp en Paquetes (1.32.0): link `wa.me/<número>`, sin texto ni servicios extra.
+
 Corregir etiqueta (1.31.0): usa el mismo escáner gratis (código de barras + OCR en el celular). Solo cambia los campos del paquete en `S.pk`.
 
 Orden de Paquetes (1.30.0): solo cambia cómo se muestra la lista; el orden guardado en `S.pk` y en la nube no cambia.
