@@ -72,12 +72,12 @@ nav.tabs .n:empty{display:none}
 .epin{width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#d7261e;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center}
 .mepos{width:18px;height:18px;border-radius:50%;background:#1a73e8;border:3px solid #fff;box-shadow:0 0 0 2px rgba(26,115,232,.35),0 1px 4px rgba(0,0,0,.4)}
 .epin b{transform:rotate(45deg);color:#fff;font:700 12px var(--f-body)}
-.epin.ok{background:var(--ok)}.epin.sel{background:var(--accent);width:36px;height:36px}
+.epin.ok{background:#9aa0a6}.epin.sel{background:var(--accent);width:36px;height:36px}
 .estop{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;cursor:pointer}
 .estop.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
 .estop.ok{opacity:.6}
 .estop .n{width:30px;height:30px;border-radius:50%;background:#d7261e;color:#fff;font:700 13px var(--f-body);display:flex;align-items:center;justify-content:center;grid-row:span 2}
-.estop.ok .n{background:var(--ok)}.estop .n.no{background:var(--muted)}
+.estop.ok .n{background:#9aa0a6}.estop .n.no{background:var(--muted)}
 .estop .dir{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .estop.sel .dir{-webkit-line-clamp:unset}
 .estop .eeta{align-self:center;font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}.estop .eeta:empty{display:none}
@@ -305,7 +305,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.22.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.23.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -1125,7 +1125,7 @@ async function renderEnt(){
     return `<div class="estop${d?' ok':''}${i===ESEL?' sel':''}" data-ei="${i}"><div class="n${s.c?'':' no'}">${s.c?s.n:'?'}</div>
     <div><b>${esc(s.nombre)}</b>${d?' <span class="small" style="color:var(--ok);font-weight:700">✓ entregado</span>':''}<div class="small muted dir">${s.c?'':'<b>Sin ubicación</b> · '}${esc(s.dir||'')}</div>${s.nota?`<div class="small">📝 ${esc(s.nota)}</div>`:''}</div>
     <div class="acts">${wz?`<a class="btn sm primary" href="${wz}" target="_blank" rel="noopener">🚗 Waze</a>`:''}${nav?`<a class="btn sm" href="${nav}" target="_blank" rel="noopener">🗺️ Maps</a>`:''}${wa?`<a class="btn sm" href="https://wa.me/${wa}" target="_blank" rel="noopener">WhatsApp</a>`:''}
-      ${d?'':`<button class="btn sm" type="button" data-eok="${i}">${p?'📸 Evidencia':'✓ Entregado'}</button>${s.c?`<span class="eeta" data-eta="${i}"></span>`:''}`}</div></div>`}).join('');
+      ${d?(s.done?`<button class="btn sm ghost" type="button" data-eundo="${i}">↩ Deshacer</button>`:''):`${p?`<button class="btn sm" type="button" data-eok="${i}">📸 Evidencia</button>`:''}<button class="btn sm" type="button" data-edone="${i}">✓ Entregado</button>${s.c?`<span class="eeta" data-eta="${i}"></span>`:''}`}</div></div>`}).join('');
   $('#entMap').hidden=!conC.length;if(!conC.length||$('#v-entrega').hidden)return;
   try{
     if(!document.querySelector('link[data-leaflet]')){const l=document.createElement('link');l.rel='stylesheet';l.href=CSS_MAP;l.dataset.leaflet=1;document.head.appendChild(l)}
@@ -1194,6 +1194,8 @@ $('#entPick').onclick=()=>{if(!EMAP){toast('Primero cargá la ruta');return}EMAP
 $('#entFile').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)entCargar(f).catch(()=>toast('No se pudo leer ese archivo'))};
 $('#entList').addEventListener('click',e=>{
   const b=e.target.closest('[data-eok]');if(b){const s=S.ent.stops[+b.dataset.eok],p=entPkg(s);if(p&&p.st!=='entregado'){openPOD(p);return}s.done=true;save();renderEnt();return}
+  const bd=e.target.closest('[data-edone]');if(bd){S.ent.stops[+bd.dataset.edone].done=true;save();renderEnt();toast('Parada marcada como entregada');return}
+  const bu=e.target.closest('[data-eundo]');if(bu){S.ent.stops[+bu.dataset.eundo].done=false;save();renderEnt();toast('Listo, la parada vuelve a pendiente');return}
   if(e.target.closest('a'))return;const c=e.target.closest('[data-ei]');if(c)entSel(+c.dataset.ei)});
 document.querySelector('[data-tab="entrega"]').addEventListener('click',()=>{requestAnimationFrame(renderEnt);if(S.ent)entVigilar();if(NUBE.on)nubeSync().then(()=>renderEnt())}); // al abrir Entrega baja lo último de la nube
 
