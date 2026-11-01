@@ -298,7 +298,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.19.3</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.19.4</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -1076,8 +1076,8 @@ $('#daypill').textContent='Entrega: '+tomorrow();
 S.pk.forEach(p=>{if(!p.tok)p.tok=tok()});
 if([DEF_COORD,DEF_COORD_F,...OLD_COORD_F].includes(S.coord)){S.coord=DEF_SIMPLE;$('#m-coord').value=S.coord}
 // 1.18.4: el aviso de la cédula se agrega una vez al "voy en camino" guardado (aunque lo hayan editado); si lo borran, no vuelve.
-if(!S.cedula2){S.cedula2=1;if(S.coord===OLD_SIMPLE)S.coord=DEF_SIMPLE;else if(!/c[eé]dula/i.test(S.coord||''))S.coord=(S.coord||'').trim()+(S.coord?'\n':'')+CEDULA;$('#m-coord').value=S.coord;saveLocal()}
-if(!S.cedula){S.cedula=1;if(!/c[eé]dula/i.test(S.camino||''))S.camino=(S.camino||'').trim()+(S.camino?'\n':'')+CEDULA;$('#m-camino').value=S.camino;saveLocal()}
+if(!S.cedula2){S.cedula2=1;if(S.coord===OLD_SIMPLE)S.coord=DEF_SIMPLE;else if(!/c[eé]dula/i.test(S.coord||''))S.coord=(S.coord||'').trim()+(S.coord?'\n':'')+CEDULA;$('#m-coord').value=S.coord;save()}
+if(!S.cedula){S.cedula=1;if(!/c[eé]dula/i.test(S.camino||''))S.camino=(S.camino||'').trim()+(S.camino?'\n':'')+CEDULA;$('#m-camino').value=S.camino;save()}
 save();
 render();
 // Cuentas (auth.js): el nombre del dueño de la cuenta firma los mensajes y la sincronización espera a que la cuenta esté abierta.
@@ -1154,7 +1154,7 @@ function nubeMezclar(srv){
   for(const p of loc){if(sMap.has(p.id))out.push(S.dirty?p:sMap.get(p.id));else if(!base.has(p.id))out.push(p)} // solo local: nuevo aquí, o se borró en el otro aparato
   for(const p of srv.pk||[])if(!lIds.has(p.id)&&!base.has(p.id))out.push(p);                                   // solo nube: nuevo allá, o se borró aquí
   const hb=S.nubeBase||{};NUBE.falta=NUBE_KEYS.some(k=>srv[k]===undefined&&S[k]!=null); // la nube perdió algo que este aparato tiene (p. ej. lo pisó una versión vieja): se vuelve a subir
-  NUBE_KEYS.forEach(k=>{if(k==='pk'||srv[k]===undefined)return;const cambioAqui=hb[k]!=null&&hb[k]!==JSON.stringify(S[k]??null);if(!cambioAqui||S[k]==null)S[k]=srv[k]});
+  NUBE_KEYS.forEach(k=>{if(k==='pk'||srv[k]===undefined)return;const cambioAqui=hb[k]==null?!!S.dirty:hb[k]!==JSON.stringify(S[k]??null);if(!cambioAqui||S[k]==null)S[k]=srv[k]});
   S.nubeOtros={};Object.keys(srv).forEach(k=>{if(!NUBE_KEYS.includes(k))S.nubeOtros[k]=srv[k]});
   S.pk=out;S.ex=false;
 }
