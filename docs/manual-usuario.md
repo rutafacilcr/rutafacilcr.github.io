@@ -75,7 +75,7 @@ Columnas: `nombre`, `telefono`, `direccion`, `ubicacion`, `guia`, `nota`.
 ### Día de entrega (pestaña **Entrega**)
 
 1. Tocá **Entrega** en la barra de abajo (entre *Ruta* y *Soporte*).
-2. Tocá **📂 Cargar ruta** y elegí el Excel del día, por ejemplo **Ruta 2026-11-01.xlsx** (en iPhone está en la app *Archivos*, carpeta *RutaFacilCR*). Si el archivo no es el de hoy, la app lo avisa en rojo.
+2. Tocá **📂 Cargar ruta** y elegí el Excel del día, por ejemplo **Ruta 2026-11-01.xlsx** (en iPhone está en la app *Archivos*, carpeta *RutaFacilCR*). Vale la ruta de hoy o la de mañana (se arma el día antes); si es de otro día, la app lo avisa en rojo.
 3. La pantalla queda en dos partes: **arriba el mapa** con las paradas numeradas en el orden de la ruta y la línea del recorrido; **abajo la lista** de paradas.
 4. Tocá una parada para verla en el mapa (se pone naranja y se acerca). Tocá un pin del mapa para bajar a esa parada.
 5. En cada parada: **🚗 Waze** o **🗺️ Maps** te llevan al punto, **WhatsApp** abre el chat del cliente y **✓ Entregar** abre la prueba de entrega (fotos y firma) si el paquete está en tu lista; si no, la marca como entregada. Las entregadas pasan a verde.
