@@ -305,7 +305,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.21.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.21.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -1146,8 +1146,23 @@ function entSel(i,desdeMapa){ESEL=i;const s=S.ent.stops[i];renderEnt().then(()=>
   if(desdeMapa){const el=document.querySelector(`[data-ei="${i}"]`);el&&el.scrollIntoView({behavior:'smooth',block:'center'})}})}
 // ---- Punto actual (azul) y reordenar desde donde estoy ----
 let EPOS=null,EWATCH=null,EAUTO=false;
-// Tiempo aproximado desde tu punto (GPS) hasta cada parada: línea recta ×1,35 a la velocidad de Ajustes, sin tráfico
-function entEta(){const v=+S.vel||25;document.querySelectorAll('[data-eta]').forEach(el=>{const s=S.ent&&S.ent.stops[+el.dataset.eta];if(!EPOS||!s||!s.c){el.textContent='';return}const km=hav(EPOS.c,s.c),m=Math.max(1,Math.round(km/v*60));el.textContent=`🚗 ~${fmtT(m)} · ${km<1?Math.round(km*1000)+' m':km.toFixed(1).replace('.',',')+' km'}`;el.title='Tiempo aproximado desde donde estás, sin tráfico'})}
+// Tiempo desde tu punto (GPS) hasta cada parada. Primero por calle con el OSRM público (gratis, sin llave);
+// si no responde, línea recta ×1,35. En ciudad se usa como mínimo 18 km/h y +1 min de arrancar y parquear.
+const OSRM={pos:null,at:0,busy:false,r:{}};
+const ckey=c=>c[0].toFixed(5)+','+c[1].toFixed(5);
+async function osrmPedir(){
+  if(OSRM.busy||!EPOS||!S.ent)return;const cs=[...new Map(S.ent.stops.filter(s=>s.c&&!entDone(s)).map(s=>[ckey(s.c),s.c])).values()].slice(0,90);if(!cs.length)return;
+  OSRM.busy=true;const from=EPOS.c;
+  try{const u='https://router.project-osrm.org/table/v1/driving/'+[from,...cs].map(c=>c[1]+','+c[0]).join(';')+'?sources=0&annotations=duration,distance';
+    const j=await (await fetch(u)).json();if(j.code!=='Ok')throw 0;
+    OSRM.r={};cs.forEach((c,i)=>{const d=j.distances[0][i+1],t=j.durations[0][i+1];if(d!=null&&t!=null)OSRM.r[ckey(c)]=[d/1000,t/60]});OSRM.pos=from;OSRM.at=Date.now();entEta(true)}
+  catch(e){OSRM.at=Date.now()}finally{OSRM.busy=false}}
+function entEta(sinPedir){
+  if(!sinPedir&&EPOS&&(!OSRM.pos||hav(OSRM.pos,EPOS.c)>0.15||Date.now()-OSRM.at>120000)&&Date.now()-OSRM.at>8000)osrmPedir();
+  const fresco=OSRM.pos&&EPOS&&hav(OSRM.pos,EPOS.c)<=0.3;
+  document.querySelectorAll('[data-eta]').forEach(el=>{const s=S.ent&&S.ent.stops[+el.dataset.eta];if(!EPOS||!s||!s.c){el.textContent='';return}
+    const o=fresco&&OSRM.r[ckey(s.c)],km=o?o[0]:hav(EPOS.c,s.c),base=o?o[1]*1.3:0,m=Math.max(1,Math.round(Math.max(base,km/18*60)+1));
+    el.textContent=`🚗 ~${fmtT(m)} · ${km<1?Math.round(km*1000)+' m':km.toFixed(1).replace('.',',')+' km'}`;el.title=o?'Por calle (OSRM), sin tráfico':'Aproximado en línea recta, sin tráfico'})}
 function entMe(){entEta();if(!EMAP||!window.L)return;const c=EPOS?EPOS.c:null;
   if(!c){if(EMAP.me){EMAP.removeLayer(EMAP.me);EMAP.me=null}return}
   if(!EMAP.me)EMAP.me=L.marker(c,{icon:L.divIcon({className:'',html:'<div class="mepos"></div>',iconSize:[18,18],iconAnchor:[9,9]}),zIndexOffset:2000,interactive:false}).addTo(EMAP);else EMAP.me.setLatLng(c)}
