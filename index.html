@@ -305,7 +305,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.21.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.22.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -545,8 +545,8 @@ function sched(ord,M,W,t0,mins,ret){
   if(ret)t+=M[prev][0];
   return {cost:t-t0+3*late+60*nl,end:t,out,nl};
 }
-function optimize(pts,W,t0,mins,vel,ret){
-  const n=pts.length-1,M=pts.map(a=>pts.map(b=>hav(a,b)/vel*60)),ids=[...Array(n)].map((_,i)=>i+1);
+function optimize(pts,W,t0,mins,vel,ret,Mx){
+  const n=pts.length-1,M=Mx||pts.map(a=>pts.map(b=>hav(a,b)/vel*60)),ids=[...Array(n)].map((_,i)=>i+1);
   const C=o=>sched(o,M,W,t0,mins,ret).cost;
   const greedy=tw=>{let left=[...ids],o=[],cur=0,t=t0;while(left.length){let bi=0,bc=1e12;left.forEach((j,k)=>{let a=t+M[cur][j],c=M[cur][j];
       if(tw&&W[j]){const ok=W[j].find(x=>x[1]>=a);c+=ok?Math.max(0,ok[0]-a):3*(a-W[j][W[j].length-1][1])+60;}if(c<bc){bc=c;bi=k}});
@@ -1172,14 +1172,19 @@ const gpsOk=g=>{EPOS={c:[+g.coords.latitude.toFixed(6),+g.coords.longitude.toFix
 const gpsFail=e=>{$('#entGps').innerHTML=e&&e.code===1?'Ubicación bloqueada. En iPhone: <b>Ajustes</b> &gt; <b>Privacidad</b> &gt; <b>Localización</b> &gt; <b>Sitios web de Safari</b> &gt; <b>Al usar la app</b>. O usá <b>🎯 Elegir en el mapa</b>.':'No se pudo obtener la ubicación. Usá <b>🎯 Elegir en el mapa</b>.'};
 function entVigilar(){if(EWATCH!=null||!navigator.geolocation)return;try{EWATCH=navigator.geolocation.watchPosition(gpsOk,gpsFail,{enableHighAccuracy:true,maximumAge:15000,timeout:30000})}catch(e){}}
 // Reordena las paradas que faltan con optimize() (la misma de Ruta), desde start; respeta el horario del cliente si el paquete está en la lista.
-function entOrdenar(start,desde){
+// Matriz de minutos por calle entre todos los puntos (OSRM público, gratis); null si no responde en 8 s
+async function osrmMatriz(pts){if(pts.length>100)return null;try{const ac=new AbortController(),to=setTimeout(()=>ac.abort(),8000);
+  const j=await (await fetch('https://router.project-osrm.org/table/v1/driving/'+pts.map(c=>c[1]+','+c[0]).join(';')+'?annotations=duration',{signal:ac.signal})).json();clearTimeout(to);
+  if(j.code!=='Ok'||j.durations.some(r=>r.some(v=>v==null)))return null;return j.durations.map(r=>r.map(v=>v/60*1.3))}catch(e){return null}}
+async function entOrdenar(start,desde){
   const E=S.ent;if(!E)return;const pend=E.stops.filter(s=>s.c&&!entDone(s)),hechas=E.stops.filter(s=>s.c&&entDone(s)),sinC=E.stops.filter(s=>!s.c);
   if(!pend.length){toast('No quedan paradas pendientes con ubicación');return}
   const pts=[start,...pend.map(s=>s.c)],W=[null,...pend.map(s=>{const p=entPkg(s);return p?parseWin(p.horario):null})],d=new Date();
-  const ord=optimize(pts,W,d.getHours()*60+d.getMinutes(),+S.min||0,+S.vel||25,false);
+  $('#entGps').textContent='Calculando la ruta por calle…';const Mx=await osrmMatriz(pts);if(EPOS)$('#entGps').textContent=`📍 Estás aquí (±${Math.round(EPOS.acc)} m)`;
+  const ord=optimize(pts,W,d.getHours()*60+d.getMinutes(),+S.min||0,+S.vel||25,false,Mx);
   let k=0;E.stops=[...ord.map(i=>pend[i-1]),...hechas,...sinC];E.stops.forEach(s=>{if(s.c)s.n=++k});E.inicio=start;ESEL=-1;
   if(EMAP)EMAP.fitted=null;save();renderEnt().then(()=>{if(EMAP)EMAP.fitBounds([start,...pend.map(s=>s.c)],{padding:[24,24]})});
-  toast(`Ruta ordenada desde ${desde} (${pend.length} paradas)`);if(NUBE.on)nubeSoon();
+  toast(`Ruta ordenada ${Mx?'por calle ':''}desde ${desde} (${pend.length} paradas)`);if(NUBE.on)nubeSoon();
 }
 $('#entAqui').onclick=()=>{if(!navigator.geolocation){gpsFail();return}EAUTO=true;$('#entGps').textContent='Buscando tu ubicación…';
   navigator.geolocation.getCurrentPosition(g=>{gpsOk(g);entOrdenar(EPOS.c,'tu ubicación');entVigilar()},

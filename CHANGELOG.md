@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-01
+- **1.22.0 · Ruta ordenada por calle:** al ordenar en *Entrega* (sola o con el botón) se usan los tiempos reales por calle de OSRM entre todas las paradas, no la línea recta. Si OSRM no responde en 8 segundos, se ordena con la línea recta como antes.
 - **1.21.1 · Tiempo más real:** el tiempo junto a Entregar ahora se calcula por calle con OSRM (gratis); si no responde, se estima en línea recta. En ciudad se cuenta mínimo 18 km/h y 1 minuto para arrancar y parquear, para acercarse a lo que da Waze.
 - **1.21.0 · Tiempo hasta cada cliente:** en *Entrega*, a la par de **✓ Entregar** sale el tiempo y la distancia aproximados desde donde estás (🚗 ~8 min · 2,1 km). Se actualiza con el GPS.
 - **1.20.1 · Se ordena sola desde tu punto:** al cargar la ruta o abrir *Entrega*, la primera vez que llega el GPS la ruta se reordena sola desde donde estás (si no se había ordenado ya desde cerca de ahí, a menos de 800 m). Antes la línea azul unía tu punto con la parada 1 del archivo aunque no fuera la más cercana.
