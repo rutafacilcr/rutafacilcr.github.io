@@ -298,7 +298,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.19.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.19.3</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -377,7 +377,9 @@ const KEY='rutafacil-cr-v1';
 const STATUS=[['pendiente','Pendiente'],['confirmado','Confirmado'],['noresponde','No responde'],['entregado','Entregado'],['fallido','No se entregó']];
 const SLABEL=Object.fromEntries(STATUS);
 const tomorrow=()=>{const d=new Date();d.setDate(d.getDate()+1);return d.toLocaleDateString('es-CR',{weekday:'long',day:'numeric',month:'long'})};
-const DEF_SIMPLE='Hola {nombre}, soy {yo}, le llevo su paquete de Temu el {fecha}. ¿A qué hora le queda bien recibirlo? Si puede, mándeme su ubicación por aquí 📍 ¡Gracias!';
+const CEDULA='Recuerde que para la entrega debe presentar la cédula.';
+const DEF_SIMPLE='Hola {nombre}, soy {yo}, le llevo su paquete de Temu el {fecha}. ¿A qué hora le queda bien recibirlo? Si puede, mándeme su ubicación por aquí 📍 '+CEDULA+' ¡Gracias!';
+const OLD_SIMPLE='Hola {nombre}, soy {yo}, le llevo su paquete de Temu el {fecha}. ¿A qué hora le queda bien recibirlo? Si puede, mándeme su ubicación por aquí 📍 ¡Gracias!';
 const DEF_COORD='Hola {nombre}, le saluda {yo}, el repartidor de su pedido de Temu (guía {guia}). El {fecha} se lo estaría entregando en: {direccion}.\n\n¿Me confirma si habrá alguien para recibirlo? Si puede, envíeme su ubicación por WhatsApp para llegar más fácil. ¡Muchas gracias!';
 const DEF_COORD_F='Hola {nombre}, le saluda {yo}, el repartidor de su paquete de Temu (guía {guia}). Se lo estaría entregando el {fecha}.\n\nPara coordinar, puede responderme por aquí:\n1. A qué hora puede recibir\n2. Su ubicación: toque el clip 📎 (o el signo de más) y elija Ubicación > Enviar mi ubicación actual\n\nO si le es más fácil, confírmelo en este formulario de 1 minuto. No pide pagos ni datos bancarios:\n{formulario}\n\n¡Muchas gracias!';
 // Plantillas anteriores: si el usuario no las cambió, se reemplazan por la vigente.
@@ -385,7 +387,6 @@ const OLD_COORD_F=['Hola {nombre}, le saluda {yo}, el repartidor de su paquete d
 const FORM_ON=!!(window.RF_CONFIG&&RF_CONFIG.supabaseUrl&&RF_CONFIG.supabaseAnonKey);
 const tok=()=>{const a=new Uint8Array(12);crypto.getRandomValues(a);return [...a].map(x=>'abcdefghijkmnpqrstuvwxyz23456789'[x%32]).join('')};
 const DEF_FORM='Gracias {nombre}. Para no fallarle con la entrega, ¿me ayuda marcando aquí su hora y las señas de la casa? Es 1 minuto: {formulario}';
-const CEDULA='Recuerde que para la entrega debe presentar la cédula.';
 const DEF_CAMINO='Hola {nombre}, voy en camino con su paquete de Temu. Llego en aproximadamente {eta} minutos. '+CEDULA+' ¡Gracias!';
 const EXAMPLE=[
  ['María Rojas','8812-3456','Santo Domingo de Heredia, 100 m sur de la iglesia','9.9813,-84.0897','TM-58210'],
@@ -1075,6 +1076,7 @@ $('#daypill').textContent='Entrega: '+tomorrow();
 S.pk.forEach(p=>{if(!p.tok)p.tok=tok()});
 if([DEF_COORD,DEF_COORD_F,...OLD_COORD_F].includes(S.coord)){S.coord=DEF_SIMPLE;$('#m-coord').value=S.coord}
 // 1.18.4: el aviso de la cédula se agrega una vez al "voy en camino" guardado (aunque lo hayan editado); si lo borran, no vuelve.
+if(!S.cedula2){S.cedula2=1;if(S.coord===OLD_SIMPLE)S.coord=DEF_SIMPLE;else if(!/c[eé]dula/i.test(S.coord||''))S.coord=(S.coord||'').trim()+(S.coord?'\n':'')+CEDULA;$('#m-coord').value=S.coord;saveLocal()}
 if(!S.cedula){S.cedula=1;if(!/c[eé]dula/i.test(S.camino||''))S.camino=(S.camino||'').trim()+(S.camino?'\n':'')+CEDULA;$('#m-camino').value=S.camino;saveLocal()}
 save();
 render();

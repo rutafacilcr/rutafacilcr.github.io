@@ -158,7 +158,7 @@ Solo `index.html`. Usa SheetJS y Leaflet (cdnjs) con mapas de OpenStreetMap, gra
 
 ### Aviso de cédula (1.18.3 y 1.18.4)
 
-`entrega.html` (pantalla final del formulario) y el mensaje *Voy en camino* de `index.html`. No toca Supabase.
+`entrega.html` (pantalla final del formulario) y los mensajes *Coordinar* (1.19.3) y *Voy en camino* de `index.html`. No toca Supabase.
 
 ### Lista en la nube (1.18.0)
 
