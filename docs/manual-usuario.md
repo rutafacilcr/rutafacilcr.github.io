@@ -81,7 +81,7 @@ Columnas: `nombre`, `telefono`, `direccion`, `ubicacion`, `guia`, `nota`.
 5. En cada parada: **🚗 Waze** o **🗺️ Maps** te llevan al punto, **WhatsApp** abre el chat del cliente y **✓ Entregar** abre la prueba de entrega (fotos y firma) si el paquete está en tu lista; si no, la marca como entregada. Las entregadas pasan a verde.
 6. Las paradas **sin ubicación** van al final, sin pin.
 
-La ruta cargada se guarda en tu cuenta: si la cargás en la PC, aparece también en el teléfono (los dos aparatos deben tener la versión 1.19.1 o más nueva; mirá el pie y tocá *Actualizar* si hace falta).
+La ruta cargada se guarda en tu cuenta (sale el aviso *Ruta subida a la nube ☁️*): si la cargás en la PC, aparece también en el teléfono al abrir *Entrega* (los dos aparatos deben tener la versión 1.19.1 o más nueva; mirá el pie y tocá *Actualizar* si hace falta).
 
 ### Los mismos paquetes en el teléfono y en la PC
 

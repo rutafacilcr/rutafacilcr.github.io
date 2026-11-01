@@ -144,6 +144,10 @@ update rf_ajustes set exigir_cuenta = false where id = 1;
   - **Liberar espacio a mano:** Supabase > **Storage** > **evidencias** > abrir la carpeta de un día viejo > seleccionar las fotos > **Download** (guardarlas en la PC) > **Delete**. Las carpetas se llaman por fecha (`AAAA-MM-DD`), así que se borran las más viejas primero. El registro en la tabla `entregas` se puede dejar: casi no ocupa.
   - En iPhone, si la app se usa desde Safari y no desde el ícono, Safari puede borrar los datos de la página tras ~7 días sin abrirla. Por eso Supabase es el respaldo oficial.
 
+### Ruta que no subía (1.19.5)
+
+Solo `index.html`. Si la nube quedaba en la misma versión que el aparato pero sin la ruta (la había pisado una versión vieja), nadie la volvía a subir. Ahora se detecta y se sube sola.
+
 ### Diagnóstico de la nube (1.19.2)
 
 Tocar *☁️* en el pie sincroniza y muestra un aviso con la versión de la lista en la nube, cuántos paquetes tiene y qué ruta. Si en el celular y la PC sale la misma versión, están iguales.

@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-01
+- **1.19.5:** arreglo de la ruta que no llegaba al celular: si la nube estaba en la misma versión pero sin la ruta, la laptop no la volvía a subir. Ahora la sube sola al abrir, al cargar la ruta (avisa *Ruta subida a la nube*) y al tocar ☁️; el celular baja lo último al abrir *Entrega*.
 - **1.19.4:** la frase de la cédula agregada a los mensajes se sube a la nube y otro aparato con el texto viejo ya no la borra.
 - **1.19.3:** el mensaje *Coordinar* también termina con *Recuerde que para la entrega debe presentar la cédula* (se agrega solo al texto guardado).
 - **1.19.2:** *Entrega* acepta la ruta de hoy o la de mañana sin marcarla en rojo; tocar ☁️ en el pie dice qué tiene la nube (versión, paquetes y ruta).
