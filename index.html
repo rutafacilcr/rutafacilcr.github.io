@@ -70,6 +70,7 @@ nav.tabs .n:empty{display:none}
 .enthead{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .entmap{position:sticky;top:0;z-index:5;height:42vh;min-height:220px;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--surface)}
 .epin{width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#d7261e;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center}
+.mepos{width:18px;height:18px;border-radius:50%;background:#1a73e8;border:3px solid #fff;box-shadow:0 0 0 2px rgba(26,115,232,.35),0 1px 4px rgba(0,0,0,.4)}
 .epin b{transform:rotate(45deg);color:#fff;font:700 12px var(--f-body)}
 .epin.ok{background:var(--ok)}.epin.sel{background:var(--accent);width:36px;height:36px}
 .estop{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;cursor:pointer}
@@ -265,6 +266,11 @@ details summary{cursor:pointer;font-weight:600}
     <label class="btn sm primary" for="entFile">📂 Cargar ruta</label><input type="file" id="entFile" accept=".xlsx,.xls,.csv" hidden>
     <span class="small muted" id="entInfo"></span>
   </div>
+  <div class="enthead" id="entTools" hidden>
+    <button class="btn sm road" id="entAqui" type="button">📍 Ordenar desde aquí</button>
+    <button class="btn sm" id="entPick" type="button">🎯 Elegir en el mapa</button>
+    <span class="small muted" id="entGps"></span>
+  </div>
   <div class="entmap" id="entMap" hidden></div>
   <div class="list" id="entList"></div>
 </section>
@@ -298,7 +304,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.19.5</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.20.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -1110,8 +1116,8 @@ const entDone=s=>{const p=entPkg(s);return s.done||(p&&p.st==='entregado')};
 async function renderEnt(){
   // La ruta se arma el día antes: vale la de hoy o la de mañana (fecha local del celular).
   const dia=d=>'Ruta '+new Date(Date.now()+d*864e5).toLocaleDateString('en-CA'),hoy=dia(0),man=dia(1);const E=S.ent,LI=$('#entList');
-  if(!E||!E.stops||!E.stops.length){$('#entMap').hidden=true;$('#entInfo').textContent=`Cargá el archivo de la ruta ("${hoy}.xlsx" o "${man}.xlsx")`;LI.innerHTML='<div class="empty">Tocá <b>📂 Cargar ruta</b> y elegí el Excel de la ruta del día. Arriba sale el mapa con las paradas en orden y abajo la lista: tocá una parada para verla en el mapa e ir con Waze o Google Maps.</div>';return}
-  const ok=E.stops.filter(entDone).length,conC=E.stops.filter(s=>s.c);
+  if(!E||!E.stops||!E.stops.length){$('#entMap').hidden=true;$('#entTools').hidden=true;$('#entInfo').textContent=`Cargá el archivo de la ruta ("${hoy}.xlsx" o "${man}.xlsx")`;LI.innerHTML='<div class="empty">Tocá <b>📂 Cargar ruta</b> y elegí el Excel de la ruta del día. Arriba sale el mapa con las paradas en orden y abajo la lista: tocá una parada para verla en el mapa e ir con Waze o Google Maps.</div>';return}
+  $('#entTools').hidden=false;const ok=E.stops.filter(entDone).length,conC=E.stops.filter(s=>s.c);
   $('#entInfo').innerHTML=`<b>${esc(E.nombre)}</b> · ${ok} de ${E.stops.length} entregadas${![hoy,man].includes(E.nombre)?' · <span style="color:var(--bad)">no es la de hoy ni la de mañana</span>':''}`;
   LI.innerHTML=E.stops.map((s,i)=>{const d=entDone(s),p=entPkg(s),nav=s.c?`https://www.google.com/maps/dir/?api=1&destination=${s.c[0]},${s.c[1]}&travelmode=driving`:'',wz=s.waze||(s.c?`https://waze.com/ul?ll=${s.c[0]},${s.c[1]}&navigate=yes`:''),wa=phoneWA(s.tel);
     return `<div class="estop${d?' ok':''}${i===ESEL?' sel':''}" data-ei="${i}"><div class="n${s.c?'':' no'}">${s.c?s.n:'?'}</div>
@@ -1122,9 +1128,11 @@ async function renderEnt(){
   try{
     if(!document.querySelector('link[data-leaflet]')){const l=document.createElement('link');l.rel='stylesheet';l.href=CSS_MAP;l.dataset.leaflet=1;document.head.appendChild(l)}
     await loadScript(LIB_MAP);
-    if(!EMAP){EMAP=L.map('entMap');L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(EMAP);EMAP.layer=L.layerGroup().addTo(EMAP);EMAP.fitted=null}
+    if(!EMAP){EMAP=L.map('entMap');L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(EMAP);EMAP.layer=L.layerGroup().addTo(EMAP);EMAP.fitted=null;EMAP.on('click',e=>{if(EMAP.pick){EMAP.pick=false;$('#entMap').style.cursor='';entOrdenar([+e.latlng.lat.toFixed(6),+e.latlng.lng.toFixed(6)],'el punto que elegiste')}})}
     EMAP.layer.clearLayers();EMAP.mk={};
-    L.polyline(conC.map(s=>s.c),{color:'#29b6f6',weight:4,opacity:.85}).addTo(EMAP.layer);
+    const ini=EPOS?EPOS.c:(E.inicio||null),pend=conC.filter(s=>!entDone(s));
+    L.polyline([...(ini&&pend.length?[ini]:[]),...pend.map(s=>s.c)],{color:'#29b6f6',weight:4,opacity:.85}).addTo(EMAP.layer);
+    entMe();
     E.stops.forEach((s,i)=>{if(!s.c)return;const m=L.marker(s.c,{icon:L.divIcon({className:'',html:`<div class="epin${entDone(s)?' ok':''}${i===ESEL?' sel':''}"><b>${s.n}</b></div>`,iconSize:[30,30],iconAnchor:[15,30]}),zIndexOffset:i===ESEL?1000:0})
       .on('click',()=>entSel(i,true)).bindPopup(`<b>${s.n}. ${esc(s.nombre)}</b>`).addTo(EMAP.layer);EMAP.mk[i]=m});
     EMAP.invalidateSize();if(EMAP.fitted!==E.at){EMAP.fitBounds(conC.map(s=>s.c),{padding:[24,24]});EMAP.fitted=E.at}
@@ -1134,11 +1142,34 @@ async function renderEnt(){
 function entSel(i,desdeMapa){ESEL=i;const s=S.ent.stops[i];renderEnt().then(()=>{
   if(s.c&&EMAP){EMAP.setView(s.c,Math.max(EMAP.getZoom(),16));EMAP.mk[i]&&EMAP.mk[i].openPopup()}
   if(desdeMapa){const el=document.querySelector(`[data-ei="${i}"]`);el&&el.scrollIntoView({behavior:'smooth',block:'center'})}})}
+// ---- Punto actual (azul) y reordenar desde donde estoy ----
+let EPOS=null,EWATCH=null;
+function entMe(){if(!EMAP||!window.L)return;const c=EPOS?EPOS.c:null;
+  if(!c){if(EMAP.me){EMAP.removeLayer(EMAP.me);EMAP.me=null}return}
+  if(!EMAP.me)EMAP.me=L.marker(c,{icon:L.divIcon({className:'',html:'<div class="mepos"></div>',iconSize:[18,18],iconAnchor:[9,9]}),zIndexOffset:2000,interactive:false}).addTo(EMAP);else EMAP.me.setLatLng(c)}
+const gpsOk=g=>{EPOS={c:[+g.coords.latitude.toFixed(6),+g.coords.longitude.toFixed(6)],acc:g.coords.accuracy};$('#entGps').textContent=`📍 Estás aquí (±${Math.round(EPOS.acc)} m)`;entMe()};
+const gpsFail=e=>{$('#entGps').innerHTML=e&&e.code===1?'Ubicación bloqueada. En iPhone: <b>Ajustes</b> &gt; <b>Privacidad</b> &gt; <b>Localización</b> &gt; <b>Sitios web de Safari</b> &gt; <b>Al usar la app</b>. O usá <b>🎯 Elegir en el mapa</b>.':'No se pudo obtener la ubicación. Usá <b>🎯 Elegir en el mapa</b>.'};
+function entVigilar(){if(EWATCH!=null||!navigator.geolocation)return;try{EWATCH=navigator.geolocation.watchPosition(gpsOk,gpsFail,{enableHighAccuracy:true,maximumAge:15000,timeout:30000})}catch(e){}}
+// Reordena las paradas que faltan con optimize() (la misma de Ruta), desde start; respeta el horario del cliente si el paquete está en la lista.
+function entOrdenar(start,desde){
+  const E=S.ent;if(!E)return;const pend=E.stops.filter(s=>s.c&&!entDone(s)),hechas=E.stops.filter(s=>s.c&&entDone(s)),sinC=E.stops.filter(s=>!s.c);
+  if(!pend.length){toast('No quedan paradas pendientes con ubicación');return}
+  const pts=[start,...pend.map(s=>s.c)],W=[null,...pend.map(s=>{const p=entPkg(s);return p?parseWin(p.horario):null})],d=new Date();
+  const ord=optimize(pts,W,d.getHours()*60+d.getMinutes(),+S.min||0,+S.vel||25,false);
+  let k=0;E.stops=[...ord.map(i=>pend[i-1]),...hechas,...sinC];E.stops.forEach(s=>{if(s.c)s.n=++k});E.inicio=start;ESEL=-1;
+  if(EMAP)EMAP.fitted=null;save();renderEnt().then(()=>{if(EMAP)EMAP.fitBounds([start,...pend.map(s=>s.c)],{padding:[24,24]})});
+  toast(`Ruta ordenada desde ${desde} (${pend.length} paradas)`);if(NUBE.on)nubeSoon();
+}
+$('#entAqui').onclick=()=>{if(!navigator.geolocation){gpsFail();return}$('#entGps').textContent='Buscando tu ubicación…';
+  navigator.geolocation.getCurrentPosition(g=>{gpsOk(g);entOrdenar(EPOS.c,'tu ubicación');entVigilar()},
+    e=>{if(e.code===1)return gpsFail(e);navigator.geolocation.getCurrentPosition(g=>{gpsOk(g);entOrdenar(EPOS.c,'tu ubicación')},gpsFail,{enableHighAccuracy:false,timeout:20000,maximumAge:120000})},
+    {enableHighAccuracy:true,timeout:15000,maximumAge:30000})};
+$('#entPick').onclick=()=>{if(!EMAP){toast('Primero cargá la ruta');return}EMAP.pick=true;$('#entMap').style.cursor='crosshair';$('#entMap').scrollIntoView({behavior:'smooth',block:'start'});toast('Tocá el mapa donde estás');};
 $('#entFile').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)entCargar(f).catch(()=>toast('No se pudo leer ese archivo'))};
 $('#entList').addEventListener('click',e=>{
   const b=e.target.closest('[data-eok]');if(b){const s=S.ent.stops[+b.dataset.eok],p=entPkg(s);if(p&&p.st!=='entregado'){openPOD(p);return}s.done=true;save();renderEnt();return}
   if(e.target.closest('a'))return;const c=e.target.closest('[data-ei]');if(c)entSel(+c.dataset.ei)});
-document.querySelector('[data-tab="entrega"]').addEventListener('click',()=>{requestAnimationFrame(renderEnt);if(NUBE.on)nubeSync().then(()=>renderEnt())}); // al abrir Entrega baja lo último de la nube
+document.querySelector('[data-tab="entrega"]').addEventListener('click',()=>{requestAnimationFrame(renderEnt);if(S.ent)entVigilar();if(NUBE.on)nubeSync().then(()=>renderEnt())}); // al abrir Entrega baja lo último de la nube
 
 // ===== Lista en la nube: los mismos paquetes en el teléfono y en la PC (rf_lista_leer / rf_lista_guardar) =====
 // S.syncVer = última versión de la nube que vio este aparato; S.baseIds = ids que había en ese momento

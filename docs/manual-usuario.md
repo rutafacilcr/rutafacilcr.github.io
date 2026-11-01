@@ -80,6 +80,8 @@ Columnas: `nombre`, `telefono`, `direccion`, `ubicacion`, `guia`, `nota`.
 4. Tocá una parada para verla en el mapa (se pone naranja y se acerca). Tocá un pin del mapa para bajar a esa parada.
 5. En cada parada: **🚗 Waze** o **🗺️ Maps** te llevan al punto, **WhatsApp** abre el chat del cliente y **✓ Entregar** abre la prueba de entrega (fotos y firma) si el paquete está en tu lista; si no, la marca como entregada. Las entregadas pasan a verde.
 6. Las paradas **sin ubicación** van al final, sin pin.
+7. **📍 Ordenar desde aquí:** toma tu ubicación (punto azul en el mapa) y reordena las paradas que faltan desde donde estás, por la ruta más corta y respetando el horario del cliente si lo tenés. Las entregadas pasan al final. Podés tocarlo otra vez a media ruta.
+8. Si el GPS no funciona (pasa en iPhone si Safari no tiene permiso), tocá **🎯 Elegir en el mapa** y luego tocá en el mapa el punto donde estás. Para dar permiso: *Ajustes > Privacidad y seguridad > Localización > Sitios web de Safari > Al usar la app*.
 
 La ruta cargada se guarda en tu cuenta (sale el aviso *Ruta subida a la nube ☁️*): si la cargás en la PC, aparece también en el teléfono al abrir *Entrega* (los dos aparatos deben tener la versión 1.19.1 o más nueva; mirá el pie y tocá *Actualizar* si hace falta).
 

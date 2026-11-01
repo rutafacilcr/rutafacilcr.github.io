@@ -144,6 +144,10 @@ update rf_ajustes set exigir_cuenta = false where id = 1;
   - **Liberar espacio a mano:** Supabase > **Storage** > **evidencias** > abrir la carpeta de un día viejo > seleccionar las fotos > **Download** (guardarlas en la PC) > **Delete**. Las carpetas se llaman por fecha (`AAAA-MM-DD`), así que se borran las más viejas primero. El registro en la tabla `entregas` se puede dejar: casi no ocupa.
   - En iPhone, si la app se usa desde Safari y no desde el ícono, Safari puede borrar los datos de la página tras ~7 días sin abrirla. Por eso Supabase es el respaldo oficial.
 
+### Ordenar desde aquí (1.20.0)
+
+Solo `index.html`. Usa el GPS del navegador (pide permiso la primera vez; en iPhone hay que permitir la ubicación a Safari) y la misma optimización de *Ruta*, todo en el celular, gratis.
+
 ### Ruta que no subía (1.19.5)
 
 Solo `index.html`. Si la nube quedaba en la misma versión que el aparato pero sin la ruta (la había pisado una versión vieja), nadie la volvía a subir. Ahora se detecta y se sube sola.
