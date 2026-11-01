@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-01
+- **1.24.1 · Hora de salida:** la hora en que terminarías se calcula desde la hora de salida (8:00 am por defecto, editable ahí mismo y la misma de *Ruta*). Si la ruta es de hoy y ya pasó esa hora, se cuenta desde ahora. Antes se contaba siempre desde la hora actual.
 - **1.24.0 · Tiempo y km de toda la ruta:** en *Entrega*, a la derecha de "Estás aquí", se muestra el tiempo estimado de la ruta completa: desde tu punto, por cada parada pendiente y hasta la última, por calle, más 3 a 5 min por entrega. También los km por calle y la hora en que terminarías. Se recalcula al entregar o al moverte.
 - **1.23.0 · Botón Entregado:** en cada parada de *Entrega*, entre Evidencia y el tiempo estimado. Al tocarlo, el número y el pin se ponen grises; con **↩ Deshacer** vuelve a pendiente.
 - **1.22.1 · Botón Evidencia:** en *Entrega*, el botón **✓ Entregar** ahora dice **📸 Evidencia**.

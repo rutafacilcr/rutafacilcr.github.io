@@ -80,7 +80,7 @@ nav.tabs .n:empty{display:none}
 .estop.ok .n{background:#9aa0a6}.estop .n.no{background:var(--muted)}
 .estop .dir{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .estop.sel .dir{-webkit-line-clamp:unset}
-.entrow #entGps{flex:0 1 auto}.entrow{flex-basis:100%;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.enttot{text-align:right;font-size:12px;line-height:1.35;color:var(--ink,inherit)}.enttot:empty{display:none}
+.entrow #entGps{flex:0 1 auto}.entrow{flex-basis:100%;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.enttot{text-align:right;font-size:12px;line-height:1.35;color:var(--ink,inherit)}.enthora{font:inherit;font-weight:700;border:1px solid var(--line);border-radius:6px;padding:0 4px;background:var(--surface);color:inherit;width:auto}
 .estop .eeta{align-self:center;font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}.estop .eeta:empty{display:none}
 .estop .acts{grid-column:2;display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
 .tpin{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font:700 13px var(--f-body);display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)}
@@ -271,7 +271,7 @@ details summary{cursor:pointer;font-weight:600}
   <div class="enthead" id="entTools" hidden>
     <button class="btn sm road" id="entAqui" type="button">📍 Ordenar desde aquí</button>
     <button class="btn sm" id="entPick" type="button">🎯 Elegir en el mapa</button>
-    <div class="entrow"><span class="small muted" id="entGps"></span><span class="enttot" id="entTot"></span></div>
+    <div class="entrow"><span class="small muted" id="entGps"></span><span class="enttot" id="entTot"><span id="totA"></span><span id="totB"><br>Salís <input type="time" id="entHora" class="enthora" aria-label="Hora de salida"> · terminás <span id="totFin"></span></span></span></div>
   </div>
   <div class="entmap" id="entMap" hidden></div>
   <div class="list" id="entList"></div>
@@ -306,7 +306,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.24.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.24.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -1168,7 +1168,7 @@ function entEta(sinPedir){
 const RTOT={k:'',at:0,busy:false,r:null};
 async function osrmCadena(k,pts){RTOT.busy=true;RTOT.at=Date.now();try{const j=await (await fetch('https://router.project-osrm.org/route/v1/driving/'+pts.map(c=>c[1]+','+c[0]).join(';')+'?overview=false')).json();
   if(j.code==='Ok'&&j.routes[0]){RTOT.k=k;RTOT.r=[j.routes[0].distance/1000,j.routes[0].duration/60];entTotal(true)}}catch(e){}finally{RTOT.busy=false}}
-function entTotal(sinPedir){const el=$('#entTot'),E=S.ent;if(!el)return;if(!E){el.textContent='';return}
+function entTotal(sinPedir){const el=$('#totA'),E=S.ent,B=$('#totB');if(!el)return;B.hidden=true;if(!E){el.textContent='';return}
   const pend=E.stops.filter(s=>s.c&&!entDone(s)),ini=EPOS?EPOS.c:E.inicio;
   if(!pend.length){el.innerHTML=E.stops.some(s=>s.c)?'<b>✓ Ruta terminada</b>':'';return}
   if(!ini){el.innerHTML='<b>⏱ Ruta:</b> falta tu ubicación';return}
@@ -1176,8 +1176,10 @@ function entTotal(sinPedir){const el=$('#entTot'),E=S.ent;if(!el)return;if(!E){e
   if(!sinPedir&&!RTOT.busy&&Date.now()-RTOT.at>10000&&(RTOT.k!==k||!RTOT.pos||hav(RTOT.pos,ini)>0.3)&&pts.length<=100){RTOT.pos=ini;osrmCadena(k,pts)}
   let km=0;for(let i=1;i<pts.length;i++)km+=hav(pts[i-1],pts[i]);let calle=false,maneja=km/18*60;
   if(RTOT.r&&RTOT.k===k&&RTOT.pos&&hav(RTOT.pos,ini)<=0.3){km=RTOT.r[0];maneja=Math.max(RTOT.r[1]*1.3,km/18*60);calle=true}
-  const n=pend.length,lo=maneja+n*3,hi=maneja+n*5,ahora=new Date(),fin=m=>hm(ahora.getHours()*60+ahora.getMinutes()+m);
-  const corto=m=>fmtT(m).replace(' min','m').replace(' h ','h ');el.innerHTML=`<b>⏱ Ruta: ${corto(lo)} – ${corto(hi)}</b><br>🛣️ ${km.toFixed(1).replace('.',',')} km · ${n} entregas<br>Terminás ${fin(lo)} – ${fin(hi)}`;
+  const n=pend.length,lo=maneja+n*3,hi=maneja+n*5,d=new Date(),ya=d.getHours()*60+d.getMinutes(),hoy=E.nombre==='Ruta '+d.toLocaleDateString('en-CA');
+  // Hora de salida: la de Ajustes (8:00 por defecto); si la ruta es de hoy y ya pasó esa hora, cuenta desde ahora
+  const t0=hoy&&ya>t0min()?ya:t0min(),fin=m=>hm(t0+m),H=$('#entHora');if(document.activeElement!==H)H.value=hoy&&ya>t0min()?String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'):(S.hora||'08:00');
+  const corto=m=>fmtT(m).replace(' min','m').replace(' h ','h ');el.innerHTML=`<b>⏱ Ruta: ${corto(lo)} – ${corto(hi)}</b><br>🛣️ ${km.toFixed(1).replace('.',',')} km · ${n} entregas`;$('#totFin').textContent=`${fin(lo)} – ${fin(hi)}`;B.hidden=false;
   el.title=`Manejo ${fmtT(maneja)} ${calle?'por calle':'aprox. en línea recta'} + 3 a 5 min por entrega`}
 function entMe(){entEta();entTotal();if(!EMAP||!window.L)return;const c=EPOS?EPOS.c:null;
   if(!c){if(EMAP.me){EMAP.removeLayer(EMAP.me);EMAP.me=null}return}
@@ -1207,6 +1209,7 @@ $('#entAqui').onclick=()=>{if(!navigator.geolocation){gpsFail();return}EAUTO=tru
     e=>{if(e.code===1)return gpsFail(e);navigator.geolocation.getCurrentPosition(g=>{gpsOk(g);entOrdenar(EPOS.c,'tu ubicación')},gpsFail,{enableHighAccuracy:false,timeout:20000,maximumAge:120000})},
     {enableHighAccuracy:true,timeout:15000,maximumAge:30000})};
 $('#entPick').onclick=()=>{if(!EMAP){toast('Primero cargá la ruta');return}EMAP.pick=true;$('#entMap').style.cursor='crosshair';$('#entMap').scrollIntoView({behavior:'smooth',block:'start'});toast('Tocá el mapa donde estás');};
+$('#entHora').onchange=e=>{if(!e.target.value)return;S.hora=e.target.value;const r=$('#r-hora');if(r)r.value=S.hora;save();entTotal(true)};
 $('#entFile').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)entCargar(f).catch(()=>toast('No se pudo leer ese archivo'))};
 $('#entList').addEventListener('click',e=>{
   const b=e.target.closest('[data-eok]');if(b){const s=S.ent.stops[+b.dataset.eok],p=entPkg(s);if(p&&p.st!=='entregado'){openPOD(p);return}s.done=true;save();renderEnt();return}
