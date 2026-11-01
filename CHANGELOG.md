@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-01
+- **1.26.2 · Etiqueta sin recargar:** si la ruta se cargó antes de la 1.25.0, la etiqueta toma lo que dice la ubicación del paquete en *Paquetes* (por ejemplo "Aplicacion" = Co-out).
 - **1.26.1 · Co-out sin recargar:** el botón **📲 Co-out** también sale en las paradas sin ubicación de una ruta cargada antes de la 1.25.0 (que dicen "Sin dato"), sin tener que volver a cargar el Excel.
 - **1.26.0 · Botón Co-out:** en las paradas Co-out, el botón **📲 Co-out** abre la app Co-out del iPhone por medio de un atajo (app Atajos) llamado "Co-out".
 - **1.25.0 · Etiqueta de ubicación:** las paradas sin ubicación ("?") muestran a la par del nombre lo que dice la columna ubicación del archivo ("Co-out" en vez de "Aplicacion", "no respode", "Vacío"). Al tocar la etiqueta podés pegar el link o las coordenadas, o tocar el punto en el mapa; la parada entra a la ruta y se reordena.
