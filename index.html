@@ -311,7 +311,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.30.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.31.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -496,7 +496,7 @@ function renderPk(){
     <div class="name">${esc(p.nombre||'(sin nombre)')} ${stChip(p)}</div>
     <div class="addr">${esc(p.dir||'Sin dirección')}${p.nota?` · <i>${esc(p.nota)}</i>`:''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
     <div class="meta"><span class="mono">${esc(p.tel||'sin teléfono')}</span>${p.guia?`<span class="mono">${esc(p.guia)}</span>`:''}<span class="pin ${c?'yes':'no'}">${c?'● Ubicación lista':'○ Falta ubicación'}</span></div>${p.pod?`<div class="ev">📷 ${p.pod.n} fotos · ${fmtDT(p.pod.at)}${p.pod.lat!=null?' · 📍 ±'+Math.round(p.pod.acc)+' m':' · sin GPS'} · ${p.pod.up?'☁️ respaldada':'⏳ sin subir'} <button class="btn sm" data-act="ev" data-id="${p.id}" style="margin-left:4px">Ver evidencia</button></div>`:''}
-    <div class="actions"><button class="btn sm primary" data-act="paste" data-id="${p.id}">📋 Pegar respuesta</button><button class="btn sm" data-act="edit" data-id="${p.id}">Editar</button>${c?`<a class="btn sm" href="${waze(c)}" target="_blank" rel="noopener">Waze</a><a class="btn sm" href="${gmaps(c)}" target="_blank" rel="noopener">Maps</a>`:''}<button class="btn sm" data-act="dev" data-id="${p.id}">${p.st==='devuelto'?'↪ Quitar devuelto':'↩ Devuelto'}</button><button class="btn sm ghost danger" data-act="del" data-id="${p.id}">Quitar</button></div>
+    <div class="actions"><button class="btn sm primary" data-act="paste" data-id="${p.id}">📋 Pegar respuesta</button><button class="btn sm" data-act="edit" data-id="${p.id}">Editar</button>${c?`<a class="btn sm" href="${waze(c)}" target="_blank" rel="noopener">Waze</a><a class="btn sm" href="${gmaps(c)}" target="_blank" rel="noopener">Maps</a>`:''}<button class="btn sm" data-act="rescan" data-id="${p.id}" title="Volver a escanear la etiqueta de este paquete">📷 Etiqueta</button><button class="btn sm" data-act="dev" data-id="${p.id}">${p.st==='devuelto'?'↪ Quitar devuelto':'↩ Devuelto'}</button><button class="btn sm ghost danger" data-act="del" data-id="${p.id}">Quitar</button></div>
   </div>`}).join('');
 }
 // Mensajes que se pueden mandar a cada cliente desde la pestaña Mensajes.
@@ -625,6 +625,7 @@ document.addEventListener('click',async e=>{
   const p=S.pk.find(x=>x.id===el.dataset.id);const a=el.dataset.act;
   if(a==='st'&&p){const i=STATUS.findIndex(s=>s[0]===p.st);const nx=STATUS[(i+1)%STATUS.length][0];if(nx==='entregado'){openPOD(p);return}p.st=nx}
   // Devuelto al almacén (por ejemplo sin dirección); tocar otra vez lo regresa al estado que tenía
+  else if(a==='rescan'&&p){scanCorregir(p);return}
   else if(a==='dev'&&p){if(p.st==='devuelto'){p.st=p.stAntes||'pendiente';delete p.stAntes;delete p.devAt;toast(`${p.nombre}: vuelve a ${SLABEL[p.st]}`)}else{p.stAntes=p.st;p.st='devuelto';p.devAt=Date.now();toast(`${p.nombre}: devuelto al almacén`)}}
   else if(a==='set'&&p){if(el.dataset.st==='entregado'&&p.st!=='entregado'){openPOD(p);return}p.st=el.dataset.st;toast(`${p.nombre}: ${SLABEL[p.st]}`)}
   else if(a==='ev'&&p){openEvidence(p);return}
@@ -870,7 +871,7 @@ $('#evClose').onclick=()=>{$('#evSheet').hidden=true;document.body.style.overflo
 const LIB_ZXING='https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';
 const LIB_OCR='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
 const loadScript=src=>(loadScript.c||(loadScript.c={}))[src]||(loadScript.c[src]=new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>{delete loadScript.c[src];rej(new Error('lib'))};document.head.appendChild(s)}));
-const SCAN={queue:[],file:null,rot:0,busy:false,cam:false,n:0,url:null,ocr:null};
+const SCAN={queue:[],file:null,rot:0,busy:false,cam:false,n:0,url:null,ocr:null,fix:null}; // fix = id del paquete que se está corrigiendo
 const scanSt=t=>$('#scanSt').textContent=t;
 function scanCanvas(file,rot){
   return new Promise((res,rej)=>{const img=new Image(),u=URL.createObjectURL(file);
@@ -945,17 +946,17 @@ function parseLabel(text,codes){
   return r;
 }
 function scanDupCheck(){const g=$('#s-guia').value.replace(/\s/g,'').toUpperCase(),el=$('#scanDup');
-  const p=g&&S.pk.find(p=>!S.ex&&(p.guia||'').replace(/\s/g,'').toUpperCase()===g);el.hidden=!p;if(p)el.textContent=`Esta guía ya está en la lista (${p.nombre||'sin nombre'}).`}
+  const p=g&&S.pk.find(p=>!S.ex&&p.id!==SCAN.fix&&(p.guia||'').replace(/\s/g,'').toUpperCase()===g);el.hidden=!p;if(p)el.textContent=`Esta guía ya está en la lista (${p.nombre||'sin nombre'}).`}
 $('#s-guia').addEventListener('input',scanDupCheck);
 function scanUI(mode){ // mode: 'wait' | 'busy' | 'review'
   $('#scanForm').hidden=mode==='wait';$('#scanSave').hidden=$('#scanRot').hidden=$('#scanSkip').hidden=mode!=='review';
   $('#scanShot').hidden=mode!=='wait';$('#scanSave').disabled=mode==='busy';
   const q=SCAN.queue.length;$('#scanCount').textContent=`Guardadas en esta tanda: ${SCAN.n}`+(q?` · faltan ${q} foto(s)`:'');
-  $('#scanSave').textContent=q?'Guardar y siguiente':(SCAN.cam?'Guardar y tomar otra':'Guardar');
+  $('#scanSave').textContent=SCAN.fix?'Guardar corrección':q?'Guardar y siguiente':(SCAN.cam?'Guardar y tomar otra':'Guardar');if(SCAN.fix)$('#scanCount').textContent='Lo que no se lea se queda como estaba.';
 }
 function openScan(){if($('#scanSheet').hidden){SCAN.n=0}$('#scanSheet').hidden=false;document.body.style.overflow='hidden';
   if(!SCAN.file){$('#scanImg').hidden=true;scanSt('Tomá la foto con la etiqueta derecha, de cerca, a la sombra y sin reflejo.');scanUI('wait')}}
-function closeScan(){$('#scanSheet').hidden=true;document.body.style.overflow='';SCAN.queue=[];SCAN.file=null;if(SCAN.url)URL.revokeObjectURL(SCAN.url);SCAN.url=null;
+function closeScan(){const fx=SCAN.fix;SCAN.fix=null;$('#scanTitle').textContent='Escanear etiquetas';if(fx)SCAN.n=0;$('#scanSheet').hidden=true;document.body.style.overflow='';SCAN.queue=[];SCAN.file=null;if(SCAN.url)URL.revokeObjectURL(SCAN.url);SCAN.url=null;
   if(SCAN.n)toast(`${SCAN.n} paquete(s) agregado(s) desde etiquetas`)}
 async function scanFile(file,rot=0){
   SCAN.file=file;SCAN.rot=rot;SCAN.busy=true;
@@ -970,7 +971,8 @@ async function scanFile(file,rot=0){
   }catch(e){fail='foto'}
   if(SCAN.file!==file)return;
   const r=parseLabel(text,codes);
-  ['guia','nombre','tel','dir'].forEach(k=>{if(r[k])$('#s-'+k).value=r[k]});scanDupCheck();
+  ['guia','nombre','tel','dir'].forEach(k=>{if(r[k])$('#s-'+k).value=r[k]});
+  const fx=SCAN.fix&&S.pk.find(x=>x.id===SCAN.fix);if(fx)['guia','nombre','tel','dir','nota'].forEach(k=>{if(!$('#s-'+k).value)$('#s-'+k).value=fx[k]||''});scanDupCheck();
   $('#scanRaw').textContent=(codes.length?'Código: '+codes.join(' · ')+'\n\n':'')+(text.trim()||'(sin texto)');
   const got=['guia','nombre','tel','dir'].filter(k=>r[k]).length;
   scanSt(fail==='foto'?'No se pudo abrir esa foto. Tomala de nuevo.':fail&&!got?'No se pudo cargar el lector. Revisá el internet y tocá "Girar y leer de nuevo", o llená los datos a mano.':
@@ -982,6 +984,8 @@ function scanNext(){
   if(f){scanFile(f);return}
   SCAN.file=null;$('#scanImg').hidden=true;scanSt(SCAN.n?`Van ${SCAN.n}. Tomá la siguiente foto o tocá Terminar.`:'Tomá la foto con la etiqueta derecha, de cerca, a la sombra y sin reflejo.');scanUI('wait');
 }
+// Corregir un paquete: abre la cámara y al guardar reemplaza los datos de ese paquete (no agrega uno nuevo)
+function scanCorregir(p){SCAN.fix=p.id;SCAN.cam=false;SCAN.queue=[];SCAN.file=null;$('#scanTitle').textContent=`Corregir etiqueta: ${p.nombre||p.guia||'paquete'}`;openScan();$('#scanCam').click()}
 $('#scanCamBtn').onclick=()=>{SCAN.cam=true;openScan();$('#scanCam').click()};
 $('#scanShot').onclick=()=>{SCAN.cam=true;$('#scanCam').click()};
 $('#scanCam').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f){openScan();scanFile(f)}};
@@ -993,6 +997,7 @@ $('#scanSave').onclick=()=>{
   if(SCAN.busy)return;
   const v=['nombre','tel','dir','','guia','nota'].map(k=>k?$('#s-'+k).value:'');
   if(!v[0].trim()&&!v[1].trim()&&!v[4].trim()){toast('Poné al menos el nombre, el teléfono o la guía');return}
+  if(SCAN.fix){const p=S.pk.find(x=>x.id===SCAN.fix);if(p){const n=mkPkg(v);Object.assign(p,{nombre:n.nombre,tel:n.tel,dir:n.dir,guia:n.guia,nota:n.nota});S.route=null;save();render();toast(`Corregido: ${p.nombre||p.guia}`)}closeScan();return}
   const again=!SCAN.queue.length&&SCAN.cam;
   if(again)$('#scanCam').click(); // abrir la cámara dentro del toque (iPhone lo exige)
   if(S.ex){S.pk=[];S.ex=false}

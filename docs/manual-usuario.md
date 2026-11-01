@@ -266,3 +266,8 @@ En *Paquetes*, cada paquete tiene el botón **↩ Devuelto**. Usalo cuando el pa
 ### Orden de la lista de Paquetes (1.30.0)
 
 Arriba salen los paquetes que faltan (pendientes, confirmados, sin respuesta), en el orden en que los agregaste. Los **entregados** bajan al final y los **devueltos** quedan de últimos.
+
+
+### Corregir un paquete mal escaneado (1.31.0)
+
+En *Paquetes*, tocá **📷 Etiqueta** en el paquete que quedó mal. Se abre la cámara: tomale foto a la etiqueta otra vez. La app vuelve a leer guía, nombre, teléfono y dirección; lo que no logre leer se queda con el dato que ya tenía. Revisá, corregí a mano si hace falta y tocá **Guardar corrección**. Se actualiza ese mismo paquete, sin crear uno nuevo, y conserva su estado, su ubicación y su evidencia.
