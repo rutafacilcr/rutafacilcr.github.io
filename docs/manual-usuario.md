@@ -86,7 +86,7 @@ Desde la versión 1.18.0 la lista se guarda en tu cuenta. Si entrás con tu núm
 2. En cada cliente tocá **Abrir WhatsApp** > **Enviar** > volvé a la app.
 3. **Primer mensaje, sin links:** *"Hola Sofía, soy Victor, le llevo su paquete de Temu el viernes. ¿A qué hora le queda bien recibirlo? Si puede, mándeme su ubicación por aquí 📍 ¡Gracias!"*
 4. **Cuando el cliente conteste**, en ese cliente elegí **2. Formulario** (arriba del texto) y tocá **Abrir WhatsApp**. Le llega un segundo mensaje corto: *"Gracias Sofía. Para no fallarle con la entrega, ¿me ayuda marcando aquí su hora y las señas de la casa? Es 1 minuto: …"*. Como ya habló con vos, confía más en el link.
-5. En el formulario el cliente marca horario y señas. Para la ubicación, lo principal es **mandarla por WhatsApp** (clip 📎 > Ubicación); también puede pegar un link o usar el GPS.
+5. En el formulario el cliente marca horario y señas. Al enviarlo ve *¡Listo, gracias!* con el aviso **🪪 Recuerde que para la entrega debe presentar la cédula.** Para la ubicación, lo principal es **mandarla por WhatsApp** (clip 📎 > Ubicación); también puede pegar un link o usar el GPS.
 6. Lo que llene **entra solo** a la app (revisa cada minuto, o tocá **Revisar respuestas ahora**) y queda **Confirmado** con 🕓 horario y 🏠 señas.
 7. **Cuando el cliente responde por el chat (lo más común):** en WhatsApp mantené presionado su mensaje (la hora, la ubicación o los dos seleccionados) > **Copiar**. En la app tocá **📋 Pegar respuesta** en ese cliente. La app saca sola la **hora** y la **ubicación** y lo deja **Confirmado**. Si el iPhone pregunta "Permitir pegar", tocá **Permitir**. Si la ubicación no se puede copiar del chat, abrila, tocá **Compartir** > **Copiar** y volvé a tocar **📋 Pegar respuesta**.
 

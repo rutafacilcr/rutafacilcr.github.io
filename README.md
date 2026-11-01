@@ -2,7 +2,7 @@
 
 # RutaFácil CR
 
-Herramienta web para repartidores de paquetes en Costa Rica. Cargás la lista de entregas del día, le mandás a cada cliente un WhatsApp con el mensaje ya escrito, el cliente confirma su horario y ubicación en un formulario, y la app arma la ruta más corta.
+Herramienta web para repartidores de paquetes en Costa Rica. Cargás la lista de entregas del día, le mandás a cada cliente un WhatsApp con el mensaje ya escrito, el cliente confirma su horario y ubicación en un formulario (que le recuerda presentar la cédula), y la app arma la ruta más corta.
 
 **Usar la app:** https://rutafacilcr.github.io/
 

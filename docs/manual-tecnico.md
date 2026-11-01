@@ -144,6 +144,10 @@ update rf_ajustes set exigir_cuenta = false where id = 1;
   - **Liberar espacio a mano:** Supabase > **Storage** > **evidencias** > abrir la carpeta de un día viejo > seleccionar las fotos > **Download** (guardarlas en la PC) > **Delete**. Las carpetas se llaman por fecha (`AAAA-MM-DD`), así que se borran las más viejas primero. El registro en la tabla `entregas` se puede dejar: casi no ocupa.
   - En iPhone, si la app se usa desde Safari y no desde el ícono, Safari puede borrar los datos de la página tras ~7 días sin abrirla. Por eso Supabase es el respaldo oficial.
 
+### Aviso de cédula (1.18.3)
+
+Solo `entrega.html` (pantalla final del formulario). No toca Supabase.
+
 ### Lista en la nube (1.18.0)
 
 **Hay que volver a correr `supabase.sql`** (SQL Editor > New query > pegar todo > Run). Crea la tabla `rf_listas` (un registro JSON por cuenta, con RLS y sin políticas) y las funciones `rf_lista_leer()` y `rf_lista_guardar(p_datos, p_version)`, que llaman `rf_exigir_licencia()` y solo responden a una sesión con cuenta. Mientras no se corra, la app sigue funcionando solo en el aparato y el pie dice *☁️ sin activar: falta correr supabase.sql*.
