@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-01
+- **1.25.0 · Etiqueta de ubicación:** las paradas sin ubicación ("?") muestran a la par del nombre lo que dice la columna ubicación del archivo ("Co-out" en vez de "Aplicacion", "no respode", "Vacío"). Al tocar la etiqueta podés pegar el link o las coordenadas, o tocar el punto en el mapa; la parada entra a la ruta y se reordena.
 - **1.24.3 · Inicio y fin:** el resumen de la ruta muestra la hora de inicio (la hora actual, se refresca cada minuto) y la hora estimada de fin.
 - **1.24.2 · Fin desde ahora:** se quitó la hora de salida fija de la 1.24.1. La hora de fin vuelve a contarse desde la hora actual y dice "Si salís ya: terminás …".
 - **1.24.0 · Tiempo y km de toda la ruta:** en *Entrega*, a la derecha de "Estás aquí", se muestra el tiempo estimado de la ruta completa: desde tu punto, por cada parada pendiente y hasta la última, por calle, más 3 a 5 min por entrega. También los km por calle y la hora en que terminarías. Se recalcula al entregar o al moverte.

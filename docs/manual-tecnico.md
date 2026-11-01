@@ -146,6 +146,8 @@ update rf_ajustes set exigir_cuenta = false where id = 1;
 
 ### Ordenar desde aquí (1.20.0) y orden automático (1.20.1)
 
+Paradas sin ubicación (1.25.0): `entCargar` guarda el texto de la columna ubicación en `s.ub`; no cambia nada en Supabase (va dentro de `S.ent`).
+
 Total de la ruta (1.24.0; la 1.24.1 se revirtió en la 1.24.2). La hora de inicio es la hora actual del celular (se refresca cada minuto) y la de fin es inicio + total. una consulta a OSRM `route/v1/driving` (`overview=false`) con tu punto y las paradas pendientes en orden. Se repite solo si cambian las pendientes o te movés más de 300 m, con un mínimo de 10 s entre consultas. Si falla, usa línea recta ×1,35.
 
 Orden por calle (1.22.0): `entOrdenar` pide a OSRM la matriz completa de tiempos (`table/v1/driving` con todas las paradas pendientes más tu punto, máximo 100 puntos y 8 s de espera). Si falla, ordena con línea recta.

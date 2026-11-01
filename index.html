@@ -80,6 +80,7 @@ nav.tabs .n:empty{display:none}
 .estop.ok .n{background:#9aa0a6}.estop .n.no{background:var(--muted)}
 .estop .dir{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .estop.sel .dir{-webkit-line-clamp:unset}
+.eub{font:600 11px var(--f-body);border:1px dashed var(--muted);border-radius:999px;padding:1px 8px;background:transparent;color:var(--muted);cursor:pointer;vertical-align:1px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .entrow #entGps{flex:0 1 auto}.entrow{flex-basis:100%;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.enttot{text-align:right;font-size:12px;line-height:1.35;color:var(--ink,inherit)}.enttot:empty{display:none}
 .estop .eeta{align-self:center;font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}.estop .eeta:empty{display:none}
 .estop .acts{grid-column:2;display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
@@ -306,7 +307,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.24.3</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.25.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -1108,7 +1109,7 @@ async function entCargar(file){
   const stops=[];
   for(let r=ref.s.r+1;r<=ref.e.r;r++){const g=k=>C[k]<0?'':val(r,C[k]+ref.s.c);if(!g('nombre')&&!g('tel'))continue;
     const u=C.ubic<0?'':(link(r,C.ubic+ref.s.c)||g('ubic')),wz=C.waze<0?'':link(r,C.waze+ref.s.c);const c=parseCoord(u)||parseCoord(wz)||null;
-    stops.push({n:/^\d+$/.test(g('n'))?+g('n'):null,nombre:tidyName(g('nombre')),tel:g('tel'),dir:g('dir'),guia:g('guia'),nota:g('nota'),c,waze:wz,done:false})}
+    stops.push({n:/^\d+$/.test(g('n'))?+g('n'):null,nombre:tidyName(g('nombre')),tel:g('tel'),dir:g('dir'),guia:g('guia'),nota:g('nota'),c,waze:wz,done:false,...(c?{}:{ub:C.ubic<0?'':g('ubic')})})}
   if(!stops.length){toast('El archivo no trae paradas');return}
   let k=0;stops.forEach(s=>{if(s.c&&s.n==null)s.n=null});stops.sort((a,b)=>(a.c?0:1)-(b.c?0:1)||(a.n??1e9)-(b.n??1e9));stops.forEach(s=>{if(s.c)s.n=++k});
   S.ent={nombre:file.name.replace(/\.[^.]+$/,''),at:Date.now(),stops};ESEL=-1;save();renderEnt();if(NUBE.on)nubeSync(true).then(()=>toast(S.dirty?'La ruta queda en este aparato; se sube cuando haya internet':'Ruta subida a la nube ☁️'));toast(`${stops.length} paradas cargadas`);
@@ -1124,14 +1125,14 @@ async function renderEnt(){
   $('#entInfo').innerHTML=`<b>${esc(E.nombre)}</b> · ${ok} de ${E.stops.length} entregadas${![hoy,man].includes(E.nombre)?' · <span style="color:var(--bad)">no es la de hoy ni la de mañana</span>':''}`;
   LI.innerHTML=E.stops.map((s,i)=>{const d=entDone(s),p=entPkg(s),nav=s.c?`https://www.google.com/maps/dir/?api=1&destination=${s.c[0]},${s.c[1]}&travelmode=driving`:'',wz=s.waze||(s.c?`https://waze.com/ul?ll=${s.c[0]},${s.c[1]}&navigate=yes`:''),wa=phoneWA(s.tel);
     return `<div class="estop${d?' ok':''}${i===ESEL?' sel':''}" data-ei="${i}"><div class="n${s.c?'':' no'}">${s.c?s.n:'?'}</div>
-    <div><b>${esc(s.nombre)}</b>${d?' <span class="small" style="color:var(--ok);font-weight:700">✓ entregado</span>':''}<div class="small muted dir">${s.c?'':'<b>Sin ubicación</b> · '}${esc(s.dir||'')}</div>${s.nota?`<div class="small">📝 ${esc(s.nota)}</div>`:''}</div>
+    <div><b>${esc(s.nombre)}</b>${s.c?'':` <button class="eub" type="button" data-eub="${i}" title="Lo que dice la columna ubicación del archivo. Tocá para agregar la ubicación">📍 ${esc(s.ub===undefined?'Sin dato':/^aplicaci[oó]n$/i.test(s.ub.trim())?'Co-out':(s.ub||'Vacío'))}</button>`}${d?' <span class="small" style="color:var(--ok);font-weight:700">✓ entregado</span>':''}<div class="small muted dir">${s.c?'':'<b>Sin ubicación</b> · '}${esc(s.dir||'')}</div>${s.nota?`<div class="small">📝 ${esc(s.nota)}</div>`:''}</div>
     <div class="acts">${wz?`<a class="btn sm primary" href="${wz}" target="_blank" rel="noopener">🚗 Waze</a>`:''}${nav?`<a class="btn sm" href="${nav}" target="_blank" rel="noopener">🗺️ Maps</a>`:''}${wa?`<a class="btn sm" href="https://wa.me/${wa}" target="_blank" rel="noopener">WhatsApp</a>`:''}
       ${d?(s.done?`<button class="btn sm ghost" type="button" data-eundo="${i}">↩ Deshacer</button>`:''):`${p?`<button class="btn sm" type="button" data-eok="${i}">📸 Evidencia</button>`:''}<button class="btn sm" type="button" data-edone="${i}">✓ Entregado</button>${s.c?`<span class="eeta" data-eta="${i}"></span>`:''}`}</div></div>`}).join('');
   $('#entMap').hidden=!conC.length;if(!conC.length||$('#v-entrega').hidden)return;
   try{
     if(!document.querySelector('link[data-leaflet]')){const l=document.createElement('link');l.rel='stylesheet';l.href=CSS_MAP;l.dataset.leaflet=1;document.head.appendChild(l)}
     await loadScript(LIB_MAP);
-    if(!EMAP){EMAP=L.map('entMap');L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(EMAP);EMAP.layer=L.layerGroup().addTo(EMAP);EMAP.fitted=null;EMAP.on('click',e=>{if(EMAP.pick){EMAP.pick=false;$('#entMap').style.cursor='';entOrdenar([+e.latlng.lat.toFixed(6),+e.latlng.lng.toFixed(6)],'el punto que elegiste')}})}
+    if(!EMAP){EMAP=L.map('entMap');L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(EMAP);EMAP.layer=L.layerGroup().addTo(EMAP);EMAP.fitted=null;EMAP.on('click',e=>{if(EMAP.pickStop!=null){const i=EMAP.pickStop;EMAP.pickStop=null;$('#entMap').style.cursor='';entPonerC(i,[+e.latlng.lat.toFixed(6),+e.latlng.lng.toFixed(6)]);return}if(EMAP.pick){EMAP.pick=false;$('#entMap').style.cursor='';entOrdenar([+e.latlng.lat.toFixed(6),+e.latlng.lng.toFixed(6)],'el punto que elegiste')}})}
     EMAP.layer.clearLayers();EMAP.mk={};
     const ini=EPOS?EPOS.c:(E.inicio||null),pend=conC.filter(s=>!entDone(s));
     L.polyline([...(ini&&pend.length?[ini]:[]),...pend.map(s=>s.c)],{color:'#29b6f6',weight:4,opacity:.85}).addTo(EMAP.layer);
@@ -1208,9 +1209,17 @@ $('#entAqui').onclick=()=>{if(!navigator.geolocation){gpsFail();return}EAUTO=tru
     e=>{if(e.code===1)return gpsFail(e);navigator.geolocation.getCurrentPosition(g=>{gpsOk(g);entOrdenar(EPOS.c,'tu ubicación')},gpsFail,{enableHighAccuracy:false,timeout:20000,maximumAge:120000})},
     {enableHighAccuracy:true,timeout:15000,maximumAge:30000})};
 $('#entPick').onclick=()=>{if(!EMAP){toast('Primero cargá la ruta');return}EMAP.pick=true;$('#entMap').style.cursor='crosshair';$('#entMap').scrollIntoView({behavior:'smooth',block:'start'});toast('Tocá el mapa donde estás');};
+// Parada sin ubicación: pegar link/coordenadas o tocar el mapa; entra a la ruta y se reordena desde tu punto
+function entPonerC(i,c){const s=S.ent.stops[i];s.c=c;delete s.ub;s.n=Math.max(0,...S.ent.stops.filter(x=>x.c&&x!==s).map(x=>x.n||0))+1;
+  const sinC=S.ent.stops.filter(x=>!x.c);S.ent.stops=[...S.ent.stops.filter(x=>x.c),...sinC];
+  toast(`Ubicación agregada a ${s.nombre}`);if(EPOS)entOrdenar(EPOS.c,'donde estás');else{save();renderEnt()}}
+function entUbicar(i){const s=S.ent.stops[i];const t=prompt(`Ubicación de ${s.nombre}\nPegá el link de Google Maps o Waze, o las coordenadas.\nDejalo vacío para tocar el punto en el mapa.`,'');if(t===null)return;
+  if(t.trim()){const c=parseCoord(t.trim());if(!c){toast('No reconocí esa ubicación. Probá con el link completo o las coordenadas');return}entPonerC(i,c);return}
+  if(!EMAP){toast('Primero tiene que verse el mapa');return}EMAP.pickStop=i;$('#entMap').style.cursor='crosshair';$('#entMap').scrollIntoView({behavior:'smooth',block:'start'});toast(`Tocá el mapa donde vive ${s.nombre}`)}
 $('#entFile').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)entCargar(f).catch(()=>toast('No se pudo leer ese archivo'))};
 $('#entList').addEventListener('click',e=>{
   const b=e.target.closest('[data-eok]');if(b){const s=S.ent.stops[+b.dataset.eok],p=entPkg(s);if(p&&p.st!=='entregado'){openPOD(p);return}s.done=true;save();renderEnt();return}
+  const bub=e.target.closest('[data-eub]');if(bub){entUbicar(+bub.dataset.eub);return}
   const bd=e.target.closest('[data-edone]');if(bd){S.ent.stops[+bd.dataset.edone].done=true;save();renderEnt();toast('Parada marcada como entregada');return}
   const bu=e.target.closest('[data-eundo]');if(bu){S.ent.stops[+bu.dataset.eundo].done=false;save();renderEnt();toast('Listo, la parada vuelve a pendiente');return}
   if(e.target.closest('a'))return;const c=e.target.closest('[data-ei]');if(c)entSel(+c.dataset.ei)});
