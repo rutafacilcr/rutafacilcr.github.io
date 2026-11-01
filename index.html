@@ -310,7 +310,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.27.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.28.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -1119,7 +1119,8 @@ async function entCargar(file){
   S.ent={nombre:file.name.replace(/\.[^.]+$/,''),at:Date.now(),stops};ESEL=-1;save();renderEnt();if(NUBE.on)nubeSync(true).then(()=>toast(S.dirty?'La ruta queda en este aparato; se sube cuando haya internet':'Ruta subida a la nube ☁️'));toast(`${stops.length} paradas cargadas`);
   EAUTO=false;if(EPOS&&EPOS.acc<500){EAUTO=true;entOrdenar(EPOS.c,'donde estás')}else entVigilar(); // se ordena sola desde tu punto apenas haya GPS
 }
-const entPkg=s=>S.pk.find(p=>(s.guia&&p.guia&&p.guia.replace(/\s/g,'')===s.guia.replace(/\s/g,''))||(s.tel&&phoneWA(p.tel)&&phoneWA(p.tel)===phoneWA(s.tel)));
+// Paquete de la lista que corresponde a la parada: por guía o teléfono; si no, por el mismo nombre (sin tildes ni mayúsculas)
+const entPkg=s=>S.pk.find(p=>(s.guia&&p.guia&&p.guia.replace(/\s/g,'')===s.guia.replace(/\s/g,''))||(s.tel&&phoneWA(p.tel)&&phoneWA(p.tel)===phoneWA(s.tel)))||(s.nombre?S.pk.find(p=>p.nombre&&sinTilde(p.nombre).replace(/\s+/g,' ').trim()===sinTilde(s.nombre).replace(/\s+/g,' ').trim()):undefined);
 const entDone=s=>{const p=entPkg(s);return s.done||(p&&p.st==='entregado')};
 async function renderEnt(){
   // La ruta se arma el día antes: vale la de hoy o la de mañana (fecha local del celular).
@@ -1234,8 +1235,12 @@ $('#entFile').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)entC
 $('#entList').addEventListener('click',e=>{
   const b=e.target.closest('[data-eok]');if(b){const s=S.ent.stops[+b.dataset.eok],p=entPkg(s);if(p&&p.st!=='entregado'){openPOD(p);return}s.done=true;save();renderEnt();return}
   const bub=e.target.closest('[data-eub]');if(bub){entUbicar(+bub.dataset.eub);return}
-  const bd=e.target.closest('[data-edone]');if(bd){S.ent.stops[+bd.dataset.edone].done=true;save();renderEnt();toast('Parada marcada como entregada');return}
-  const bu=e.target.closest('[data-eundo]');if(bu){S.ent.stops[+bu.dataset.eundo].done=false;save();renderEnt();toast('Listo, la parada vuelve a pendiente');return}
+  const bd=e.target.closest('[data-edone]');if(bd){const s=S.ent.stops[+bd.dataset.edone],p=entPkg(s);s.done=true;
+    // También en Paquetes: el mismo paquete pasa a entregado (se guarda el estado anterior por si se deshace)
+    if(p&&p.st!=='entregado'){s.prevSt=p.st;s.pkId=p.id;p.st='entregado';p.entAt=Date.now()}
+    save();render();toast(p?`Entregado, también en Paquetes (${p.nombre})`:'Parada marcada como entregada');return}
+  const bu=e.target.closest('[data-eundo]');if(bu){const s=S.ent.stops[+bu.dataset.eundo];s.done=false;const p=s.pkId&&S.pk.find(x=>x.id===s.pkId);
+    if(p&&p.st==='entregado'&&!p.pod){p.st=s.prevSt||'confirmado';delete p.entAt}delete s.prevSt;delete s.pkId;save();render();toast('Listo, la parada vuelve a pendiente');return}
   if(e.target.closest('a'))return;const c=e.target.closest('[data-ei]');if(c)entSel(+c.dataset.ei)});
 document.querySelector('[data-tab="entrega"]').addEventListener('click',()=>{requestAnimationFrame(renderEnt);if(S.ent)entVigilar();if(NUBE.on)nubeSync().then(()=>renderEnt())}); // al abrir Entrega baja lo último de la nube
 

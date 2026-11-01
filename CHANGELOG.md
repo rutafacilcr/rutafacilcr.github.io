@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-01
+- **1.28.0 · Entregado también en Paquetes:** al tocar **✓ Entregado** en *Entrega*, el mismo paquete (por guía, teléfono o nombre) queda como entregado en *Paquetes* y se sincroniza. **↩ Deshacer** lo devuelve al estado que tenía.
 - **1.27.1 · Derechos:** debajo del pie de la app y del Panel, en letra pequeña: "© 2026. InfolinkCR todos los derechos reservados."
 - **1.27.0 · Lupa en Entrega:** debajo del resumen de la ruta (arriba del mapa) hay un buscador. Escribís parte del nombre (sin importar tildes), el teléfono o la guía y te lleva a esa parada en el mapa y en la lista; Enter pasa a la siguiente si hay varias.
 - **1.26.4 · Botones ordenados:** cada parada muestra en la primera fila Waze, Maps y WhatsApp; en la segunda el tiempo estimado; en la tercera Evidencia, Co-out y Entregado, en una sola línea.

@@ -146,6 +146,8 @@ update rf_ajustes set exigir_cuenta = false where id = 1;
 
 ### Ordenar desde aquí (1.20.0) y orden automático (1.20.1)
 
+Entregado en Paquetes (1.28.0): cambia `st` del paquete en `S.pk`, que se sincroniza con `rf_listas` como siempre. No hay cambios en `supabase.sql`.
+
 Pie con derechos (1.27.1): texto fijo en `index.html` y `admin.html`.
 
 Lupa (1.27.0): búsqueda local en el celular, no consulta a ningún servidor.
