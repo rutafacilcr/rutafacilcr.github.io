@@ -256,3 +256,8 @@ El panel está en https://rutafacilcr.github.io/admin.html (o **Panel**, al fina
 
 En **Ajustes** van el número SINPE que ven los repartidores, el precio, los días de gracia y el interruptor **Exigir cuenta activa** (ver manual técnico).
 
+
+
+### Devolver un paquete al almacén (1.29.0)
+
+En *Paquetes*, cada paquete tiene el botón **↩ Devuelto**. Usalo cuando el paquete no se va a entregar y vuelve al almacén, por ejemplo porque no tiene dirección. Queda con la etiqueta gris *Devuelto*, ya no entra en *Calcular mejor ruta* y arriba se cuenta en **devueltos**. Si te equivocaste, tocá **↪ Quitar devuelto** y vuelve al estado que tenía.

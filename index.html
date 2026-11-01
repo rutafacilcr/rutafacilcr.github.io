@@ -133,6 +133,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);outline-
 .st-noresponde{background:var(--warn-bg);color:var(--warn)}
 .st-entregado{background:var(--ok);color:var(--surface)}
 .st-fallido{background:var(--bad-bg);color:var(--bad)}
+.st-devuelto{background:#e6e7e9;color:#555b63}
 .pin{font-size:12px;font-weight:600}
 .pin.yes{color:var(--ok)} .pin.no{color:var(--warn)}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
@@ -310,7 +311,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.28.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.29.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -387,7 +388,7 @@ details summary{cursor:pointer;font-weight:600}
 
 <script>
 const KEY='rutafacil-cr-v1';
-const STATUS=[['pendiente','Pendiente'],['confirmado','Confirmado'],['noresponde','No responde'],['entregado','Entregado'],['fallido','No se entregó']];
+const STATUS=[['pendiente','Pendiente'],['confirmado','Confirmado'],['noresponde','No responde'],['entregado','Entregado'],['fallido','No se entregó'],['devuelto','Devuelto']];
 const SLABEL=Object.fromEntries(STATUS);
 const tomorrow=()=>{const d=new Date();d.setDate(d.getDate()+1);return d.toLocaleDateString('es-CR',{weekday:'long',day:'numeric',month:'long'})};
 const CEDULA='Recuerde que para la entrega debe presentar la cédula.';
@@ -482,7 +483,7 @@ function stChip(p){return `<button class="chip st-${p.st}" data-act="st" data-id
 function renderStats(){
   const c=k=>S.pk.filter(p=>p.st===k).length;
   const sinPin=S.pk.filter(p=>!parseCoord(p.ubic)).length;
-  $('#stats').innerHTML=[[S.pk.length,'paquetes'],[c('confirmado'),'confirmados'],[c('entregado'),'entregados'],[sinPin,'sin ubicación']].map(([n,l])=>`<div class="stat"><b>${n}</b><span>${l}</span></div>`).join('');
+  $('#stats').innerHTML=[[S.pk.length,'paquetes'],[c('confirmado'),'confirmados'],[c('entregado'),'entregados'],...(c('devuelto')?[[c('devuelto'),'devueltos']]:[]),[sinPin,'sin ubicación']].map(([n,l])=>`<div class="stat"><b>${n}</b><span>${l}</span></div>`).join('');
   $('#n-pk').textContent=S.pk.length||'';
 }
 function renderPk(){
@@ -493,7 +494,7 @@ function renderPk(){
     <div class="name">${esc(p.nombre||'(sin nombre)')} ${stChip(p)}</div>
     <div class="addr">${esc(p.dir||'Sin dirección')}${p.nota?` · <i>${esc(p.nota)}</i>`:''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
     <div class="meta"><span class="mono">${esc(p.tel||'sin teléfono')}</span>${p.guia?`<span class="mono">${esc(p.guia)}</span>`:''}<span class="pin ${c?'yes':'no'}">${c?'● Ubicación lista':'○ Falta ubicación'}</span></div>${p.pod?`<div class="ev">📷 ${p.pod.n} fotos · ${fmtDT(p.pod.at)}${p.pod.lat!=null?' · 📍 ±'+Math.round(p.pod.acc)+' m':' · sin GPS'} · ${p.pod.up?'☁️ respaldada':'⏳ sin subir'} <button class="btn sm" data-act="ev" data-id="${p.id}" style="margin-left:4px">Ver evidencia</button></div>`:''}
-    <div class="actions"><button class="btn sm primary" data-act="paste" data-id="${p.id}">📋 Pegar respuesta</button><button class="btn sm" data-act="edit" data-id="${p.id}">Editar</button>${c?`<a class="btn sm" href="${waze(c)}" target="_blank" rel="noopener">Waze</a><a class="btn sm" href="${gmaps(c)}" target="_blank" rel="noopener">Maps</a>`:''}<button class="btn sm ghost danger" data-act="del" data-id="${p.id}">Quitar</button></div>
+    <div class="actions"><button class="btn sm primary" data-act="paste" data-id="${p.id}">📋 Pegar respuesta</button><button class="btn sm" data-act="edit" data-id="${p.id}">Editar</button>${c?`<a class="btn sm" href="${waze(c)}" target="_blank" rel="noopener">Waze</a><a class="btn sm" href="${gmaps(c)}" target="_blank" rel="noopener">Maps</a>`:''}<button class="btn sm" data-act="dev" data-id="${p.id}">${p.st==='devuelto'?'↪ Quitar devuelto':'↩ Devuelto'}</button><button class="btn sm ghost danger" data-act="del" data-id="${p.id}">Quitar</button></div>
   </div>`}).join('');
 }
 // Mensajes que se pueden mandar a cada cliente desde la pestaña Mensajes.
@@ -570,7 +571,7 @@ const t0min=()=>{const m=(S.hora||'08:00').match(/(\d{1,2}):(\d{2})/);return m?+
 function calcRoute(){
   const start=parseCoord(S.start);
   if(!start){toast('Poné un punto de salida válido (coordenadas o link)');return}
-  const pool=S.pk.filter(p=>p.st!=='entregado'&&p.st!=='fallido'&&(S.filter==='todos'||p.st==='confirmado'));
+  const pool=S.pk.filter(p=>p.st!=='entregado'&&p.st!=='fallido'&&p.st!=='devuelto'&&(S.filter==='todos'||p.st==='confirmado'));
   const withC=pool.filter(p=>parseCoord(p.ubic)),noC=pool.filter(p=>!parseCoord(p.ubic));
   const pts=[start,...withC.map(p=>parseCoord(p.ubic))],W=[null,...withC.map(p=>parseWin(p.horario))];
   $('#routeBtn').textContent='Calculando…';
@@ -621,6 +622,8 @@ document.addEventListener('click',async e=>{
   const el=e.target.closest('[data-act]');if(!el)return;
   const p=S.pk.find(x=>x.id===el.dataset.id);const a=el.dataset.act;
   if(a==='st'&&p){const i=STATUS.findIndex(s=>s[0]===p.st);const nx=STATUS[(i+1)%STATUS.length][0];if(nx==='entregado'){openPOD(p);return}p.st=nx}
+  // Devuelto al almacén (por ejemplo sin dirección); tocar otra vez lo regresa al estado que tenía
+  else if(a==='dev'&&p){if(p.st==='devuelto'){p.st=p.stAntes||'pendiente';delete p.stAntes;delete p.devAt;toast(`${p.nombre}: vuelve a ${SLABEL[p.st]}`)}else{p.stAntes=p.st;p.st='devuelto';p.devAt=Date.now();toast(`${p.nombre}: devuelto al almacén`)}}
   else if(a==='set'&&p){if(el.dataset.st==='entregado'&&p.st!=='entregado'){openPOD(p);return}p.st=el.dataset.st;toast(`${p.nombre}: ${SLABEL[p.st]}`)}
   else if(a==='ev'&&p){openEvidence(p);return}
   else if(a==='paste'&&p){pasteReply(p);return}
