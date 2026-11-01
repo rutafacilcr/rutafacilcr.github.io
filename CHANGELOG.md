@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-01
+- **1.29.1 · Entregado llega a Paquetes:** las paradas marcadas como entregadas antes de la 1.28, o desde otro aparato, ahora también pasan su paquete a *Entregado* al abrir la app. La guía se compara sin importar si el escáner leyó O en vez de 0 (JCROO… = JCR00…).
 - **1.29.0 · Devuelto:** en *Paquetes*, el botón **↩ Devuelto** marca el paquete como devuelto al almacén (por ejemplo, si no tiene dirección). Sale del cálculo de ruta y se cuenta aparte; **↪ Quitar devuelto** lo regresa al estado que tenía.
 - **1.28.0 · Entregado también en Paquetes:** al tocar **✓ Entregado** en *Entrega*, el mismo paquete (por guía, teléfono o nombre) queda como entregado en *Paquetes* y se sincroniza. **↩ Deshacer** lo devuelve al estado que tenía.
 - **1.27.1 · Derechos:** debajo del pie de la app y del Panel, en letra pequeña: "© 2026. InfolinkCR todos los derechos reservados."
