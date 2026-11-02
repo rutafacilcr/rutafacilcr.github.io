@@ -338,7 +338,7 @@ details summary{cursor:pointer;font-weight:600}
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.62.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.63.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -698,23 +698,29 @@ document.querySelectorAll('nav.tabs [role=tab]').forEach(b=>b.onclick=()=>{
 document.addEventListener('click',async e=>{
   const el=e.target.closest('[data-act]');if(!el)return;
   const p=S.pk.find(x=>x.id===el.dataset.id);const a=el.dataset.act;
-  if(a==='st'&&p){const i=STATUS.findIndex(s=>s[0]===p.st);const nx=STATUS[(i+1)%STATUS.length][0];if(nx==='entregado'){openPOD(p);return}p.st=nx}
+  if(a==='st'&&p){const i=STATUS.findIndex(s=>s[0]===p.st);const nx=STATUS[(i+1)%STATUS.length][0];if(nx==='entregado'){openPOD(p);return}
+    if((p.st==='entregado'||p.st==='devuelto')&&!confirm(`${p.nombre||'Este paquete'} está ${SLABEL[p.st].toLowerCase()}. ¿Cambiarlo a "${SLABEL[nx]}"?${p.st==='entregado'?'\nSu parada en Ruta vuelve a pendiente.':''}`))return;
+    p.st=nx;pkReflejar(p)}
   // Devuelto al almacén (por ejemplo sin dirección); tocar otra vez lo regresa al estado que tenía
   else if(a==='aruta'&&p){entAgregarPk(p);return}
   else if(a==='rescan'&&p){scanCorregir(p);return}
-  else if(a==='dev'&&p){if(p.st==='devuelto'){p.st=p.stAntes||'pendiente';delete p.stAntes;delete p.devAt;toast(`${p.nombre}: vuelve a ${SLABEL[p.st]}`)}else{p.stAntes=p.st;p.st='devuelto';p.devAt=Date.now();toast(`${p.nombre}: devuelto al almacén`)}}
+  else if(a==='dev'&&p){if(!confirm(p.st==='devuelto'?`¿Quitar "devuelto" a ${p.nombre||'este paquete'}?`:`¿Marcar a ${p.nombre||'este paquete'} como devuelto al almacén?${p.st==='entregado'?'\nAhora está ENTREGADO.':''}`))return;
+    if(p.st==='devuelto'){p.st=p.stAntes||'pendiente';delete p.stAntes;delete p.devAt;toast(`${p.nombre}: vuelve a ${SLABEL[p.st]}`)}else{p.stAntes=p.st;p.st='devuelto';p.devAt=Date.now();toast(`${p.nombre}: devuelto al almacén`)}pkReflejar(p);if(typeof renderEnt==='function')setTimeout(renderEnt,0)}
   // Etiqueta ⛔ Devolver (marcada desde Ruta): tocarla lo marca como devuelto, o quita la marca
   else if(a==='devok'&&p){const st=(S.ent&&S.ent.stops||[]).filter(x=>x.devolver&&entPkg(x)===p);
     if(confirm(`¿Ya devolviste el paquete de ${p.nombre||'este cliente'} al almacén?\nAceptar = marcarlo como devuelto.`)){if(p.st!=='devuelto'){p.stAntes=p.st;p.st='devuelto';p.devAt=Date.now()}delete p.devolver;st.forEach(x=>delete x.devolver);toast(`${p.nombre}: devuelto al almacén`)}
     else if(confirm(`¿Quitar la marca "Devolver" a ${p.nombre||'este paquete'}?\nVuelve a estar activo en la ruta.`)){delete p.devolver;st.forEach(x=>delete x.devolver);toast(`${p.nombre}: ya no está para devolver`)}
     else return;entMod();save();render();if(typeof renderEnt==='function')renderEnt();return}
-  else if(a==='set'&&p){if(el.dataset.st==='entregado'&&p.st!=='entregado'){openPOD(p);return}p.st=el.dataset.st;toast(`${p.nombre}: ${SLABEL[p.st]}`)}
+  else if(a==='set'&&p){if(el.dataset.st==='entregado'&&p.st!=='entregado'){openPOD(p);return}p.st=el.dataset.st;pkReflejar(p);toast(`${p.nombre}: ${SLABEL[p.st]}`)}
   else if(a==='ev'&&p){openEvidence(p);return}
   else if(a==='paste'&&p){pasteReply(p);return}
   else if(a==='sent'&&p){const k=el.dataset.k||'coord';if(k==='coord')p.sent=true;else if(k==='form')p.formSent=true;else p.caminoSent=true;delete p.msgSel;save();setTimeout(render,300);return}
   else if(a==='msgsel'&&p){p.msgSel=el.dataset.k;save();renderMsg();return}
   else if(a==='copy'&&p){const t=msgText(p);try{await navigator.clipboard.writeText(t);toast('Mensaje copiado')}catch(err){const d=el.closest('.pkg').querySelector('details');d.open=true;const r=document.createRange();r.selectNodeContents(d.querySelector('.preview'));getSelection().removeAllRanges();getSelection().addRange(r);toast('Texto seleccionado, copialo')}return}
-  else if(a==='del'&&p){S.pk=S.pk.filter(x=>x!==p);S.route=null;toast('Paquete quitado')}
+  else if(a==='del'&&p){const ps=entParadasDe(p);
+    if(!confirm(`¿Borrar el paquete #${p.num||''} de ${p.nombre||'este cliente'}?\n${ps.length?'También se quita su parada de la Ruta.\n':''}Esto no se puede deshacer.`))return;
+    if(ps.length&&S.ent){S.ent.stops=S.ent.stops.filter(x=>!ps.includes(x));let k=0;S.ent.stops.forEach(x=>{if(x.c)x.n=++k});ESEL=-1;entMod()}
+    S.pk=S.pk.filter(x=>x!==p);S.route=null;toast(ps.length?'Paquete borrado de Paquetes, Mensajes y Ruta':'Paquete borrado');save();render();if(typeof renderEnt==='function')renderEnt();return}
   else if(a==='edit'&&p){editId=p.id;$('#f-nombre').value=p.nombre;$('#f-tel').value=p.tel;$('#f-dir').value=p.dir;$('#f-ubic').value=p.ubic;$('#f-guia').value=p.guia;$('#f-nota').value=p.nota||'';loteLlenar(repDia(p.ing));$('#formPanel').open=true;$('#formTitle').textContent='Editar paquete';$('#saveBtn').textContent='Guardar cambios';$('#cancelEdit').hidden=false;$('#formPanel').scrollIntoView({behavior:'smooth'});
     document.querySelector('[data-tab="paquetes"]').click();setTimeout(()=>$('#formPanel').scrollIntoView(),50);return}
   save();render();
@@ -726,6 +732,10 @@ function loteLlenar(sel){const n=loteDias(),hoy=repDia(Date.now()),dias=[...new 
   const def=sel||Object.keys(n).sort((a,b)=>n[b]-n[a]||a.localeCompare(b))[0]||hoy;
   $('#f-lote').innerHTML=dias.map(k=>`<option value="${k}"${k===def?' selected':''}>${repEntregasDe(k)}${k===hoy?' (hoy)':''}${n[k]?` · ${n[k]} paquetes`:''}</option>`).join('')}
 function loteIng(k,prev){if(!k)return prev||Date.now();if(prev&&repDia(prev)===k)return prev;if(k===repDia(Date.now()))return Date.now();const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d,12).getTime()}
+// ===== Datos relacionados (1.63.0): Paquetes, Mensajes y Ruta son el mismo paquete. Al cambiarlo en un lado se ajusta en los otros.
+// Si el paquete deja de estar entregado (se cambió el estado a mano), su parada en Ruta vuelve a pendiente; si no, entSyncPk lo volvería a marcar entregado.
+function pkReflejar(p){let n=0;try{entParadasDe(p).forEach(x=>{if(p.st!=='entregado'&&x.done){x.done=false;delete x.at;delete x.gps;delete x.prevSt;n++}
+  if(p.st==='devuelto'||p.devolver){if(x.hold){x.hold=false;n++}}})}catch(e){}if(n)entMod();return n}
 function resetForm(){editId=null;$('#pkgForm').reset();setTimeout(()=>loteLlenar(),0);$('#f-ubic-ok').textContent='';$('#formTitle').textContent='Agregar un paquete a mano';$('#saveBtn').textContent='Agregar';$('#cancelEdit').hidden=true}
 $('#cancelEdit').onclick=resetForm;
 $('#formPanel').addEventListener('toggle',()=>{if($('#formPanel').open&&!editId)loteLlenar()});
@@ -733,7 +743,9 @@ const ubicCheck=()=>{const v=$('#f-ubic').value.trim(),c=parseCoord(v),o=$('#f-u
 $('#f-ubic').addEventListener('input',ubicCheck);
 $('#pkgForm').onsubmit=e=>{e.preventDefault();
   const v=['nombre','tel','dir','ubic','guia','nota'].map(k=>$('#f-'+k).value);
-  if(editId){const p=S.pk.find(x=>x.id===editId);const n=mkPkg(v);const ps=entParadasDe(p);if(p.tel&&phoneWA(p.tel)!==phoneWA(n.tel))p.telsAnt=[...new Set([...(p.telsAnt||[]),p.tel])];Object.assign(p,{nombre:n.nombre,tel:n.tel,dir:n.dir,ubic:n.ubic,guia:n.guia,nota:n.nota,ing:loteIng($('#f-lote').value,p.ing)});entCopiarPk(p,ps);S.route=null;save();render();toast('Cambios guardados')}
+  if(editId){const p=S.pk.find(x=>x.id===editId);const n=mkPkg(v);
+    const cam=[['Nombre','nombre'],['Teléfono','tel'],['Dirección','dir'],['Ubicación','ubic'],['Guía','guia']].filter(([l,k])=>String(p[k]||'').trim()!==String(n[k]||'').trim()).map(([l,k])=>`• ${l}: "${p[k]||'—'}" → "${n[k]||'—'}"`);
+    if(cam.length&&!confirm(`¿Guardar estos cambios de ${p.nombre||'este paquete'}?\n${cam.join('\n')}\n\nSe actualizan en Paquetes, Mensajes y Ruta.`))return;const ps=entParadasDe(p);if(p.tel&&phoneWA(p.tel)!==phoneWA(n.tel))p.telsAnt=[...new Set([...(p.telsAnt||[]),p.tel])];Object.assign(p,{nombre:n.nombre,tel:n.tel,dir:n.dir,ubic:n.ubic,guia:n.guia,nota:n.nota,ing:loteIng($('#f-lote').value,p.ing)});entCopiarPk(p,ps);S.route=null;save();render();toast('Cambios guardados')}
   else{const k=$('#f-lote').value;if(S.ex){S.pk=[];S.ex=false;S.nums={}}const n=mkPkg(v);n.ing=loteIng(k);S.pk.push(n);S.route=null;save();render();toast(`Paquete agregado a ${repEntregasDe(repDia(n.ing))}`)}
   resetForm();
 };
@@ -1538,7 +1550,7 @@ $('#entAqui').onclick=()=>{if(!navigator.geolocation){gpsFail();return}EAUTO=tru
     {enableHighAccuracy:true,timeout:15000,maximumAge:30000})};
 $('#entPick').onclick=()=>{if(!EMAP){toast('Primero cargá la ruta');return}EMAP.pick=true;$('#entMap').style.cursor='crosshair';$('#entMap').scrollIntoView({behavior:'smooth',block:'start'});toast('Tocá el mapa donde estás');};
 // Parada sin ubicación: pegar link/coordenadas o tocar el mapa; entra a la ruta y se reordena desde tu punto
-function entPonerC(i,c){entMod();const s=S.ent.stops[i];s.c=c;delete s.ub;s.n=Math.max(0,...S.ent.stops.filter(x=>x.c&&x!==s).map(x=>x.n||0))+1;
+function entPonerC(i,c){entMod();const s=S.ent.stops[i];s.c=c;delete s.ub;try{const p=entPkg(s);if(p&&entFuerte(s,p)&&!parseCoord(p.ubic)){p.ubic=c[0]+','+c[1];s.pkId=p.id}}catch(e){} // la ubicación también queda en Paquetess.n=Math.max(0,...S.ent.stops.filter(x=>x.c&&x!==s).map(x=>x.n||0))+1;
   const sinC=S.ent.stops.filter(x=>!x.c);S.ent.stops=[...S.ent.stops.filter(x=>x.c),...sinC];
   toast(`Ubicación agregada a ${s.nombre}`);if(EPOS)entOrdenar(EPOS.c,'donde estás');else{save();renderEnt()}}
 function entUbicar(i){const s=S.ent.stops[i];const t=prompt(`Ubicación de ${s.nombre}\nPegá el link de Google Maps o Waze, o las coordenadas.\nDejalo vacío para tocar el punto en el mapa.`,'');if(t===null)return;

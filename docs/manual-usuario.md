@@ -460,6 +460,14 @@ No tenés que unir nada a mano: si corregís en *Paquetes* el nombre, el teléfo
 
 Cuando tocás **✓ Entregado** en *Ruta*, el número del paquete queda tachado y en gris, y la parada baja al final de la lista. En *Paquetes* el número también sale tachado, la tarjeta entera se ve apagada en gris (1.40.1) y el paquete pasa con los entregados. Sus botones siguen sirviendo por si hay que corregir algo. Si te equivocaste, **↩ Deshacer** lo devuelve.
 
+### Todo está conectado (1.63.0)
+
+*Paquetes*, *Mensajes* y *Ruta* usan el mismo paquete:
+- **Editar** (nombre, teléfono, dirección, ubicación, guía) cambia los tres. Antes de guardar te muestra qué cambia y pide confirmar.
+- **Borrar** pide confirmar y quita el paquete de los tres, también su parada en la ruta.
+- **✓ Entregado**, **⏸ Hold** y **⛔ Devolver** en *Ruta* se ven en *Paquetes* y *Mensajes*. Si cambiás el estado de un entregado en *Paquetes*, su parada vuelve a pendiente.
+- La ubicación que ponés en *Ruta* queda también en el paquete.
+
 ### Promedios y cierre (1.62.0)
 
 - El reporte trae **Promedio por entrega**: minutos y km por paquete entregado. Con **▶ Iniciar** y **■ Finalizar** cada día, el promedio es más real porque cuenta desde la salida hasta el final.

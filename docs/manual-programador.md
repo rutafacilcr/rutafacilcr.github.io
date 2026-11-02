@@ -113,6 +113,14 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - *Guardar* abre la cámara **dentro del mismo toque** (iPhone no deja abrirla después de un `await`) y agrega con `mkPkg()`. Las fotos de etiqueta no se guardan.
 - Prueba local: las CDN están bloqueadas en el sandbox; se instalan los paquetes con npm y Playwright sirve los archivos interceptando las URL de jsDelivr. Las etiquetas de prueba se generan con JsBarcode.
 
+## 3c-duodecies. Datos relacionados (1.63.0)
+
+- `pkReflejar(p)`: si `p.st!=='entregado'` limpia `done/at/gps/prevSt` de `entParadasDe(p)`; con devuelto o `devolver` quita `hold`. Se llama en `data-act` `st`, `set` y `dev`.
+- `del`: `confirm`, saca las paradas de `entParadasDe(p)` de `S.ent.stops` y renumera.
+- `st` (desde entregado o devuelto) y `dev` piden `confirm`. *Editar* arma la lista de cambios y pide `confirm`.
+- `entPonerC` copia `c` a `p.ubic` si la unión es segura (`entFuerte`) y el paquete no tenía ubicación legible.
+- `supabase.sql` probado entero dos veces seguidas en PostgreSQL 16 (con stubs de `auth`, `storage` y `net`): corre sin errores y sin borrar datos.
+
 ## 3c-undecies. Promedios (1.62.0)
 
 - `repResumen` devuelve además `pMin` y `pKm` (= `min`/`km` de `repTotales` ÷ entregados con hora) y `dias` (días distintos con entregas). PDF: "Días de entrega" (casilla 6) y "Promedio por entrega" (casilla 9). `cerrarDia` pone `S.jor={}` (ya va en `p_ruta.jor`).
