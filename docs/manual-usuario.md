@@ -268,7 +268,16 @@ En *Paquetes*, cada paquete tiene el botón **↩ Devuelto**. Usalo cuando el pa
 Arriba salen los paquetes que faltan (pendientes, confirmados, sin respuesta), en el orden en que los agregaste. Los **entregados** bajan al final y los **devueltos** quedan de últimos.
 
 
-### Botones de cada paquete (1.41.0)
+### Botones de cada paquete (1.41.2)
+
+Desde la 1.41.2 los botones quedan siempre en dos líneas:
+
+- Primera: **📋 Pegar respuesta**, **Editar** y **📷 Escáner**.
+- Segunda: **Borrar**, **↩ Devuelto** y **WhatsApp**.
+
+Para ir con Waze o Maps usá la pestaña *Ruta*.
+
+#### Antes (1.41.0)
 
 En *Paquetes*, cada tarjeta trae en este orden: **📋 Pegar respuesta**, **Editar**, **Waze** (si tiene ubicación), **Borrar** (antes *Quitar*), **↩ Devuelto**, **📷 Escáner** y **WhatsApp** justo debajo de Escáner (1.41.1). El botón **Maps** ya no sale en *Paquetes*; en *Ruta* sigue igual.
 

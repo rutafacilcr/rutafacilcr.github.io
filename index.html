@@ -125,9 +125,8 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);outline-
 .pkg .name{font-weight:700;display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-width:0}
 .pkg .addr{font-size:14px;color:var(--muted);min-width:0;overflow-wrap:anywhere}
 .pkg .meta{display:flex;gap:6px 12px;flex-wrap:wrap;font-size:13px;align-items:center}
-.pkg .actions{grid-column:2;display:flex;gap:6px;flex-wrap:wrap;align-items:flex-start;margin-top:6px}
-.pkg .actions .scanwa{display:inline-flex;flex-direction:column;gap:6px}
-.pkg .actions .scanwa>.btn{justify-content:center;text-align:center}
+.pkg .actions{grid-column:1/-1;display:flex;gap:5px;flex-wrap:nowrap;margin-top:6px}.pkg .actions+.actions{margin-top:0}
+.pkg .actions .btn{flex:1 1 auto;justify-content:center;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:6px;font-size:12.5px}
 .mono{font-family:var(--f-mono);font-size:12.5px}
 .chip{font-size:12px;font-weight:600;letter-spacing:0;padding:2px 8px;border-radius:999px;border:0;cursor:pointer;font-family:var(--f-body)}
 .st-pendiente{background:var(--line);color:var(--ink)}
@@ -163,7 +162,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);outline-
 .podline{display:flex;gap:8px;align-items:flex-start;font-size:14px}
 .podline b{min-width:22px}
 .ev{font-size:12.5px;color:var(--ok);font-weight:600}
-.pkg .ev{grid-column:2} /* sin esto cae en la columna del número y aprieta la tarjeta */
+.pkg .ev,.pkg .ubwarn{grid-column:2;min-width:0;overflow-wrap:anywhere} /* sin esto cae en la columna del número y aprieta la tarjeta */
 .pkg>details{grid-column:2;min-width:0}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:14px;z-index:40;max-width:calc(100% - 32px)}
 details summary{cursor:pointer;font-weight:600}
@@ -312,7 +311,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.41.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.41.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -508,8 +507,9 @@ function renderPk(){
     <div class="num${p.st==='entregado'?' tachado':''}">${p.num||i+1}</div>
     <div class="name">${esc(p.nombre||'(sin nombre)')} ${stChip(p)}</div>
     <div class="addr">${esc(p.dir||'Sin dirección')}${p.nota?` · <i>${esc(p.nota)}</i>`:''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
-    <div class="meta"><span class="mono">${esc(p.tel||'sin teléfono')}</span>${p.guia?`<span class="mono">${esc(p.guia)}</span>`:''}<span class="pin ${c?'yes':'no'}">${c?'● Ubicación lista':'○ Falta ubicación'}</span>${S.ent&&S.ent.stops?(enR[p.id]?`<span class="small muted">🗺️ En la ruta${enR[p.id].c?'':' (sin ubicación)'}</span>`:c&&p.st!=='entregado'&&p.st!=='devuelto'?`<button class="btn sm" data-act="aruta" data-id="${p.id}">➕ Agregar a la ruta</button>`:'<span class="small muted">No está en la ruta</span>'):''}</div>${p.ubic&&!c?`<div class="small" style="color:var(--bad)">⚠ No reconozco esta ubicación (${esc(String(p.ubic).slice(0,40))}). Pegá el link que trae coordenadas, por ejemplo el de "Compartir ubicación" de WhatsApp o un link de Waze.</div>`:''}${p.pod?`<div class="ev">📷 ${p.pod.n} fotos · ${fmtDT(p.pod.at)}${p.pod.lat!=null?' · 📍 ±'+Math.round(p.pod.acc)+' m':' · sin GPS'} · ${p.pod.up?'☁️ respaldada':'⏳ sin subir'} <button class="btn sm" data-act="ev" data-id="${p.id}" style="margin-left:4px">Ver evidencia</button></div>`:p.entAt?`<div class="ev">✓ Entregado ${fmtDT(p.entAt)}${p.entGps?` · <a href="https://www.google.com/maps?q=${p.entGps.lat},${p.entGps.lng}" target="_blank" rel="noopener">📍 dónde (±${p.entGps.acc} m)</a>`:' · sin GPS'}</div>`:''}
-    <div class="actions"><button class="btn sm primary" data-act="paste" data-id="${p.id}">📋 Pegar respuesta</button><button class="btn sm" data-act="edit" data-id="${p.id}">Editar</button>${c?`<a class="btn sm" href="${waze(c)}" target="_blank" rel="noopener">Waze</a>`:''}<button class="btn sm ghost danger" data-act="del" data-id="${p.id}">Borrar</button><button class="btn sm" data-act="dev" data-id="${p.id}">${p.st==='devuelto'?'↪ Quitar devuelto':'↩ Devuelto'}</button><span class="scanwa"><button class="btn sm" data-act="rescan" data-id="${p.id}" title="Volver a escanear la etiqueta de este paquete">📷 Escáner</button>${phoneWA(p.tel)?`<a class="btn sm wa" href="https://wa.me/${phoneWA(p.tel)}" target="_blank" rel="noopener">WhatsApp</a>`:''}</span></div>
+    <div class="meta"><span class="mono">${esc(p.tel||'sin teléfono')}</span>${p.guia?`<span class="mono">${esc(p.guia)}</span>`:''}<span class="pin ${c?'yes':'no'}">${c?'● Ubicación lista':'○ Falta ubicación'}</span>${S.ent&&S.ent.stops?(enR[p.id]?`<span class="small muted">🗺️ En la ruta${enR[p.id].c?'':' (sin ubicación)'}</span>`:c&&p.st!=='entregado'&&p.st!=='devuelto'?`<button class="btn sm" data-act="aruta" data-id="${p.id}">➕ Agregar a la ruta</button>`:'<span class="small muted">No está en la ruta</span>'):''}</div>${p.ubic&&!c?`<div class="small ubwarn" style="color:var(--bad)">⚠ No reconozco esta ubicación (${esc(String(p.ubic).slice(0,40))}). Pegá el link que trae coordenadas, por ejemplo el de "Compartir ubicación" de WhatsApp o un link de Waze.</div>`:''}${p.pod?`<div class="ev">📷 ${p.pod.n} fotos · ${fmtDT(p.pod.at)}${p.pod.lat!=null?' · 📍 ±'+Math.round(p.pod.acc)+' m':' · sin GPS'} · ${p.pod.up?'☁️ respaldada':'⏳ sin subir'} <button class="btn sm" data-act="ev" data-id="${p.id}" style="margin-left:4px">Ver evidencia</button></div>`:p.entAt?`<div class="ev">✓ Entregado ${fmtDT(p.entAt)}${p.entGps?` · <a href="https://www.google.com/maps?q=${p.entGps.lat},${p.entGps.lng}" target="_blank" rel="noopener">📍 dónde (±${p.entGps.acc} m)</a>`:' · sin GPS'}</div>`:''}
+    <div class="actions"><button class="btn sm primary" data-act="paste" data-id="${p.id}">📋 Pegar respuesta</button><button class="btn sm" data-act="edit" data-id="${p.id}">Editar</button><button class="btn sm" data-act="rescan" data-id="${p.id}" title="Volver a escanear la etiqueta de este paquete">📷 Escáner</button></div>
+    <div class="actions"><button class="btn sm ghost danger" data-act="del" data-id="${p.id}">Borrar</button><button class="btn sm" data-act="dev" data-id="${p.id}">${p.st==='devuelto'?'↪ Quitar devuelto':'↩ Devuelto'}</button>${phoneWA(p.tel)?`<a class="btn sm wa" href="https://wa.me/${phoneWA(p.tel)}" target="_blank" rel="noopener">WhatsApp</a>`:''}</div>
   </div>`}).join('');
 }
 // Mensajes que se pueden mandar a cada cliente desde la pestaña Mensajes.
