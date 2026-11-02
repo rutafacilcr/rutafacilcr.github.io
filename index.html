@@ -311,7 +311,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.42.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.43.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -1229,7 +1229,7 @@ async function renderEnt(){entSyncPk();
   LI.innerHTML=E.stops.map((s,i)=>[s,i]).sort((a,b)=>erk(a[0])-erk(b[0])||a[1]-b[1]).map(([s,i])=>{const d=entDone(s),p=entPkg(s),ubx=s.ub!==undefined?s.ub:(p&&p.ubic&&!parseCoord(p.ubic)?String(p.ubic):undefined),nav=s.c?`https://www.google.com/maps/dir/?api=1&destination=${s.c[0]},${s.c[1]}&travelmode=driving`:'',wz=s.waze||(s.c?`https://waze.com/ul?ll=${s.c[0]},${s.c[1]}&navigate=yes`:''),wa=phoneWA(s.tel);
     return `<div class="estop${d?' ok':''}${i===ESEL?' sel':''}" data-ei="${i}"><div class="n${s.c||d?'':' no'}">${s.c||d?eNum(s):'?'}</div>
     <div><b>${esc(s.nombre)}</b>${s.c?'':` <button class="eub" type="button" data-eub="${i}" title="Lo que dice la columna ubicación del archivo. Tocá para agregar la ubicación">📍 ${esc(ubx===undefined?'Sin dato':/^aplicaci[oó]n$/i.test(ubx.trim())?'Co-out':(ubx||'Vacío'))}</button>`}${!p?` <button class="eub" type="button" data-elink="${i}" title="Esta parada no está unida a ningún paquete de la lista: tocá para unirla">🔗 Unir a paquete</button>`:!s.c?` <button class="eub" type="button" data-elink="${i}" title="Paquete unido a esta parada; tocá para cambiarlo">🔗 ${esc((p.nombre||'').split(' ')[0])} · ${esc(p.tel||'sin tel')}</button>`:''}${d?` <span class="small" style="color:var(--ok);font-weight:700">✓ entregado${s.at?' '+hm(new Date(s.at).getHours()*60+new Date(s.at).getMinutes()):''}${s.gps?' 📍':''}</span>`:''}<div class="small muted dir">${s.c?'':'<b>Sin ubicación</b> · '}${esc(s.dir||'')}</div>${s.nota?`<div class="small">📝 ${esc(s.nota)}</div>`:''}</div>
-    <div class="acts">${wz?`<a class="btn sm primary" href="${wz}" target="_blank" rel="noopener">🚗 Waze</a>`:''}${nav?`<a class="btn sm" href="${nav}" target="_blank" rel="noopener">🗺️ Maps</a>`:''}${wa?`<a class="btn sm" href="https://wa.me/${wa}" target="_blank" rel="noopener">WhatsApp</a>`:''}<button class="btn sm ghost danger" type="button" data-equitar="${i}" title="Quitar esta parada de la ruta (el paquete sigue en Paquetes)">🗑️ Quitar</button>
+    <div class="acts">${wz?`<a class="btn sm primary" href="${wz}" target="_blank" rel="noopener">🚗 Waze</a>`:''}${nav?`<a class="btn sm" href="${nav}" target="_blank" rel="noopener">🗺️ Maps</a>`:''}${wa?`<a class="btn sm" href="${entWaUrl(wa,'')}" data-ewa="${i}" target="_blank" rel="noopener">WhatsApp</a>`:''}<button class="btn sm ghost danger" type="button" data-equitar="${i}" title="Quitar esta parada de la ruta (el paquete sigue en Paquetes)">🗑️ Quitar</button>
       ${!d&&s.c?`<span class="eeta" data-eta="${i}"></span>`:''}<div class="acts2">${!d&&p?`<button class="btn sm" type="button" data-eok="${i}">📸 Evidencia</button>`:''}<a class="btn sm" href="shortcuts://run-shortcut?name=Co-out" title="Abre la app Co-out con el atajo de iPhone llamado Co-out">📲 Co-out</a>${d?(s.done?`<button class="btn sm ghost" type="button" data-eundo="${i}">↩ Deshacer</button>`:''):`<button class="btn sm" type="button" data-edone="${i}">✓ Entregado</button>`}</div></div></div>`}).join('');
   $('#entMap').hidden=!conC.length;if(!conC.length||$('#v-entrega').hidden)return;
   try{
@@ -1272,12 +1272,14 @@ async function osrmPedir(){
     const j=await (await fetch(u)).json();if(j.code!=='Ok')throw 0;
     OSRM.r={};cs.forEach((c,i)=>{const d=j.distances[0][i+1],t=j.durations[0][i+1];if(d!=null&&t!=null)OSRM.r[ckey(c)]=[d/1000,t/60]});OSRM.pos=from;OSRM.at=Date.now();entEta(true)}
   catch(e){OSRM.at=Date.now()}finally{OSRM.busy=false}}
+// WhatsApp desde Ruta: mensaje de "en camino" con el tiempo estimado que muestra la parada (si no hay, sin el tiempo)
+function entWaUrl(wa,t){return `https://wa.me/${wa}?text=${encodeURIComponent(`Estamos en camino${t?`, en aprox ${t}`:''}, le estaremos entregando su paquete, *RECUERDE* presentar su Cédula, en la entrega`)}`}
 function entEta(sinPedir){
   if(!sinPedir&&EPOS&&(!OSRM.pos||hav(OSRM.pos,EPOS.c)>0.15||Date.now()-OSRM.at>120000)&&Date.now()-OSRM.at>8000)osrmPedir();
   const fresco=OSRM.pos&&EPOS&&hav(OSRM.pos,EPOS.c)<=0.3;
   document.querySelectorAll('[data-eta]').forEach(el=>{const s=S.ent&&S.ent.stops[+el.dataset.eta];if(!EPOS||!s||!s.c){el.textContent='';return}
     const o=fresco&&OSRM.r[ckey(s.c)],km=o?o[0]:hav(EPOS.c,s.c),base=o?o[1]*1.3:0,m=Math.max(1,Math.round(Math.max(base,km/18*60)+1));
-    el.textContent=`🚗 ~${fmtT(m)} · ${km<1?Math.round(km*1000)+' m':km.toFixed(1).replace('.',',')+' km'}`;el.title=o?'Por calle (OSRM), sin tráfico':'Aproximado en línea recta, sin tráfico'})}
+    el.dataset.min=m;el.textContent=`🚗 ~${fmtT(m)} · ${km<1?Math.round(km*1000)+' m':km.toFixed(1).replace('.',',')+' km'}`;el.title=o?'Por calle (OSRM), sin tráfico':'Aproximado en línea recta, sin tráfico'})}
 // Tiempo estimado de toda la ruta: desde tu punto, por cada parada pendiente en orden, hasta la última; +3 a 5 min por entrega
 const RTOT={k:'',at:0,busy:false,r:null};
 async function osrmCadena(k,pts){RTOT.busy=true;RTOT.at=Date.now();try{const j=await (await fetch('https://router.project-osrm.org/route/v1/driving/'+pts.map(c=>c[1]+','+c[0]).join(';')+'?overview=false')).json();
@@ -1338,6 +1340,8 @@ $('#entList').addEventListener('click',e=>{
     s.pkId=p.id;s.pkFijo=p.id;save();render();renderEnt();toast(`Unida a ${p.nombre}: toma su teléfono y ubicación`);return}
   const bub=e.target.closest('[data-eub]');if(bub){entUbicar(+bub.dataset.eub);return}
   // Quitar una parada repetida o que no va: sale de la ruta (el paquete queda en Paquetes) y no se vuelve a agregar sola
+  const bw=e.target.closest('[data-ewa]');if(bw){const el=document.querySelector(`[data-eta="${bw.dataset.ewa}"]`),m=el&&+el.dataset.min,wa=bw.href.match(/wa\.me\/(\d+)/);
+    if(wa)bw.href=entWaUrl(wa[1],m&&el.textContent?fmtT(m):'');return} // sin preventDefault: abre WhatsApp con el href ya actualizado
   const bq=e.target.closest('[data-equitar]');if(bq){const k=+bq.dataset.equitar,s=S.ent.stops[k];if(!s||!confirm(`¿Quitar a ${s.nombre||'esta parada'} de la ruta?\nEl paquete sigue en Paquetes.`))return;
     const p=entPkg(s);if(p){S.ent.quitadas=S.ent.quitadas||[];if(!S.ent.quitadas.includes(p.id))S.ent.quitadas.push(p.id)}
     S.ent.stops.splice(k,1);ESEL=-1;save();render();renderEnt();toast(`${s.nombre||'Parada'} quitada de la ruta`);return}

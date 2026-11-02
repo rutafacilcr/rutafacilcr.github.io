@@ -268,6 +268,14 @@ En *Paquetes*, cada paquete tiene el botón **↩ Devuelto**. Usalo cuando el pa
 Arriba salen los paquetes que faltan (pendientes, confirmados, sin respuesta), en el orden en que los agregaste. Los **entregados** bajan al final y los **devueltos** quedan de últimos.
 
 
+### Avisar que vas en camino (1.43.0)
+
+En *Ruta*, el botón **WhatsApp** de cada parada abre el chat del cliente con este mensaje ya escrito:
+
+> Estamos en camino, en aprox 11 min, le estaremos entregando su paquete, *RECUERDE* presentar su Cédula, en la entrega
+
+El tiempo es el mismo 🚗 que ves en la parada. Si todavía no hay GPS o la parada no tiene ubicación, el mensaje va sin el tiempo. Solo tenés que tocar enviar en WhatsApp.
+
 ### Quitar una parada de la ruta (1.42.0)
 
 Si una parada está repetida o no va (por ejemplo, una que salió con texto raro del escáner), tocá **🗑️ Quitar** en su tarjeta de *Ruta* y confirmá. La parada sale de la ruta, pero el paquete sigue en *Paquetes* y la app no lo vuelve a meter sola. Si después sí querés llevarlo, en *Paquetes* tocá **➕ Agregar a la ruta**.
