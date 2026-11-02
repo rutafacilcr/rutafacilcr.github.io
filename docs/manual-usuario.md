@@ -296,3 +296,8 @@ Abajo quedan **Paquetes, Mensajes, Ruta y Soporte**. La pestaña **Ruta** es la 
 ### La ubicación del paquete pasa a la Ruta (1.37.0)
 
 Cuando un cliente te manda su ubicación y la ponés en *Paquetes* (con **📋 Pegar respuesta** o **Editar**), su parada en **Ruta** se actualiza sola. Si estaba con el **?** amarillo, pasa a pin rojo con número, aparece en el mapa y la ruta se reordena desde donde estás. Lo mismo pasa al abrir la app con ubicaciones que agregaste antes.
+
+
+### 🔗 Unir a paquete (1.37.1)
+
+Si en **Ruta** una parada muestra **🔗 Unir a paquete**, la app no encontró su paquete en *Paquetes* (por ejemplo, porque el nombre o la guía quedaron distintos). Tocalo, escribí parte del nombre, la guía o el teléfono como está en *Paquetes* y elegilo. Desde ese momento la parada toma el teléfono (para WhatsApp) y la ubicación de ese paquete, y si estaba con **?** entra al mapa. Los links de Waze para compartir (waze.com/ul/…) ya cuentan como ubicación.

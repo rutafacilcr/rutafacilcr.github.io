@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-01
+- **1.37.1 · Unir parada y paquete:** la app reconoce también los links de Waze para compartir (waze.com/ul/h…) como ubicación. Encuentra el paquete aunque el nombre tenga apellidos de más. Si una parada no está unida a ningún paquete, muestra **🔗 Unir a paquete** para unirla a mano; desde ahí toma el teléfono y la ubicación del paquete.
 - **1.37.0 · Ubicación de Paquetes a Ruta:** si un paquete recibe o cambia su ubicación en *Paquetes* (Pegar respuesta, Editar), su parada en *Ruta* la toma sola. Si era un "?" amarillo, pasa a pin rojo con número, entra al mapa y la ruta se reordena desde donde estás. También aplica al abrir la app.
 - **1.36.0 · Una sola pestaña de ruta:** se quitó la pestaña vieja *Ruta* (calcular mejor ruta a mano) y la pestaña *Entrega* ahora se llama **Ruta**. Pestañas: Paquetes, Mensajes, Ruta y Soporte.
 - **1.35.1 · Teléfono al día en Entrega:** al abrir la app, cada parada toma el teléfono que tiene su paquete en *Paquetes* (por guía o nombre), aunque el número se haya corregido antes de la 1.34.
