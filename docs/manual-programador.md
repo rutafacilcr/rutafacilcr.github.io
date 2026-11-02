@@ -138,6 +138,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - `entDone(s)` cuenta `s.devolver` como cerrada (sale de `entOrdenar`, de la línea, de `entTotal` y el pin va gris) y `entDev(s)` también, así no suma en "entregadas".
 - `.estop.devol`: gris, `pointer-events:none` en `.acts`, `.acts2` y `.eub`; el click no llama `entSel`. Solo queda `data-edevno` ("↩ Quitar devolver"), que borra ambos flags y reordena si hay `EPOS`.
 - `renderPk` muestra `span.devtag` "⛔ Devolver" si `p.devolver`, junto con `stChip(p)` dentro de `span.chips1` (`inline-flex`, `nowrap`) para que no se separen (1.50.1). 📋 Lista dice "⛔ devolver".
+- 1.56.4: `vehIcono()` (🏍️/🚙/🚐 según `S.veh`) y `conVeh(t)` (pone el ícono tras la primera palabra "camino"). Se usa en `entWaUrl` y en `msgText` para `k==='camino'`; la plantilla guardada `S.camino` no cambia.
 - 1.56.3: `entSyncPk` pone `p.entAt=s.at` (antes `Date.now()`) cuando una parada `done` se une a su paquete, y corrige `p.entAt` si es posterior a `s.at` (sin `pod`). `repT(p)` da la hora del reporte: `pod.at`, el `at` más temprano de `entParadasDe(p)` hechas, o `entAt`; devueltos `devAt`.
 - 1.56.2: `enc` en 3 filas de la cuadrícula de 4: col. 1 = fecha y mensajero, col. 2 = km y horas, col. 4 = recibidos, entregados, devueltos; tabla en y=40.
 - 1.56.1: `repFilas` ordena por `tE(p)` (`entAt`/`pod.at` o `devAt`), sin hora al final (`Infinity`) y empate por `num`.

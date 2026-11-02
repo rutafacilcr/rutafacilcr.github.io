@@ -500,4 +500,4 @@ En **Cierres**, tocá **📄 Bajar reporte PDF**. Se baja un PDF horizontal con 
 
 ### Vehículo (1.55.0)
 
-En **Ruta**, a la par de **📋 Lista**, hay tres botones: **🏍 moto**, **🚙 carro** y **🚐 buseta**. Tocá el que vas a usar; queda marcado en naranja y se guarda (moto viene marcado al inicio). Por ahora solo guarda la elección; no cambia los tiempos, los km ni el orden de la ruta.
+En **Ruta**, a la par de **📋 Lista**, hay tres botones: **🏍 moto**, **🚙 carro** y **🚐 buseta**. Tocá el que vas a usar; queda marcado en naranja y se guarda (moto viene marcado al inicio). No cambia los tiempos, los km ni el orden de la ruta. Desde la 1.56.4, el ícono elegido va en el WhatsApp de "en camino", justo después de la palabra *camino* (por ejemplo "Estamos en camino 🏍️, le estaremos entregando…"), tanto en *Ruta* como en el mensaje 3 de *Mensajes*.

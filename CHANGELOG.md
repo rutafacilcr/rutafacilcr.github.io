@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.56.4 · Vehículo en el mensaje:** el WhatsApp de "en camino" (en *Ruta* y en *Mensajes*) lleva después de la palabra "camino" el ícono del vehículo elegido en *Ruta*: 🏍️, 🚙 o 🚐.
 - **1.56.3 · Hora real de entrega:** si una parada se marcaba ✓ Entregado antes de estar unida a su paquete, al unirse el paquete quedaba con la hora de ese momento (varias entregas con la misma hora). Ahora toma la hora del toque y corrige las que ya estaban mal; el reporte usa esa hora.
 - **1.56.2 · Encabezado en columna:** en el reporte PDF, Paquetes recibidos, entregados y devueltos quedan uno debajo del otro a la derecha, y Mensajero va debajo de Fecha.
 - **1.56.1 · Reporte por hora:** las filas del reporte PDF van ordenadas por fecha y hora de entrega (o devolución), de la más vieja a la más nueva.

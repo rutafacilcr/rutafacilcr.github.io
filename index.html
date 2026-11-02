@@ -333,7 +333,7 @@ details summary{cursor:pointer;font-weight:600}
     <button class="btn sm primary" id="repPdf" type="button" style="width:auto;display:inline-flex">📄 Bajar reporte PDF</button> <span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.56.3</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.56.4</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -558,7 +558,10 @@ function renderPk(){
 // Mensajes que se pueden mandar a cada cliente desde la pestaña Mensajes.
 function msgOpts(){return [['coord','1. Coordinar'],...(FORM_ON?[['form','2. Formulario']]:[]),['camino',FORM_ON?'3. En camino':'2. En camino']]}
 function msgSel(p){const ok=msgOpts().map(o=>o[0]);if(ok.includes(p.msgSel))return p.msgSel;return !p.sent?'coord':(FORM_ON&&!p.formSent?'form':'coord')}
-function msgText(p,k){k=k||msgSel(p);return k==='form'?fill(S.form,p):k==='camino'?fill(S.camino,p,{eta:routeEta(p)}):coordText(p)}
+// Ícono del vehículo elegido en Ruta (1.56.4): va después de la palabra "camino" en el mensaje de en camino (Mensajes y Ruta)
+function vehIcono(){return {moto:'🏍️',carro:'🚙',buseta:'🚐'}[S.veh]||'🏍️'}
+function conVeh(t){return String(t).replace(/camino/i,m=>m+' '+vehIcono())}
+function msgText(p,k){k=k||msgSel(p);return k==='form'?fill(S.form,p):k==='camino'?conVeh(fill(S.camino,p,{eta:routeEta(p)})):coordText(p)}
 function routeEta(p){const R=S.route;if(!R||!R.ids.includes(p.id))return '15';const vel=+S.vel||25;let prev=R.start;for(const id of R.ids){const q=S.pk.find(x=>x.id===id);const c=q&&parseCoord(q.ubic);if(!c)continue;if(id===p.id)return String(Math.round(hav(prev,c)/vel*60)+2);prev=c}return '15'}
 function renderMsg(){
   const L=$('#msgList');
@@ -1409,7 +1412,7 @@ async function osrmPedir(){
     OSRM.r={};cs.forEach((c,i)=>{const d=j.distances[0][i+1],t=j.durations[0][i+1];if(d!=null&&t!=null)OSRM.r[ckey(c)]=[d/1000,t/60]});OSRM.pos=from;OSRM.at=Date.now();entEta(true)}
   catch(e){OSRM.at=Date.now()}finally{OSRM.busy=false}}
 // WhatsApp desde Ruta: mensaje de "en camino" con el tiempo estimado que muestra la parada (si no hay, sin el tiempo)
-function entWaUrl(wa,t){return `https://wa.me/${wa}?text=${encodeURIComponent(`Estamos en camino, le estaremos entregando su paquete${t?`, en ${t}`:''}\n\n*IMPORTANTE*\n- Mostrar la cédula para verificar la etiqueta del paquete.\n\n* POLÍTICA DE ENTREGA*\n- Si previo se había coordinado la entrega y se llega al lugar  y nadie puede recibirlo, el paquete será devuelto a bodega para una reprogramacion.`)}`}
+function entWaUrl(wa,t){return `https://wa.me/${wa}?text=${encodeURIComponent(`Estamos en camino ${vehIcono()}, le estaremos entregando su paquete${t?`, en ${t}`:''}\n\n*IMPORTANTE*\n- Mostrar la cédula para verificar la etiqueta del paquete.\n\n* POLÍTICA DE ENTREGA*\n- Si previo se había coordinado la entrega y se llega al lugar  y nadie puede recibirlo, el paquete será devuelto a bodega para una reprogramacion.`)}`}
 function entEta(sinPedir){
   if(!sinPedir&&EPOS&&(!OSRM.pos||hav(OSRM.pos,EPOS.c)>0.15||Date.now()-OSRM.at>120000)&&Date.now()-OSRM.at>8000)osrmPedir();
   const fresco=OSRM.pos&&EPOS&&hav(OSRM.pos,EPOS.c)<=0.3;
