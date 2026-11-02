@@ -463,7 +463,7 @@ Cuando tocás **✓ Entregado** en *Ruta*, el número del paquete queda tachado 
 ### Todo está conectado (1.63.0)
 
 *Paquetes*, *Mensajes* y *Ruta* usan el mismo paquete:
-- **Editar** (nombre, teléfono, dirección, ubicación, guía) cambia los tres. Antes de guardar te muestra qué cambia y pide confirmar.
+- **Editar** (nombre, teléfono, dirección, ubicación, guía, nota) cambia los tres. Al cambiar el **teléfono**, todos los botones de WhatsApp (Paquetes, 1. Coordinar, Mensajes y las paradas de Ruta) usan el número nuevo, también en tus otros aparatos. Antes de guardar te muestra qué cambia y pide confirmar.
 - **Borrar** pide confirmar y quita el paquete de los tres, también su parada en la ruta.
 - **✓ Entregado**, **⏸ Hold** y **⛔ Devolver** en *Ruta* se ven en *Paquetes* y *Mensajes*. Si cambiás el estado de un entregado en *Paquetes*, su parada vuelve a pendiente.
 - La ubicación que ponés en *Ruta* queda también en el paquete.
