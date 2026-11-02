@@ -268,6 +268,10 @@ En *Paquetes*, cada paquete tiene el botón **↩ Devuelto**. Usalo cuando el pa
 Arriba salen los paquetes que faltan (pendientes, confirmados, sin respuesta), en el orden en que los agregaste. Los **entregados** bajan al final y los **devueltos** quedan de últimos.
 
 
+### Poner en la ruta un paquete que sigue con "?" (1.45.2)
+
+Si un paquete ya tiene ubicación en *Paquetes* pero en *Ruta* sigue con el **?** amarillo, en su tarjeta de *Paquetes* aparece **📍 Poner en la ruta**. Tocalo: la parada toma la ubicación, se vuelve pin rojo con el mismo número del paquete y la ruta se reordena desde donde estás. Si el paquete está como *Devuelto*, primero tocá **↪ Quitar devuelto**.
+
 ### Paquetes sin ubicación en rojo (1.45.1)
 
 En *Paquetes*, los paquetes pendientes a los que les falta la ubicación (o que tienen una que la app no puede leer) se ven con el **borde rojo**. Así sabés rápido a quién pedirle la ubicación. Los entregados y devueltos no se marcan.
