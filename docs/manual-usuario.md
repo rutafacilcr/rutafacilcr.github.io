@@ -268,6 +268,10 @@ En *Paquetes*, cada paquete tiene el botón **↩ Devuelto**. Usalo cuando el pa
 Arriba salen los paquetes que faltan (pendientes, confirmados, sin respuesta), en el orden en que los agregaste. Los **entregados** bajan al final y los **devueltos** quedan de últimos.
 
 
+### Mensajes sin cambios (1.44.1)
+
+Los botones de *Mensajes* se ven igual que antes; el cambio de botones fue solo en *Paquetes* y en *Ruta*.
+
 ### Botones de cada parada en Ruta (1.44.0)
 
 - Primera línea: **🚗 Waze**, **🗺️ Maps** y **WhatsApp** (verde).

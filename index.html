@@ -126,8 +126,10 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);outline-
 .pkg .name{font-weight:700;display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-width:0}
 .pkg .addr{font-size:14px;color:var(--muted);min-width:0;overflow-wrap:anywhere}
 .pkg .meta{display:flex;gap:6px 12px;flex-wrap:wrap;font-size:13px;align-items:center}
-.pkg .actions{grid-column:1/-1;display:flex;gap:5px;flex-wrap:nowrap;margin-top:6px}.pkg .actions+.actions{margin-top:0}
-.pkg .actions .btn{flex:1 1 auto;justify-content:center;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:6px;font-size:12.5px}
+.pkg .actions{grid-column:2;display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+/* Solo Paquetes (Mensajes usa la misma tarjeta .pkg y queda como estaba) */
+#pkgList .pkg .actions{grid-column:1/-1;gap:5px;flex-wrap:nowrap}#pkgList .pkg .actions+.actions{margin-top:0}
+#pkgList .pkg .actions .btn{flex:1 1 auto;justify-content:center;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:6px;font-size:12.5px}
 .mono{font-family:var(--f-mono);font-size:12.5px}
 .chip{font-size:12px;font-weight:600;letter-spacing:0;padding:2px 8px;border-radius:999px;border:0;cursor:pointer;font-family:var(--f-body)}
 .st-pendiente{background:var(--line);color:var(--ink)}
@@ -312,7 +314,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.44.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.44.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
