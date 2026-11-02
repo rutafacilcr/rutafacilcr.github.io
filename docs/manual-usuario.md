@@ -276,3 +276,8 @@ En *Paquetes*, tocá **📷 Etiqueta** en el paquete que quedó mal. Se abre la 
 ### WhatsApp desde Paquetes (1.32.0)
 
 A la par de **Quitar** está el botón verde **WhatsApp**, que abre el chat con ese cliente (sin mensaje escrito). Si el paquete no tiene teléfono válido, el botón no aparece.
+
+
+### Cambios de teléfono llegan a Entrega (1.34.0)
+
+Si corregís el teléfono de un paquete en *Paquetes* (con **Editar** o **📷 Etiqueta**), la parada de ese cliente en *Entrega* se actualiza sola con el número nuevo, y el botón WhatsApp ya abre el chat correcto. También se actualizan el nombre y la guía.

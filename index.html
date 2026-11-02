@@ -311,7 +311,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.33.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.34.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -644,7 +644,7 @@ const ubicCheck=()=>{const v=$('#f-ubic').value.trim(),c=parseCoord(v),o=$('#f-u
 $('#f-ubic').addEventListener('input',ubicCheck);
 $('#pkgForm').onsubmit=e=>{e.preventDefault();
   const v=['nombre','tel','dir','ubic','guia','nota'].map(k=>$('#f-'+k).value);
-  if(editId){const p=S.pk.find(x=>x.id===editId);const n=mkPkg(v);Object.assign(p,{nombre:n.nombre,tel:n.tel,dir:n.dir,ubic:n.ubic,guia:n.guia,nota:n.nota});S.route=null;save();render();toast('Cambios guardados')}
+  if(editId){const p=S.pk.find(x=>x.id===editId);const n=mkPkg(v);const ps=entParadasDe(p);Object.assign(p,{nombre:n.nombre,tel:n.tel,dir:n.dir,ubic:n.ubic,guia:n.guia,nota:n.nota});entCopiarPk(p,ps);S.route=null;save();render();toast('Cambios guardados')}
   else{if(S.ex){S.pk=[];S.ex=false}S.pk.push(mkPkg(v));S.route=null;save();render();toast('Paquete agregado')}
   resetForm();
 };
@@ -997,7 +997,7 @@ $('#scanSave').onclick=()=>{
   if(SCAN.busy)return;
   const v=['nombre','tel','dir','','guia','nota'].map(k=>k?$('#s-'+k).value:'');
   if(!v[0].trim()&&!v[1].trim()&&!v[4].trim()){toast('Poné al menos el nombre, el teléfono o la guía');return}
-  if(SCAN.fix){const p=S.pk.find(x=>x.id===SCAN.fix);if(p){const n=mkPkg(v);Object.assign(p,{nombre:n.nombre,tel:n.tel,dir:n.dir,guia:n.guia,nota:n.nota});S.route=null;save();render();toast(`Corregido: ${p.nombre||p.guia}`)}closeScan();return}
+  if(SCAN.fix){const p=S.pk.find(x=>x.id===SCAN.fix);if(p){const n=mkPkg(v);const ps=entParadasDe(p);Object.assign(p,{nombre:n.nombre,tel:n.tel,dir:n.dir,guia:n.guia,nota:n.nota});entCopiarPk(p,ps);S.route=null;save();render();toast(`Corregido: ${p.nombre||p.guia}`)}closeScan();return}
   const again=!SCAN.queue.length&&SCAN.cam;
   if(again)$('#scanCam').click(); // abrir la cámara dentro del toque (iPhone lo exige)
   if(S.ex){S.pk=[];S.ex=false}
@@ -1132,9 +1132,12 @@ async function entCargar(file){
 // Paquete de la lista que corresponde a la parada: por guía o teléfono; si no, por el mismo nombre (sin tildes ni mayúsculas)
 // La guía viene del escáner (OCR) y a veces confunde O con 0 o I con 1: se comparan normalizadas
 const guiaN=g=>String(g||'').toUpperCase().replace(/\s/g,'').replace(/O/g,'0').replace(/[IL]/g,'1');
-const entPkg=s=>S.pk.find(p=>(s.guia&&p.guia&&guiaN(p.guia)===guiaN(s.guia))||(s.tel&&phoneWA(p.tel)&&phoneWA(p.tel)===phoneWA(s.tel)))||(s.nombre?S.pk.find(p=>p.nombre&&sinTilde(p.nombre).replace(/\s+/g,' ').trim()===sinTilde(s.nombre).replace(/\s+/g,' ').trim()):undefined);
+const entPkg=s=>(s.pkId&&S.pk.find(p=>p.id===s.pkId))||S.pk.find(p=>(s.guia&&p.guia&&guiaN(p.guia)===guiaN(s.guia))||(s.tel&&phoneWA(p.tel)&&phoneWA(p.tel)===phoneWA(s.tel)))||(s.nombre?S.pk.find(p=>p.nombre&&sinTilde(p.nombre).replace(/\s+/g,' ').trim()===sinTilde(s.nombre).replace(/\s+/g,' ').trim()):undefined);
 const entDone=s=>{const p=entPkg(s);return s.done||(p&&p.st==='entregado')};
 setTimeout(()=>{try{entSyncPk()}catch(e){}},0); // al abrir la app (el render() inicial corre antes de que existan entPkg/sinTilde)
+// Al editar un paquete: se buscan sus paradas en Entrega ANTES del cambio y después se les copia el teléfono (y nombre/guía si los tiene)
+function entParadasDe(p){try{return S.ent&&S.ent.stops?S.ent.stops.filter(s=>s.pkId===p.id||entPkg(s)===p):[]}catch(e){return []}}
+function entCopiarPk(p,ps){(ps||[]).forEach(s=>{s.tel=p.tel||'';if(p.nombre)s.nombre=p.nombre;if(p.guia)s.guia=p.guia;s.pkId=s.pkId||p.id})}
 // Paradas marcadas Entregado (también las de antes de la 1.28 o de otro aparato) pasan su paquete a entregado en Paquetes
 function entSyncPk(){const E=S.ent;if(!E||!E.stops)return false;let n=0;E.stops.forEach(s=>{if(!s.done)return;const p=entPkg(s);
   if(p&&p.st!=='entregado'&&p.st!=='devuelto'){s.prevSt=p.st;s.pkId=p.id;p.st='entregado';p.entAt=p.entAt||Date.now();n++}});

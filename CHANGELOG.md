@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-01
+- **1.34.0 · Teléfono también en Entrega:** al cambiar el teléfono de un paquete en *Paquetes* (Editar o 📷 Etiqueta), su parada en *Entrega* toma el número nuevo, y con él el WhatsApp. También copia el nombre y la guía. Se sincroniza.
 - **1.33.0 · Hora y lugar del Entregado:** al tocar **✓ Entregado** en *Entrega* se guarda la hora y la ubicación GPS de ese momento. Se ven en la parada y en el paquete, con link al mapa.
 - **1.32.0 · WhatsApp en Paquetes:** cada paquete con teléfono tiene un botón **WhatsApp** a la par de Quitar, que abre el chat del cliente sin mensaje.
 - **1.31.0 · Corregir etiqueta:** cada paquete en *Paquetes* tiene el botón **📷 Etiqueta** para volver a escanear su etiqueta si se leyó mal. Corrige ese mismo paquete (no agrega otro); lo que no se lea se queda como estaba.
