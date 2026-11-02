@@ -270,7 +270,7 @@ Arriba salen los paquetes que faltan (pendientes, confirmados, sin respuesta), e
 
 ### Dejar una parada para el final: Hold (1.47.0)
 
-Si un cliente no está o te pide pasar más tarde, en su parada de *Ruta* tocá **⏸ Hold** (a la par de ✓ Entregado). La parada se va al final de la ruta y ahí se queda aunque reordenes. El botón cambia a **▶ Quitar hold** en amarillo; tocalo para devolverla a la ruta normal (se reordena desde donde estás).
+Si un cliente no está o te pide pasar más tarde, en su parada de *Ruta* tocá **⏸ Hold** (a la izquierda de ✓ Entregado, desde 1.47.1). La parada se va al final de la ruta y ahí se queda aunque reordenes. El botón cambia a **▶ Quitar hold** en amarillo; tocalo para devolverla a la ruta normal (se reordena desde donde estás).
 
 ### Lista de la ruta en orden (1.46.0)
 
