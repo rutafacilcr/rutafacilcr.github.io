@@ -333,7 +333,7 @@ details summary{cursor:pointer;font-weight:600}
     <button class="btn sm primary" id="repPdf" type="button" style="width:auto;display:inline-flex">📄 Bajar reporte PDF</button> <span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.56.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.56.3</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -791,20 +791,22 @@ let repCarga=null;
 function repCargar(){if(window.jspdf&&window.jspdf.jsPDF&&window.jspdf.jsPDF.API.autoTable)return Promise.resolve();
   if(!repCarga)repCarga=REP_JS.reduce((pr,u)=>pr.then(()=>new Promise((ok,no)=>{const x=document.createElement('script');x.src=u;x.onload=ok;x.onerror=()=>no(new Error(u));document.head.appendChild(x)})),Promise.resolve()).catch(e=>{repCarga=null;throw e});
   return repCarga}
+// Hora real de entrega para el reporte (1.56.3): evidencia, o el toque de ✓ Entregado en la parada, o entAt; devueltos: devAt
+function repT(p){return p.st==='entregado'?((p.pod&&p.pod.at)||entParadasDe(p).filter(x=>x.done&&x.at).map(x=>x.at).sort((a,b)=>a-b)[0]||p.entAt):p.st==='devuelto'?p.devAt:null}
 function repFilas(){
   const f=t=>t?new Date(t).toLocaleDateString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric'}):'',h=t=>t?new Date(t).toLocaleTimeString('es-CR',{hour:'numeric',minute:'2-digit'}):'';
   const tl=x=>{const d=String(x||'').replace(/\D/g,'');return d.length===11&&d.startsWith('506')?d.slice(3):d};
   // Orden (1.56.1): por fecha y hora de entrega (o devolución), la más vieja primero; los que no tienen hora van al final por número
-  const tE=p=>p.st==='entregado'?(p.entAt||(p.pod&&p.pod.at)):p.devAt;
+  const tE=repT;
   return S.pk.filter(p=>p.st==='entregado'||p.st==='devuelto'||p.devolver).sort((a,b)=>(tE(a)||Infinity)-(tE(b)||Infinity)||(+a.num||0)-(+b.num||0)).map(p=>{
     const ent=p.st==='entregado',t=tE(p);
     return [String(p.num||''),p.guia||'',tl(p.tel),tidyName(p.nombre||''),ent?'Entregado':'Devuelto',f(p.ing),f(t),h(t)]})}
 // Resumen del encabezado: km = línea recta entre el inicio de la ruta y cada entrega en orden de hora (hav ya suma ×1,35 por calles); horas = de la primera a la última entrega o devolución
 function repResumen(){
   const rec=S.pk.length,ent=S.pk.filter(p=>p.st==='entregado').length,dev=S.pk.filter(p=>p.st==='devuelto'||(p.devolver&&p.st!=='entregado')).length;
-  const pts=S.pk.filter(p=>p.st==='entregado').map(p=>{const t=p.entAt||(p.pod&&p.pod.at),g=p.entGps||(p.pod&&p.pod.lat!=null?p.pod:null),st=entParadasDe(p)[0];
+  const pts=S.pk.filter(p=>p.st==='entregado').map(p=>{const t=repT(p),g=p.entGps||(p.pod&&p.pod.lat!=null?p.pod:null),st=entParadasDe(p)[0];
     const c=g&&g.lat!=null?[g.lat,g.lng]:(st&&st.c)||parseCoord(p.ubic);return t&&c?{t,c}:null}).filter(Boolean).sort((a,b)=>a.t-b.t);
-  const ts=[...S.pk.map(p=>p.st==='entregado'?(p.entAt||(p.pod&&p.pod.at)):p.st==='devuelto'?p.devAt:null)].filter(Boolean).sort((a,b)=>a-b);
+  const ts=[...S.pk.map(repT)].filter(Boolean).sort((a,b)=>a-b);
   let km=null;if(pts.length){km=0;let prev=S.ent&&S.ent.inicio||pts[0].c;pts.forEach(x=>{km+=hav(prev,x.c);prev=x.c})}
   return {rec,ent,dev,km,min:ts.length>1?(ts[ts.length-1]-ts[0])/60000:null}}
 function repPdf(){
@@ -1343,7 +1345,10 @@ function entSyncPk(){const E=S.ent;if(!E||!E.stops)return false;const ul=entUnir
   // La ubicación también manda la de Paquetes: si cambió (o la parada no tenía), la parada la toma y entra al mapa
   const pc=p&&parseCoord(p.ubic);if(pc&&(!s.c||Math.abs(pc[0]-s.c[0])>1e-5||Math.abs(pc[1]-s.c[1])>1e-5)){if(!s.c){nuevas++;s.n=++maxN}s.c=pc;delete s.ub;delete s.waze;s.pkId=p.id;t++}
   if(!s.done)return;
-  if(p&&p.st!=='entregado'&&p.st!=='devuelto'){s.prevSt=p.st;s.pkId=p.id;p.st='entregado';p.entAt=p.entAt||Date.now();n++}});
+  // Hora real (1.56.3): la del toque de ✓ Entregado en la parada (s.at), no la hora en que se unió o sincronizó.
+  // Antes, si la parada se marcaba sin paquete unido, al unirse después el paquete quedaba con la hora de ese momento; esto corrige esas horas.
+  if(p&&p.st==='entregado'&&s.at&&!p.pod&&(!p.entAt||p.entAt>s.at)){p.entAt=s.at;if(s.gps&&!p.entGps)p.entGps=s.gps;t++}
+  if(p&&p.st!=='entregado'&&p.st!=='devuelto'){s.prevSt=p.st;s.pkId=p.id;p.st='entregado';p.entAt=s.at||p.entAt||Date.now();if(s.gps&&!p.entGps)p.entGps=s.gps;n++}});
   if(nuevas){E.stops=[...E.stops.filter(x=>x.c),...E.stops.filter(x=>!x.c)];if(EPOS)setTimeout(()=>entOrdenar(EPOS.c,'donde estás'),0);toast(`${nuevas} parada(s) ya tienen ubicación y entraron a la ruta`)}
   if(n||t){save();renderStats();renderPk();if(t&&!$('#v-entrega').hidden)setTimeout(renderEnt,0)}return n>0}
 // Número de la parada = el número fijo del paquete en Paquetes (codificación de Victor); si no hay paquete, el orden de la ruta

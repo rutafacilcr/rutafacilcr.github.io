@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.56.3 · Hora real de entrega:** si una parada se marcaba ✓ Entregado antes de estar unida a su paquete, al unirse el paquete quedaba con la hora de ese momento (varias entregas con la misma hora). Ahora toma la hora del toque y corrige las que ya estaban mal; el reporte usa esa hora.
 - **1.56.2 · Encabezado en columna:** en el reporte PDF, Paquetes recibidos, entregados y devueltos quedan uno debajo del otro a la derecha, y Mensajero va debajo de Fecha.
 - **1.56.1 · Reporte por hora:** las filas del reporte PDF van ordenadas por fecha y hora de entrega (o devolución), de la más vieja a la más nueva.
 - **1.56.0 · Etiqueta de devueltos:** los paquetes devueltos llevan la misma etiqueta gris con ⛔ que *Devolver*, pero dice **⛔ Devuelto** (en *Paquetes*, *Mensajes* y *Ruta*). Tocarla en *Paquetes* o *Mensajes* sigue cambiando el estado.
