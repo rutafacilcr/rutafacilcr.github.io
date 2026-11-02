@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.44.4 · Maps y Waze:** en cada parada de *Ruta* la primera línea queda 🗺️ Maps · 🚗 Waze · WhatsApp.
 - **1.44.3 · Galería a la par:** en *Paquetes*, el botón **🖼️ Galería** (antes "Elegir fotos de la galería") queda en la misma línea que **📷 Escanear etiquetas**.
 - **1.44.2 · Ruta alineada:** en cada parada, Waze, Maps y WhatsApp se reparten a lo ancho, así WhatsApp termina alineado con Co-out y Maps queda al centro.
 - **1.44.1 · Mensajes como antes:** el estilo nuevo de los botones de *Paquetes* (1.41.2) se había pasado a *Mensajes*; ahora solo aplica en *Paquetes* y *Mensajes* queda igual que en la 1.40.
