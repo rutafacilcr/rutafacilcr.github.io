@@ -79,7 +79,7 @@ nav.tabs .n:empty{display:none}
 .epin.hold{background:#f5c518}.epin.hold b{color:#1f2125}.epin.ok{background:#9aa0a6;text-decoration:line-through}.epin.sel{background:var(--accent);width:36px;height:36px}.epin.hold.sel{background:#f5c518}
 .estop{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;cursor:pointer}
 .estop.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
-.estop.ok{opacity:.6}.estop.devol{opacity:.5;filter:grayscale(1);background:#eceef0}.estop.devol .acts a,.estop.devol .acts button,.estop.devol .acts2 a,.estop.devol .acts2 button,.estop.devol .eub{pointer-events:none;opacity:.45}.estop.devol .acts3{filter:none}.coordbtn{display:inline-flex;align-items:center;font:600 12px var(--f-body);padding:5px 10px;border-radius:999px;background:var(--road);color:var(--road-ink);border:1px solid var(--road);text-decoration:none;min-height:30px;vertical-align:1px;white-space:nowrap}.coordbtn.off{background:var(--surface);color:var(--muted);border-color:var(--line)}.vehsel{display:inline-flex;gap:4px;vertical-align:middle}.vehsel button{font-size:20px;line-height:1;min-width:40px;min-height:34px;padding:4px 6px;border-radius:10px;border:1px solid var(--line);background:var(--surface);cursor:pointer;filter:grayscale(1);opacity:.6}.vehsel button.on{filter:none;opacity:1;border-color:#f26b1d;box-shadow:0 0 0 2px rgba(242,107,29,.25)}.chips1{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;vertical-align:1px}button.devtag{border:0;cursor:pointer;font-family:inherit;min-height:28px}button.devtag:active{transform:scale(.96)}.devtag,.chip.devtag{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:#5f6368;color:#fff;vertical-align:1px}.estop .acts3 .edevol{font-weight:700;padding:7px 14px;color:var(--bad);border-color:var(--bad)}
+.estop.ok{opacity:.6}.estop.devol{opacity:.5;filter:grayscale(1);background:#eceef0}.estop.devol .acts a,.estop.devol .acts button,.estop.devol .acts2 a,.estop.devol .acts2 button,.estop.devol .eub{pointer-events:none;opacity:.45}.estop.devol .acts3{filter:none}.coordbtn{display:inline-flex;align-items:center;font:600 12px var(--f-body);padding:5px 10px;border-radius:999px;background:var(--road);color:var(--road-ink);border:1px solid var(--road);text-decoration:none;min-height:30px;vertical-align:1px;white-space:nowrap}.coordbtn.off{background:var(--surface);color:var(--muted);border-color:var(--line)}.vehsel{display:inline-flex;gap:4px;vertical-align:middle}.vehsel button{font-size:20px;line-height:1;min-width:40px;min-height:34px;padding:4px 6px;border-radius:10px;border:1px solid var(--line);background:var(--surface);cursor:pointer;filter:grayscale(1);opacity:.6}.vehsel button.on{filter:none;opacity:1;border-color:#f26b1d;box-shadow:0 0 0 2px rgba(242,107,29,.25)}.replin{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line)}.replin:first-child{border-top:0}.replin .btn{width:auto;flex:none}.chips1{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;vertical-align:1px}button.devtag{border:0;cursor:pointer;font-family:inherit;min-height:28px}button.devtag:active{transform:scale(.96)}.devtag,.chip.devtag{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:#5f6368;color:#fff;vertical-align:1px}.estop .acts3 .edevol{font-weight:700;padding:7px 14px;color:var(--bad);border-color:var(--bad)}
 .estop .n{width:30px;height:30px;border-radius:50%;background:#d7261e;color:#fff;font:700 13px var(--f-body);display:flex;align-items:center;justify-content:center;grid-row:span 2}
 .estop.ok .n{background:#9aa0a6;text-decoration:line-through;text-decoration-thickness:2px}#pkgList .pkg.sinub{border:2px solid var(--bad,#d93025)}.pkg.entregado{background:#eceef0;filter:grayscale(1);opacity:.6}.pkg.entregado:focus-within{opacity:1}.pkg .num.tachado{text-decoration:line-through;text-decoration-thickness:2px;color:#9aa0a6}.estop .n.no{background:#f5c518;color:#1f2125}
 .estop .dir{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -329,11 +329,11 @@ details summary{cursor:pointer;font-weight:600}
   </div>
   <div class="panel">
     <h2>Reporte de entregas</h2>
-    <p class="small muted">PDF horizontal con los paquetes <b>entregados</b> y <b>devueltos</b> de la lista actual: número, guía / pedido, teléfono, nombre, estado, fecha recibido y fecha y hora de entrega.</p>
-    <button class="btn sm primary" id="repPdf" type="button" style="width:auto;display:inline-flex">📄 Bajar reporte PDF</button> <span class="small muted" id="repInfo"></span>
+    <p class="small muted">Un reporte por cada <b>fecha de recibido</b> de los paquetes (también de listas ya vaciadas). Tocá <b>📄 PDF</b> para bajar el de esa fecha: entregados y devueltos con número, guía / pedido, teléfono, nombre, estado, fecha recibido y fecha y hora de entrega.</p>
+    <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.56.4</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.57.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -794,43 +794,64 @@ let repCarga=null;
 function repCargar(){if(window.jspdf&&window.jspdf.jsPDF&&window.jspdf.jsPDF.API.autoTable)return Promise.resolve();
   if(!repCarga)repCarga=REP_JS.reduce((pr,u)=>pr.then(()=>new Promise((ok,no)=>{const x=document.createElement('script');x.src=u;x.onload=ok;x.onerror=()=>no(new Error(u));document.head.appendChild(x)})),Promise.resolve()).catch(e=>{repCarga=null;throw e});
   return repCarga}
-// Hora real de entrega para el reporte (1.56.3): evidencia, o el toque de ✓ Entregado en la parada, o entAt; devueltos: devAt
-function repT(p){return p.st==='entregado'?((p.pod&&p.pod.at)||entParadasDe(p).filter(x=>x.done&&x.at).map(x=>x.at).sort((a,b)=>a-b)[0]||p.entAt):p.st==='devuelto'?p.devAt:null}
-function repFilas(){
+// Reportes por fecha de recibido (1.57.0): un reporte por cada fecha de ingreso (p.ing). Junta la lista actual con los cierres
+// guardados en la base (rf_cierres_listar + rf_cierre_leer), así las fechas viejas siguen saliendo después de Vaciar lista.
+let REPC={ids:new Set(),pk:[],st:{},carga:null};
+// Paradas de cada paquete: las de la ruta actual o las guardadas en el cierre
+function repParadas(p){return REPC.st[p.id]||entParadasDe(p)}
+// Hora real de entrega (1.56.3): evidencia, o el toque de ✓ Entregado en la parada, o entAt; devueltos: devAt
+function repT(p){return p.st==='entregado'?((p.pod&&p.pod.at)||repParadas(p).filter(x=>x.done&&x.at).map(x=>x.at).sort((a,b)=>a-b)[0]||p.entAt):p.st==='devuelto'?p.devAt:null}
+const repDia=t=>{if(!t)return '';const d=new Date(t);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const repDiaTxt=k=>k?k.split('-').reverse().join('/'):'Sin fecha';
+function repTodos(){const ids=new Set(S.pk.map(p=>p.id));return [...S.pk,...REPC.pk.filter(p=>!ids.has(p.id))]}
+function repGrupos(){const g={};repTodos().forEach(p=>{const k=repDia(p.ing);(g[k]=g[k]||[]).push(p)});return Object.keys(g).sort((a,b)=>!a?1:!b?-1:b.localeCompare(a)).map(k=>({k,pk:g[k]}))}
+async function repCierres(){
+  if(REPC.carga)return REPC.carga;
+  REPC.carga=(async()=>{try{const l=await RF_AUTH.rpc('rf_cierres_listar',{p_limite:60})||[];
+    for(const c of l){if(REPC.ids.has(c.id))continue;const d=await RF_AUTH.rpc('rf_cierre_leer',{p_id:c.id});REPC.ids.add(c.id);if(!d)continue;
+      (d.paquetes||[]).forEach(p=>{if(p&&p.id&&!REPC.pk.some(x=>x.id===p.id))REPC.pk.push(p)});
+      ((d.ruta&&d.ruta.stops)||[]).forEach(x=>{const id=x.pkFijo||x.pkId;if(id)(REPC.st[id]=REPC.st[id]||[]).push(x)})}}
+    catch(e){console.warn('cierres',e)}finally{REPC.carga=null}})();
+  return REPC.carga}
+function repFilas(L){
   const f=t=>t?new Date(t).toLocaleDateString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric'}):'',h=t=>t?new Date(t).toLocaleTimeString('es-CR',{hour:'numeric',minute:'2-digit'}):'';
   const tl=x=>{const d=String(x||'').replace(/\D/g,'');return d.length===11&&d.startsWith('506')?d.slice(3):d};
   // Orden (1.56.1): por fecha y hora de entrega (o devolución), la más vieja primero; los que no tienen hora van al final por número
-  const tE=repT;
-  return S.pk.filter(p=>p.st==='entregado'||p.st==='devuelto'||p.devolver).sort((a,b)=>(tE(a)||Infinity)-(tE(b)||Infinity)||(+a.num||0)-(+b.num||0)).map(p=>{
-    const ent=p.st==='entregado',t=tE(p);
+  return L.filter(p=>p.st==='entregado'||p.st==='devuelto'||p.devolver).sort((a,b)=>(repT(a)||Infinity)-(repT(b)||Infinity)||(+a.num||0)-(+b.num||0)).map(p=>{
+    const ent=p.st==='entregado',t=repT(p);
     return [String(p.num||''),p.guia||'',tl(p.tel),tidyName(p.nombre||''),ent?'Entregado':'Devuelto',f(p.ing),f(t),h(t)]})}
 // Resumen del encabezado: km = línea recta entre el inicio de la ruta y cada entrega en orden de hora (hav ya suma ×1,35 por calles); horas = de la primera a la última entrega o devolución
-function repResumen(){
-  const rec=S.pk.length,ent=S.pk.filter(p=>p.st==='entregado').length,dev=S.pk.filter(p=>p.st==='devuelto'||(p.devolver&&p.st!=='entregado')).length;
-  const pts=S.pk.filter(p=>p.st==='entregado').map(p=>{const t=repT(p),g=p.entGps||(p.pod&&p.pod.lat!=null?p.pod:null),st=entParadasDe(p)[0];
+function repResumen(L){
+  const rec=L.length,ent=L.filter(p=>p.st==='entregado').length,dev=L.filter(p=>p.st==='devuelto'||(p.devolver&&p.st!=='entregado')).length;
+  const pts=L.filter(p=>p.st==='entregado').map(p=>{const t=repT(p),g=p.entGps||(p.pod&&p.pod.lat!=null?p.pod:null),st=repParadas(p)[0];
     const c=g&&g.lat!=null?[g.lat,g.lng]:(st&&st.c)||parseCoord(p.ubic);return t&&c?{t,c}:null}).filter(Boolean).sort((a,b)=>a.t-b.t);
-  const ts=[...S.pk.map(repT)].filter(Boolean).sort((a,b)=>a-b);
-  let km=null;if(pts.length){km=0;let prev=S.ent&&S.ent.inicio||pts[0].c;pts.forEach(x=>{km+=hav(prev,x.c);prev=x.c})}
+  const ts=L.map(repT).filter(Boolean).sort((a,b)=>a-b);
+  const actual=L.some(p=>S.pk.includes(p));
+  let km=null;if(pts.length){km=0;let prev=(actual&&S.ent&&S.ent.inicio)||pts[0].c;pts.forEach(x=>{km+=hav(prev,x.c);prev=x.c})}
   return {rec,ent,dev,km,min:ts.length>1?(ts[ts.length-1]-ts[0])/60000:null}}
-function repPdf(){
-  const fil=repFilas();if(!fil.length){toast('No hay paquetes entregados ni devueltos en la lista');return}
+function repPdf(k){
+  const G=repGrupos().find(x=>x.k===k);const L=G?G.pk:[];
+  const fil=repFilas(L);if(!fil.length){toast('Esa fecha no tiene paquetes entregados ni devueltos');return}
   if(!(window.jspdf&&window.jspdf.jsPDF&&window.jspdf.jsPDF.API.autoTable)){toast('Cargando el reporte… tocá otra vez en un momento');repCargar().catch(()=>toast('No se pudo cargar el PDF. Revisá el internet.'));return}
   const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'letter'}),hoy=new Date();
-  const R=repResumen(),fd=hoy.toLocaleDateString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric'});
+  const R=repResumen(L),fd=hoy.toLocaleDateString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric'});
   doc.setFontSize(15);doc.text('RutaFácil CR · Reporte de entregas',14,15);
   // Encabezado (1.54.1): fecha, mensajero, recibidos, entregados, devueltos, km y horas
-  // Posiciones fijas (1.56.2), cuadrícula de 4 columnas: col. 1 fecha y mensajero debajo; col. 2 km y horas; col. 4 recibidos, entregados y devueltos
-  const KM=['Km recorridos',R.km==null?'—':R.km.toFixed(1)+' km aprox.'],HR=['Horas invertidas',R.min==null?'—':`${Math.floor(R.min/60)} h ${String(Math.round(R.min%60)).padStart(2,'0')} min`];
-  const enc=[['Fecha',fd],KM,null,['Paquetes recibidos',String(R.rec)],['Mensajero',S.yo||'—'],HR,null,['Paquetes entregados',String(R.ent)],null,null,null,['Paquetes devueltos',String(R.dev)]];
-  doc.setFontSize(10);enc.forEach((e,i)=>{if(!e)return;const [k,v]=e,x=14+(i%4)*64,y=23+Math.floor(i/4)*6;doc.setFont(undefined,'bold');doc.text(k+':',x,y);const w=doc.getTextWidth(k+': ')+1;doc.setFont(undefined,'normal');doc.text(v,x+w,y)});
+  // Posiciones fijas (1.56.2), cuadrícula de 4 columnas: col. 1 fecha y mensajero debajo; col. 2 km y horas; col. 3 fecha de recibido (1.57.0); col. 4 recibidos, entregados y devueltos
+  const KM=['Km recorridos',R.km==null||R.km<0.05?'—':R.km.toFixed(1)+' km aprox.'],HR=['Horas invertidas',R.min==null?'—':`${Math.floor(R.min/60)} h ${String(Math.round(R.min%60)).padStart(2,'0')} min`];
+  const enc=[['Fecha',fd],KM,['Fecha de recibido',repDiaTxt(k)],['Paquetes recibidos',String(R.rec)],['Mensajero',S.yo||'—'],HR,null,['Paquetes entregados',String(R.ent)],null,null,null,['Paquetes devueltos',String(R.dev)]];
+  doc.setFontSize(10);enc.forEach((e,i)=>{if(!e)return;const [kk,v]=e,x=14+(i%4)*64,y=23+Math.floor(i/4)*6;doc.setFont(undefined,'bold');doc.text(kk+':',x,y);const w=doc.getTextWidth(kk+': ')+1;doc.setFont(undefined,'normal');doc.text(v,x+w,y)});
   doc.autoTable({startY:40,head:[['No. paquete','No. guía / pedido','No. teléfono','Nombre','Estado','Fecha recibido','Fecha entrega','Hora entrega']],body:fil,
     styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},
     didParseCell:d=>{if(d.section==='body'&&d.column.index===4)d.cell.styles.textColor=d.cell.raw==='Entregado'?[30,130,60]:[200,40,40]}});
-  const name=`reporte-${hoy.toISOString().slice(0,10)}.pdf`;
+  const name=`reporte-recibidos-${k||'sin-fecha'}.pdf`;
   if(IOS&&navigator.canShare){const file=new File([doc.output('blob')],name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Reporte guardado')).catch(()=>{});return}}
   doc.save(name);toast(`Reporte con ${fil.length} paquete(s)`)}
-$('#repPdf').onclick=repPdf;
-document.querySelector('[data-tab="cierres"]').addEventListener('click',()=>{const n=repFilas().length;$('#repInfo').textContent=`${n} paquete(s) para el reporte`;repCargar().catch(()=>{})});
+function repLista(){const G=repGrupos(),el=$('#repLista');if(!el)return;
+  el.innerHTML=G.length?G.map(g=>{const R=repResumen(g.pk),n=repFilas(g.pk).length;return `<div class="replin"><div><b>📦 ${repDiaTxt(g.k)}</b><div class="small muted">${R.rec} recibidos · ${R.ent} entregados · ${R.dev} devueltos</div></div><button class="btn sm primary" type="button" data-rep="${g.k}"${n?'':' disabled'}>📄 PDF</button></div>`}).join(''):'<p class="small muted">Todavía no hay paquetes.</p>'}
+$('#repLista').addEventListener('click',e=>{const b=e.target.closest('[data-rep]');if(b)repPdf(b.dataset.rep)});
+document.querySelector('[data-tab="cierres"]').addEventListener('click',()=>{repLista();repCargar().catch(()=>{});
+  $('#repInfo').textContent='Buscando reportes de cierres anteriores…';repCierres().then(()=>{repLista();$('#repInfo').textContent=''})});
 $('#m-pref').addEventListener('input',()=>{$('#vcfEj').textContent=vcfName({nombre:'Nombre',guia:'pedido'})});
 $('#m-buscar').addEventListener('input',()=>renderMsg());
 $('#p-buscar').addEventListener('input',()=>renderPk());
