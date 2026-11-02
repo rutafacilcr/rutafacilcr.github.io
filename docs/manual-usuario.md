@@ -343,9 +343,11 @@ En *Mensajes*, cuando un paquete se entrega, su cliente se pone en gris con el n
 
 El mensaje **Coordinar** de *Mensajes* ahora dice:
 
-> Hola Ana , soy Victor tenemos un paquete de *TEMU* a su nombre y nos gustaria coordinar la entrega para el martes, 3 de noviembre.
+> Hola Ana, soy Victor, tenemos un paquete de *TEMU* a su nombre y nos gustaría coordinar la entrega para el martes, 3 de noviembre.
 >
-> Nos puedes enviar la ubicación por acá para agrfegarlo a la ruta, una vez que tengamos la ubicacion nos contactamoos con usted para la hora.
+> Nos puede enviar la ubicación por acá para agregarlo a la ruta. Una vez que tengamos la ubicación, nos contactamos con usted para la hora.
+
+(Ortografía corregida en la 1.52.3.)
 
 El nombre del cliente, tu nombre y la fecha de entrega se llenan solos. Si lo cambiás en la plantilla de Mensajes, la app respeta tu cambio.
 

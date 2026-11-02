@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.52.3 · Ortografía de Coordinar:** el mensaje Coordinar queda corregido (gustaría, puede, agregarlo, ubicación, contactamos y comas).
 - **1.52.2 · "Sin 📍":** en el resumen de *Paquetes* el contador "Sin ubicación" dice **Sin 📍**.
 - **1.52.1 · Mensajes ordenados:** en *Mensajes*, los clientes con paquete entregado se ven en gris (número tachado) y bajan; al final van los devueltos. Arriba quedan los que faltan.
 - **1.52.0 · Contadores de Paquetes:** arriba de *Paquetes* salen **Recibidos, Entregados, Hold, Devueltos y Sin ubicación**. Cada paquete cuenta en un solo grupo: *Devueltos* suma los devueltos y los ⛔ Devolver; *Hold* son los pendientes cuya parada está en Hold; *Sin ubicación* son solo los pendientes sin coordenadas ni en el paquete ni en su parada de la ruta (antes contaba también entregados y devueltos, y paquetes que sí tenían ubicación en la ruta).
