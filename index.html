@@ -333,7 +333,7 @@ details summary{cursor:pointer;font-weight:600}
     <button class="btn sm primary" id="repPdf" type="button" style="width:auto;display:inline-flex">📄 Bajar reporte PDF</button> <span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.56.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.56.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -794,8 +794,10 @@ function repCargar(){if(window.jspdf&&window.jspdf.jsPDF&&window.jspdf.jsPDF.API
 function repFilas(){
   const f=t=>t?new Date(t).toLocaleDateString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric'}):'',h=t=>t?new Date(t).toLocaleTimeString('es-CR',{hour:'numeric',minute:'2-digit'}):'';
   const tl=x=>{const d=String(x||'').replace(/\D/g,'');return d.length===11&&d.startsWith('506')?d.slice(3):d};
-  return S.pk.filter(p=>p.st==='entregado'||p.st==='devuelto'||p.devolver).sort((a,b)=>(+a.num||0)-(+b.num||0)).map(p=>{
-    const ent=p.st==='entregado',t=ent?(p.entAt||(p.pod&&p.pod.at)):p.devAt;
+  // Orden (1.56.1): por fecha y hora de entrega (o devolución), la más vieja primero; los que no tienen hora van al final por número
+  const tE=p=>p.st==='entregado'?(p.entAt||(p.pod&&p.pod.at)):p.devAt;
+  return S.pk.filter(p=>p.st==='entregado'||p.st==='devuelto'||p.devolver).sort((a,b)=>(tE(a)||Infinity)-(tE(b)||Infinity)||(+a.num||0)-(+b.num||0)).map(p=>{
+    const ent=p.st==='entregado',t=tE(p);
     return [String(p.num||''),p.guia||'',tl(p.tel),tidyName(p.nombre||''),ent?'Entregado':'Devuelto',f(p.ing),f(t),h(t)]})}
 // Resumen del encabezado: km = línea recta entre el inicio de la ruta y cada entrega en orden de hora (hav ya suma ×1,35 por calles); horas = de la primera a la última entrega o devolución
 function repResumen(){
