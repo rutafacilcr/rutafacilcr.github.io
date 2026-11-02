@@ -331,6 +331,10 @@ En *Paquetes*, a la par de **📷 Escanear etiquetas** está **🖼️ Galería*
 
 Los botones de *Mensajes* se ven igual que antes; el cambio de botones fue solo en *Paquetes* y en *Ruta*.
 
+### Mensajes: entregados abajo (1.52.1)
+
+En *Mensajes*, cuando un paquete se entrega, su cliente se pone en gris con el número tachado y baja al final de la lista. Arriba quedan los que todavía faltan por entregar; los devueltos van de últimos. Sus botones siguen funcionando.
+
 ### Mensaje para coordinar (1.51.1)
 
 El mensaje **Coordinar** de *Mensajes* ahora dice:

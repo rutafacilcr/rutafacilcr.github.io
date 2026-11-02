@@ -327,7 +327,7 @@ details summary{cursor:pointer;font-weight:600}
     <p class="small muted">Aquí van a estar los cierres del día. Próximamente.</p>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.51.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.52.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -554,8 +554,10 @@ function renderMsg(){
   const q=($('#m-buscar').value||'').trim().toLowerCase(),qd=q.replace(/\D/g,'');
   // Buscar: por nombre o guía, o por los últimos dígitos del teléfono (sirve para ver de quién es un número que contesta)
   const hit=p=>!q||(p.nombre||'').toLowerCase().includes(q)||(p.guia||'').toLowerCase().includes(q)||(qd.length>=3&&String(p.tel||'').replace(/\D/g,'').includes(qd.slice(-8)));
-  L.innerHTML=S.pk.map((p,i)=>{const sel=msgSel(p),txt=msgText(p,sel);const l=waLink(p,txt);return `<div class="pkg"${hit(p)?'':' style="display:none"'}>
-    <div class="num">${p.num||i+1}</div>
+  // 1.52.1: como en Paquetes, los entregados se ven en gris (número tachado) y bajan; al final los devueltos
+  const rk=p=>p.st==='entregado'?1:p.st==='devuelto'?2:0;
+  L.innerHTML=S.pk.map((p,i)=>[p,i]).sort((a,b)=>rk(a[0])-rk(b[0])||a[1]-b[1]).map(([p,i])=>{const sel=msgSel(p),txt=msgText(p,sel);const l=waLink(p,txt);return `<div class="pkg${p.st==='entregado'?' entregado':''}"${hit(p)?'':' style="display:none"'}>
+    <div class="num${p.st==='entregado'?' tachado':''}">${p.num||i+1}</div>
     <div class="name">${esc(p.nombre)} ${stChip(p)} ${p.sent?'<span class="small muted">✓ mensaje abierto</span>':''}${p.formSent?'<span class="small muted">· formulario enviado</span>':''}</div>
     <div class="addr"><span class="mono">${esc(p.tel||'sin teléfono')}</span>${p.resp?' <span class="small" style="color:var(--ok);font-weight:600">✓ llenó el formulario</span>':''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
     <div class="msgsel" role="radiogroup" aria-label="Qué mensaje mandar">${msgOpts().map(([k,t])=>`<button type="button" role="radio" aria-checked="${k===sel}" data-act="msgsel" data-k="${k}" data-id="${p.id}">${t}</button>`).join('')}</div>
