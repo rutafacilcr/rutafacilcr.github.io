@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-01
+- **1.35.1 · Teléfono al día en Entrega:** al abrir la app, cada parada toma el teléfono que tiene su paquete en *Paquetes* (por guía o nombre), aunque el número se haya corregido antes de la 1.34.
 - **1.35.0 · Entregadas al final:** en *Entrega*, las paradas ya entregadas bajan totalmente al final de la lista; arriba quedan las pendientes en orden de ruta y luego las que no tienen ubicación. El "?" de las paradas sin ubicación ahora es amarillo.
 - **1.34.0 · Teléfono también en Entrega:** al cambiar el teléfono de un paquete en *Paquetes* (Editar o 📷 Etiqueta), su parada en *Entrega* toma el número nuevo, y con él el WhatsApp. También copia el nombre y la guía. Se sincroniza.
 - **1.33.0 · Hora y lugar del Entregado:** al tocar **✓ Entregado** en *Entrega* se guarda la hora y la ubicación GPS de ese momento. Se ven en la parada y en el paquete, con link al mapa.
