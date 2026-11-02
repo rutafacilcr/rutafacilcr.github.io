@@ -310,7 +310,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.38.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.38.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -493,11 +493,13 @@ function renderPk(){
   if(!S.pk.length){L.innerHTML='<div class="empty">Todavía no hay paquetes. Pegá tu lista arriba o agregá uno a mano.</div>';return}
   // Primero los que faltan (en el orden de la lista), después los entregados y al final los devueltos
   const rk=p=>p.st==='entregado'?1:p.st==='devuelto'?2:0;
+  // Qué paquetes ya tienen parada en la ruta cargada (para avisar y ofrecer agregarlos)
+  const enR={};try{(S.ent&&S.ent.stops||[]).forEach(s=>{const q=entPkg(s);if(q&&!enR[q.id])enR[q.id]=s})}catch(e){}
   L.innerHTML=S.pk.map((p,i)=>[p,i]).sort((a,b)=>rk(a[0])-rk(b[0])||a[1]-b[1]).map(([p],i)=>{const c=parseCoord(p.ubic);return `<div class="pkg">
     <div class="num">${p.num||i+1}</div>
     <div class="name">${esc(p.nombre||'(sin nombre)')} ${stChip(p)}</div>
     <div class="addr">${esc(p.dir||'Sin dirección')}${p.nota?` · <i>${esc(p.nota)}</i>`:''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
-    <div class="meta"><span class="mono">${esc(p.tel||'sin teléfono')}</span>${p.guia?`<span class="mono">${esc(p.guia)}</span>`:''}<span class="pin ${c?'yes':'no'}">${c?'● Ubicación lista':'○ Falta ubicación'}</span></div>${p.pod?`<div class="ev">📷 ${p.pod.n} fotos · ${fmtDT(p.pod.at)}${p.pod.lat!=null?' · 📍 ±'+Math.round(p.pod.acc)+' m':' · sin GPS'} · ${p.pod.up?'☁️ respaldada':'⏳ sin subir'} <button class="btn sm" data-act="ev" data-id="${p.id}" style="margin-left:4px">Ver evidencia</button></div>`:p.entAt?`<div class="ev">✓ Entregado ${fmtDT(p.entAt)}${p.entGps?` · <a href="https://www.google.com/maps?q=${p.entGps.lat},${p.entGps.lng}" target="_blank" rel="noopener">📍 dónde (±${p.entGps.acc} m)</a>`:' · sin GPS'}</div>`:''}
+    <div class="meta"><span class="mono">${esc(p.tel||'sin teléfono')}</span>${p.guia?`<span class="mono">${esc(p.guia)}</span>`:''}<span class="pin ${c?'yes':'no'}">${c?'● Ubicación lista':'○ Falta ubicación'}</span>${S.ent&&S.ent.stops?(enR[p.id]?`<span class="small muted">🗺️ En la ruta${enR[p.id].c?'':' (sin ubicación)'}</span>`:c&&p.st!=='entregado'&&p.st!=='devuelto'?`<button class="btn sm" data-act="aruta" data-id="${p.id}">➕ Agregar a la ruta</button>`:'<span class="small muted">No está en la ruta</span>'):''}</div>${p.ubic&&!c?`<div class="small" style="color:var(--bad)">⚠ No reconozco esta ubicación (${esc(String(p.ubic).slice(0,40))}). Pegá el link que trae coordenadas, por ejemplo el de "Compartir ubicación" de WhatsApp o un link de Waze.</div>`:''}${p.pod?`<div class="ev">📷 ${p.pod.n} fotos · ${fmtDT(p.pod.at)}${p.pod.lat!=null?' · 📍 ±'+Math.round(p.pod.acc)+' m':' · sin GPS'} · ${p.pod.up?'☁️ respaldada':'⏳ sin subir'} <button class="btn sm" data-act="ev" data-id="${p.id}" style="margin-left:4px">Ver evidencia</button></div>`:p.entAt?`<div class="ev">✓ Entregado ${fmtDT(p.entAt)}${p.entGps?` · <a href="https://www.google.com/maps?q=${p.entGps.lat},${p.entGps.lng}" target="_blank" rel="noopener">📍 dónde (±${p.entGps.acc} m)</a>`:' · sin GPS'}</div>`:''}
     <div class="actions"><button class="btn sm primary" data-act="paste" data-id="${p.id}">📋 Pegar respuesta</button><button class="btn sm" data-act="edit" data-id="${p.id}">Editar</button>${c?`<a class="btn sm" href="${waze(c)}" target="_blank" rel="noopener">Waze</a><a class="btn sm" href="${gmaps(c)}" target="_blank" rel="noopener">Maps</a>`:''}<button class="btn sm" data-act="rescan" data-id="${p.id}" title="Volver a escanear la etiqueta de este paquete">📷 Etiqueta</button><button class="btn sm" data-act="dev" data-id="${p.id}">${p.st==='devuelto'?'↪ Quitar devuelto':'↩ Devuelto'}</button><button class="btn sm ghost danger" data-act="del" data-id="${p.id}">Quitar</button>${phoneWA(p.tel)?`<a class="btn sm wa" href="https://wa.me/${phoneWA(p.tel)}" target="_blank" rel="noopener">WhatsApp</a>`:''}</div>
   </div>`}).join('');
 }
@@ -630,6 +632,7 @@ document.addEventListener('click',async e=>{
   const p=S.pk.find(x=>x.id===el.dataset.id);const a=el.dataset.act;
   if(a==='st'&&p){const i=STATUS.findIndex(s=>s[0]===p.st);const nx=STATUS[(i+1)%STATUS.length][0];if(nx==='entregado'){openPOD(p);return}p.st=nx}
   // Devuelto al almacén (por ejemplo sin dirección); tocar otra vez lo regresa al estado que tenía
+  else if(a==='aruta'&&p){entAgregarPk(p);return}
   else if(a==='rescan'&&p){scanCorregir(p);return}
   else if(a==='dev'&&p){if(p.st==='devuelto'){p.st=p.stAntes||'pendiente';delete p.stAntes;delete p.devAt;toast(`${p.nombre}: vuelve a ${SLABEL[p.st]}`)}else{p.stAntes=p.st;p.st='devuelto';p.devAt=Date.now();toast(`${p.nombre}: devuelto al almacén`)}}
   else if(a==='set'&&p){if(el.dataset.st==='entregado'&&p.st!=='entregado'){openPOD(p);return}p.st=el.dataset.st;toast(`${p.nombre}: ${SLABEL[p.st]}`)}
@@ -1154,6 +1157,12 @@ setTimeout(()=>{try{entSyncPk()}catch(e){}},0); // al abrir la app (el render() 
 function entParadasDe(p){try{return S.ent&&S.ent.stops?S.ent.stops.filter(s=>s.pkId===p.id||entPkg(s)===p):[]}catch(e){return []}}
 function entCopiarPk(p,ps){(ps||[]).forEach(s=>{s.tel=p.tel||'';if(p.nombre)s.nombre=p.nombre;if(p.guia)s.guia=p.guia;s.pkId=s.pkId||p.id})}
 // Paradas marcadas Entregado (también las de antes de la 1.28 o de otro aparato) pasan su paquete a entregado en Paquetes
+// Paquete con ubicación que no está en la ruta: se agrega como parada nueva y se reordena desde donde estás
+function entAgregarPk(p){const c=parseCoord(p.ubic);if(!S.ent||!c){toast('Primero cargá la ruta en la pestaña Ruta');return}
+  const mx=Math.max(0,...S.ent.stops.filter(x=>x.c).map(x=>x.n||0));
+  S.ent.stops.unshift({n:mx+1,nombre:p.nombre||'',tel:p.tel||'',dir:p.dir||'',guia:p.guia||'',nota:p.nota||'',c,waze:'',done:false,pkId:p.id,pkFijo:p.id});
+  S.ent.stops=[...S.ent.stops.filter(x=>x.c),...S.ent.stops.filter(x=>!x.c)];toast(`${p.nombre||'Paquete'} agregado a la ruta`);
+  if(EPOS)entOrdenar(EPOS.c,'donde estás');else{save();render()}}
 function entSyncPk(){const E=S.ent;if(!E||!E.stops)return false;let n=0,t=0,nuevas=0,maxN=Math.max(0,...E.stops.filter(x=>x.c).map(x=>x.n||0));E.stops.forEach(s=>{const p=entPkg(s);
   // El teléfono manda el de Paquetes: si se corrigió allá (también antes de la 1.34), la parada lo toma
   if(p&&p.tel&&phoneWA(p.tel)&&phoneWA(p.tel)!==phoneWA(s.tel)){s.tel=p.tel;s.pkId=p.id;t++}

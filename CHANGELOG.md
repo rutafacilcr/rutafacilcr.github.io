@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-01
+- **1.38.1 · Paquetes dice si está en la ruta:** cada paquete muestra "🗺️ En la ruta" o, si tiene ubicación y no está, el botón **➕ Agregar a la ruta**. Si la ubicación que se pegó no se puede leer (por ejemplo un link corto maps.app.goo.gl), lo avisa en rojo.
 - **1.38.0 · Número fijo del paquete:** cada paquete tiene un número fijo (su posición en la lista; los nuevos toman el siguiente) y se ve igual en *Paquetes*, *Mensajes* y en el pin y la tarjeta de *Ruta*. El orden de la ruta no cambia, solo el número que se muestra.
 - **1.37.3 · Paquetes manda en todo:** para cualquier paquete, si le cambiás el nombre, el teléfono o la ubicación en *Paquetes*, su parada en *Ruta* toma los mismos datos. La unión entre parada y paquete se mantiene aunque cambien todos esos datos.
 - **1.37.2 · Paquete correcto para cada parada:** si hay dos paquetes parecidos (por ejemplo, uno repetido con el teléfono viejo), la parada se une al que más coincide y tiene ubicación, no al primero que encuentra. Las paradas sin ubicación muestran a qué paquete están unidas (🔗 nombre · teléfono), y al tocarlo se puede cambiar.
