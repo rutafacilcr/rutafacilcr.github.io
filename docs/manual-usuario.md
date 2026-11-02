@@ -301,3 +301,8 @@ Cuando un cliente te manda su ubicación y la ponés en *Paquetes* (con **📋 P
 ### 🔗 Unir a paquete (1.37.1)
 
 Si en **Ruta** una parada muestra **🔗 Unir a paquete**, la app no encontró su paquete en *Paquetes* (por ejemplo, porque el nombre o la guía quedaron distintos). Tocalo, escribí parte del nombre, la guía o el teléfono como está en *Paquetes* y elegilo. Desde ese momento la parada toma el teléfono (para WhatsApp) y la ubicación de ese paquete, y si estaba con **?** entra al mapa. Los links de Waze para compartir (waze.com/ul/…) ya cuentan como ubicación.
+
+
+### Ver y cambiar el paquete de una parada (1.37.2)
+
+En las paradas con **?**, la etiqueta **🔗 Nombre · teléfono** muestra con qué paquete de *Paquetes* está unida. Si es el equivocado (por ejemplo, un paquete repetido con el número viejo), tocala y elegí el correcto. Queda fijo y la parada toma su teléfono y su ubicación.

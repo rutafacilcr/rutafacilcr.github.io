@@ -310,7 +310,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.37.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.37.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -1134,7 +1134,15 @@ async function entCargar(file){
 // Paquete de la lista que corresponde a la parada: por guía o teléfono; si no, por el mismo nombre (sin tildes ni mayúsculas)
 // La guía viene del escáner (OCR) y a veces confunde O con 0 o I con 1: se comparan normalizadas
 const guiaN=g=>String(g||'').toUpperCase().replace(/\s/g,'').replace(/O/g,'0').replace(/[IL]/g,'1');
-const entPkg=s=>(s.pkId&&S.pk.find(p=>p.id===s.pkId))||S.pk.find(p=>(s.guia&&p.guia&&guiaN(p.guia)===guiaN(s.guia))||(s.tel&&phoneWA(p.tel)&&phoneWA(p.tel)===phoneWA(s.tel)))||(s.nombre?S.pk.find(p=>p.nombre&&nomN(p.nombre)===nomN(s.nombre))||S.pk.find(p=>p.nombre&&nom2(p.nombre)&&nom2(p.nombre)===nom2(s.nombre)):undefined);
+// Paquete de la lista que corresponde a la parada. Si se unió a mano (pkFijo) manda ese; si no, gana el que más coincide:
+// guía (+4), nombre igual (+3) o primeras dos palabras (+2), teléfono (+1), el ya unido (+1), con ubicación (+2); empate: el más nuevo.
+// Así un paquete repetido con el teléfono viejo no le gana al que se corrigió.
+const entPkg=s=>{if(s.pkFijo){const f=S.pk.find(p=>p.id===s.pkFijo);if(f)return f}
+  const g=s.guia&&guiaN(s.guia),t=s.tel&&phoneWA(s.tel),n=s.nombre&&nomN(s.nombre),n2=s.nombre&&nom2(s.nombre);let best,bs=0;
+  for(const p of S.pk){let k=0;if(g&&p.guia&&guiaN(p.guia)===g)k+=4;if(n&&p.nombre){const pn=nomN(p.nombre);if(pn===n)k+=3;else if(n2&&nom2(p.nombre)===n2)k+=2}
+    if(t&&phoneWA(p.tel)===t)k+=1;if(!k)continue;if(p.id===s.pkId)k+=1;if(parseCoord(p.ubic))k+=2;
+    if(k>bs||(k===bs&&(p.ing||0)>(best.ing||0))){best=p;bs=k}}
+  return best}
 // Nombre normalizado (sin tildes, espacios simples) y sus dos primeras palabras, por si un lado trae apellidos de más
 const nomN=t=>sinTilde(t).replace(/[^a-zñ0-9 ]/g,' ').replace(/\s+/g,' ').trim(),nom2=t=>{const w=nomN(t).split(' ').filter(x=>x.length>1);return w.length>=2?w[0]+' '+w[1]:''};
 const entDone=s=>{const p=entPkg(s);return s.done||(p&&p.st==='entregado')};
@@ -1162,7 +1170,7 @@ async function renderEnt(){entSyncPk();
   const erk=s=>entDone(s)?2:s.c?0:1;
   LI.innerHTML=E.stops.map((s,i)=>[s,i]).sort((a,b)=>erk(a[0])-erk(b[0])||a[1]-b[1]).map(([s,i])=>{const d=entDone(s),p=entPkg(s),ubx=s.ub!==undefined?s.ub:(p&&p.ubic&&!parseCoord(p.ubic)?String(p.ubic):undefined),nav=s.c?`https://www.google.com/maps/dir/?api=1&destination=${s.c[0]},${s.c[1]}&travelmode=driving`:'',wz=s.waze||(s.c?`https://waze.com/ul?ll=${s.c[0]},${s.c[1]}&navigate=yes`:''),wa=phoneWA(s.tel);
     return `<div class="estop${d?' ok':''}${i===ESEL?' sel':''}" data-ei="${i}"><div class="n${s.c?'':' no'}">${s.c?s.n:'?'}</div>
-    <div><b>${esc(s.nombre)}</b>${s.c?'':` <button class="eub" type="button" data-eub="${i}" title="Lo que dice la columna ubicación del archivo. Tocá para agregar la ubicación">📍 ${esc(ubx===undefined?'Sin dato':/^aplicaci[oó]n$/i.test(ubx.trim())?'Co-out':(ubx||'Vacío'))}</button>`}${p?'':` <button class="eub" type="button" data-elink="${i}" title="Esta parada no está unida a ningún paquete de la lista: tocá para unirla">🔗 Unir a paquete</button>`}${d?` <span class="small" style="color:var(--ok);font-weight:700">✓ entregado${s.at?' '+hm(new Date(s.at).getHours()*60+new Date(s.at).getMinutes()):''}${s.gps?' 📍':''}</span>`:''}<div class="small muted dir">${s.c?'':'<b>Sin ubicación</b> · '}${esc(s.dir||'')}</div>${s.nota?`<div class="small">📝 ${esc(s.nota)}</div>`:''}</div>
+    <div><b>${esc(s.nombre)}</b>${s.c?'':` <button class="eub" type="button" data-eub="${i}" title="Lo que dice la columna ubicación del archivo. Tocá para agregar la ubicación">📍 ${esc(ubx===undefined?'Sin dato':/^aplicaci[oó]n$/i.test(ubx.trim())?'Co-out':(ubx||'Vacío'))}</button>`}${!p?` <button class="eub" type="button" data-elink="${i}" title="Esta parada no está unida a ningún paquete de la lista: tocá para unirla">🔗 Unir a paquete</button>`:!s.c?` <button class="eub" type="button" data-elink="${i}" title="Paquete unido a esta parada; tocá para cambiarlo">🔗 ${esc((p.nombre||'').split(' ')[0])} · ${esc(p.tel||'sin tel')}</button>`:''}${d?` <span class="small" style="color:var(--ok);font-weight:700">✓ entregado${s.at?' '+hm(new Date(s.at).getHours()*60+new Date(s.at).getMinutes()):''}${s.gps?' 📍':''}</span>`:''}<div class="small muted dir">${s.c?'':'<b>Sin ubicación</b> · '}${esc(s.dir||'')}</div>${s.nota?`<div class="small">📝 ${esc(s.nota)}</div>`:''}</div>
     <div class="acts">${wz?`<a class="btn sm primary" href="${wz}" target="_blank" rel="noopener">🚗 Waze</a>`:''}${nav?`<a class="btn sm" href="${nav}" target="_blank" rel="noopener">🗺️ Maps</a>`:''}${wa?`<a class="btn sm" href="https://wa.me/${wa}" target="_blank" rel="noopener">WhatsApp</a>`:''}
       ${!d&&s.c?`<span class="eeta" data-eta="${i}"></span>`:''}<div class="acts2">${!d&&p?`<button class="btn sm" type="button" data-eok="${i}">📸 Evidencia</button>`:''}<a class="btn sm" href="shortcuts://run-shortcut?name=Co-out" title="Abre la app Co-out con el atajo de iPhone llamado Co-out">📲 Co-out</a>${d?(s.done?`<button class="btn sm ghost" type="button" data-eundo="${i}">↩ Deshacer</button>`:''):`<button class="btn sm" type="button" data-edone="${i}">✓ Entregado</button>`}</div></div></div>`}).join('');
   $('#entMap').hidden=!conC.length;if(!conC.length||$('#v-entrega').hidden)return;
@@ -1266,10 +1274,10 @@ function entUbicar(i){const s=S.ent.stops[i];const t=prompt(`Ubicación de ${s.n
 $('#entFile').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)entCargar(f).catch(()=>toast('No se pudo leer ese archivo'))};
 $('#entList').addEventListener('click',e=>{
   const b=e.target.closest('[data-eok]');if(b){const s=S.ent.stops[+b.dataset.eok],p=entPkg(s);if(p&&p.st!=='entregado'){openPOD(p);return}s.done=true;save();renderEnt();return}
-  const bl=e.target.closest('[data-elink]');if(bl){const s=S.ent.stops[+bl.dataset.elink];const q=prompt(`¿Cuál paquete es ${s.nombre}?\nEscribí parte del nombre, la guía o el teléfono como está en Paquetes:`,(s.nombre||'').split(' ')[0]);if(!q)return;
+  const bl=e.target.closest('[data-elink]');if(bl){const s=S.ent.stops[+bl.dataset.elink];const q=prompt(`¿Cuál paquete es ${s.nombre}?${entPkg(s)?`\n(Ahora está unida a: ${entPkg(s).nombre} · ${entPkg(s).tel||'sin tel'})`:''}\nEscribí parte del nombre, la guía o el teléfono como está en Paquetes:`,(s.nombre||'').split(' ')[0]);if(!q)return;
     const qq=nomN(q),dg=q.replace(/\D/g,''),c=S.pk.filter(p=>nomN(p.nombre).includes(qq)||(dg.length>=4&&String(p.tel||'').replace(/\D/g,'').includes(dg))||(p.guia&&guiaN(p.guia).includes(guiaN(q))));
     if(!c.length){toast('No encontré ese paquete en la lista');return}let p=c[0];if(c.length>1){const k=prompt('Hay varios, escribí el número:\n'+c.slice(0,9).map((x,j)=>`${j+1}. ${x.nombre} · ${x.tel||''}`).join('\n'),'1');p=c[(+k||1)-1];if(!p)return}
-    s.pkId=p.id;save();render();renderEnt();toast(`Unida a ${p.nombre}: toma su teléfono y ubicación`);return}
+    s.pkId=p.id;s.pkFijo=p.id;save();render();renderEnt();toast(`Unida a ${p.nombre}: toma su teléfono y ubicación`);return}
   const bub=e.target.closest('[data-eub]');if(bub){entUbicar(+bub.dataset.eub);return}
   const bd=e.target.closest('[data-edone]');if(bd){const s=S.ent.stops[+bd.dataset.edone],p=entPkg(s);s.done=true;
     // Hora y ubicación real (GPS del celular en ese momento) de la entrega
