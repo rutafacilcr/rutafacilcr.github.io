@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.41.1 · WhatsApp bajo Escáner:** en *Paquetes*, el botón **WhatsApp** queda siempre justo debajo de **📷 Escáner**.
 - **1.41.0 · Botones de Paquetes:** sin **Maps**; nuevo orden: Pegar respuesta, Editar, Waze, **Borrar** (antes Quitar), **↩ Devuelto**, **📷 Escáner** (antes Etiqueta) y WhatsApp debajo.
 - **1.40.1 · Entregados en gris:** en *Paquetes*, la tarjeta de un paquete entregado se ve apagada en gris (los botones siguen sirviendo para corregir).
 - **1.40.0 · Número tachado:** al tocar **✓ Entregado** en *Ruta*, el número del paquete sale tachado (en la tarjeta, el pin y en *Paquetes*) y la parada baja al final de la lista.

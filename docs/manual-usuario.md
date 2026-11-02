@@ -270,7 +270,7 @@ Arriba salen los paquetes que faltan (pendientes, confirmados, sin respuesta), e
 
 ### Botones de cada paquete (1.41.0)
 
-En *Paquetes*, cada tarjeta trae en este orden: **📋 Pegar respuesta**, **Editar**, **Waze** (si tiene ubicación), **Borrar** (antes *Quitar*), **↩ Devuelto**, **📷 Escáner** y, debajo, **WhatsApp**. El botón **Maps** ya no sale en *Paquetes*; en *Ruta* sigue igual.
+En *Paquetes*, cada tarjeta trae en este orden: **📋 Pegar respuesta**, **Editar**, **Waze** (si tiene ubicación), **Borrar** (antes *Quitar*), **↩ Devuelto**, **📷 Escáner** y **WhatsApp** justo debajo de Escáner (1.41.1). El botón **Maps** ya no sale en *Paquetes*; en *Ruta* sigue igual.
 
 
 ### Corregir un paquete mal escaneado (1.31.0)
