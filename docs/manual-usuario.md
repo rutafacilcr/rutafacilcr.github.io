@@ -268,6 +268,15 @@ En *Paquetes*, cada paquete tiene el botón **↩ Devuelto**. Usalo cuando el pa
 Arriba salen los paquetes que faltan (pendientes, confirmados, sin respuesta), en el orden en que los agregaste. Los **entregados** bajan al final y los **devueltos** quedan de últimos.
 
 
+### Lista de la ruta en orden (1.46.0)
+
+En *Ruta*, tocá **📋 Lista** (a la par de 🎯 Elegir en el mapa). Sale la ruta en el orden en que vas a entregar, con el número fijo de cada paquete, el nombre y el teléfono, por ejemplo:
+
+> 1. #13 Suyapa · 88169570
+> 2. #62 Patricia · 88881111
+
+Al final van las paradas sin ubicación y las ya entregadas. Podés tomarle captura, tocar **📋 Copiar** o **📤 Compartir** para mandarla por WhatsApp.
+
 ### Ubicación en grados (1.45.3)
 
 En la ubicación de un paquete podés pegar:

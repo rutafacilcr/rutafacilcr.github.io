@@ -279,6 +279,7 @@ details summary{cursor:pointer;font-weight:600}
   <div class="enthead" id="entTools" hidden>
     <button class="btn sm road" id="entAqui" type="button">📍 Ordenar desde aquí</button>
     <button class="btn sm" id="entPick" type="button">🎯 Elegir en el mapa</button>
+    <button class="btn sm" id="entLista" type="button">📋 Lista</button>
     <div class="entrow"><span class="small muted" id="entGps"></span><span class="enttot" id="entTot"></span></div>
   </div>
   <div class="entbus" id="entBus" hidden><input type="search" id="entBuscar" placeholder="🔍 Buscar cliente, teléfono o guía" autocomplete="off" enterkeyhint="search"><span class="small muted" id="entBusN"></span></div>
@@ -315,7 +316,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.45.3</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.46.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -1050,9 +1051,13 @@ $('#supDiag').onclick=async()=>{let t=`RutaFácil ${$('#appVer').textContent} ·
     t+='\n-- Paquetes con ubicación unidos a parada sin pin, entregada o a varias --\n';S.pk.filter(p=>parseCoord(p.ubic)&&dueno[p.id]&&(dueno[p.id].length>1||dueno[p.id].some(x=>!x.c||x.done)||p.st==='entregado')).forEach(p=>{t+=`* ${f(p)}\n`;dueno[p.id].forEach(x=>{t+=`   <- parada ${x.nombre} | tel ${x.tel||'-'} | ${x.c?'pin':'SIN pin'}${x.done?' | entregada':''}${x.pkFijo?' | fijo':''}\n`})});
     t+='\n-- Paquetes con ubicación que no se lee --\n';S.pk.filter(p=>p.ubic&&!parseCoord(p.ubic)).forEach(p=>{t+=`* ${f(p)}\n`})}}catch(e){t+='ERROR '+e.message+'\n'+(e.stack||'').slice(0,300)}
   // En iPhone copiar/pegar a veces falla: se muestra en pantalla para captura, con Compartir (WhatsApp, Notas…) y Copiar
-  $('#diagTxt').textContent=t;$('#supSheet').hidden=true;$('#diagSheet').hidden=false;document.body.style.overflow='hidden'};
+  $('#diagTitle').textContent='🧪 Diagnóstico de la ruta';$('#diagTxt').textContent=t;$('#supSheet').hidden=true;$('#diagSheet').hidden=false;document.body.style.overflow='hidden'};
+// Lista de la ruta en el orden en que se va a entregar, con el número fijo de cada paquete (para copiar o mandar por WhatsApp)
+$('#entLista').onclick=()=>{const E=S.ent;if(!E||!E.stops)return;const erk=s=>entDone(s)?2:s.c?0:1;let k=0;
+  const L=E.stops.map((s,i)=>[s,i]).sort((a,b)=>erk(a[0])-erk(b[0])||a[1]-b[1]).map(([s])=>{const p=entPkg(s);return `${++k}. #${eNum(s)} ${s.nombre||''}${p&&p.tel?' · '+p.tel:''}${entDone(s)?' ✓ entregado':!s.c?' (sin ubicación)':''}`});
+  $('#diagTitle').textContent='📋 Ruta en orden';$('#diagTxt').textContent=`${E.nombre} · ${new Date().toLocaleString('es-CR')}\n\n`+L.join('\n');$('#diagSheet').hidden=false;document.body.style.overflow='hidden'};
 $('#diagClose').onclick=()=>{$('#diagSheet').hidden=true;document.body.style.overflow=''};
-$('#diagShare').onclick=async()=>{const t=$('#diagTxt').textContent;if(navigator.share){try{await navigator.share({title:'Diagnóstico RutaFácil',text:t});return}catch(e){if(e.name==='AbortError')return}}
+$('#diagShare').onclick=async()=>{const t=$('#diagTxt').textContent;if(navigator.share){try{await navigator.share({title:$('#diagTitle').textContent,text:t});return}catch(e){if(e.name==='AbortError')return}}
   location.href=`https://wa.me/${SOPORTE_WA}?text=${encodeURIComponent(t.slice(0,3500))}`};
 $('#diagCopy').onclick=async()=>{const t=$('#diagTxt').textContent;try{await navigator.clipboard.writeText(t);toast('Diagnóstico copiado')}catch(e){const r=document.createRange();r.selectNodeContents($('#diagTxt'));const g=getSelection();g.removeAllRanges();g.addRange(r);try{document.execCommand('copy');toast('Diagnóstico copiado')}catch(_){toast('Tomale captura de pantalla')}}};
 // ===== Soporte: WhatsApp y videos (lista en videos.json) =====

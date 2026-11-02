@@ -12,7 +12,7 @@ Al marcar un paquete como entregado en *Ruta*, su número queda tachado y baja a
 
 En *Ruta*, el botón WhatsApp de cada parada abre el chat con el aviso "Estamos en camino" y el tiempo estimado. También se puede quitar una parada repetida con **🗑️ Quitar**; el paquete sigue en *Paquetes*.
 
-En *Paquetes* hay un buscador por nombre, teléfono, guía o número.
+En *Ruta*, **📋 Lista** da la ruta en orden con el número de cada paquete para copiar o compartir. En *Paquetes* hay un buscador por nombre, teléfono, guía o número.
 
 La app se maneja con tres pestañas en la barra de abajo (**Paquetes**, **Mensajes** y **Ruta**) más el botón **Soporte**.
 
