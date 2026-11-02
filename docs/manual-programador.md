@@ -113,6 +113,10 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - *Guardar* abre la cámara **dentro del mismo toque** (iPhone no deja abrirla después de un `await`) y agrega con `mkPkg()`. Las fotos de etiqueta no se guardan.
 - Prueba local: las CDN están bloqueadas en el sandbox; se instalan los paquetes con npm y Playwright sirve los archivos interceptando las URL de jsDelivr. Las etiquetas de prueba se generan con JsBarcode.
 
+## 3c-quater. Contadores (1.52.0)
+
+- `renderStats()`: Recibidos = `S.pk.length`; Entregados = `st==='entregado'`; Devueltos = `devuelto` o `p.devolver`; Hold = abiertos con alguna parada (`entParadasDe`) `hold && !done`; Sin ubicación = abiertos sin `parseCoord(p.ubic)` ni parada con `c`. `.stats` es `repeat(5,minmax(0,1fr))`; en celular centrado y letra de 11 px.
+
 ## 3c-ter. Cierre (1.51.0)
 
 - `#clearAll` (dos toques) llama `cerrarDia(b)`: con `NUBE.on` manda `RF_AUTH.rpc('rf_cierre_guardar',{p_paquetes,p_ruta})` con `fecha_cierre` (ISO) en cada paquete, en la ruta y en cada parada; si falla no borra. Sin cuenta pide `confirm`.

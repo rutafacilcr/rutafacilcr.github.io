@@ -450,6 +450,10 @@ No tenés que unir nada a mano: si corregís en *Paquetes* el nombre, el teléfo
 
 Cuando tocás **✓ Entregado** en *Ruta*, el número del paquete queda tachado y en gris, y la parada baja al final de la lista. En *Paquetes* el número también sale tachado, la tarjeta entera se ve apagada en gris (1.40.1) y el paquete pasa con los entregados. Sus botones siguen sirviendo por si hay que corregir algo. Si te equivocaste, **↩ Deshacer** lo devuelve.
 
+### Contadores (1.52.0)
+
+Arriba de *Paquetes* hay cinco cuadros: **Recibidos** (todos), **Entregados**, **Hold** (pendientes en Hold en la ruta), **Devueltos** (devueltos y ⛔ Devolver) y **Sin ubicación** (pendientes que no tienen ubicación ni en el paquete ni en la ruta). Un link corto de Google Maps (`maps.app.goo.gl`) no cuenta como ubicación.
+
 ### Cierre del día (1.51.0)
 
 Al terminar, en *Paquetes* tocá **Vaciar lista** y otra vez para confirmar (**¿Cerrar el día? Tocá otra vez**). La app guarda en la nube todos los paquetes y la ruta con la fecha y hora del cierre, y deja *Paquetes* y *Ruta* vacías para cargar la ruta nueva. Si no hay internet, avisa y **no borra nada**: probá de nuevo cuando tengás señal.

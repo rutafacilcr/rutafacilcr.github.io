@@ -144,11 +144,11 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);outline-
 .st-devuelto{background:#e6e7e9;color:#555b63}
 .pin{font-size:12px;font-weight:600}
 .pin.yes{color:var(--ok)} .pin.no{color:var(--warn)}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-@media (max-width:520px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
 .stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
 .stat b{display:block;font-family:var(--f-display);font-weight:800;font-size:24px;line-height:1;font-variant-numeric:tabular-nums}
 .stat span{font-size:12px;color:var(--muted)}
+@media (max-width:520px){.stat{padding:8px 4px;text-align:center}.stat b{font-size:22px}.stat span{font-size:11px;line-height:1.2;display:block}}
 .preview{white-space:pre-wrap;background:var(--bg);border:1px dashed var(--line);border-radius:7px;padding:10px;font-size:14px}
 .leg{display:flex;flex-direction:column;gap:0}
 .stop{display:grid;grid-template-columns:34px 1fr;gap:10px;position:relative;padding-bottom:14px}
@@ -512,9 +512,14 @@ const waze=c=>`https://waze.com/ul?ll=${c[0]},${c[1]}&navigate=yes`;
 function stChip(p){return `<button class="chip st-${p.st}" data-act="st" data-id="${p.id}" title="Cambiar estado">${SLABEL[p.st]}</button>`}
 
 function renderStats(){
-  const c=k=>S.pk.filter(p=>p.st===k).length;
-  const sinPin=S.pk.filter(p=>!parseCoord(p.ubic)).length;
-  $('#stats').innerHTML=[[S.pk.length,'paquetes'],[c('confirmado'),'confirmados'],[c('entregado'),'entregados'],...(c('devuelto')?[[c('devuelto'),'devueltos']]:[]),[sinPin,'sin ubicación']].map(([n,l])=>`<div class="stat"><b>${n}</b><span>${l}</span></div>`).join('');
+  // Cada paquete cae en un solo grupo, así: recibidos = entregados + hold + devueltos + sin ubicación + por entregar (con ubicación)
+  const pk=S.ex?[]:S.pk,par=p=>{try{return entParadasDe(p)}catch(e){return []}};
+  const cerr=p=>p.st==='entregado'||p.st==='devuelto'||p.devolver;
+  const ent=pk.filter(p=>p.st==='entregado').length,dev=pk.filter(p=>p.st!=='entregado'&&(p.st==='devuelto'||p.devolver)).length;
+  const hold=pk.filter(p=>!cerr(p)&&par(p).some(x=>x.hold&&!x.done)).length;
+  // Sin ubicación: pendientes que no tienen coordenadas ni en Paquetes ni en su parada de la ruta
+  const sinUb=pk.filter(p=>!cerr(p)&&!parseCoord(p.ubic)&&!par(p).some(x=>x.c)).length;
+  $('#stats').innerHTML=[[pk.length,'Recibidos'],[ent,'Entregados'],[hold,'Hold'],[dev,'Devueltos'],[sinUb,'Sin ubicación']].map(([n,l])=>`<div class="stat"><b>${n}</b><span>${l}</span></div>`).join('');
   $('#n-pk').textContent=S.ex?'':(S.pk.filter(p=>p.st!=='entregado'&&p.st!=='devuelto'&&!p.devolver).length||''); // globito = paquetes que faltan por entregar
 }
 function renderPk(){

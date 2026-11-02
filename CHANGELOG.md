@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.52.0 · Contadores de Paquetes:** arriba de *Paquetes* salen **Recibidos, Entregados, Hold, Devueltos y Sin ubicación**. Cada paquete cuenta en un solo grupo: *Devueltos* suma los devueltos y los ⛔ Devolver; *Hold* son los pendientes cuya parada está en Hold; *Sin ubicación* son solo los pendientes sin coordenadas ni en el paquete ni en su parada de la ruta (antes contaba también entregados y devueltos, y paquetes que sí tenían ubicación en la ruta).
 - **1.51.1 · Nuevo mensaje Coordinar:** el mensaje "Coordinar" de *Mensajes* pasa al texto nuevo de Victor (paquete de *TEMU*, pedir la ubicación por WhatsApp y después coordinar la hora). Se pone una sola vez; si después lo editás en Mensajes, se respeta.
 - **1.51.0 · Cierre del día y globito de pendientes:** (1) **Vaciar lista** (dos toques) ahora es un cierre: guarda en la base (`rf_cierres`) todos los paquetes y la ruta con la fecha del cierre y después vacía *Paquetes* y *Ruta* para empezar una ruta nueva. Si no se puede guardar (sin internet), no borra nada. Requiere correr de nuevo `supabase.sql`. (2) El globito de *Paquetes* cuenta solo los que faltan por entregar (sin entregados, devueltos ni los marcados ⛔ Devolver).
 - **1.50.1 · Devolver junto al estado:** en *Paquetes*, la etiqueta **⛔ Devolver** queda siempre a la par del estado (Pendiente, Confirmado…); si el nombre es largo, bajan juntas.
