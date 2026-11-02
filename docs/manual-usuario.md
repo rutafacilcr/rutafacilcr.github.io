@@ -281,3 +281,8 @@ A la par de **Quitar** está el botón verde **WhatsApp**, que abre el chat con 
 ### Cambios de teléfono llegan a Entrega (1.34.0)
 
 Si corregís el teléfono de un paquete en *Paquetes* (con **Editar** o **📷 Etiqueta**), la parada de ese cliente en *Entrega* se actualiza sola con el número nuevo, y el botón WhatsApp ya abre el chat correcto. También se actualizan el nombre y la guía.
+
+
+### Orden de la lista en Entrega (1.35.0)
+
+Arriba salen las paradas que faltan, en el orden de la ruta; después las que no tienen ubicación (con el "?" en amarillo). Las que ya entregaste bajan solas al final, en gris.

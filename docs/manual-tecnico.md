@@ -154,6 +154,8 @@ Orden de Paquetes (1.30.0): solo cambia cómo se muestra la lista; el orden guar
 
 Devuelto (1.29.0): nuevo valor `st='devuelto'` en los paquetes (con `stAntes` y `devAt`); viaja en `S.pk` por `rf_listas`, sin cambios en `supabase.sql`.
 
+Orden en Entrega (1.35.0): solo cambia cómo se muestra la lista; el orden guardado de `S.ent.stops` no cambia.
+
 Teléfono a Entrega (1.34.0): solo cambia `S.ent` en el celular y la nube (`rf_listas`).
 
 Hora y GPS del Entregado (1.33.0): se guardan en la parada (`S.ent.stops[].at/gps`) y en el paquete (`entAt`, `entGps`), dentro de `rf_listas` (no en el bucket de evidencias). La evidencia con fotos sigue en "evidencias".
