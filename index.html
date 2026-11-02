@@ -316,7 +316,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.47.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.48.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -1054,7 +1054,7 @@ $('#supDiag').onclick=async()=>{let t=`RutaFácil ${$('#appVer').textContent} ·
   $('#diagTitle').textContent='🧪 Diagnóstico de la ruta';$('#diagTxt').textContent=t;$('#supSheet').hidden=true;$('#diagSheet').hidden=false;document.body.style.overflow='hidden'};
 // Lista de la ruta en el orden en que se va a entregar, con el número fijo de cada paquete (para copiar o mandar por WhatsApp)
 $('#entLista').onclick=()=>{const E=S.ent;if(!E||!E.stops)return;const erk=s=>entDone(s)?2:s.c?(s.hold?0.5:0):1;let k=0;
-  const L=E.stops.map((s,i)=>[s,i]).sort((a,b)=>erk(a[0])-erk(b[0])||a[1]-b[1]).map(([s])=>{const p=entPkg(s);return `${++k}. #${eNum(s)} ${s.nombre||''}${p&&p.tel?' · '+p.tel:''}${entDone(s)?' ✓ entregado':!s.c?' (sin ubicación)':''}`});
+  const L=E.stops.map((s,i)=>[s,i]).sort((a,b)=>erk(a[0])-erk(b[0])||a[1]-b[1]).map(([s])=>{const p=entPkg(s);return `${++k}. #${eNum(s)} ${s.nombre||''}${p&&p.tel?' · '+p.tel:''}${entDev(s)?' ↩ devuelto':entDone(s)?' ✓ entregado':s.hold?' ⏸ hold':!s.c?' (sin ubicación)':''}`});
   $('#diagTitle').textContent='📋 Ruta en orden';$('#diagTxt').textContent=`${E.nombre} · ${new Date().toLocaleString('es-CR')}\n\n`+L.join('\n');$('#diagSheet').hidden=false;document.body.style.overflow='hidden'};
 $('#diagClose').onclick=()=>{$('#diagSheet').hidden=true;document.body.style.overflow=''};
 $('#diagShare').onclick=async()=>{const t=$('#diagTxt').textContent;if(navigator.share){try{await navigator.share({title:$('#diagTitle').textContent,text:t});return}catch(e){if(e.name==='AbortError')return}}
@@ -1181,7 +1181,7 @@ async function entCargar(file){
     stops.push({n:/^\d+$/.test(g('n'))?+g('n'):null,nombre:tidyName(g('nombre')),tel:g('tel'),dir:g('dir'),guia:g('guia'),nota:g('nota'),c,waze:wz,done:false,...(c?{}:{ub:C.ubic<0?'':g('ubic')})})}
   if(!stops.length){toast('El archivo no trae paradas');return}
   let k=0;stops.forEach(s=>{if(s.c&&s.n==null)s.n=null});stops.sort((a,b)=>(a.c?0:1)-(b.c?0:1)||(a.n??1e9)-(b.n??1e9));stops.forEach(s=>{if(s.c)s.n=++k});
-  S.ent={nombre:file.name.replace(/\.[^.]+$/,''),at:Date.now(),stops};ESEL=-1;save();renderEnt();if(NUBE.on)nubeSync(true).then(()=>toast(S.dirty?'La ruta queda en este aparato; se sube cuando haya internet':'Ruta subida a la nube ☁️'));toast(`${stops.length} paradas cargadas`);
+  S.ent={nombre:file.name.replace(/\.[^.]+$/,''),at:Date.now(),mod:Date.now(),stops};ESEL=-1;save();renderEnt();if(NUBE.on)nubeSync(true).then(()=>toast(S.dirty?'La ruta queda en este aparato; se sube cuando haya internet':'Ruta subida a la nube ☁️'));toast(`${stops.length} paradas cargadas`);
   EAUTO=false;if(EPOS&&EPOS.acc<500){EAUTO=true;entOrdenar(EPOS.c,'donde estás')}else entVigilar(); // se ordena sola desde tu punto apenas haya GPS
 }
 // Paquete de la lista que corresponde a la parada: por guía o teléfono; si no, por el mismo nombre (sin tildes ni mayúsculas)
@@ -1190,7 +1190,7 @@ const guiaN=g=>String(g||'').toUpperCase().replace(/\s/g,'').replace(/O/g,'0').r
 // Paquete de la lista que corresponde a la parada. Si se unió a mano (pkFijo) manda ese; si no, gana el que más coincide:
 // guía (+4), nombre igual (+3) o primeras dos palabras (+2), teléfono (+1), el ya unido (+2, cuenta aunque haya cambiado todo lo demás), con ubicación (+2); empate: el más nuevo.
 // Así un paquete repetido con el teléfono viejo no le gana al que se corrigió.
-const entPkg=s=>{if(s.pkFijo){const f=S.pk.find(p=>p.id===s.pkFijo);if(f)return f}
+const entPkgCand=s=>{if(s.pkFijo){const f=S.pk.find(p=>p.id===s.pkFijo);if(f)return f}
   const g=s.guia&&guiaN(s.guia),t=s.tel&&phoneWA(s.tel),n=s.nombre&&nomN(s.nombre),n2=s.nombre&&nom2(s.nombre);let best,bs=0;
   for(const p of S.pk){let k=0;if(g&&p.guia&&guiaN(p.guia)===g)k+=4;if(n&&p.nombre){const pn=nomN(p.nombre);if(pn===n)k+=3;else if(n2&&nom2(p.nombre)===n2)k+=2}
     if(t&&(phoneWA(p.tel)===t||(p.telsAnt||[]).some(x=>phoneWA(x)===t)))k+=1;if(p.id===s.pkId)k+=2;if(!k)continue;if(parseCoord(p.ubic))k+=2;
@@ -1198,15 +1198,21 @@ const entPkg=s=>{if(s.pkFijo){const f=S.pk.find(p=>p.id===s.pkFijo);if(f)return 
   return best}
 // Nombre normalizado (sin tildes, espacios simples) y sus dos primeras palabras, por si un lado trae apellidos de más
 const nomN=t=>sinTilde(t).replace(/[^a-zñ0-9 ]/g,' ').replace(/\s+/g,' ').trim(),nom2=t=>{const w=nomN(t).split(' ').filter(x=>x.length>1);return w.length>=2?w[0]+' '+w[1]:''};
-const entDone=s=>{const p=entPkg(s);return s.done||(p&&p.st==='entregado')};
+// Paquete de la parada: solo si la unión es segura (a mano, guía, nombre o teléfono). Así el número, el estado y el pin no salen de otro cliente.
+const entPkg=s=>{const p=entPkgCand(s);return p&&entFuerte(s,p)?p:null};
+// Cerrada = entregada o su paquete está entregado o devuelto: sale de la línea del mapa, del orden, del total y va gris al final
+const entDone=s=>{const p=entPkg(s);return !!(s.done||(p&&(p.st==='entregado'||p.st==='devuelto')))};
+const entDev=s=>{const p=entPkg(s);return !s.done&&!!p&&p.st==='devuelto'};
+// Marca de cuándo se tocó la ruta a mano (para que otro aparato con una ruta vieja no la pise)
+const entMod=()=>{if(S.ent)S.ent.mod=Date.now()};
 setTimeout(()=>{try{entSyncPk()}catch(e){}},0); // al abrir la app (el render() inicial corre antes de que existan entPkg/sinTilde)
 // Al editar un paquete: se buscan sus paradas en Entrega ANTES del cambio y después se les copia el teléfono (y nombre/guía si los tiene)
 function entParadasDe(p){try{return S.ent&&S.ent.stops?S.ent.stops.filter(s=>s.pkFijo===p.id||(entPkg(s)===p&&entFuerte(s,p))):[]}catch(e){return []}}
-function entCopiarPk(p,ps){(ps||[]).forEach(s=>{s.tel=p.tel||'';if(p.nombre)s.nombre=p.nombre;if(p.guia)s.guia=p.guia;s.pkId=p.id;s.pkFijo=p.id});
+function entCopiarPk(p,ps){if((ps||[]).length)entMod();(ps||[]).forEach(s=>{s.tel=p.tel||'';if(p.nombre)s.nombre=p.nombre;if(p.guia)s.guia=p.guia;s.pkId=p.id;s.pkFijo=p.id});
   if(!(ps||[]).length&&S.ent&&S.ent.stops&&parseCoord(p.ubic)&&p.st!=='entregado'&&p.st!=='devuelto'&&!(S.ent.quitadas||[]).includes(p.id))setTimeout(()=>entAgregarPk(p),0)}
 // Paradas marcadas Entregado (también las de antes de la 1.28 o de otro aparato) pasan su paquete a entregado en Paquetes
 // Paquete con ubicación que no está en la ruta: se agrega como parada nueva y se reordena desde donde estás
-function entAgregarPk(p){const c=parseCoord(p.ubic);if(!S.ent||!c){toast('Primero cargá la ruta en la pestaña Ruta');return}
+function entAgregarPk(p){const c=parseCoord(p.ubic);if(!S.ent||!c){toast('Primero cargá la ruta en la pestaña Ruta');return}entMod();
   if(S.ent.quitadas)S.ent.quitadas=S.ent.quitadas.filter(x=>x!==p.id); // si se había quitado a mano, vuelve
   const mx=Math.max(0,...S.ent.stops.filter(x=>x.c).map(x=>x.n||0));
   // Si ya tiene parada pero sin pin (el "?" amarillo), a esa parada se le pone la ubicación del paquete y queda unida para siempre
@@ -1239,18 +1245,18 @@ function entSyncPk(){const E=S.ent;if(!E||!E.stops)return false;const ul=entUnir
   if(nuevas){E.stops=[...E.stops.filter(x=>x.c),...E.stops.filter(x=>!x.c)];if(EPOS)setTimeout(()=>entOrdenar(EPOS.c,'donde estás'),0);toast(`${nuevas} parada(s) ya tienen ubicación y entraron a la ruta`)}
   if(n||t){save();renderStats();renderPk();if(t&&!$('#v-entrega').hidden)setTimeout(renderEnt,0)}return n>0}
 // Número de la parada = el número fijo del paquete en Paquetes (codificación de Victor); si no hay paquete, el orden de la ruta
-const eNum=s=>{const p=entPkg(s);return p&&p.num?p.num:s.n};
+const eNum=s=>{const p=entPkg(s);return p&&p.num?p.num:'–'}; // sin paquete unido no se inventa número (se confundía con los de Paquetes)
 async function renderEnt(){entSyncPk();
   // La ruta se arma el día antes: vale la de hoy o la de mañana (fecha local del celular).
   const dia=d=>'Ruta '+new Date(Date.now()+d*864e5).toLocaleDateString('en-CA'),hoy=dia(0),man=dia(1);const E=S.ent,LI=$('#entList');
   if(!E||!E.stops||!E.stops.length){$('#entMap').hidden=true;$('#entTools').hidden=true;$('#entBus').hidden=true;$('#entInfo').textContent=`Cargá el archivo de la ruta ("${hoy}.xlsx" o "${man}.xlsx")`;LI.innerHTML='<div class="empty">Tocá <b>📂 Cargar ruta</b> y elegí el Excel de la ruta del día. Arriba sale el mapa con las paradas en orden y abajo la lista: tocá una parada para verla en el mapa e ir con Waze o Google Maps.</div>';return}
-  $('#entTools').hidden=false;$('#entBus').hidden=false;const ok=E.stops.filter(entDone).length,conC=E.stops.filter(s=>s.c);
+  $('#entTools').hidden=false;$('#entBus').hidden=false;const ok=E.stops.filter(x=>entDone(x)&&!entDev(x)).length,conC=E.stops.filter(s=>s.c);
   $('#entInfo').innerHTML=`<b>${esc(E.nombre)}</b> · ${ok} de ${E.stops.length} entregadas${![hoy,man].includes(E.nombre)?' · <span style="color:var(--bad)">no es la de hoy ni la de mañana</span>':''}`;
   // Pendientes arriba (en orden de ruta; las sin ubicación después) y las entregadas totalmente de últimas
   const erk=s=>entDone(s)?2:s.c?(s.hold?0.5:0):1;
   LI.innerHTML=E.stops.map((s,i)=>[s,i]).sort((a,b)=>erk(a[0])-erk(b[0])||a[1]-b[1]).map(([s,i])=>{const d=entDone(s),p=entPkg(s),ubx=s.ub!==undefined?s.ub:(p&&p.ubic&&!parseCoord(p.ubic)?String(p.ubic):undefined),nav=s.c?`https://www.google.com/maps/dir/?api=1&destination=${s.c[0]},${s.c[1]}&travelmode=driving`:'',wz=s.waze||(s.c?`https://waze.com/ul?ll=${s.c[0]},${s.c[1]}&navigate=yes`:''),wa=phoneWA(s.tel);
     return `<div class="estop${d?' ok':''}${i===ESEL?' sel':''}" data-ei="${i}"><div class="n${s.c||d?'':' no'}">${s.c||d?eNum(s):'?'}</div>
-    <div><b>${esc(s.nombre)}</b>${s.c?'':` <button class="eub" type="button" data-eub="${i}" title="Lo que dice la columna ubicación del archivo. Tocá para agregar la ubicación">📍 ${esc(ubx===undefined?'Sin dato':/^aplicaci[oó]n$/i.test(ubx.trim())?'Co-out':(ubx||'Vacío'))}</button>`}${!p?` <button class="eub" type="button" data-elink="${i}" title="Esta parada no está unida a ningún paquete de la lista: tocá para unirla">🔗 Unir a paquete</button>`:!s.c?` <button class="eub" type="button" data-elink="${i}" title="Paquete unido a esta parada; tocá para cambiarlo">🔗 ${esc((p.nombre||'').split(' ')[0])} · ${esc(p.tel||'sin tel')}</button>`:''}${d?` <span class="small" style="color:var(--ok);font-weight:700">✓ entregado${s.at?' '+hm(new Date(s.at).getHours()*60+new Date(s.at).getMinutes()):''}${s.gps?' 📍':''}</span>`:''}<div class="small muted dir">${s.c?'':'<b>Sin ubicación</b> · '}${esc(s.dir||'')}</div>${s.nota?`<div class="small">📝 ${esc(s.nota)}</div>`:''}</div>
+    <div><b>${esc(s.nombre)}</b>${s.c?'':` <button class="eub" type="button" data-eub="${i}" title="Lo que dice la columna ubicación del archivo. Tocá para agregar la ubicación">📍 ${esc(ubx===undefined?'Sin dato':/^aplicaci[oó]n$/i.test(ubx.trim())?'Co-out':(ubx||'Vacío'))}</button>`}${!p?` <button class="eub" type="button" data-elink="${i}" title="Esta parada no está unida a ningún paquete de la lista: tocá para unirla">🔗 Unir a paquete</button>`:!s.c?` <button class="eub" type="button" data-elink="${i}" title="Paquete unido a esta parada; tocá para cambiarlo">🔗 ${esc((p.nombre||'').split(' ')[0])} · ${esc(p.tel||'sin tel')}</button>`:''}${d&&entDev(s)?` <span class="small muted" style="font-weight:700">↩ devuelto</span>`:d?` <span class="small" style="color:var(--ok);font-weight:700">✓ entregado${s.at?' '+hm(new Date(s.at).getHours()*60+new Date(s.at).getMinutes()):''}${s.gps?' 📍':''}</span>`:''}<div class="small muted dir">${s.c?'':'<b>Sin ubicación</b> · '}${esc(s.dir||'')}</div>${s.nota?`<div class="small">📝 ${esc(s.nota)}</div>`:''}</div>
     <div class="acts">${!d&&s.c?`<span class="eeta" data-eta="${i}"></span>`:''}${wz?`<a class="btn sm primary" href="${wz}" target="_blank" rel="noopener">🚗 Waze</a>`:''}${wa?`<a class="btn sm wa" href="${entWaUrl(wa,'')}" data-ewa="${i}" target="_blank" rel="noopener">WhatsApp</a>`:''}</div>
       <div class="acts2"><button class="btn sm ghost danger" type="button" data-equitar="${i}" title="Quitar esta parada de la ruta (el paquete sigue en Paquetes)">🗑️ Quitar</button>${nav?`<a class="btn sm" href="${nav}" target="_blank" rel="noopener">🗺️ Maps</a>`:''}${!d&&p?`<button class="btn sm" type="button" data-eok="${i}">📸 Evidencia</button>`:''}<a class="btn sm" href="shortcuts://run-shortcut?name=Co-out" title="Abre la app Co-out con el atajo de iPhone llamado Co-out">📲 Co-out</a></div>
       <div class="acts3">${d?(s.done?`<button class="btn sm ghost" type="button" data-eundo="${i}">↩ Deshacer</button>`:''):`${s.c?`<button class="btn sm ehold${s.hold?' on':''}" type="button" data-ehold="${i}" title="Pasar esta parada al final de la ruta">${s.hold?'▶ Quitar hold':'⏸ Hold'}</button>`:''}<button class="btn sm edone" type="button" data-edone="${i}">✓ Entregado</button>`}</div></div>`}).join('');
@@ -1339,7 +1345,7 @@ async function entOrdenar(start,desde){
   const pts=[start,...pend.map(s=>s.c)],W=[null,...pend.map(s=>{const p=entPkg(s);return p?parseWin(p.horario):null})],d=new Date();
   $('#entGps').textContent='Calculando la ruta por calle…';const Mx=await osrmMatriz(pts);if(EPOS)$('#entGps').textContent=`📍 Estás aquí (±${Math.round(EPOS.acc)} m)`;
   const ord=optimize(pts,W,d.getHours()*60+d.getMinutes(),+S.min||0,+S.vel||25,false,Mx);
-  let k=0;E.stops=[...ord.map(i=>pend[i-1]),...held,...hechas,...sinC];E.stops.forEach(s=>{if(s.c)s.n=++k});E.inicio=start;ESEL=-1;
+  entMod();let k=0;E.stops=[...ord.map(i=>pend[i-1]),...held,...hechas,...sinC];E.stops.forEach(s=>{if(s.c)s.n=++k});E.inicio=start;ESEL=-1;
   if(EMAP)EMAP.fitted=null;save();renderEnt().then(()=>{if(EMAP)EMAP.fitBounds([start,...pend.map(s=>s.c)],{padding:[24,24]})});
   toast(`Ruta ordenada ${Mx?'por calle ':''}desde ${desde} (${pend.length} paradas)`);if(NUBE.on)nubeSoon();
 }
@@ -1349,14 +1355,14 @@ $('#entAqui').onclick=()=>{if(!navigator.geolocation){gpsFail();return}EAUTO=tru
     {enableHighAccuracy:true,timeout:15000,maximumAge:30000})};
 $('#entPick').onclick=()=>{if(!EMAP){toast('Primero cargá la ruta');return}EMAP.pick=true;$('#entMap').style.cursor='crosshair';$('#entMap').scrollIntoView({behavior:'smooth',block:'start'});toast('Tocá el mapa donde estás');};
 // Parada sin ubicación: pegar link/coordenadas o tocar el mapa; entra a la ruta y se reordena desde tu punto
-function entPonerC(i,c){const s=S.ent.stops[i];s.c=c;delete s.ub;s.n=Math.max(0,...S.ent.stops.filter(x=>x.c&&x!==s).map(x=>x.n||0))+1;
+function entPonerC(i,c){entMod();const s=S.ent.stops[i];s.c=c;delete s.ub;s.n=Math.max(0,...S.ent.stops.filter(x=>x.c&&x!==s).map(x=>x.n||0))+1;
   const sinC=S.ent.stops.filter(x=>!x.c);S.ent.stops=[...S.ent.stops.filter(x=>x.c),...sinC];
   toast(`Ubicación agregada a ${s.nombre}`);if(EPOS)entOrdenar(EPOS.c,'donde estás');else{save();renderEnt()}}
 function entUbicar(i){const s=S.ent.stops[i];const t=prompt(`Ubicación de ${s.nombre}\nPegá el link de Google Maps o Waze, o las coordenadas.\nDejalo vacío para tocar el punto en el mapa.`,'');if(t===null)return;
   if(t.trim()){const c=parseCoord(t.trim());if(!c){toast('No reconocí esa ubicación. Probá con el link completo o las coordenadas');return}entPonerC(i,c);return}
   if(!EMAP){toast('Primero tiene que verse el mapa');return}EMAP.pickStop=i;$('#entMap').style.cursor='crosshair';$('#entMap').scrollIntoView({behavior:'smooth',block:'start'});toast(`Tocá el mapa donde vive ${s.nombre}`)}
 $('#entFile').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)entCargar(f).catch(()=>toast('No se pudo leer ese archivo'))};
-$('#entList').addEventListener('click',e=>{
+$('#entList').addEventListener('click',e=>{if(e.target.closest('[data-edone],[data-eundo],[data-ehold],[data-equitar],[data-elink],[data-eok]'))entMod();
   const b=e.target.closest('[data-eok]');if(b){const s=S.ent.stops[+b.dataset.eok],p=entPkg(s);if(p&&p.st!=='entregado'){openPOD(p);return}s.done=true;save();renderEnt();return}
   const bl=e.target.closest('[data-elink]');if(bl){const s=S.ent.stops[+bl.dataset.elink];const q=prompt(`¿Cuál paquete es ${s.nombre}?${entPkg(s)?`\n(Ahora está unida a: ${entPkg(s).nombre} · ${entPkg(s).tel||'sin tel'})`:''}\nEscribí parte del nombre, la guía o el teléfono como está en Paquetes:`,(s.nombre||'').split(' ')[0]);if(!q)return;
     const qq=nomN(q),dg=q.replace(/\D/g,''),c=S.pk.filter(p=>nomN(p.nombre).includes(qq)||(dg.length>=4&&String(p.tel||'').replace(/\D/g,'').includes(dg))||(p.guia&&guiaN(p.guia).includes(guiaN(q))));
@@ -1394,12 +1400,22 @@ const nubeMsg=t=>{const el=$('#nubeInfo');if(el)el.textContent=t?' · '+t:''};
 function nubeDatos(){const d={...(S.nubeOtros||{})};NUBE_KEYS.forEach(k=>{if(S[k]!==undefined)d[k]=S[k]});if(S.ex)d.pk=[];return d}
 // Huella de cada clave al sincronizar: si no cambió aquí desde entonces, gana lo de la nube (antes ganaba todo lo local si había cualquier cambio).
 const nubeHuella=()=>{const h={};NUBE_KEYS.forEach(k=>{if(k!=='pk')h[k]=JSON.stringify(S[k]??null)});S.nubeBase=h};
+// Dos versiones de la ruta (este aparato y la nube): gana la que se tocó a mano más reciente (ent.mod; una ruta cargada después
+// manda). De la otra solo se rescatan las entregas, para que un aparato atrasado no reviva paradas ni borre lo entregado.
+function entMezclar(a,b){if(!a||!a.stops)return b;if(!b||!b.stops)return a;
+  if((a.at||0)!==(b.at||0))return (a.at||0)>(b.at||0)?a:b; // otra ruta cargada: manda la más nueva
+  const [w,l]=(a.mod||0)>=(b.mod||0)?[a,b]:[b,a],key=x=>x.pkFijo||x.pkId||(x.nombre||'')+'|'+(x.tel||'');
+  const out=JSON.parse(JSON.stringify(w)),m=new Map(out.stops.map(x=>[key(x),x]));
+  l.stops.forEach(x=>{if(!x.done)return;const y=m.get(key(x));if(y&&!y.done){y.done=true;y.at=x.at;y.gps=x.gps;y.prevSt=x.prevSt;y.pkId=y.pkId||x.pkId}});
+  return out}
 function nubeMezclar(srv){
   const base=new Set(S.baseIds||[]),loc=S.ex?[]:S.pk,sMap=new Map((srv.pk||[]).map(p=>[p.id,p])),lIds=new Set(loc.map(p=>p.id)),out=[];
   for(const p of loc){if(sMap.has(p.id))out.push(S.dirty?p:sMap.get(p.id));else if(!base.has(p.id))out.push(p)} // solo local: nuevo aquí, o se borró en el otro aparato
   for(const p of srv.pk||[])if(!lIds.has(p.id)&&!base.has(p.id))out.push(p);                                   // solo nube: nuevo allá, o se borró aquí
   const hb=S.nubeBase||{};NUBE.falta=NUBE_KEYS.some(k=>srv[k]===undefined&&S[k]!=null); // la nube perdió algo que este aparato tiene (p. ej. lo pisó una versión vieja): se vuelve a subir
-  NUBE_KEYS.forEach(k=>{if(k==='pk'||srv[k]===undefined)return;const cambioAqui=hb[k]==null?!!S.dirty:hb[k]!==JSON.stringify(S[k]??null);if(!cambioAqui||S[k]==null)S[k]=srv[k]});
+  NUBE_KEYS.forEach(k=>{if(k==='pk'||srv[k]===undefined)return;const cambioAqui=hb[k]==null?!!S.dirty:hb[k]!==JSON.stringify(S[k]??null);
+    if(k==='ent'&&cambioAqui&&S.ent&&srv.ent){S.ent=entMezclar(S.ent,srv.ent);return} // la ruta: gana la que se tocó a mano más reciente, sin perder entregas
+    if(!cambioAqui||S[k]==null)S[k]=srv[k]});
   S.nubeOtros={};Object.keys(srv).forEach(k=>{if(!NUBE_KEYS.includes(k))S.nubeOtros[k]=srv[k]});
   S.pk=out;S.ex=false;
 }

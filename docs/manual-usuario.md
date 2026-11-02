@@ -268,6 +268,13 @@ En *Paquetes*, cada paquete tiene el botón **↩ Devuelto**. Usalo cuando el pa
 Arriba salen los paquetes que faltan (pendientes, confirmados, sin respuesta), en el orden en que los agregaste. Los **entregados** bajan al final y los **devueltos** quedan de últimos.
 
 
+### Ruta, mapa y lista siempre iguales (1.48.0)
+
+- El número de cada parada (tarjeta, pin y 📋 Lista) es siempre el del paquete unido. Si la parada no está unida a ningún paquete sale **–** y el botón **🔗 Unir a paquete**.
+- Las paradas **entregadas** y las **devueltas** van en gris al final, no entran en la línea azul del mapa ni en el tiempo total, y dicen "✓ entregado" o "↩ devuelto".
+- Las de **Hold** van después de las pendientes, en la lista, en el mapa y en la 📋 Lista.
+- Si usás la app en el celular y en la PC, la ruta que tocaste de último manda, y nunca se pierde una entrega marcada en cualquiera de los dos.
+
 ### La ruta no cambia sola (1.47.2)
 
 La ruta solo cambia cuando vos lo hacés: al cargar el archivo, al ordenar, con Hold, Quitar, Agregar o Poner en la ruta, o al **editar** un paquete (si tiene ubicación y no estaba en la ruta, entra). La app ya no mete sola paquetes de la lista ni cambia una parada por otro cliente con un nombre parecido. Si una parada no se une a su paquete, usá **🔗 Unir a paquete** o **📍 Poner en la ruta**.
