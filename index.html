@@ -198,9 +198,9 @@ details summary{cursor:pointer;font-weight:600}
   <div class="panel">
     <h2>Escanear etiquetas</h2>
     <p class="small muted">Tomale foto a la etiqueta de cada paquete: la app lee la <b>guía</b> del código de barras y trata de leer <b>nombre, teléfono y dirección</b>. Revisás, corregís si hace falta y seguís con el próximo. También podés elegir varias fotos de la galería.</p>
-    <div class="row">
-      <button class="btn primary" id="scanCamBtn">📷 Escanear etiquetas</button>
-      <label class="btn" for="scanGal" style="text-transform:none;letter-spacing:0;font-size:14px;color:var(--ink);flex-direction:row">Elegir fotos de la galería</label>
+    <div class="row" style="flex-wrap:nowrap;gap:8px">
+      <button class="btn primary" id="scanCamBtn" style="white-space:nowrap">📷 Escanear etiquetas</button>
+      <label class="btn" for="scanGal" title="Elegir fotos de la galería" style="text-transform:none;letter-spacing:0;font-size:14px;color:var(--ink);flex-direction:row;white-space:nowrap">🖼️ Galería</label>
     </div>
   </div>
 
@@ -314,7 +314,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.44.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.44.3</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">

@@ -57,7 +57,7 @@ Tenés cuatro formas de cargar:
 1. **Escanear etiquetas (lo más rápido con muchos paquetes):** tocá **📷 Escanear etiquetas** y tomale foto a la etiqueta.
    - La app saca la **guía** del código de barras y trata de leer **nombre, teléfono y dirección**.
    - Revisá los datos, corregí lo que haga falta y tocá **Guardar y tomar otra**. Así seguís con los 70 sin salir de la pantalla. Al final tocá **Terminar**.
-   - **Si ya tomaste las fotos:** tocá **Elegir fotos de la galería** y seleccioná varias. La app las va mostrando una por una.
+   - **Si ya tomaste las fotos:** tocá **🖼️ Galería** y seleccioná varias. La app las va mostrando una por una.
    - **Para que lea bien:** etiqueta derecha y llenando la pantalla, a la sombra, sin reflejo y con la bolsa estirada. Si sale mal, tocá **↻ Girar y leer de nuevo** o tomá otra foto.
    - Si la guía ya estaba en la lista, sale un aviso en rojo para que no la repitás.
    - La primera vez tarda un poco más porque baja el lector de texto (unos MB). Después queda guardado en el celular.
@@ -267,6 +267,10 @@ En *Paquetes*, cada paquete tiene el botón **↩ Devuelto**. Usalo cuando el pa
 
 Arriba salen los paquetes que faltan (pendientes, confirmados, sin respuesta), en el orden en que los agregaste. Los **entregados** bajan al final y los **devueltos** quedan de últimos.
 
+
+### Galería junto al escáner (1.44.3)
+
+En *Paquetes*, a la par de **📷 Escanear etiquetas** está **🖼️ Galería**, para elegir fotos de etiquetas que ya tenés en el celular.
 
 ### Mensajes sin cambios (1.44.1)
 
