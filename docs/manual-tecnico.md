@@ -154,6 +154,8 @@ Orden de Paquetes (1.30.0): solo cambia cómo se muestra la lista; el orden guar
 
 Devuelto (1.29.0): nuevo valor `st='devuelto'` en los paquetes (con `stAntes` y `devAt`); viaja en `S.pk` por `rf_listas`, sin cambios en `supabase.sql`.
 
+Pestañas (1.36.0): se quitó el botón `#tab-ruta`. La sección `#v-ruta` y su código siguen en el archivo pero ya no se pueden abrir, y `S.vel`, `S.min` y `S.route` se conservan porque otras partes los usan. La pestaña `data-tab="entrega"` muestra el texto "Ruta".
+
 Orden en Entrega (1.35.0): solo cambia cómo se muestra la lista; el orden guardado de `S.ent.stops` no cambia.
 
 Teléfono a Entrega (1.34.0, 1.35.1). Al abrir la app también se igualan los teléfonos con los de Paquetes. solo cambia `S.ent` en el celular y la nube (`rf_listas`).

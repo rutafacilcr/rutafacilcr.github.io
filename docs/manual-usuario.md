@@ -286,3 +286,8 @@ Si corregís el teléfono de un paquete en *Paquetes* (con **Editar** o **📷 E
 ### Orden de la lista en Entrega (1.35.0)
 
 Arriba salen las paradas que faltan, en el orden de la ruta; después las que no tienen ubicación (con el "?" en amarillo). Las que ya entregaste bajan solas al final, en gris.
+
+
+### Pestañas desde la 1.36.0
+
+Abajo quedan **Paquetes, Mensajes, Ruta y Soporte**. La pestaña **Ruta** es la que antes se llamaba *Entrega*: cargás el Excel de la ruta, ves el mapa y entregás. La pestaña vieja de *Ruta* ("Calcular mejor ruta") se quitó. Donde este manual dice *Entrega*, ahora es **Ruta**.
