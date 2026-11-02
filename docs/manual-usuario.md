@@ -478,6 +478,8 @@ El globito de **Paquetes** (abajo) muestra cuántos **faltan por entregar**; no 
 
 En *Ruta*, cada parada tiene **⛔ Devolver** a la par de **⏸ Hold** y **✓ Entregado**. Al tocarlo (y confirmar), la parada se queda en la ruta pero **desactivada**: gris, sin botones, fuera del orden y del tiempo de la ruta. En *Paquetes*, la tarjeta del paquete muestra la etiqueta **⛔ Devolver**. Si fue un error, tocá **↩ Quitar devolver** en la parada.
 
+Desde la 1.53.1, la etiqueta **⛔ Devolver** de *Paquetes* también se puede tocar: primero pregunta *¿Ya devolviste el paquete al almacén?* → **Aceptar** lo marca como **devuelto** (cuenta en Devueltos y la parada queda "↩ devuelto"). Si tocás **Cancelar**, pregunta si querés **quitar la marca Devolver** para que vuelva a estar activo en la ruta.
+
 ### Diagnóstico para soporte (1.39.1)
 
 Si una parada no toma los datos de su paquete, abrí **Soporte** y tocá **🧪 Copiar diagnóstico de la ruta**. Se copia un texto con las paradas sin ubicación, el paquete al que está unida cada una y los paquetes con ubicación que no están en la ruta. Pegalo en el chat de soporte.

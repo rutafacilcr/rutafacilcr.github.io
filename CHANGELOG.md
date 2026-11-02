@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.53.1 · ⛔ Devolver se puede tocar:** en *Paquetes*, la etiqueta **⛔ Devolver** (puesta desde *Ruta*) ahora es un botón: al tocarlo pregunta si ya se devolvió y lo marca como **devuelto**; si no, ofrece quitar la marca.
 - **1.53.0 · Coordinar en Paquetes:** en la tarjeta de *Paquetes*, el estado (Pendiente, Confirmado, No responde…) se cambia por el botón **1. Coordinar**, que abre WhatsApp con el mensaje de coordinar y lo marca como enviado (✓). Entregados y devueltos siguen mostrando su estado. Sin teléfono válido el botón sale gris.
 - **1.52.4 · Hold en Mensajes:** en *Mensajes*, los clientes cuya parada está en Hold en *Ruta* también salen en gris con "⏸ hold", después de los pendientes y antes de los entregados.
 - **1.52.3 · Ortografía de Coordinar:** el mensaje Coordinar queda corregido (gustaría, puede, agregarlo, ubicación, contactamos y comas).
