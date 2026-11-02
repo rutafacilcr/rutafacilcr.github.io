@@ -268,6 +268,12 @@ En *Paquetes*, cada paquete tiene el botón **↩ Devuelto**. Usalo cuando el pa
 Arriba salen los paquetes que faltan (pendientes, confirmados, sin respuesta), en el orden en que los agregaste. Los **entregados** bajan al final y los **devueltos** quedan de últimos.
 
 
+### Botones de cada parada en Ruta (1.44.0)
+
+- Primera línea: **🚗 Waze**, **🗺️ Maps** y **WhatsApp** (verde).
+- Segunda línea: **🗑️ Quitar**, el tiempo estimado (🚗 minutos y km), **📸 Evidencia** y **📲 Co-out**.
+- Tercera línea, centrado: **✓ Entregado** en negro. Cuando ya está entregada sale **↩ Deshacer**.
+
 ### Avisar que vas en camino (1.43.0)
 
 En *Ruta*, el botón **WhatsApp** de cada parada abre el chat del cliente con este mensaje ya escrito:

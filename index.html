@@ -82,10 +82,11 @@ nav.tabs .n:empty{display:none}
 .estop.sel .dir{-webkit-line-clamp:unset}
 .eub{font:600 11px var(--f-body);border:1px dashed var(--muted);border-radius:999px;padding:1px 8px;background:transparent;color:var(--muted);cursor:pointer;vertical-align:1px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .entrow #entGps{flex:0 1 auto}.entrow{flex-basis:100%;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.enttot{text-align:right;font-size:12px;line-height:1.35;color:var(--ink,inherit)}.enttot:empty{display:none}
-.estop .eeta{flex-basis:100%;font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}.estop .eeta:empty{display:none}
+.estop .eeta{flex:0 1 auto;font-size:11.5px;line-height:1.2;font-weight:700;color:var(--muted);white-space:nowrap;text-align:center;align-self:center}.estop .eeta:empty{display:none}
 .entbus{display:flex;align-items:center;gap:8px;margin:2px 0 10px}.entbus input{flex:1;min-width:0;font-size:16px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:inherit}
-.estop .acts2{flex-basis:100%;display:flex;gap:5px;flex-wrap:nowrap}.estop .acts2 .btn{padding-left:6px;padding-right:6px;font-size:12.5px;white-space:nowrap}
-.estop .acts{grid-column:2;display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.estop .acts3{grid-column:1/-1;display:flex;justify-content:center}.estop .acts3:empty{display:none}.estop .acts3 .edone{background:#1f2125;color:#fff;border-color:#1f2125;font-weight:700;padding:7px 22px}
+.estop .acts,.estop .acts2{grid-column:1/-1}.estop .acts2{display:flex;gap:5px;flex-wrap:nowrap;align-items:center}.estop .acts2 .btn{padding-left:6px;padding-right:6px;font-size:12.5px;white-space:nowrap}
+.estop .acts{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
 .tpin{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font:700 13px var(--f-body);display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)}
 .vcfrow{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
 .vcfrow label{flex:0 0 72px;width:72px;min-width:0}
@@ -311,7 +312,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.43.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.44.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -1229,8 +1230,9 @@ async function renderEnt(){entSyncPk();
   LI.innerHTML=E.stops.map((s,i)=>[s,i]).sort((a,b)=>erk(a[0])-erk(b[0])||a[1]-b[1]).map(([s,i])=>{const d=entDone(s),p=entPkg(s),ubx=s.ub!==undefined?s.ub:(p&&p.ubic&&!parseCoord(p.ubic)?String(p.ubic):undefined),nav=s.c?`https://www.google.com/maps/dir/?api=1&destination=${s.c[0]},${s.c[1]}&travelmode=driving`:'',wz=s.waze||(s.c?`https://waze.com/ul?ll=${s.c[0]},${s.c[1]}&navigate=yes`:''),wa=phoneWA(s.tel);
     return `<div class="estop${d?' ok':''}${i===ESEL?' sel':''}" data-ei="${i}"><div class="n${s.c||d?'':' no'}">${s.c||d?eNum(s):'?'}</div>
     <div><b>${esc(s.nombre)}</b>${s.c?'':` <button class="eub" type="button" data-eub="${i}" title="Lo que dice la columna ubicación del archivo. Tocá para agregar la ubicación">📍 ${esc(ubx===undefined?'Sin dato':/^aplicaci[oó]n$/i.test(ubx.trim())?'Co-out':(ubx||'Vacío'))}</button>`}${!p?` <button class="eub" type="button" data-elink="${i}" title="Esta parada no está unida a ningún paquete de la lista: tocá para unirla">🔗 Unir a paquete</button>`:!s.c?` <button class="eub" type="button" data-elink="${i}" title="Paquete unido a esta parada; tocá para cambiarlo">🔗 ${esc((p.nombre||'').split(' ')[0])} · ${esc(p.tel||'sin tel')}</button>`:''}${d?` <span class="small" style="color:var(--ok);font-weight:700">✓ entregado${s.at?' '+hm(new Date(s.at).getHours()*60+new Date(s.at).getMinutes()):''}${s.gps?' 📍':''}</span>`:''}<div class="small muted dir">${s.c?'':'<b>Sin ubicación</b> · '}${esc(s.dir||'')}</div>${s.nota?`<div class="small">📝 ${esc(s.nota)}</div>`:''}</div>
-    <div class="acts">${wz?`<a class="btn sm primary" href="${wz}" target="_blank" rel="noopener">🚗 Waze</a>`:''}${nav?`<a class="btn sm" href="${nav}" target="_blank" rel="noopener">🗺️ Maps</a>`:''}${wa?`<a class="btn sm" href="${entWaUrl(wa,'')}" data-ewa="${i}" target="_blank" rel="noopener">WhatsApp</a>`:''}<button class="btn sm ghost danger" type="button" data-equitar="${i}" title="Quitar esta parada de la ruta (el paquete sigue en Paquetes)">🗑️ Quitar</button>
-      ${!d&&s.c?`<span class="eeta" data-eta="${i}"></span>`:''}<div class="acts2">${!d&&p?`<button class="btn sm" type="button" data-eok="${i}">📸 Evidencia</button>`:''}<a class="btn sm" href="shortcuts://run-shortcut?name=Co-out" title="Abre la app Co-out con el atajo de iPhone llamado Co-out">📲 Co-out</a>${d?(s.done?`<button class="btn sm ghost" type="button" data-eundo="${i}">↩ Deshacer</button>`:''):`<button class="btn sm" type="button" data-edone="${i}">✓ Entregado</button>`}</div></div></div>`}).join('');
+    <div class="acts">${wz?`<a class="btn sm primary" href="${wz}" target="_blank" rel="noopener">🚗 Waze</a>`:''}${nav?`<a class="btn sm" href="${nav}" target="_blank" rel="noopener">🗺️ Maps</a>`:''}${wa?`<a class="btn sm wa" href="${entWaUrl(wa,'')}" data-ewa="${i}" target="_blank" rel="noopener">WhatsApp</a>`:''}</div>
+      <div class="acts2"><button class="btn sm ghost danger" type="button" data-equitar="${i}" title="Quitar esta parada de la ruta (el paquete sigue en Paquetes)">🗑️ Quitar</button>${!d&&s.c?`<span class="eeta" data-eta="${i}"></span>`:''}${!d&&p?`<button class="btn sm" type="button" data-eok="${i}">📸 Evidencia</button>`:''}<a class="btn sm" href="shortcuts://run-shortcut?name=Co-out" title="Abre la app Co-out con el atajo de iPhone llamado Co-out">📲 Co-out</a></div>
+      <div class="acts3">${d?(s.done?`<button class="btn sm ghost" type="button" data-eundo="${i}">↩ Deshacer</button>`:''):`<button class="btn sm edone" type="button" data-edone="${i}">✓ Entregado</button>`}</div></div>`}).join('');
   $('#entMap').hidden=!conC.length;if(!conC.length||$('#v-entrega').hidden)return;
   try{
     if(!document.querySelector('link[data-leaflet]')){const l=document.createElement('link');l.rel='stylesheet';l.href=CSS_MAP;l.dataset.leaflet=1;document.head.appendChild(l)}
@@ -1279,7 +1281,7 @@ function entEta(sinPedir){
   const fresco=OSRM.pos&&EPOS&&hav(OSRM.pos,EPOS.c)<=0.3;
   document.querySelectorAll('[data-eta]').forEach(el=>{const s=S.ent&&S.ent.stops[+el.dataset.eta];if(!EPOS||!s||!s.c){el.textContent='';return}
     const o=fresco&&OSRM.r[ckey(s.c)],km=o?o[0]:hav(EPOS.c,s.c),base=o?o[1]*1.3:0,m=Math.max(1,Math.round(Math.max(base,km/18*60)+1));
-    el.dataset.min=m;el.textContent=`🚗 ~${fmtT(m)} · ${km<1?Math.round(km*1000)+' m':km.toFixed(1).replace('.',',')+' km'}`;el.title=o?'Por calle (OSRM), sin tráfico':'Aproximado en línea recta, sin tráfico'})}
+    el.dataset.min=m;el.innerHTML=`🚗 ~${fmtT(m)}<br>${km<1?Math.round(km*1000)+' m':km.toFixed(1).replace('.',',')+' km'}`;el.title=o?'Por calle (OSRM), sin tráfico':'Aproximado en línea recta, sin tráfico'})}
 // Tiempo estimado de toda la ruta: desde tu punto, por cada parada pendiente en orden, hasta la última; +3 a 5 min por entrega
 const RTOT={k:'',at:0,busy:false,r:null};
 async function osrmCadena(k,pts){RTOT.busy=true;RTOT.at=Date.now();try{const j=await (await fetch('https://router.project-osrm.org/route/v1/driving/'+pts.map(c=>c[1]+','+c[0]).join(';')+'?overview=false')).json();
