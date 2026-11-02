@@ -326,3 +326,8 @@ En *Paquetes*, debajo del teléfono, cada paquete dice:
 - **No está en la ruta**: no tiene ubicación o ya se entregó.
 
 Si aparece en rojo **⚠ No reconozco esta ubicación**, el link que pegaste no trae coordenadas (pasa con los links cortos de Google tipo maps.app.goo.gl). Pedile al cliente que comparta la ubicación por WhatsApp o pegá un link de Waze o de Google Maps con números.
+
+
+### Unión automática (1.39.0)
+
+No tenés que unir nada a mano: si corregís en *Paquetes* el nombre, el teléfono o la ubicación de un cliente, su parada en **Ruta** se actualiza sola. Si tenía **?**, pasa a pin rojo y entra al mapa. Esto funciona aunque el nombre esté escrito un poco diferente o le hayas cambiado el teléfono. Si un paquete con ubicación no estaba en la ruta, se agrega solo. El botón **🔗** queda solo para casos raros.

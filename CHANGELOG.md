@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-01
+- **1.39.0 · Paquetes y Ruta siempre unidos:** si una parada no encuentra su paquete (nombre escrito distinto y teléfono cambiado), se une al paquete libre que comparte palabras del nombre o el mismo número escrito. La app recuerda los teléfonos anteriores de cada paquete. Los paquetes con ubicación que no tienen parada se agregan solos a la ruta. Así, al corregir nombre, teléfono o ubicación en *Paquetes*, la parada pasa a pin rojo y entra al mapa sin tocar nada.
 - **1.38.2 · El número nunca cambia:** el número de cada paquete queda guardado aparte (también en la nube) y no cambia al ordenar, quitar, editar, reescanear ni sincronizar. Al quitar un paquete su número no se vuelve a usar. Solo **Vaciar lista** (o reemplazar la lista al importar) empieza otra vez desde 1.
 - **1.38.1 · Paquetes dice si está en la ruta:** cada paquete muestra "🗺️ En la ruta" o, si tiene ubicación y no está, el botón **➕ Agregar a la ruta**. Si la ubicación que se pegó no se puede leer (por ejemplo un link corto maps.app.goo.gl), lo avisa en rojo.
 - **1.38.0 · Número fijo del paquete:** cada paquete tiene un número fijo (su posición en la lista; los nuevos toman el siguiente) y se ve igual en *Paquetes*, *Mensajes* y en el pin y la tarjeta de *Ruta*. El orden de la ruta no cambia, solo el número que se muestra.

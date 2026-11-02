@@ -154,6 +154,8 @@ Orden de Paquetes (1.30.0): solo cambia cómo se muestra la lista; el orden guar
 
 Devuelto (1.29.0): nuevo valor `st='devuelto'` en los paquetes (con `stAntes` y `devAt`); viaja en `S.pk` por `rf_listas`, sin cambios en `supabase.sql`.
 
+Unión automática (1.39.0): nuevo campo `telsAnt` en los paquetes (teléfonos anteriores); todo se calcula en el celular.
+
 Estado en la ruta (1.38.1): todo se calcula en el celular. Los links cortos de Google no se pueden abrir desde el navegador (CORS) para sacarles las coordenadas.
 
 Número fijo (1.38.0, 1.38.2): además, la clave `nums` ({id: número}) se sincroniza como clave propia de `rf_listas` y sirve de respaldo; campo nuevo `num` en cada paquete de `S.pk`, que se sincroniza en `rf_listas`; no hay cambios en `supabase.sql`.
