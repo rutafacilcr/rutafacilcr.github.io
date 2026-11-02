@@ -310,7 +310,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.39.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.39.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -376,11 +376,17 @@ details summary{cursor:pointer;font-weight:600}
     <button class="btn ghost" id="scanEnd">Terminar</button>
   </div>
 </div></div>
+<div class="sheet" id="diagSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="diagTitle">
+  <h2 id="diagTitle">🧪 Diagnóstico de la ruta</h2>
+  <p class="small muted">Tomale captura de pantalla (bajá y tomá varias si es largo) o tocá Compartir y mandalo por WhatsApp.</p>
+  <pre id="diagTxt" style="white-space:pre-wrap;word-break:break-word;font-size:12px;line-height:1.35;max-height:60vh;overflow:auto;background:#f4f4f5;color:#1f2125;padding:10px;border-radius:8px;margin:8px 0"></pre>
+  <div class="row"><button class="btn primary sm" id="diagShare" type="button">📤 Compartir</button><button class="btn sm" id="diagCopy" type="button">📋 Copiar</button><button class="btn ghost sm" id="diagClose" type="button">Cerrar</button></div>
+</div></div>
 <div class="sheet" id="supSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="supTitle">
   <div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><h2 id="supTitle" style="display:flex;align-items:center;gap:8px;margin:0"><svg class="ico-sop" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2.5" y="13" width="4" height="6" rx="1.5"/><rect x="17.5" y="13" width="4" height="6" rx="1.5"/><path d="M19.5 19c0 1.7-1.8 2.5-4.5 2.5h-2"/></svg> Soporte</h2><button class="btn primary" id="supClose" type="button" style="padding:8px 12px;border-radius:8px;border-color:transparent;flex:none">Cerrar</button></div>
   <p class="small muted">¿Algo no funciona o tenés una duda? Escribinos por WhatsApp.</p>
   <a class="btn wa" id="supWa" target="_blank" rel="noopener" style="justify-content:center">💬 Escribir a soporte por WhatsApp</a>
-  <button class="btn sm" id="supDiag" type="button">🧪 Copiar diagnóstico de la ruta</button>
+  <button class="btn sm" id="supDiag" type="button">🧪 Ver diagnóstico de la ruta</button>
   <h3>Videos: cómo se usa la app</h3>
   <div class="vids" id="supVids"><p class="small muted">Cargando…</p></div>
 </div></div>
@@ -1024,8 +1030,16 @@ $('#supDiag').onclick=async()=>{let t=`RutaFácil ${$('#appVer').textContent} ·
     const f=p=>p?`#${p.num} ${p.nombre} | tel ${p.tel||'-'} | guía ${p.guia||'-'} | nota ${p.nota||'-'} | ubic ${String(p.ubic||'-').slice(0,70)} | ${parseCoord(p.ubic)?'OK':'NO'} | ${p.st}`:'(ninguno)';
     t+='\n-- Paradas sin ubicación --\n';E.stops.filter(x=>!x.c).forEach(x=>{t+=`* ${x.nombre} | tel ${x.tel||'-'} | guía ${x.guia||'-'} | nota ${x.nota||'-'} | pkId ${x.pkId||'-'} | fijo ${x.pkFijo||'-'}\n   -> ${f(entPkg(x))}\n`});
     const us=new Set(E.stops.map(x=>{const q=entPkg(x);return q&&q.id}));t+='\n-- Paquetes con ubicación sin parada --\n';S.pk.filter(p=>parseCoord(p.ubic)&&!us.has(p.id)).forEach(p=>{t+=`* ${f(p)}\n`});
+    // Quién tiene a cada paquete con ubicación: si lo agarra otra parada (o una entregada) no se agrega solo a la ruta
+    const dueno={};E.stops.forEach(x=>{const q=entPkg(x);if(q)(dueno[q.id]=dueno[q.id]||[]).push(x)});
+    t+='\n-- Paquetes con ubicación unidos a parada sin pin, entregada o a varias --\n';S.pk.filter(p=>parseCoord(p.ubic)&&dueno[p.id]&&(dueno[p.id].length>1||dueno[p.id].some(x=>!x.c||x.done)||p.st==='entregado')).forEach(p=>{t+=`* ${f(p)}\n`;dueno[p.id].forEach(x=>{t+=`   <- parada ${x.nombre} | tel ${x.tel||'-'} | ${x.c?'pin':'SIN pin'}${x.done?' | entregada':''}${x.pkFijo?' | fijo':''}\n`})});
     t+='\n-- Paquetes con ubicación que no se lee --\n';S.pk.filter(p=>p.ubic&&!parseCoord(p.ubic)).forEach(p=>{t+=`* ${f(p)}\n`})}}catch(e){t+='ERROR '+e.message+'\n'+(e.stack||'').slice(0,300)}
-  try{await navigator.clipboard.writeText(t);toast('Diagnóstico copiado: pegalo en el chat de soporte')}catch(e){prompt('Copiá este texto y mandalo a soporte:',t)}};
+  // En iPhone copiar/pegar a veces falla: se muestra en pantalla para captura, con Compartir (WhatsApp, Notas…) y Copiar
+  $('#diagTxt').textContent=t;$('#supSheet').hidden=true;$('#diagSheet').hidden=false;document.body.style.overflow='hidden'};
+$('#diagClose').onclick=()=>{$('#diagSheet').hidden=true;document.body.style.overflow=''};
+$('#diagShare').onclick=async()=>{const t=$('#diagTxt').textContent;if(navigator.share){try{await navigator.share({title:'Diagnóstico RutaFácil',text:t});return}catch(e){if(e.name==='AbortError')return}}
+  location.href=`https://wa.me/${SOPORTE_WA}?text=${encodeURIComponent(t.slice(0,3500))}`};
+$('#diagCopy').onclick=async()=>{const t=$('#diagTxt').textContent;try{await navigator.clipboard.writeText(t);toast('Diagnóstico copiado')}catch(e){const r=document.createRange();r.selectNodeContents($('#diagTxt'));const g=getSelection();g.removeAllRanges();g.addRange(r);try{document.execCommand('copy');toast('Diagnóstico copiado')}catch(_){toast('Tomale captura de pantalla')}}};
 // ===== Soporte: WhatsApp y videos (lista en videos.json) =====
 const SOPORTE_WA='50662700666';
 async function openSupport(){

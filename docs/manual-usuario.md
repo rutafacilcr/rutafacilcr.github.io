@@ -336,3 +336,5 @@ No tenés que unir nada a mano: si corregís en *Paquetes* el nombre, el teléfo
 ### Diagnóstico para soporte (1.39.1)
 
 Si una parada no toma los datos de su paquete, abrí **Soporte** y tocá **🧪 Copiar diagnóstico de la ruta**. Se copia un texto con las paradas sin ubicación, el paquete al que está unida cada una y los paquetes con ubicación que no están en la ruta. Pegalo en el chat de soporte.
+
+Desde la 1.39.2 el botón se llama **🧪 Ver diagnóstico de la ruta** y muestra el texto en pantalla. Tomale captura (si es largo, bajá y tomá varias) o tocá **📤 Compartir** para mandarlo por WhatsApp. **📋 Copiar** sigue disponible.

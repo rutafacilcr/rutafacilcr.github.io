@@ -29,7 +29,7 @@ Cuando alguien crea cuenta, al administrador le llega un **WhatsApp y un correo*
 
 ## Soporte
 
-Dentro de la app, el botón **Soporte** (ícono de audífonos) abre WhatsApp con soporte (+506 6270-0666) y los videos de cómo se usa.
+Dentro de la app, el botón **Soporte** (ícono de audífonos) abre WhatsApp con soporte (+506 6270-0666) y los videos de cómo se usa. También trae **🧪 Ver diagnóstico de la ruta**, que muestra en pantalla cómo están unidas las paradas con sus paquetes para mandarlo a soporte (captura o Compartir).
 
 ## Documentación
 

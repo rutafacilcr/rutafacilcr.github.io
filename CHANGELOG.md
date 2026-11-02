@@ -23,6 +23,9 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.1 | — | *Crear cuenta* con los campos en blanco |
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
+## 2026-11-02
+- **1.39.2 · Diagnóstico en pantalla:** en iPhone no se podía pegar el diagnóstico. Ahora **🧪 Ver diagnóstico de la ruta** lo muestra en pantalla para tomarle captura, con botones **📤 Compartir** (WhatsApp, Notas…) y **📋 Copiar**.
+
 ## 2026-11-01
 - **1.39.1 · Diagnóstico:** en *Soporte*, el botón **🧪 Copiar diagnóstico de la ruta** copia un texto que muestra cómo están unidas las paradas sin ubicación con sus paquetes, para mandarlo a soporte.
 - **1.39.0 · Paquetes y Ruta siempre unidos:** si una parada no encuentra su paquete (nombre escrito distinto y teléfono cambiado), se une al paquete libre que comparte palabras del nombre o el mismo número escrito. La app recuerda los teléfonos anteriores de cada paquete. Los paquetes con ubicación que no tienen parada se agregan solos a la ruta. Así, al corregir nombre, teléfono o ubicación en *Paquetes*, la parada pasa a pin rojo y entra al mapa sin tocar nada.
