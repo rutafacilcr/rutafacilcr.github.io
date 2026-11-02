@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.45.3 · Coordenadas en grados:** la ubicación también se puede pegar como la copia Google Maps en grados, minutos y segundos (9°54'24.5"N 84°03'45.1"W).
 - **1.45.2 · Poner en la ruta:** si un paquete tiene ubicación pero su parada en *Ruta* sigue con el "?" amarillo, en *Paquetes* sale **📍 Poner en la ruta**. Le pasa la ubicación a esa parada, que queda unida al paquete y se vuelve pin rojo, con el mismo número.
 - **1.45.1 · Sin ubicación en rojo:** en *Paquetes*, la tarjeta de un paquete pendiente sin ubicación (o con una que no se puede leer) tiene el borde rojo.
 - **1.45.0 · Buscar en Paquetes:** arriba de la lista hay un buscador 🔍 por nombre (sin importar tildes), teléfono (3 o más dígitos), guía o número de paquete.

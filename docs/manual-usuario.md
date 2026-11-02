@@ -268,6 +268,14 @@ En *Paquetes*, cada paquete tiene el botón **↩ Devuelto**. Usalo cuando el pa
 Arriba salen los paquetes que faltan (pendientes, confirmados, sin respuesta), en el orden en que los agregaste. Los **entregados** bajan al final y los **devueltos** quedan de últimos.
 
 
+### Ubicación en grados (1.45.3)
+
+En la ubicación de un paquete podés pegar:
+
+- El link de WhatsApp o de Waze.
+- Las coordenadas en decimal (9.906806, -84.062528).
+- Las coordenadas en grados como las copia Google Maps (9°54'24.5"N 84°03'45.1"W). La W también puede venir como O.
+
 ### Poner en la ruta un paquete que sigue con "?" (1.45.2)
 
 Si un paquete ya tiene ubicación en *Paquetes* pero en *Ruta* sigue con el **?** amarillo, en su tarjeta de *Paquetes* aparece **📍 Poner en la ruta**. Tocalo: la parada toma la ubicación, se vuelve pin rojo con el mismo número del paquete y la ruta se reordena desde donde estás. Si el paquete está como *Devuelto*, primero tocá **↪ Quitar devuelto**.
