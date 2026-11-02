@@ -268,6 +268,10 @@ En *Paquetes*, cada paquete tiene el botón **↩ Devuelto**. Usalo cuando el pa
 Arriba salen los paquetes que faltan (pendientes, confirmados, sin respuesta), en el orden en que los agregaste. Los **entregados** bajan al final y los **devueltos** quedan de últimos.
 
 
+### Paquetes sin ubicación en rojo (1.45.1)
+
+En *Paquetes*, los paquetes pendientes a los que les falta la ubicación (o que tienen una que la app no puede leer) se ven con el **borde rojo**. Así sabés rápido a quién pedirle la ubicación. Los entregados y devueltos no se marcan.
+
 ### Buscar un paquete (1.45.0)
 
 En *Paquetes*, debajo de "Lista del día", escribí en **🔍 Buscar**:
