@@ -268,6 +268,10 @@ En *Paquetes*, cada paquete tiene el botón **↩ Devuelto**. Usalo cuando el pa
 Arriba salen los paquetes que faltan (pendientes, confirmados, sin respuesta), en el orden en que los agregaste. Los **entregados** bajan al final y los **devueltos** quedan de últimos.
 
 
+### Dejar una parada para el final: Hold (1.47.0)
+
+Si un cliente no está o te pide pasar más tarde, en su parada de *Ruta* tocá **⏸ Hold** (a la par de ✓ Entregado). La parada se va al final de la ruta y ahí se queda aunque reordenes. El botón cambia a **▶ Quitar hold** en amarillo; tocalo para devolverla a la ruta normal (se reordena desde donde estás).
+
 ### Lista de la ruta en orden (1.46.0)
 
 En *Ruta*, tocá **📋 Lista** (a la par de 🎯 Elegir en el mapa). Sale la ruta en el orden en que vas a entregar, con el número fijo de cada paquete, el nombre y el teléfono, por ejemplo:

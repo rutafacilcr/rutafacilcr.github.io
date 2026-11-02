@@ -84,7 +84,7 @@ nav.tabs .n:empty{display:none}
 .entrow #entGps{flex:0 1 auto}.entrow{flex-basis:100%;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.enttot{text-align:right;font-size:12px;line-height:1.35;color:var(--ink,inherit)}.enttot:empty{display:none}
 .estop .eeta{flex:0 1 auto;font-size:11.5px;line-height:1.2;font-weight:700;color:var(--muted);white-space:nowrap;text-align:center;align-self:center}.estop .eeta:empty{display:none}
 .entbus{display:flex;align-items:center;gap:8px;margin:2px 0 10px}.entbus input{flex:1;min-width:0;font-size:16px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:inherit}
-.estop .acts3{grid-column:1/-1;display:flex;justify-content:center}.estop .acts3:empty{display:none}.estop .acts3 .edone{background:#1f2125;color:#fff;border-color:#1f2125;font-weight:700;padding:7px 22px}
+.estop .acts3{grid-column:1/-1;display:flex;justify-content:center}.estop .acts3:empty{display:none}.estop .acts3{gap:8px}.estop .acts3 .ehold{font-weight:700;padding:7px 14px}.estop .acts3 .ehold.on{background:#f5c518;border-color:#f5c518;color:#1f2125}.estop .acts3 .edone{background:#1f2125;color:#fff;border-color:#1f2125;font-weight:700;padding:7px 22px}
 .estop .acts,.estop .acts2{grid-column:1/-1}.estop .acts{flex-wrap:nowrap;gap:5px}.estop .acts .btn{flex:1 1 0}.estop .acts .btn,.estop .acts2 .btn{flex-grow:1;justify-content:center;min-width:0;white-space:nowrap}.estop .eeta{flex:0 0 auto!important}.estop .acts2{display:flex;gap:5px;flex-wrap:nowrap;align-items:center}.estop .acts2 .btn{padding-left:6px;padding-right:6px;font-size:12.5px;white-space:nowrap}
 .estop .acts{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
 .tpin{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font:700 13px var(--f-body);display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)}
@@ -316,7 +316,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.46.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.47.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -1053,7 +1053,7 @@ $('#supDiag').onclick=async()=>{let t=`RutaFácil ${$('#appVer').textContent} ·
   // En iPhone copiar/pegar a veces falla: se muestra en pantalla para captura, con Compartir (WhatsApp, Notas…) y Copiar
   $('#diagTitle').textContent='🧪 Diagnóstico de la ruta';$('#diagTxt').textContent=t;$('#supSheet').hidden=true;$('#diagSheet').hidden=false;document.body.style.overflow='hidden'};
 // Lista de la ruta en el orden en que se va a entregar, con el número fijo de cada paquete (para copiar o mandar por WhatsApp)
-$('#entLista').onclick=()=>{const E=S.ent;if(!E||!E.stops)return;const erk=s=>entDone(s)?2:s.c?0:1;let k=0;
+$('#entLista').onclick=()=>{const E=S.ent;if(!E||!E.stops)return;const erk=s=>entDone(s)?2:s.c?(s.hold?0.5:0):1;let k=0;
   const L=E.stops.map((s,i)=>[s,i]).sort((a,b)=>erk(a[0])-erk(b[0])||a[1]-b[1]).map(([s])=>{const p=entPkg(s);return `${++k}. #${eNum(s)} ${s.nombre||''}${p&&p.tel?' · '+p.tel:''}${entDone(s)?' ✓ entregado':!s.c?' (sin ubicación)':''}`});
   $('#diagTitle').textContent='📋 Ruta en orden';$('#diagTxt').textContent=`${E.nombre} · ${new Date().toLocaleString('es-CR')}\n\n`+L.join('\n');$('#diagSheet').hidden=false;document.body.style.overflow='hidden'};
 $('#diagClose').onclick=()=>{$('#diagSheet').hidden=true;document.body.style.overflow=''};
@@ -1248,13 +1248,13 @@ async function renderEnt(){entSyncPk();
   $('#entTools').hidden=false;$('#entBus').hidden=false;const ok=E.stops.filter(entDone).length,conC=E.stops.filter(s=>s.c);
   $('#entInfo').innerHTML=`<b>${esc(E.nombre)}</b> · ${ok} de ${E.stops.length} entregadas${![hoy,man].includes(E.nombre)?' · <span style="color:var(--bad)">no es la de hoy ni la de mañana</span>':''}`;
   // Pendientes arriba (en orden de ruta; las sin ubicación después) y las entregadas totalmente de últimas
-  const erk=s=>entDone(s)?2:s.c?0:1;
+  const erk=s=>entDone(s)?2:s.c?(s.hold?0.5:0):1;
   LI.innerHTML=E.stops.map((s,i)=>[s,i]).sort((a,b)=>erk(a[0])-erk(b[0])||a[1]-b[1]).map(([s,i])=>{const d=entDone(s),p=entPkg(s),ubx=s.ub!==undefined?s.ub:(p&&p.ubic&&!parseCoord(p.ubic)?String(p.ubic):undefined),nav=s.c?`https://www.google.com/maps/dir/?api=1&destination=${s.c[0]},${s.c[1]}&travelmode=driving`:'',wz=s.waze||(s.c?`https://waze.com/ul?ll=${s.c[0]},${s.c[1]}&navigate=yes`:''),wa=phoneWA(s.tel);
     return `<div class="estop${d?' ok':''}${i===ESEL?' sel':''}" data-ei="${i}"><div class="n${s.c||d?'':' no'}">${s.c||d?eNum(s):'?'}</div>
     <div><b>${esc(s.nombre)}</b>${s.c?'':` <button class="eub" type="button" data-eub="${i}" title="Lo que dice la columna ubicación del archivo. Tocá para agregar la ubicación">📍 ${esc(ubx===undefined?'Sin dato':/^aplicaci[oó]n$/i.test(ubx.trim())?'Co-out':(ubx||'Vacío'))}</button>`}${!p?` <button class="eub" type="button" data-elink="${i}" title="Esta parada no está unida a ningún paquete de la lista: tocá para unirla">🔗 Unir a paquete</button>`:!s.c?` <button class="eub" type="button" data-elink="${i}" title="Paquete unido a esta parada; tocá para cambiarlo">🔗 ${esc((p.nombre||'').split(' ')[0])} · ${esc(p.tel||'sin tel')}</button>`:''}${d?` <span class="small" style="color:var(--ok);font-weight:700">✓ entregado${s.at?' '+hm(new Date(s.at).getHours()*60+new Date(s.at).getMinutes()):''}${s.gps?' 📍':''}</span>`:''}<div class="small muted dir">${s.c?'':'<b>Sin ubicación</b> · '}${esc(s.dir||'')}</div>${s.nota?`<div class="small">📝 ${esc(s.nota)}</div>`:''}</div>
     <div class="acts">${!d&&s.c?`<span class="eeta" data-eta="${i}"></span>`:''}${wz?`<a class="btn sm primary" href="${wz}" target="_blank" rel="noopener">🚗 Waze</a>`:''}${wa?`<a class="btn sm wa" href="${entWaUrl(wa,'')}" data-ewa="${i}" target="_blank" rel="noopener">WhatsApp</a>`:''}</div>
       <div class="acts2"><button class="btn sm ghost danger" type="button" data-equitar="${i}" title="Quitar esta parada de la ruta (el paquete sigue en Paquetes)">🗑️ Quitar</button>${nav?`<a class="btn sm" href="${nav}" target="_blank" rel="noopener">🗺️ Maps</a>`:''}${!d&&p?`<button class="btn sm" type="button" data-eok="${i}">📸 Evidencia</button>`:''}<a class="btn sm" href="shortcuts://run-shortcut?name=Co-out" title="Abre la app Co-out con el atajo de iPhone llamado Co-out">📲 Co-out</a></div>
-      <div class="acts3">${d?(s.done?`<button class="btn sm ghost" type="button" data-eundo="${i}">↩ Deshacer</button>`:''):`<button class="btn sm edone" type="button" data-edone="${i}">✓ Entregado</button>`}</div></div>`}).join('');
+      <div class="acts3">${d?(s.done?`<button class="btn sm ghost" type="button" data-eundo="${i}">↩ Deshacer</button>`:''):`<button class="btn sm edone" type="button" data-edone="${i}">✓ Entregado</button>${s.c?`<button class="btn sm ehold${s.hold?' on':''}" type="button" data-ehold="${i}" title="Pasar esta parada al final de la ruta">${s.hold?'▶ Quitar hold':'⏸ Hold'}</button>`:''}`}</div></div>`}).join('');
   $('#entMap').hidden=!conC.length;if(!conC.length||$('#v-entrega').hidden)return;
   try{
     if(!document.querySelector('link[data-leaflet]')){const l=document.createElement('link');l.rel='stylesheet';l.href=CSS_MAP;l.dataset.leaflet=1;document.head.appendChild(l)}
@@ -1334,12 +1334,13 @@ async function osrmMatriz(pts){if(pts.length>100)return null;try{const ac=new Ab
   const j=await (await fetch('https://router.project-osrm.org/table/v1/driving/'+pts.map(c=>c[1]+','+c[0]).join(';')+'?annotations=duration',{signal:ac.signal})).json();clearTimeout(to);
   if(j.code!=='Ok'||j.durations.some(r=>r.some(v=>v==null)))return null;return j.durations.map(r=>r.map(v=>v/60*1.3))}catch(e){return null}}
 async function entOrdenar(start,desde){
-  const E=S.ent;if(!E)return;const pend=E.stops.filter(s=>s.c&&!entDone(s)),hechas=E.stops.filter(s=>s.c&&entDone(s)),sinC=E.stops.filter(s=>!s.c);
+  const E=S.ent;if(!E)return;let pend=E.stops.filter(s=>s.c&&!entDone(s)&&!s.hold),held=E.stops.filter(s=>s.c&&!entDone(s)&&s.hold);const hechas=E.stops.filter(s=>s.c&&entDone(s)),sinC=E.stops.filter(s=>!s.c);
+  if(!pend.length&&held.length){pend=held;held=[]} // solo quedan las de Hold: se ordenan entre ellas
   if(!pend.length){toast('No quedan paradas pendientes con ubicación');return}
   const pts=[start,...pend.map(s=>s.c)],W=[null,...pend.map(s=>{const p=entPkg(s);return p?parseWin(p.horario):null})],d=new Date();
   $('#entGps').textContent='Calculando la ruta por calle…';const Mx=await osrmMatriz(pts);if(EPOS)$('#entGps').textContent=`📍 Estás aquí (±${Math.round(EPOS.acc)} m)`;
   const ord=optimize(pts,W,d.getHours()*60+d.getMinutes(),+S.min||0,+S.vel||25,false,Mx);
-  let k=0;E.stops=[...ord.map(i=>pend[i-1]),...hechas,...sinC];E.stops.forEach(s=>{if(s.c)s.n=++k});E.inicio=start;ESEL=-1;
+  let k=0;E.stops=[...ord.map(i=>pend[i-1]),...held,...hechas,...sinC];E.stops.forEach(s=>{if(s.c)s.n=++k});E.inicio=start;ESEL=-1;
   if(EMAP)EMAP.fitted=null;save();renderEnt().then(()=>{if(EMAP)EMAP.fitBounds([start,...pend.map(s=>s.c)],{padding:[24,24]})});
   toast(`Ruta ordenada ${Mx?'por calle ':''}desde ${desde} (${pend.length} paradas)`);if(NUBE.on)nubeSoon();
 }
@@ -1366,6 +1367,11 @@ $('#entList').addEventListener('click',e=>{
   // Quitar una parada repetida o que no va: sale de la ruta (el paquete queda en Paquetes) y no se vuelve a agregar sola
   const bw=e.target.closest('[data-ewa]');if(bw){const el=document.querySelector(`[data-eta="${bw.dataset.ewa}"]`),m=el&&+el.dataset.min,wa=bw.href.match(/wa\.me\/(\d+)/);
     if(wa)bw.href=entWaUrl(wa[1],m&&el.textContent?fmtT(m):'');return} // sin preventDefault: abre WhatsApp con el href ya actualizado
+  // Hold: la parada pasa al final de las pendientes (y ahí se queda aunque se reordene); otro toque la devuelve a la ruta
+  const bh=e.target.closest('[data-ehold]');if(bh){const E=S.ent,s=E.stops[+bh.dataset.ehold];if(!s)return;s.hold=!s.hold;
+    if(s.hold){E.stops=E.stops.filter(x=>x!==s);const k=E.stops.reduce((a,x,j)=>x.c&&!entDone(x)?j:a,-1);E.stops.splice(k+1,0,s);toast(`${s.nombre||'Parada'} en hold: pasa al final de la ruta`)}
+    else toast(`${s.nombre||'Parada'} vuelve a la ruta`);
+    let n=0;E.stops.forEach(x=>{if(x.c)x.n=++n});ESEL=-1;if(!s.hold&&EPOS){entOrdenar(EPOS.c,'donde estás');return}save();renderEnt();return}
   const bq=e.target.closest('[data-equitar]');if(bq){const k=+bq.dataset.equitar,s=S.ent.stops[k];if(!s||!confirm(`¿Quitar a ${s.nombre||'esta parada'} de la ruta?\nEl paquete sigue en Paquetes.`))return;
     const p=entPkg(s);if(p){S.ent.quitadas=S.ent.quitadas||[];if(!S.ent.quitadas.includes(p.id))S.ent.quitadas.push(p.id)}
     S.ent.stops.splice(k,1);ESEL=-1;save();render();renderEnt();toast(`${s.nombre||'Parada'} quitada de la ruta`);return}
