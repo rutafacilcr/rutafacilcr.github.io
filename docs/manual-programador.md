@@ -113,6 +113,13 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - *Guardar* abre la cámara **dentro del mismo toque** (iPhone no deja abrirla después de un `await`) y agrega con `mkPkg()`. Las fotos de etiqueta no se guardan.
 - Prueba local: las CDN están bloqueadas en el sandbox; se instalan los paquetes con npm y Playwright sirve los archivos interceptando las URL de jsDelivr. Las etiquetas de prueba se generan con JsBarcode.
 
+## 3c-bis. Devolver (1.50.0)
+
+- `data-edevol="i"` en `.acts3` de `renderEnt` (con `confirm`) pone `s.devolver=true` (quita `hold`) y `p.devolver=true` en el paquete unido (`entPkg`). No cambia `p.st`.
+- `entDone(s)` cuenta `s.devolver` como cerrada (sale de `entOrdenar`, de la línea, de `entTotal` y el pin va gris) y `entDev(s)` también, así no suma en "entregadas".
+- `.estop.devol`: gris, `pointer-events:none` en `.acts`, `.acts2` y `.eub`; el click no llama `entSel`. Solo queda `data-edevno` ("↩ Quitar devolver"), que borra ambos flags y reordena si hay `EPOS`.
+- `renderPk` muestra `span.devtag` "⛔ Devolver" si `p.devolver`. 📋 Lista dice "⛔ devolver".
+
 ## 3d. Soporte
 
 - 1.49.0: `#supTab` ya no es parte de `nav.tabs`; es `button.hdsop` dentro de `.hdrow` (con `#daypill`) en `header.top`. Su lugar en la barra lo ocupa `#tab-cierres` (`data-tab="cierres"`), que muestra `#v-cierres` (sección vacía, contenido por definir); la lista de vistas del cambio de pestaña incluye `cierres`.
