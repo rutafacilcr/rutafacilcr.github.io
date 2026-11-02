@@ -274,7 +274,7 @@ Los botones de *Mensajes* se ven igual que antes; el cambio de botones fue solo 
 
 ### Botones de cada parada en Ruta (1.44.0)
 
-- Primera línea: **🚗 Waze**, **🗺️ Maps** y **WhatsApp** (verde).
+- Primera línea: **🚗 Waze**, **🗺️ Maps** y **WhatsApp** (verde), repartidos a lo ancho y alineados con la línea de abajo (1.44.2).
 - Segunda línea: **🗑️ Quitar**, el tiempo estimado (🚗 minutos y km), **📸 Evidencia** y **📲 Co-out**.
 - Tercera línea, centrado: **✓ Entregado** en negro. Cuando ya está entregada sale **↩ Deshacer**.
 

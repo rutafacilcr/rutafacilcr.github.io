@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.44.2 · Ruta alineada:** en cada parada, Waze, Maps y WhatsApp se reparten a lo ancho, así WhatsApp termina alineado con Co-out y Maps queda al centro.
 - **1.44.1 · Mensajes como antes:** el estilo nuevo de los botones de *Paquetes* (1.41.2) se había pasado a *Mensajes*; ahora solo aplica en *Paquetes* y *Mensajes* queda igual que en la 1.40.
 - **1.44.0 · Botones de Ruta:** cada parada trae tres líneas. Arriba 🚗 Waze, 🗺️ Maps y WhatsApp (verde). En medio 🗑️ Quitar, el tiempo estimado, 📸 Evidencia y 📲 Co-out. Abajo, centrado, **✓ Entregado** en negro (o ↩ Deshacer).
 - **1.43.0 · WhatsApp "en camino":** en *Ruta*, el botón **WhatsApp** de cada parada abre el chat con el mensaje "Estamos en camino, en aprox [tiempo estimado], le estaremos entregando su paquete, *RECUERDE* presentar su Cédula, en la entrega". Si la parada no tiene tiempo estimado, va sin esa parte.

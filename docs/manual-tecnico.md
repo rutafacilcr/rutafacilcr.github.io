@@ -154,7 +154,7 @@ Orden de Paquetes (1.30.0): solo cambia cómo se muestra la lista; el orden guar
 
 Devuelto (1.29.0): nuevo valor `st='devuelto'` en los paquetes (con `stAntes` y `devAt`); viaja en `S.pk` por `rf_listas`, sin cambios en `supabase.sql`.
 
-Mensajes como antes (1.44.1): solo CSS. Botones de Ruta (1.44.0): solo marcado y CSS. WhatsApp en camino (1.43.0): solo arma un link `wa.me` con el texto; no usa la API de WhatsApp ni cuesta nada. Quitar parada (1.42.0): `S.ent.quitadas` (ids de paquete) viaja con la ruta en la nube dentro de `ent`. Número tachado (1.40.0), tarjeta gris (1.40.1) y orden de botones en Paquetes (1.41.0 a 1.41.2): solo CSS y marcado en `index.html`; no cambia datos ni Supabase.
+Ruta alineada (1.44.2): solo CSS. Mensajes como antes (1.44.1): solo CSS. Botones de Ruta (1.44.0): solo marcado y CSS. WhatsApp en camino (1.43.0): solo arma un link `wa.me` con el texto; no usa la API de WhatsApp ni cuesta nada. Quitar parada (1.42.0): `S.ent.quitadas` (ids de paquete) viaja con la ruta en la nube dentro de `ent`. Número tachado (1.40.0), tarjeta gris (1.40.1) y orden de botones en Paquetes (1.41.0 a 1.41.2): solo CSS y marcado en `index.html`; no cambia datos ni Supabase.
 
 Diagnóstico (1.39.1): `#supDiag` arma el texto en el celular y lo copia al portapapeles; no lo manda a ningún lado. Incluye teléfonos y ubicaciones, así que se comparte solo con soporte. Desde la 1.39.2 se muestra en la hoja `#diagSheet`; Compartir usa la Web Share API del celular (si no existe, abre `wa.me` de soporte con los primeros 3.500 caracteres). Nada se sube a Supabase.
 
