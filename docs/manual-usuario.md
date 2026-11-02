@@ -343,7 +343,7 @@ En *Ruta*, el botón **WhatsApp** de cada parada abre el chat del cliente con es
 
 > Estamos en camino, en aprox 11 min, le estaremos entregando su paquete, *RECUERDE* presentar su Cédula, en la entrega
 
-Desde la 1.48.4 el mensaje sigue con:
+Desde la 1.48.5 el mensaje es: "Estamos en camino, le estaremos entregando su paquete, en 11 min", seguido de *IMPORTANTE* (mostrar la cédula para verificar la etiqueta) y la POLÍTICA DE ENTREGA (si nadie puede recibirlo, vuelve a bodega para reprogramar). Versión anterior (1.48.4):
 
 > Política de entrega
 > - Mostrar su cédula a la hora de recibir el paquete.
