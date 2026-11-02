@@ -113,6 +113,10 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - *Guardar* abre la cámara **dentro del mismo toque** (iPhone no deja abrirla después de un `await`) y agrega con `mkPkg()`. Las fotos de etiqueta no se guardan.
 - Prueba local: las CDN están bloqueadas en el sandbox; se instalan los paquetes con npm y Playwright sirve los archivos interceptando las URL de jsDelivr. Las etiquetas de prueba se generan con JsBarcode.
 
+## 3c-nonies. Nombre del grupo (1.60.0)
+
+- `repEntregasDe(k)` → "Entregas del 2 de noviembre" (de `repDia(p.ing)`); se usa en la lista de *Cierres*, el título del PDF y el nombre del archivo (`entregas-del-AAAA-MM-DD.pdf`). El campo del encabezado pasa a "Recibidos el".
+
 ## 3c-octies. Jornada (1.59.0)
 
 - `S.jor['AAAA-MM-DD'] = {ini:{t,c}, fin:{t,c}}` (en `NUBE_KEYS`; también va en `p_ruta.jor` del cierre y `repCierres` lo junta en `REPC.jor`). `#jorBar` lo pinta `jorRender()` (desde `renderEnt`); `jorGps()` usa `getCurrentPosition` (o `EPOS`).

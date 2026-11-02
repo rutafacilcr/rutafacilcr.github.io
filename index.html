@@ -333,11 +333,11 @@ details summary{cursor:pointer;font-weight:600}
   </div>
   <div class="panel">
     <h2>Reporte de entregas</h2>
-    <p class="small muted">Un reporte por cada <b>fecha de recibido</b> de los paquetes (también de listas ya vaciadas). Tocá <b>📄 PDF</b> para bajar el de esa fecha: entregados y devueltos con número, guía / pedido, teléfono, nombre, estado, fecha recibido y fecha y hora de entrega.</p>
+    <p class="small muted">Un reporte por cada día en que se recibieron paquetes (<b>Entregas del 2 de noviembre</b>, por ejemplo), aunque se entreguen en los días siguientes; cada paquete lleva su fecha y hora real de entrega. También salen los de listas ya vaciadas. Tocá <b>📄 PDF</b> para bajar el de esa fecha: entregados y devueltos con número, guía / pedido, teléfono, nombre, estado, fecha recibido y fecha y hora de entrega.</p>
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.59.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.60.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -807,6 +807,8 @@ function repParadas(p){return REPC.st[p.id]||entParadasDe(p)}
 function repT(p){return p.st==='entregado'?((p.pod&&p.pod.at)||repParadas(p).filter(x=>x.done&&x.at).map(x=>x.at).sort((a,b)=>a-b)[0]||p.entAt):p.st==='devuelto'?p.devAt:null}
 const repDia=t=>{if(!t)return '';const d=new Date(t);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
 const repDiaTxt=k=>k?k.split('-').reverse().join('/'):'Sin fecha';
+// Nombre del grupo (1.60.0): "Entregas del 2 de noviembre" = los paquetes recibidos ese día, aunque se entreguen en días siguientes
+const repEntregasDe=k=>{if(!k)return 'Entregas sin fecha';const [y,m,d]=k.split('-').map(Number);return 'Entregas del '+new Date(y,m-1,d).toLocaleDateString('es-CR',{day:'numeric',month:'long'})};
 function repTodos(){const ids=new Set(S.pk.map(p=>p.id));return [...S.pk,...REPC.pk.filter(p=>!ids.has(p.id))]}
 function repGrupos(){const g={};repTodos().forEach(p=>{const k=repDia(p.ing);(g[k]=g[k]||[]).push(p)});return Object.keys(g).sort((a,b)=>!a?1:!b?-1:b.localeCompare(a)).map(k=>({k,pk:g[k]}))}
 async function repCierres(){
@@ -856,20 +858,20 @@ function repPdf(k){
   if(!(window.jspdf&&window.jspdf.jsPDF&&window.jspdf.jsPDF.API.autoTable)){toast('Cargando el reporte… tocá otra vez en un momento');repCargar().catch(()=>toast('No se pudo cargar el PDF. Revisá el internet.'));return}
   const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'letter'}),hoy=new Date();
   const R=repResumen(L),fd=hoy.toLocaleDateString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric'});
-  doc.setFontSize(15);doc.text('RutaFácil CR · Reporte de entregas',14,15);
+  doc.setFontSize(15);doc.text('RutaFácil CR · '+repEntregasDe(k),14,15);
   // Encabezado (1.54.1): fecha, mensajero, recibidos, entregados, devueltos, km y horas
   // Posiciones fijas (1.56.2), cuadrícula de 4 columnas: col. 1 fecha y mensajero debajo; col. 2 km y horas; col. 3 fecha de recibido (1.57.0); col. 4 recibidos, entregados y devueltos
   const KM=['Km recorridos',R.km==null||R.km<0.05?'—':R.km.toFixed(1)+' km aprox.'],HR=['Horas invertidas',R.min==null?'—':`${Math.floor(R.min/60)} h ${String(Math.round(R.min%60)).padStart(2,'0')} min`];
-  const enc=[['Fecha',fd],KM,['Fecha de recibido',repDiaTxt(k)],['Paquetes recibidos',String(R.rec)],['Mensajero',S.yo||'—'],HR,null,['Paquetes entregados',String(R.ent)],null,null,null,['Paquetes devueltos',String(R.dev)]];
+  const enc=[['Fecha',fd],KM,['Recibidos el',repDiaTxt(k)],['Paquetes recibidos',String(R.rec)],['Mensajero',S.yo||'—'],HR,null,['Paquetes entregados',String(R.ent)],null,null,null,['Paquetes devueltos',String(R.dev)]];
   doc.setFontSize(10);enc.forEach((e,i)=>{if(!e)return;const [kk,v]=e,x=14+(i%4)*64,y=23+Math.floor(i/4)*6;doc.setFont(undefined,'bold');doc.text(kk+':',x,y);const w=doc.getTextWidth(kk+': ')+1;doc.setFont(undefined,'normal');doc.text(v,x+w,y)});
   doc.autoTable({startY:40,head:[['No. paquete','No. guía / pedido','No. teléfono','Nombre','Estado','Fecha recibido','Fecha entrega','Hora entrega','Tiempo desde anterior','Km desde anterior']],body:fil,
     styles:{fontSize:8.5,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},
     didParseCell:d=>{if(d.section==='body'&&d.column.index===4)d.cell.styles.textColor=d.cell.raw==='Entregado'?[30,130,60]:[200,40,40]}});
-  const name=`reporte-recibidos-${k||'sin-fecha'}.pdf`;
+  const name=`entregas-del-${k||'sin-fecha'}.pdf`;
   if(IOS&&navigator.canShare){const file=new File([doc.output('blob')],name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Reporte guardado')).catch(()=>{});return}}
   doc.save(name);toast(`Reporte con ${fil.length} paquete(s)`)}
 function repLista(){const G=repGrupos(),el=$('#repLista');if(!el)return;
-  el.innerHTML=G.length?G.map(g=>{const R=repResumen(g.pk),n=repFilas(g.pk).length;return `<div class="replin"><div><b>📦 ${repDiaTxt(g.k)}</b><div class="small muted">${R.rec} recibidos · ${R.ent} entregados · ${R.dev} devueltos</div></div><button class="btn sm primary" type="button" data-rep="${g.k}"${n?'':' disabled'}>📄 PDF</button></div>`}).join(''):'<p class="small muted">Todavía no hay paquetes.</p>'}
+  el.innerHTML=G.length?G.map(g=>{const R=repResumen(g.pk),n=repFilas(g.pk).length;return `<div class="replin"><div><b>📦 ${repEntregasDe(g.k)}</b><div class="small muted">${R.rec} recibidos · ${R.ent} entregados · ${R.dev} devueltos</div></div><button class="btn sm primary" type="button" data-rep="${g.k}"${n?'':' disabled'}>📄 PDF</button></div>`}).join(''):'<p class="small muted">Todavía no hay paquetes.</p>'}
 $('#repLista').addEventListener('click',e=>{const b=e.target.closest('[data-rep]');if(b)repPdf(b.dataset.rep)});
 document.querySelector('[data-tab="cierres"]').addEventListener('click',()=>{repLista();repCargar().catch(()=>{});
   $('#repInfo').textContent='Buscando reportes de cierres anteriores…';repCierres().then(()=>{repLista();$('#repInfo').textContent=''})});
