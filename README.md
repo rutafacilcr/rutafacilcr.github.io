@@ -8,7 +8,7 @@ Herramienta web para repartidores de paquetes en Costa Rica. Cargás la lista de
 
 ## Qué hace
 
-Al marcar un paquete como entregado en *Ruta*, su número queda tachado y baja al final de la lista.
+Al marcar un paquete como entregado en *Ruta*, su número queda tachado y baja al final de la lista; en *Paquetes* su tarjeta se ve en gris.
 
 La app se maneja con tres pestañas en la barra de abajo (**Paquetes**, **Mensajes** y **Ruta**) más el botón **Soporte**.
 

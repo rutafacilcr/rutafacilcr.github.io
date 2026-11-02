@@ -335,7 +335,7 @@ No tenés que unir nada a mano: si corregís en *Paquetes* el nombre, el teléfo
 
 ### Entregados tachados (1.40.0)
 
-Cuando tocás **✓ Entregado** en *Ruta*, el número del paquete queda tachado y en gris, y la parada baja al final de la lista. En *Paquetes* el número también sale tachado y el paquete pasa con los entregados. Si te equivocaste, **↩ Deshacer** lo devuelve.
+Cuando tocás **✓ Entregado** en *Ruta*, el número del paquete queda tachado y en gris, y la parada baja al final de la lista. En *Paquetes* el número también sale tachado, la tarjeta entera se ve apagada en gris (1.40.1) y el paquete pasa con los entregados. Sus botones siguen sirviendo por si hay que corregir algo. Si te equivocaste, **↩ Deshacer** lo devuelve.
 
 ### Diagnóstico para soporte (1.39.1)
 
