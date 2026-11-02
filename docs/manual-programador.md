@@ -115,6 +115,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 ## 3c-duodecies. Datos relacionados (1.63.0)
 
+- 1.63.1: `entCopiarPk` y `entSyncPk` copian también `guia`, `dir` y `nota` del paquete a la parada (el paquete manda).
 - `pkReflejar(p)`: si `p.st!=='entregado'` limpia `done/at/gps/prevSt` de `entParadasDe(p)`; con devuelto o `devolver` quita `hold`. Se llama en `data-act` `st`, `set` y `dev`.
 - `del`: `confirm`, saca las paradas de `entParadasDe(p)` de `S.ent.stops` y renumera.
 - `st` (desde entregado o devuelto) y `dev` piden `confirm`. *Editar* arma la lista de cambios y pide `confirm`.
