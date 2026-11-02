@@ -327,7 +327,7 @@ details summary{cursor:pointer;font-weight:600}
     <p class="small muted">Aquí van a estar los cierres del día. Próximamente.</p>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.53.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.53.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -530,8 +530,9 @@ function renderStats(){
 function renderPk(){
   const L=$('#pkgList');
   if(!S.pk.length){L.innerHTML='<div class="empty">Todavía no hay paquetes. Pegá tu lista arriba o agregá uno a mano.</div>';return}
-  // Primero los que faltan (en el orden de la lista), después los entregados y al final los devueltos
-  const rk=p=>p.st==='entregado'?1:p.st==='devuelto'?2:0;
+  // Orden (1.53.2): activos, Hold, devueltos (y ⛔ Devolver) y al final los entregados (tarjeta gris)
+  const pkHold=p=>{try{return entParadasDe(p).some(x=>x.hold&&!x.done)}catch(e){return false}};
+  const rk=p=>p.st==='entregado'?3:p.st==='devuelto'||p.devolver?2:pkHold(p)?1:0;
   // Qué paquetes ya tienen parada en la ruta cargada (para avisar y ofrecer agregarlos)
   const enR={};try{(S.ent&&S.ent.stops||[]).forEach(s=>{const q=entPkg(s);if(q&&!enR[q.id])enR[q.id]=s})}catch(e){}
   // Buscar (1.45.0): nombre sin tildes, guía, número de paquete exacto o 3+ dígitos del teléfono

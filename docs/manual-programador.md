@@ -134,6 +134,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - `entDone(s)` cuenta `s.devolver` como cerrada (sale de `entOrdenar`, de la línea, de `entTotal` y el pin va gris) y `entDev(s)` también, así no suma en "entregadas".
 - `.estop.devol`: gris, `pointer-events:none` en `.acts`, `.acts2` y `.eub`; el click no llama `entSel`. Solo queda `data-edevno` ("↩ Quitar devolver"), que borra ambos flags y reordena si hay `EPOS`.
 - `renderPk` muestra `span.devtag` "⛔ Devolver" si `p.devolver`, junto con `stChip(p)` dentro de `span.chips1` (`inline-flex`, `nowrap`) para que no se separen (1.50.1). 📋 Lista dice "⛔ devolver".
+- 1.53.2: `renderPk` ordena con `rk`: 0 activos, 1 Hold (`entParadasDe(p)` con `hold` y sin `done`), 2 devueltos o `p.devolver`, 3 entregados; empate por orden de la lista.
 - 1.53.1: en `renderPk` la etiqueta es `button.devtag` con `data-act="devok"`. El manejador global de `[data-act]`: primer `confirm` → `p.st='devuelto'` (guarda `stAntes`, `devAt`) y borra `p.devolver` y `s.devolver` de las paradas unidas (`entPkg(s)===p`); segundo `confirm` → solo borra las marcas. Luego `entMod()`, `save()`, `render()`, `renderEnt()`.
 
 ## 3d. Soporte
