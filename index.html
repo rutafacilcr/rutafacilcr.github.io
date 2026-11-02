@@ -1313,7 +1313,7 @@ async function osrmPedir(){
     OSRM.r={};cs.forEach((c,i)=>{const d=j.distances[0][i+1],t=j.durations[0][i+1];if(d!=null&&t!=null)OSRM.r[ckey(c)]=[d/1000,t/60]});OSRM.pos=from;OSRM.at=Date.now();entEta(true)}
   catch(e){OSRM.at=Date.now()}finally{OSRM.busy=false}}
 // WhatsApp desde Ruta: mensaje de "en camino" con el tiempo estimado que muestra la parada (si no hay, sin el tiempo)
-function entWaUrl(wa,t){return `https://wa.me/${wa}?text=${encodeURIComponent(`Estamos en camino${t?`, en aprox ${t}`:''}, le estaremos entregando su paquete, *RECUERDE* presentar su Cédula, en la entrega`)}`}
+function entWaUrl(wa,t){return `https://wa.me/${wa}?text=${encodeURIComponent(`Estamos en camino${t?`, en aprox ${t}`:''}, le estaremos entregando su paquete, *RECUERDE* presentar su Cédula, en la entrega\n\nPolítica de entrega\n- Mostrar su cédula a la hora de recibir el paquete.\n- Si previo se había coordinado la entrega y se llega y no se logra la entrega, el paquete será devuelvo a bodega reprogramar.`)}`}
 function entEta(sinPedir){
   if(!sinPedir&&EPOS&&(!OSRM.pos||hav(OSRM.pos,EPOS.c)>0.15||Date.now()-OSRM.at>120000)&&Date.now()-OSRM.at>8000)osrmPedir();
   const fresco=OSRM.pos&&EPOS&&hav(OSRM.pos,EPOS.c)<=0.3;

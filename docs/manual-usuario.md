@@ -343,6 +343,12 @@ En *Ruta*, el botón **WhatsApp** de cada parada abre el chat del cliente con es
 
 > Estamos en camino, en aprox 11 min, le estaremos entregando su paquete, *RECUERDE* presentar su Cédula, en la entrega
 
+Desde la 1.48.4 el mensaje sigue con:
+
+> Política de entrega
+> - Mostrar su cédula a la hora de recibir el paquete.
+> - Si previo se había coordinado la entrega y se llega y no se logra la entrega, el paquete será devuelvo a bodega reprogramar.
+
 El tiempo es el mismo 🚗 que ves en la parada. Si todavía no hay GPS o la parada no tiene ubicación, el mensaje va sin el tiempo. Solo tenés que tocar enviar en WhatsApp.
 
 ### Quitar una parada de la ruta (1.42.0)
