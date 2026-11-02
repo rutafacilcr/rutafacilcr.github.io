@@ -154,6 +154,8 @@ Orden de Paquetes (1.30.0): solo cambia cómo se muestra la lista; el orden guar
 
 Devuelto (1.29.0): nuevo valor `st='devuelto'` en los paquetes (con `stAntes` y `devAt`); viaja en `S.pk` por `rf_listas`, sin cambios en `supabase.sql`.
 
+Diagnóstico (1.39.1): `#supDiag` arma el texto en el celular y lo copia al portapapeles; no lo manda a ningún lado. Incluye teléfonos y ubicaciones, así que se comparte solo con soporte.
+
 Unión automática (1.39.0): nuevo campo `telsAnt` en los paquetes (teléfonos anteriores); todo se calcula en el celular.
 
 Estado en la ruta (1.38.1): todo se calcula en el celular. Los links cortos de Google no se pueden abrir desde el navegador (CORS) para sacarles las coordenadas.

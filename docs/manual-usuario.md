@@ -331,3 +331,8 @@ Si aparece en rojo **⚠ No reconozco esta ubicación**, el link que pegaste no 
 ### Unión automática (1.39.0)
 
 No tenés que unir nada a mano: si corregís en *Paquetes* el nombre, el teléfono o la ubicación de un cliente, su parada en **Ruta** se actualiza sola. Si tenía **?**, pasa a pin rojo y entra al mapa. Esto funciona aunque el nombre esté escrito un poco diferente o le hayas cambiado el teléfono. Si un paquete con ubicación no estaba en la ruta, se agrega solo. El botón **🔗** queda solo para casos raros.
+
+
+### Diagnóstico para soporte (1.39.1)
+
+Si una parada no toma los datos de su paquete, abrí **Soporte** y tocá **🧪 Copiar diagnóstico de la ruta**. Se copia un texto con las paradas sin ubicación, el paquete al que está unida cada una y los paquetes con ubicación que no están en la ruta. Pegalo en el chat de soporte.
