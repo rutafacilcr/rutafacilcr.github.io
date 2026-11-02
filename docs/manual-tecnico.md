@@ -154,7 +154,7 @@ Orden de Paquetes (1.30.0): solo cambia cómo se muestra la lista; el orden guar
 
 Devuelto (1.29.0): nuevo valor `st='devuelto'` en los paquetes (con `stAntes` y `devAt`); viaja en `S.pk` por `rf_listas`, sin cambios en `supabase.sql`.
 
-Unir parada y paquete (1.37.1, 1.37.2): el cálculo es en el celular; la unión manual queda en `S.ent.stops[].pkFijo`. `parseCoord` decodifica el geohash de los links `waze.com/ul/h…`, sin consultar a ningún servidor. Los links cortos de Google (maps.app.goo.gl) siguen sin poder leerse desde el navegador.
+Unir parada y paquete (1.37.1–1.37.3): nombre, teléfono y ubicación de Paquetes se copian a la ruta; el cálculo es en el celular; la unión manual queda en `S.ent.stops[].pkFijo`. `parseCoord` decodifica el geohash de los links `waze.com/ul/h…`, sin consultar a ningún servidor. Los links cortos de Google (maps.app.goo.gl) siguen sin poder leerse desde el navegador.
 
 Ubicación a Ruta (1.37.0): la ubicación del paquete (`ubic`) manda sobre la de la parada; solo cambia `S.ent` (sincronizado en `rf_listas`).
 

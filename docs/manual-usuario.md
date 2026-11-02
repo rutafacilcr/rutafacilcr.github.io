@@ -306,3 +306,8 @@ Si en **Ruta** una parada muestra **🔗 Unir a paquete**, la app no encontró s
 ### Ver y cambiar el paquete de una parada (1.37.2)
 
 En las paradas con **?**, la etiqueta **🔗 Nombre · teléfono** muestra con qué paquete de *Paquetes* está unida. Si es el equivocado (por ejemplo, un paquete repetido con el número viejo), tocala y elegí el correcto. Queda fijo y la parada toma su teléfono y su ubicación.
+
+
+### Paquetes manda (1.37.3)
+
+Lo que corrijás en *Paquetes* (nombre, teléfono o ubicación) se copia solo a la parada de ese cliente en **Ruta**, para todos los clientes. No hace falta volver a cargar el Excel.

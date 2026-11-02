@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-01
+- **1.37.3 · Paquetes manda en todo:** para cualquier paquete, si le cambiás el nombre, el teléfono o la ubicación en *Paquetes*, su parada en *Ruta* toma los mismos datos. La unión entre parada y paquete se mantiene aunque cambien todos esos datos.
 - **1.37.2 · Paquete correcto para cada parada:** si hay dos paquetes parecidos (por ejemplo, uno repetido con el teléfono viejo), la parada se une al que más coincide y tiene ubicación, no al primero que encuentra. Las paradas sin ubicación muestran a qué paquete están unidas (🔗 nombre · teléfono), y al tocarlo se puede cambiar.
 - **1.37.1 · Unir parada y paquete:** la app reconoce también los links de Waze para compartir (waze.com/ul/h…) como ubicación. Encuentra el paquete aunque el nombre tenga apellidos de más. Si una parada no está unida a ningún paquete, muestra **🔗 Unir a paquete** para unirla a mano; desde ahí toma el teléfono y la ubicación del paquete.
 - **1.37.0 · Ubicación de Paquetes a Ruta:** si un paquete recibe o cambia su ubicación en *Paquetes* (Pegar respuesta, Editar), su parada en *Ruta* la toma sola. Si era un "?" amarillo, pasa a pin rojo con número, entra al mapa y la ruta se reordena desde donde estás. También aplica al abrir la app.
