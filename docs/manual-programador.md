@@ -113,6 +113,13 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - *Guardar* abre la cámara **dentro del mismo toque** (iPhone no deja abrirla después de un `await`) y agrega con `mkPkg()`. Las fotos de etiqueta no se guardan.
 - Prueba local: las CDN están bloqueadas en el sandbox; se instalan los paquetes con npm y Playwright sirve los archivos interceptando las URL de jsDelivr. Las etiquetas de prueba se generan con JsBarcode.
 
+## 3c-ter. Cierre (1.51.0)
+
+- `#clearAll` (dos toques) llama `cerrarDia(b)`: con `NUBE.on` manda `RF_AUTH.rpc('rf_cierre_guardar',{p_paquetes,p_ruta})` con `fecha_cierre` (ISO) en cada paquete, en la ruta y en cada parada; si falla no borra. Sin cuenta pide `confirm`.
+- Después: `S.pk=[]`, `S.nums={}`, `S.route=null` y `S.ent={nombre:'',at,mod,stops:[],cerrada}` (no `null`: `nubeMezclar` toma la de la nube cuando la local es `null`; con `at` más nuevo gana en `entMezclar`). `entAgregarPk` no agrega a una ruta `cerrada`.
+- `rf_cierres_listar(p_limite)` y `rf_cierre_leer(p_id)` quedan listas para la pestaña *Cierres*.
+- Globito `#n-pk`: cuenta `S.pk` sin `entregado`, `devuelto` ni `p.devolver`.
+
 ## 3c-bis. Devolver (1.50.0)
 
 - `data-edevol="i"` en `.acts3` de `renderEnt` (con `confirm`) pone `s.devolver=true` (quita `hold`) y `p.devolver=true` en el paquete unido (`entPkg`). No cambia `p.st`.

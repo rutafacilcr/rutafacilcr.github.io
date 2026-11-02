@@ -517,6 +517,72 @@ revoke all on function public.rf_lista_guardar(jsonb, bigint) from public, anon;
 grant execute on function public.rf_lista_leer() to authenticated;
 grant execute on function public.rf_lista_guardar(jsonb, bigint) to authenticated;
 
+-- =====================================================================
+-- Cierres (1.51.0). Agregado 2026-11-02.
+-- Al tocar "Vaciar lista" la app guarda aquí todos los paquetes y la ruta del día
+-- con la fecha del cierre, y después los borra del celular. Un registro por cierre.
+-- Sin políticas: solo se lee y escribe con las funciones rf_cierre_* (exigen licencia).
+-- =====================================================================
+create table if not exists public.rf_cierres (
+  id           bigserial primary key,
+  owner_id     uuid not null references auth.users(id) on delete cascade,
+  fecha_cierre timestamptz not null default now(),
+  paquetes     jsonb not null default '[]'::jsonb,
+  ruta         jsonb,
+  total        int not null default 0,
+  entregados   int not null default 0,
+  devueltos    int not null default 0,
+  devolver     int not null default 0
+);
+create index if not exists rf_cierres_owner_fecha on public.rf_cierres (owner_id, fecha_cierre desc);
+alter table public.rf_cierres enable row level security;
+
+create or replace function public.rf_cierre_guardar(p_paquetes jsonb, p_ruta jsonb)
+returns json language plpgsql security definer set search_path = public as $$
+declare c rf_cierres; pk jsonb := coalesce(p_paquetes, '[]'::jsonb);
+begin
+  perform public.rf_exigir_licencia();
+  if auth.uid() is null then raise exception 'RF_CUENTA: sin sesión'; end if;
+  if jsonb_typeof(pk) <> 'array' then raise exception 'RF_CIERRE: paquetes debe ser una lista'; end if;
+  if octet_length(pk::text) + octet_length(coalesce(p_ruta::text, '')) > 3000000 then raise exception 'RF_CIERRE: el cierre es demasiado grande'; end if;
+  insert into rf_cierres (owner_id, paquetes, ruta, total, entregados, devueltos, devolver)
+  values (auth.uid(), pk, p_ruta, jsonb_array_length(pk),
+    (select count(*) from jsonb_array_elements(pk) e where e->>'st' = 'entregado'),
+    (select count(*) from jsonb_array_elements(pk) e where e->>'st' = 'devuelto'),
+    (select count(*) from jsonb_array_elements(pk) e where (e->>'devolver')::boolean is true))
+  returning * into c;
+  return json_build_object('ok', true, 'id', c.id, 'fecha_cierre', c.fecha_cierre);
+end $$;
+
+-- Lista los cierres de la cuenta (lo más nuevo primero), sin el detalle, para la pestaña Cierres.
+create or replace function public.rf_cierres_listar(p_limite int default 60)
+returns json language plpgsql security definer set search_path = public as $$
+begin
+  perform public.rf_exigir_licencia();
+  if auth.uid() is null then raise exception 'RF_CUENTA: sin sesión'; end if;
+  return coalesce((select json_agg(x order by x.fecha_cierre desc) from (
+    select id, fecha_cierre, total, entregados, devueltos, devolver from rf_cierres
+    where owner_id = auth.uid() order by fecha_cierre desc limit least(greatest(coalesce(p_limite, 60), 1), 500)) x), '[]'::json);
+end $$;
+
+-- Detalle de un cierre (paquetes y ruta) de la misma cuenta.
+create or replace function public.rf_cierre_leer(p_id bigint)
+returns json language plpgsql security definer set search_path = public as $$
+declare c rf_cierres;
+begin
+  perform public.rf_exigir_licencia();
+  if auth.uid() is null then raise exception 'RF_CUENTA: sin sesión'; end if;
+  select * into c from rf_cierres where id = p_id and owner_id = auth.uid();
+  if not found then return null; end if;
+  return json_build_object('id', c.id, 'fecha_cierre', c.fecha_cierre, 'paquetes', c.paquetes, 'ruta', c.ruta);
+end $$;
+revoke all on function public.rf_cierre_guardar(jsonb, jsonb) from public, anon;
+revoke all on function public.rf_cierres_listar(int) from public, anon;
+revoke all on function public.rf_cierre_leer(bigint) from public, anon;
+grant execute on function public.rf_cierre_guardar(jsonb, jsonb) to authenticated;
+grant execute on function public.rf_cierres_listar(int) to authenticated;
+grant execute on function public.rf_cierre_leer(bigint) to authenticated;
+
 -- Carpeta privada para las fotos. La app solo puede SUBIR; verlas se hace desde el panel de Supabase.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('evidencias', 'evidencias', false, 2097152, array['image/jpeg'])

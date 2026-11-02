@@ -440,6 +440,12 @@ No tenés que unir nada a mano: si corregís en *Paquetes* el nombre, el teléfo
 
 Cuando tocás **✓ Entregado** en *Ruta*, el número del paquete queda tachado y en gris, y la parada baja al final de la lista. En *Paquetes* el número también sale tachado, la tarjeta entera se ve apagada en gris (1.40.1) y el paquete pasa con los entregados. Sus botones siguen sirviendo por si hay que corregir algo. Si te equivocaste, **↩ Deshacer** lo devuelve.
 
+### Cierre del día (1.51.0)
+
+Al terminar, en *Paquetes* tocá **Vaciar lista** y otra vez para confirmar (**¿Cerrar el día? Tocá otra vez**). La app guarda en la nube todos los paquetes y la ruta con la fecha y hora del cierre, y deja *Paquetes* y *Ruta* vacías para cargar la ruta nueva. Si no hay internet, avisa y **no borra nada**: probá de nuevo cuando tengás señal.
+
+El globito de **Paquetes** (abajo) muestra cuántos **faltan por entregar**; no cuenta entregados, devueltos ni los marcados ⛔ Devolver.
+
 ### Devolver (1.50.0)
 
 En *Ruta*, cada parada tiene **⛔ Devolver** a la par de **⏸ Hold** y **✓ Entregado**. Al tocarlo (y confirmar), la parada se queda en la ruta pero **desactivada**: gris, sin botones, fuera del orden y del tiempo de la ruta. En *Paquetes*, la tarjeta del paquete muestra la etiqueta **⛔ Devolver**. Si fue un error, tocá **↩ Quitar devolver** en la parada.

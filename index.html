@@ -327,7 +327,7 @@ details summary{cursor:pointer;font-weight:600}
     <p class="small muted">Aquí van a estar los cierres del día. Próximamente.</p>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.50.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.51.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -514,7 +514,7 @@ function renderStats(){
   const c=k=>S.pk.filter(p=>p.st===k).length;
   const sinPin=S.pk.filter(p=>!parseCoord(p.ubic)).length;
   $('#stats').innerHTML=[[S.pk.length,'paquetes'],[c('confirmado'),'confirmados'],[c('entregado'),'entregados'],...(c('devuelto')?[[c('devuelto'),'devueltos']]:[]),[sinPin,'sin ubicación']].map(([n,l])=>`<div class="stat"><b>${n}</b><span>${l}</span></div>`).join('');
-  $('#n-pk').textContent=S.pk.length||'';
+  $('#n-pk').textContent=S.ex?'':(S.pk.filter(p=>p.st!=='entregado'&&p.st!=='devuelto'&&!p.devolver).length||''); // globito = paquetes que faltan por entregar
 }
 function renderPk(){
   const L=$('#pkgList');
@@ -699,7 +699,22 @@ $('#fileIn').onchange=async e=>{const f=e.target.files[0];if(!f)return;
   else addPkgs(parseText(await f.text()))}catch(err){toast('No pude leer ese archivo')}
   e.target.value=''};
 $('#clearExample').onclick=()=>{S.pk=[];S.ex=false;S.nums={};S.route=null;save();render()};
-$('#clearAll').onclick=e=>{const b=e.currentTarget;if(b.dataset.c){S.pk=[];S.ex=false;S.nums={};S.route=null;save();render();b.textContent='Vaciar lista';delete b.dataset.c}else{b.dataset.c=1;b.textContent='¿Seguro? Tocá otra vez';setTimeout(()=>{b.textContent='Vaciar lista';delete b.dataset.c},3000)}};
+// Vaciar lista = cierre: guarda en la base (rf_cierre_guardar) todos los paquetes y la ruta con la fecha del cierre,
+// y después borra Paquetes y Ruta para empezar otra. Si no se pudo guardar, no se borra nada.
+async function cerrarDia(b){
+  const fc=new Date().toISOString(),pk=S.ex?[]:S.pk,E=S.ent&&S.ent.stops&&S.ent.stops.length?S.ent:null;
+  if(!pk.length&&!E){toast('No hay paquetes ni ruta que cerrar');return}
+  if(NUBE.on&&window.RF_AUTH){b.disabled=true;b.textContent='Guardando cierre…';
+    try{const r=await RF_AUTH.rpc('rf_cierre_guardar',{p_paquetes:pk.map(p=>({...p,fecha_cierre:fc})),p_ruta:E?{...E,fecha_cierre:fc,stops:E.stops.map(x=>({...x,fecha_cierre:fc}))}:null});
+      if(!r||!r.ok)throw new Error('sin respuesta')}
+    catch(err){b.disabled=false;b.textContent='Vaciar lista';toast('No se pudo guardar el cierre (revisá internet). No se borró nada.');return}
+    finally{b.disabled=false}}
+  else if(!confirm('No hay cuenta conectada: el cierre NO se va a guardar en la base.\n¿Vaciar igual?'))return;
+  const t=Date.now();S.pk=[];S.ex=false;S.nums={};S.route=null;
+  S.ent={nombre:'',at:t,mod:t,stops:[],cerrada:fc}; // ruta vacía y más nueva que la de la nube, para que la sincronización no la reviva
+  ESEL=-1;save();render();if(typeof renderEnt==='function')renderEnt();if(NUBE.on)nubeSync(true);
+  b.textContent='Vaciar lista';toast(`Cierre guardado (${new Date(fc).toLocaleString('es-CR')}). Listo para una ruta nueva.`)}
+$('#clearAll').onclick=e=>{const b=e.currentTarget;if(b.disabled)return;if(b.dataset.c){delete b.dataset.c;cerrarDia(b)}else{b.dataset.c=1;b.textContent='¿Cerrar el día? Tocá otra vez';setTimeout(()=>{if(b.dataset.c){b.textContent='Vaciar lista';delete b.dataset.c}},3000)}};
 const bind=(sel,k,num)=>{const el=$(sel);el.value=S[k]??'';el.addEventListener(el.type==='checkbox'?'change':'input',()=>{S[k]=el.type==='checkbox'?el.checked:(num?+el.value:el.value);save();if(['coord','form','yo','fecha'].includes(k))renderMsg()})};
 $('#routeBtn').onclick=calcRoute;
 // ---- Contactos del día: un .vcf con todos los clientes como "TM-Nombre" ----
@@ -1223,7 +1238,7 @@ function entCopiarPk(p,ps){if((ps||[]).length)entMod();(ps||[]).forEach(s=>{s.te
   if(!(ps||[]).length&&S.ent&&S.ent.stops&&parseCoord(p.ubic)&&p.st!=='entregado'&&p.st!=='devuelto'&&!(S.ent.quitadas||[]).includes(p.id))setTimeout(()=>entAgregarPk(p),0)}
 // Paradas marcadas Entregado (también las de antes de la 1.28 o de otro aparato) pasan su paquete a entregado en Paquetes
 // Paquete con ubicación que no está en la ruta: se agrega como parada nueva y se reordena desde donde estás
-function entAgregarPk(p){const c=parseCoord(p.ubic);if(!S.ent||!c){toast('Primero cargá la ruta en la pestaña Ruta');return}entMod();
+function entAgregarPk(p){const c=parseCoord(p.ubic);if(!S.ent||S.ent.cerrada||!c){toast('Primero cargá la ruta en la pestaña Ruta');return}entMod();
   if(S.ent.quitadas)S.ent.quitadas=S.ent.quitadas.filter(x=>x!==p.id); // si se había quitado a mano, vuelve
   const mx=Math.max(0,...S.ent.stops.filter(x=>x.c).map(x=>x.n||0));
   // Si ya tiene parada pero sin pin (el "?" amarillo), a esa parada se le pone la ubicación del paquete y queda unida para siempre

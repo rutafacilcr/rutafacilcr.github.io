@@ -33,6 +33,10 @@ Desde la versión 1.7.0 cada repartidor entra con **su número de teléfono y un
 
 Cuando alguien crea cuenta, al administrador le llega un **WhatsApp y un correo** (servicios gratis). Al activarla, el panel deja listo el mensaje de WhatsApp para avisarle al repartidor, y en la app del repartidor el botón gris *Esperando activación* se pone naranja (*Cuenta habilitada · Entrar*) en menos de un minuto.
 
+## Cierre del día
+
+**Vaciar lista** guarda en la base todos los paquetes y la ruta con la fecha del cierre (tabla `rf_cierres`) y deja la app lista para una ruta nueva.
+
 ## Soporte
 
 Dentro de la app, el botón **Soporte** (ícono de audífonos) abre WhatsApp con soporte (+506 6270-0666) y los videos de cómo se usa. También trae **🧪 Ver diagnóstico de la ruta**, que muestra en pantalla cómo están unidas las paradas con sus paquetes para mandarlo a soporte (captura o Compartir).

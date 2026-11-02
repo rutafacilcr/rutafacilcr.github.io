@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.51.0 · Cierre del día y globito de pendientes:** (1) **Vaciar lista** (dos toques) ahora es un cierre: guarda en la base (`rf_cierres`) todos los paquetes y la ruta con la fecha del cierre y después vacía *Paquetes* y *Ruta* para empezar una ruta nueva. Si no se puede guardar (sin internet), no borra nada. Requiere correr de nuevo `supabase.sql`. (2) El globito de *Paquetes* cuenta solo los que faltan por entregar (sin entregados, devueltos ni los marcados ⛔ Devolver).
 - **1.50.1 · Devolver junto al estado:** en *Paquetes*, la etiqueta **⛔ Devolver** queda siempre a la par del estado (Pendiente, Confirmado…); si el nombre es largo, bajan juntas.
 - **1.50.0 · Devolver:** en *Ruta*, a la par de **⏸ Hold** y **✓ Entregado**, está **⛔ Devolver**. La parada queda en la ruta pero desactivada (gris, sin botones, fuera del orden, la línea y el tiempo) y en *Paquetes* la tarjeta lleva la etiqueta **⛔ Devolver**. **↩ Quitar devolver** la reactiva.
 - **1.49.0 · Soporte arriba y pestaña Cierres:** el botón **🎧 Soporte** pasa al encabezado, a la par del día de entrega. En su lugar, en la barra de abajo, queda la pestaña nueva **Cierres** (por ahora vacía; su contenido viene en próximas versiones).
