@@ -316,7 +316,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.48.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.48.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -1364,8 +1364,8 @@ function entUbicar(i){const s=S.ent.stops[i];const t=prompt(`Ubicación de ${s.n
 $('#entFile').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)entCargar(f).catch(()=>toast('No se pudo leer ese archivo'))};
 $('#entList').addEventListener('click',e=>{if(e.target.closest('[data-edone],[data-eundo],[data-ehold],[data-equitar],[data-elink],[data-eok]'))entMod();
   const b=e.target.closest('[data-eok]');if(b){const s=S.ent.stops[+b.dataset.eok],p=entPkg(s);if(p&&p.st!=='entregado'){openPOD(p);return}s.done=true;save();renderEnt();return}
-  const bl=e.target.closest('[data-elink]');if(bl){const s=S.ent.stops[+bl.dataset.elink];const q=prompt(`¿Cuál paquete es ${s.nombre}?${entPkg(s)?`\n(Ahora está unida a: ${entPkg(s).nombre} · ${entPkg(s).tel||'sin tel'})`:''}\nEscribí parte del nombre, la guía o el teléfono como está en Paquetes:`,(s.nombre||'').split(' ')[0]);if(!q)return;
-    const qq=nomN(q),dg=q.replace(/\D/g,''),c=S.pk.filter(p=>nomN(p.nombre).includes(qq)||(dg.length>=4&&String(p.tel||'').replace(/\D/g,'').includes(dg))||(p.guia&&guiaN(p.guia).includes(guiaN(q))));
+  const bl=e.target.closest('[data-elink]');if(bl){const s=S.ent.stops[+bl.dataset.elink];const q=prompt(`¿Cuál paquete es ${s.nombre}?${entPkg(s)?`\n(Ahora está unida a: ${entPkg(s).nombre} · ${entPkg(s).tel||'sin tel'})`:''}\nEscribí el número del paquete (ej. 62), parte del nombre, la guía o el teléfono:`,(s.nombre||'').split(' ')[0]);if(!q)return;
+    const qq=nomN(q),dg=q.replace(/\D/g,''),c=/^\s*#?\d{1,3}\s*$/.test(q)?S.pk.filter(p=>String(p.num)===dg):S.pk.filter(p=>nomN(p.nombre).includes(qq)||(dg.length>=4&&String(p.tel||'').replace(/\D/g,'').includes(dg))||(p.guia&&guiaN(p.guia).includes(guiaN(q))));
     if(!c.length){toast('No encontré ese paquete en la lista');return}let p=c[0];if(c.length>1){const k=prompt('Hay varios, escribí el número:\n'+c.slice(0,9).map((x,j)=>`${j+1}. ${x.nombre} · ${x.tel||''}`).join('\n'),'1');p=c[(+k||1)-1];if(!p)return}
     s.pkId=p.id;s.pkFijo=p.id;save();render();renderEnt();toast(`Unida a ${p.nombre}: toma su teléfono y ubicación`);return}
   const bub=e.target.closest('[data-eub]');if(bub){entUbicar(+bub.dataset.eub);return}

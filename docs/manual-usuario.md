@@ -268,6 +268,10 @@ En *Paquetes*, cada paquete tiene el botón **↩ Devuelto**. Usalo cuando el pa
 Arriba salen los paquetes que faltan (pendientes, confirmados, sin respuesta), en el orden en que los agregaste. Los **entregados** bajan al final y los **devueltos** quedan de últimos.
 
 
+### Unir una parada escribiendo el número (1.48.1)
+
+En *Ruta*, en una parada sin unir tocá **🔗 Unir a paquete** y escribí el número del paquete (por ejemplo **62**). Si el paquete tiene ubicación, la parada pasa a pin rojo y entra al mapa.
+
 ### Ruta, mapa y lista siempre iguales (1.48.0)
 
 - El número de cada parada (tarjeta, pin y 📋 Lista) es siempre el del paquete unido. Si la parada no está unida a ningún paquete sale **–** y el botón **🔗 Unir a paquete**.
