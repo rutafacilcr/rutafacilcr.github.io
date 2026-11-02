@@ -327,7 +327,7 @@ details summary{cursor:pointer;font-weight:600}
     <p class="small muted">Aquí van a estar los cierres del día. Próximamente.</p>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.52.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.52.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -519,7 +519,7 @@ function renderStats(){
   const hold=pk.filter(p=>!cerr(p)&&par(p).some(x=>x.hold&&!x.done)).length;
   // Sin ubicación: pendientes que no tienen coordenadas ni en Paquetes ni en su parada de la ruta
   const sinUb=pk.filter(p=>!cerr(p)&&!parseCoord(p.ubic)&&!par(p).some(x=>x.c)).length;
-  $('#stats').innerHTML=[[pk.length,'Recibidos'],[ent,'Entregados'],[hold,'Hold'],[dev,'Devueltos'],[sinUb,'Sin ubicación']].map(([n,l])=>`<div class="stat"><b>${n}</b><span>${l}</span></div>`).join('');
+  $('#stats').innerHTML=[[pk.length,'Recibidos'],[ent,'Entregados'],[hold,'Hold'],[dev,'Devueltos'],[sinUb,'Sin 📍']].map(([n,l])=>`<div class="stat"><b>${n}</b><span>${l}</span></div>`).join('');
   $('#n-pk').textContent=S.ex?'':(S.pk.filter(p=>p.st!=='entregado'&&p.st!=='devuelto'&&!p.devolver).length||''); // globito = paquetes que faltan por entregar
 }
 function renderPk(){

@@ -331,6 +331,10 @@ En *Paquetes*, a la par de **📷 Escanear etiquetas** está **🖼️ Galería*
 
 Los botones de *Mensajes* se ven igual que antes; el cambio de botones fue solo en *Paquetes* y en *Ruta*.
 
+### Contador "Sin 📍" (1.52.2)
+
+En el resumen de arriba de *Paquetes*, el contador de paquetes pendientes sin ubicación ahora dice **Sin 📍**.
+
 ### Mensajes: entregados abajo (1.52.1)
 
 En *Mensajes*, cuando un paquete se entrega, su cliente se pone en gris con el número tachado y baja al final de la lista. Arriba quedan los que todavía faltan por entregar; los devueltos van de últimos. Sus botones siguen funcionando.
