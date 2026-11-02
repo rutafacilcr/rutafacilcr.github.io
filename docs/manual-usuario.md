@@ -291,3 +291,8 @@ Arriba salen las paradas que faltan, en el orden de la ruta; después las que no
 ### Pestañas desde la 1.36.0
 
 Abajo quedan **Paquetes, Mensajes, Ruta y Soporte**. La pestaña **Ruta** es la que antes se llamaba *Entrega*: cargás el Excel de la ruta, ves el mapa y entregás. La pestaña vieja de *Ruta* ("Calcular mejor ruta") se quitó. Donde este manual dice *Entrega*, ahora es **Ruta**.
+
+
+### La ubicación del paquete pasa a la Ruta (1.37.0)
+
+Cuando un cliente te manda su ubicación y la ponés en *Paquetes* (con **📋 Pegar respuesta** o **Editar**), su parada en **Ruta** se actualiza sola. Si estaba con el **?** amarillo, pasa a pin rojo con número, aparece en el mapa y la ruta se reordena desde donde estás. Lo mismo pasa al abrir la app con ubicaciones que agregaste antes.
