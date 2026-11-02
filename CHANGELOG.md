@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.48.3 · Hold amarillo también seleccionada:** el pin de una parada en Hold sigue amarillo aunque la toqués (antes se ponía naranja al seleccionarla).
 - **1.48.2 · Hold en amarillo:** en el mapa de *Ruta*, el pin de una parada en Hold sale amarillo.
 - **1.48.1 · Unir por número:** en *Ruta*, **🔗 Unir a paquete** acepta el número del paquete (por ejemplo 62).
 - **1.48.0 · Ruta consistente:** tarjetas, pines, línea del mapa, 📋 Lista, tiempo total y orden salen de la misma regla. (1) Una parada solo toma número, estado y datos de un paquete si la unión es segura (a mano, guía, mismo nombre o teléfono); antes una coincidencia floja podía mostrar el número o el "entregado" de otro cliente. Sin paquete unido muestra "–" en vez de un número inventado. (2) Los paquetes **devueltos** salen de la ruta igual que los entregados (gris, al final, fuera de la línea y del total) y dicen "↩ devuelto". (3) Sincronización: si dos aparatos cambian la ruta, gana la que se tocó a mano más recientemente y de la otra solo se rescatan las entregas; un aparato atrasado ya no revive paradas ni deshace el orden.
