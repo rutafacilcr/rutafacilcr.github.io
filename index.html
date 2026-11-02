@@ -332,7 +332,7 @@ details summary{cursor:pointer;font-weight:600}
     <button class="btn sm primary" id="repPdf" type="button" style="width:auto;display:inline-flex">📄 Bajar reporte PDF</button> <span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.54.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.54.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -797,14 +797,24 @@ function repFilas(){
     // Teléfono 2: el teléfono anterior del paquete o el de la parada de la ruta, si es distinto del principal
     const t2=[...(p.telsAnt||[]),...entParadasDe(p).map(x=>x.tel)].find(x=>x&&phoneWA(x)!==phoneWA(p.tel));
     return [String(p.num||''),p.guia||'',tl(p.tel),tl(t2),ent?'Entregado':'Devuelto',f(p.ing),f(t),h(t)]})}
+// Resumen del encabezado: km = línea recta entre el inicio de la ruta y cada entrega en orden de hora, ×1,3 por calles (aprox.); horas = de la primera a la última entrega o devolución
+function repResumen(){
+  const rec=S.pk.length,ent=S.pk.filter(p=>p.st==='entregado').length,dev=S.pk.filter(p=>p.st==='devuelto'||(p.devolver&&p.st!=='entregado')).length;
+  const pts=S.pk.filter(p=>p.st==='entregado').map(p=>{const t=p.entAt||(p.pod&&p.pod.at),g=p.entGps||(p.pod&&p.pod.lat!=null?p.pod:null),st=entParadasDe(p)[0];
+    const c=g&&g.lat!=null?[g.lat,g.lng]:(st&&st.c)||parseCoord(p.ubic);return t&&c?{t,c}:null}).filter(Boolean).sort((a,b)=>a.t-b.t);
+  const ts=[...S.pk.map(p=>p.st==='entregado'?(p.entAt||(p.pod&&p.pod.at)):p.st==='devuelto'?p.devAt:null)].filter(Boolean).sort((a,b)=>a-b);
+  let km=null;if(pts.length){km=0;let prev=S.ent&&S.ent.inicio||pts[0].c;pts.forEach(x=>{km+=hav(prev,x.c);prev=x.c});km*=1.3}
+  return {rec,ent,dev,km,min:ts.length>1?(ts[ts.length-1]-ts[0])/60000:null}}
 function repPdf(){
   const fil=repFilas();if(!fil.length){toast('No hay paquetes entregados ni devueltos en la lista');return}
   if(!(window.jspdf&&window.jspdf.jsPDF&&window.jspdf.jsPDF.API.autoTable)){toast('Cargando el reporte… tocá otra vez en un momento');repCargar().catch(()=>toast('No se pudo cargar el PDF. Revisá el internet.'));return}
   const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'letter'}),hoy=new Date();
-  const ne=fil.filter(r=>r[4]==='Entregado').length;
+  const R=repResumen(),fd=hoy.toLocaleDateString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric'});
   doc.setFontSize(15);doc.text('RutaFácil CR · Reporte de entregas',14,15);
-  doc.setFontSize(10);doc.text(`${S.yo?S.yo+' · ':''}${hoy.toLocaleString('es-CR')} · ${ne} entregado(s), ${fil.length-ne} devuelto(s)`,14,22);
-  doc.autoTable({startY:27,head:[['No. paquete','No. guía / pedido','No. teléfono','No. teléfono 2','Estado','Fecha recibido','Fecha entrega','Hora entrega']],body:fil,
+  // Encabezado (1.54.1): fecha, mensajero, recibidos, entregados, devueltos, km y horas
+  const enc=[['Fecha',fd],['Mensajero',S.yo||'—'],['Paquetes recibidos',String(R.rec)],['Paquetes entregados',String(R.ent)],['Paquetes devueltos',String(R.dev)],['Km recorridos',R.km==null?'—':R.km.toFixed(1)+' km aprox.'],['Horas invertidas',R.min==null?'—':`${Math.floor(R.min/60)} h ${String(Math.round(R.min%60)).padStart(2,'0')} min`]];
+  doc.setFontSize(10);enc.forEach(([k,v],i)=>{const x=14+(i%4)*64,y=23+Math.floor(i/4)*6;doc.setFont(undefined,'bold');doc.text(k+':',x,y);const w=doc.getTextWidth(k+': ')+1;doc.setFont(undefined,'normal');doc.text(v,x+w,y)});
+  doc.autoTable({startY:34,head:[['No. paquete','No. guía / pedido','No. teléfono','No. teléfono 2','Estado','Fecha recibido','Fecha entrega','Hora entrega']],body:fil,
     styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},
     didParseCell:d=>{if(d.section==='body'&&d.column.index===4)d.cell.styles.textColor=d.cell.raw==='Entregado'?[30,130,60]:[200,40,40]}});
   const name=`reporte-${hoy.toISOString().slice(0,10)}.pdf`;

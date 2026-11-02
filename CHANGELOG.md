@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.54.1 · Encabezado del reporte:** el PDF trae arriba fecha, mensajero, paquetes recibidos, entregados y devueltos, km recorridos (aprox.) y horas invertidas.
 - **1.54.0 · Reporte PDF:** en *Cierres*, **📄 Bajar reporte PDF** arma un PDF horizontal con los entregados y devueltos de la lista: No. paquete, No. guía / pedido, No. teléfono, No. teléfono 2, Estado, Fecha recibido, Fecha entrega y Hora entrega.
 - **1.53.2 · Orden en Paquetes:** primero los activos, luego los que están en Hold, después los devueltos (y ⛔ Devolver) y al final los entregados en gris.
 - **1.53.1 · ⛔ Devolver se puede tocar:** en *Paquetes*, la etiqueta **⛔ Devolver** (puesta desde *Ruta*) ahora es un botón: al tocarlo pregunta si ya se devolvió y lo marca como **devuelto**; si no, ofrece quitar la marca.
