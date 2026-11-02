@@ -46,7 +46,7 @@ Reglas de la cuenta:
 
 ## 2. Rutina diaria
 
-La app tiene tres pestañas en la **barra de abajo**: **Paquetes** (📦, con un globito que dice cuántos hay), **Mensajes** (💬) y **Ruta**, más el botón **Soporte** (🎧) que abre la ayuda. La pestaña en la que estás se marca en naranja.
+La app tiene cuatro pestañas en la **barra de abajo**: **Paquetes** (📦, con un globito que dice cuántos hay), **Mensajes** (💬), **Ruta** y **Cierres** (por ahora vacía). El botón **Soporte** (🎧) que abre la ayuda está **arriba**, en el encabezado, a la par del día de entrega. La pestaña en la que estás se marca en naranja.
 
 ### Día antes: cargar paquetes (pestaña **Paquetes**)
 
@@ -198,7 +198,7 @@ Tocá la etiqueta de color para pasar al siguiente estado.
 
 **¿No ves la versión nueva?** Cuando se publica un cambio, la app muestra abajo *Hay una versión nueva · **Actualizar***: tocalo. Si no sale, cerrá la app por completo y abrila otra vez. GitHub puede tardar hasta 10 minutos en entregar la versión nueva.
 
-**Ayuda:** tocá **Soporte** (el ícono de audífonos, abajo a la par de *Ruta*, o *Soporte* al final de la pantalla). Ahí podés escribirnos por WhatsApp al **6270-0666** (el mensaje ya lleva tu versión de la app) y ver los **videos** de cómo se usa cada parte:
+**Ayuda:** tocá **Soporte** (el botón con audífonos arriba, en el encabezado, o *Soporte* al final de la pantalla). Ahí podés escribirnos por WhatsApp al **6270-0666** (el mensaje ya lleva tu versión de la app) y ver los **videos** de cómo se usa cada parte:
 
 1. Entrar a la app (crear cuenta, número y PIN, soporte)
 2. Cargar los paquetes (escanear etiquetas, subir el Excel)

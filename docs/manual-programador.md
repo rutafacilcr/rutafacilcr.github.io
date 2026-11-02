@@ -115,6 +115,8 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 ## 3d. Soporte
 
+- 1.49.0: `#supTab` ya no es parte de `nav.tabs`; es `button.hdsop` dentro de `.hdrow` (con `#daypill`) en `header.top`. Su lugar en la barra lo ocupa `#tab-cierres` (`data-tab="cierres"`), que muestra `#v-cierres` (sección vacía, contenido por definir); la lista de vistas del cambio de pestaña incluye `cierres`.
+
 - Ícono: SVG en línea de audífonos con micrófono (`stroke=currentColor`, clase `.ico-sop`), sin archivos ni librerías; toma el color del texto. El mismo trazo va en `ayuda` y `contacto()` de `auth.js`.
 - Botón `#supTab` (cuarto botón de `nav.tabs`, ícono `.ico-sop`, sin `role=tab`: abre la hoja y no cambia de pestaña; el manejador de pestañas filtra `nav.tabs [role=tab]`) y enlace `#supPie` en el pie → `openSupport()` abre `#supSheet`.
 - WhatsApp: `wa.me/SOPORTE_WA` con texto que incluye la versión (`#appVer`).

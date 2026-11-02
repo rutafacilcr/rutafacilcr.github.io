@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.49.0 · Soporte arriba y pestaña Cierres:** el botón **🎧 Soporte** pasa al encabezado, a la par del día de entrega. En su lugar, en la barra de abajo, queda la pestaña nueva **Cierres** (por ahora vacía; su contenido viene en próximas versiones).
 - **1.48.3 · Hold amarillo también seleccionada:** el pin de una parada en Hold sigue amarillo aunque la toqués (antes se ponía naranja al seleccionarla).
 - **1.48.2 · Hold en amarillo:** en el mapa de *Ruta*, el pin de una parada en Hold sale amarillo.
 - **1.48.1 · Unir por número:** en *Ruta*, **🔗 Unir a paquete** acepta el número del paquete (por ejemplo 62).

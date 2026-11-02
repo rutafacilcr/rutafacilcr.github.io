@@ -14,7 +14,7 @@ En *Ruta*, el botón WhatsApp de cada parada abre el chat con el aviso "Estamos 
 
 En *Ruta*, **📋 Lista** da la ruta en orden con el número de cada paquete para copiar o compartir. En *Paquetes* hay un buscador por nombre, teléfono, guía o número.
 
-La app se maneja con tres pestañas en la barra de abajo (**Paquetes**, **Mensajes** y **Ruta**) más el botón **Soporte**.
+La app se maneja con cuatro pestañas en la barra de abajo (**Paquetes**, **Mensajes**, **Ruta** y **Cierres**) y el botón **Soporte** arriba, en el encabezado.
 
 | Paso | Qué resuelve |
 |---|---|
