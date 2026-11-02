@@ -311,3 +311,8 @@ En las paradas con **?**, la etiqueta **🔗 Nombre · teléfono** muestra con q
 ### Paquetes manda (1.37.3)
 
 Lo que corrijás en *Paquetes* (nombre, teléfono o ubicación) se copia solo a la parada de ese cliente en **Ruta**, para todos los clientes. No hace falta volver a cargar el Excel.
+
+
+### Número del paquete (1.38.0)
+
+Cada paquete tiene un **número fijo**: el que tenía en la lista, y los nuevos toman el siguiente. Ese mismo número sale en *Paquetes*, en *Mensajes* y en el pin y la tarjeta de **Ruta**, para que coincida con tu codificación. No cambia al ordenar la lista ni al quitar otros paquetes. En la ruta el recorrido sigue el mejor orden, así que los números no van seguidos (por ejemplo 13, 4, 27…). Si vaciás la lista, se empieza otra vez desde 1.
