@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.40.0 · Número tachado:** al tocar **✓ Entregado** en *Ruta*, el número del paquete sale tachado (en la tarjeta, el pin y en *Paquetes*) y la parada baja al final de la lista.
 - **1.39.2 · Diagnóstico en pantalla:** en iPhone no se podía pegar el diagnóstico. Ahora **🧪 Ver diagnóstico de la ruta** lo muestra en pantalla para tomarle captura, con botones **📤 Compartir** (WhatsApp, Notas…) y **📋 Copiar**.
 
 ## 2026-11-01
