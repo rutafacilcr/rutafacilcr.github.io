@@ -333,7 +333,7 @@ details summary{cursor:pointer;font-weight:600}
     <button class="btn sm primary" id="repPdf" type="button" style="width:auto;display:inline-flex">📄 Bajar reporte PDF</button> <span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.56.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.56.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -814,10 +814,11 @@ function repPdf(){
   const R=repResumen(),fd=hoy.toLocaleDateString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric'});
   doc.setFontSize(15);doc.text('RutaFácil CR · Reporte de entregas',14,15);
   // Encabezado (1.54.1): fecha, mensajero, recibidos, entregados, devueltos, km y horas
-  // Posiciones fijas (1.54.2): fila 1 fecha, mensajero, recibidos, entregados; fila 2 km, horas y devueltos debajo de entregados
-  const enc=[['Fecha',fd],['Mensajero',S.yo||'—'],['Paquetes recibidos',String(R.rec)],['Paquetes entregados',String(R.ent)],['Km recorridos',R.km==null?'—':R.km.toFixed(1)+' km aprox.'],['Horas invertidas',R.min==null?'—':`${Math.floor(R.min/60)} h ${String(Math.round(R.min%60)).padStart(2,'0')} min`],null,['Paquetes devueltos',String(R.dev)]];
+  // Posiciones fijas (1.56.2), cuadrícula de 4 columnas: col. 1 fecha y mensajero debajo; col. 2 km y horas; col. 4 recibidos, entregados y devueltos
+  const KM=['Km recorridos',R.km==null?'—':R.km.toFixed(1)+' km aprox.'],HR=['Horas invertidas',R.min==null?'—':`${Math.floor(R.min/60)} h ${String(Math.round(R.min%60)).padStart(2,'0')} min`];
+  const enc=[['Fecha',fd],KM,null,['Paquetes recibidos',String(R.rec)],['Mensajero',S.yo||'—'],HR,null,['Paquetes entregados',String(R.ent)],null,null,null,['Paquetes devueltos',String(R.dev)]];
   doc.setFontSize(10);enc.forEach((e,i)=>{if(!e)return;const [k,v]=e,x=14+(i%4)*64,y=23+Math.floor(i/4)*6;doc.setFont(undefined,'bold');doc.text(k+':',x,y);const w=doc.getTextWidth(k+': ')+1;doc.setFont(undefined,'normal');doc.text(v,x+w,y)});
-  doc.autoTable({startY:34,head:[['No. paquete','No. guía / pedido','No. teléfono','Nombre','Estado','Fecha recibido','Fecha entrega','Hora entrega']],body:fil,
+  doc.autoTable({startY:40,head:[['No. paquete','No. guía / pedido','No. teléfono','Nombre','Estado','Fecha recibido','Fecha entrega','Hora entrega']],body:fil,
     styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},
     didParseCell:d=>{if(d.section==='body'&&d.column.index===4)d.cell.styles.textColor=d.cell.raw==='Entregado'?[30,130,60]:[200,40,40]}});
   const name=`reporte-${hoy.toISOString().slice(0,10)}.pdf`;
