@@ -79,7 +79,7 @@ nav.tabs .n:empty{display:none}
 .epin.hold{background:#f5c518}.epin.hold b{color:#1f2125}.epin.ok{background:#9aa0a6;text-decoration:line-through}.epin.sel{background:var(--accent);width:36px;height:36px}.epin.hold.sel{background:#f5c518}
 .estop{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;cursor:pointer}
 .estop.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
-.estop.ok{opacity:.6}.estop.devol{opacity:.5;filter:grayscale(1);background:#eceef0}.estop.devol .acts a,.estop.devol .acts button,.estop.devol .acts2 a,.estop.devol .acts2 button,.estop.devol .eub{pointer-events:none;opacity:.45}.estop.devol .acts3{filter:none}.coordbtn{display:inline-flex;align-items:center;font:600 12px var(--f-body);padding:5px 10px;border-radius:999px;background:var(--road);color:var(--road-ink);border:1px solid var(--road);text-decoration:none;min-height:30px;vertical-align:1px;white-space:nowrap}.coordbtn.off{background:var(--surface);color:var(--muted);border-color:var(--line)}.chips1{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;vertical-align:1px}button.devtag{border:0;cursor:pointer;font-family:inherit;min-height:28px}button.devtag:active{transform:scale(.96)}.devtag,.chip.devtag{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:#5f6368;color:#fff;vertical-align:1px}.estop .acts3 .edevol{font-weight:700;padding:7px 14px;color:var(--bad);border-color:var(--bad)}
+.estop.ok{opacity:.6}.estop.devol{opacity:.5;filter:grayscale(1);background:#eceef0}.estop.devol .acts a,.estop.devol .acts button,.estop.devol .acts2 a,.estop.devol .acts2 button,.estop.devol .eub{pointer-events:none;opacity:.45}.estop.devol .acts3{filter:none}.coordbtn{display:inline-flex;align-items:center;font:600 12px var(--f-body);padding:5px 10px;border-radius:999px;background:var(--road);color:var(--road-ink);border:1px solid var(--road);text-decoration:none;min-height:30px;vertical-align:1px;white-space:nowrap}.coordbtn.off{background:var(--surface);color:var(--muted);border-color:var(--line)}.vehsel{display:inline-flex;gap:4px;vertical-align:middle}.vehsel button{font-size:20px;line-height:1;min-width:40px;min-height:34px;padding:4px 6px;border-radius:10px;border:1px solid var(--line);background:var(--surface);cursor:pointer;filter:grayscale(1);opacity:.6}.vehsel button.on{filter:none;opacity:1;border-color:#f26b1d;box-shadow:0 0 0 2px rgba(242,107,29,.25)}.chips1{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;vertical-align:1px}button.devtag{border:0;cursor:pointer;font-family:inherit;min-height:28px}button.devtag:active{transform:scale(.96)}.devtag,.chip.devtag{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:#5f6368;color:#fff;vertical-align:1px}.estop .acts3 .edevol{font-weight:700;padding:7px 14px;color:var(--bad);border-color:var(--bad)}
 .estop .n{width:30px;height:30px;border-radius:50%;background:#d7261e;color:#fff;font:700 13px var(--f-body);display:flex;align-items:center;justify-content:center;grid-row:span 2}
 .estop.ok .n{background:#9aa0a6;text-decoration:line-through;text-decoration-thickness:2px}#pkgList .pkg.sinub{border:2px solid var(--bad,#d93025)}.pkg.entregado{background:#eceef0;filter:grayscale(1);opacity:.6}.pkg.entregado:focus-within{opacity:1}.pkg .num.tachado{text-decoration:line-through;text-decoration-thickness:2px;color:#9aa0a6}.estop .n.no{background:#f5c518;color:#1f2125}
 .estop .dir{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -284,6 +284,7 @@ details summary{cursor:pointer;font-weight:600}
     <button class="btn sm road" id="entAqui" type="button">📍 Ordenar desde aquí</button>
     <button class="btn sm" id="entPick" type="button">🎯 Elegir en el mapa</button>
     <button class="btn sm" id="entLista" type="button">📋 Lista</button>
+    <span class="vehsel" id="vehSel" role="group" aria-label="Vehículo"><button type="button" data-veh="moto" title="Moto">🏍</button><button type="button" data-veh="carro" title="Carro">🚙</button><button type="button" data-veh="buseta" title="Buseta">🚐</button></span>
     <div class="entrow"><span class="small muted" id="entGps"></span><span class="enttot" id="entTot"></span></div>
   </div>
   <div class="entbus" id="entBus" hidden><input type="search" id="entBuscar" placeholder="🔍 Buscar cliente, teléfono o guía" autocomplete="off" enterkeyhint="search"><span class="small muted" id="entBusN"></span></div>
@@ -332,7 +333,7 @@ details summary{cursor:pointer;font-weight:600}
     <button class="btn sm primary" id="repPdf" type="button" style="width:auto;display:inline-flex">📄 Bajar reporte PDF</button> <span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.54.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.55.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -795,13 +796,13 @@ function repFilas(){
   return S.pk.filter(p=>p.st==='entregado'||p.st==='devuelto'||p.devolver).sort((a,b)=>(+a.num||0)-(+b.num||0)).map(p=>{
     const ent=p.st==='entregado',t=ent?(p.entAt||(p.pod&&p.pod.at)):p.devAt;
     return [String(p.num||''),p.guia||'',tl(p.tel),tidyName(p.nombre||''),ent?'Entregado':'Devuelto',f(p.ing),f(t),h(t)]})}
-// Resumen del encabezado: km = línea recta entre el inicio de la ruta y cada entrega en orden de hora, ×1,3 por calles (aprox.); horas = de la primera a la última entrega o devolución
+// Resumen del encabezado: km = línea recta entre el inicio de la ruta y cada entrega en orden de hora (hav ya suma ×1,35 por calles); horas = de la primera a la última entrega o devolución
 function repResumen(){
   const rec=S.pk.length,ent=S.pk.filter(p=>p.st==='entregado').length,dev=S.pk.filter(p=>p.st==='devuelto'||(p.devolver&&p.st!=='entregado')).length;
   const pts=S.pk.filter(p=>p.st==='entregado').map(p=>{const t=p.entAt||(p.pod&&p.pod.at),g=p.entGps||(p.pod&&p.pod.lat!=null?p.pod:null),st=entParadasDe(p)[0];
     const c=g&&g.lat!=null?[g.lat,g.lng]:(st&&st.c)||parseCoord(p.ubic);return t&&c?{t,c}:null}).filter(Boolean).sort((a,b)=>a.t-b.t);
   const ts=[...S.pk.map(p=>p.st==='entregado'?(p.entAt||(p.pod&&p.pod.at)):p.st==='devuelto'?p.devAt:null)].filter(Boolean).sort((a,b)=>a-b);
-  let km=null;if(pts.length){km=0;let prev=S.ent&&S.ent.inicio||pts[0].c;pts.forEach(x=>{km+=hav(prev,x.c);prev=x.c});km*=1.3}
+  let km=null;if(pts.length){km=0;let prev=S.ent&&S.ent.inicio||pts[0].c;pts.forEach(x=>{km+=hav(prev,x.c);prev=x.c})}
   return {rec,ent,dev,km,min:ts.length>1?(ts[ts.length-1]-ts[0])/60000:null}}
 function repPdf(){
   const fil=repFilas();if(!fil.length){toast('No hay paquetes entregados ni devueltos en la lista');return}
@@ -1143,6 +1144,9 @@ $('#supDiag').onclick=async()=>{let t=`RutaFácil ${$('#appVer').textContent} ·
   // En iPhone copiar/pegar a veces falla: se muestra en pantalla para captura, con Compartir (WhatsApp, Notas…) y Copiar
   $('#diagTitle').textContent='🧪 Diagnóstico de la ruta';$('#diagTxt').textContent=t;$('#supSheet').hidden=true;$('#diagSheet').hidden=false;document.body.style.overflow='hidden'};
 // Lista de la ruta en el orden en que se va a entregar, con el número fijo de cada paquete (para copiar o mandar por WhatsApp)
+// Vehículo (1.55.0): se elige uno de los 3 y se guarda en S.veh (moto por defecto). Todavía no cambia tiempos, km ni ruta; su uso viene después.
+function vehPintar(){const v=['moto','carro','buseta'].includes(S.veh)?S.veh:'moto';document.querySelectorAll('#vehSel [data-veh]').forEach(b=>{b.classList.toggle('on',b.dataset.veh===v);b.setAttribute('aria-pressed',b.dataset.veh===v)})}
+$('#vehSel').onclick=e=>{const b=e.target.closest('[data-veh]');if(!b)return;S.veh=b.dataset.veh;save();vehPintar();toast(`Vehículo: ${b.title}`)};vehPintar();
 $('#entLista').onclick=()=>{const E=S.ent;if(!E||!E.stops)return;const erk=s=>entDone(s)?2:s.c?(s.hold?0.5:0):1;let k=0;
   const L=E.stops.map((s,i)=>[s,i]).sort((a,b)=>erk(a[0])-erk(b[0])||a[1]-b[1]).map(([s])=>{const p=entPkg(s);return `${++k}. #${eNum(s)} ${s.nombre||''}${p&&p.tel?' · '+p.tel:''}${s.devolver?' ⛔ devolver':entDev(s)?' ↩ devuelto':entDone(s)?' ✓ entregado':s.hold?' ⏸ hold':!s.c?' (sin ubicación)':''}`});
   $('#diagTitle').textContent='📋 Ruta en orden';$('#diagTxt').textContent=`${E.nombre} · ${new Date().toLocaleString('es-CR')}\n\n`+L.join('\n');$('#diagSheet').hidden=false;document.body.style.overflow='hidden'};
@@ -1493,7 +1497,7 @@ document.querySelector('[data-tab="entrega"]').addEventListener('click',()=>{req
 // ===== Lista en la nube: los mismos paquetes en el teléfono y en la PC (rf_lista_leer / rf_lista_guardar) =====
 // S.syncVer = última versión de la nube que vio este aparato; S.baseIds = ids que había en ese momento
 // (sirven para saber qué se borró en un lado y qué es nuevo). S.dirty = hay cambios sin subir.
-const NUBE_KEYS=['nums','ent','pk','coord','form','camino','pref','fecha','hora','start','vel','min','ret','route'];
+const NUBE_KEYS=['nums','ent','pk','coord','form','camino','pref','fecha','hora','start','vel','min','ret','route','veh'];
 const nubeMsg=t=>{const el=$('#nubeInfo');if(el)el.textContent=t?' · '+t:''};
 // Se sube todo lo que había en la nube (aunque esta versión no lo conozca) más las claves propias, para no borrar datos de otros aparatos.
 function nubeDatos(){const d={...(S.nubeOtros||{})};NUBE_KEYS.forEach(k=>{if(S[k]!==undefined)d[k]=S[k]});if(S.ex)d.pk=[];return d}

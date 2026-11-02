@@ -12,7 +12,7 @@ Al marcar un paquete como entregado en *Ruta*, su número queda tachado y baja a
 
 En *Ruta*, el botón WhatsApp de cada parada abre el chat con el aviso "Estamos en camino" y el tiempo estimado. También se puede quitar una parada repetida con **🗑️ Quitar**; el paquete sigue en *Paquetes*.
 
-En *Ruta*, **📋 Lista** da la ruta en orden con el número de cada paquete para copiar o compartir. En *Paquetes* hay un buscador por nombre, teléfono, guía o número. En *Cierres*, **📄 Bajar reporte PDF** descarga un reporte horizontal de entregados y devueltos, con un encabezado de fecha, mensajero, recibidos, entregados, devueltos, km y horas. La lista de *Paquetes* va ordenada: activos, Hold, devueltos y al final los entregados en gris. Un paquete marcado **⛔ Devolver** en *Ruta* muestra esa etiqueta en *Paquetes*; al tocarla se confirma como devuelto (o se quita la marca).
+En *Ruta*, **📋 Lista** da la ruta en orden con el número de cada paquete para copiar o compartir. En *Paquetes* hay un buscador por nombre, teléfono, guía o número. En *Ruta*, junto a 📋 Lista, se elige el vehículo (🏍 moto, 🚙 carro o 🚐 buseta). En *Cierres*, **📄 Bajar reporte PDF** descarga un reporte horizontal de entregados y devueltos, con un encabezado de fecha, mensajero, recibidos, entregados, devueltos, km y horas. La lista de *Paquetes* va ordenada: activos, Hold, devueltos y al final los entregados en gris. Un paquete marcado **⛔ Devolver** en *Ruta* muestra esa etiqueta en *Paquetes*; al tocarla se confirma como devuelto (o se quita la marca).
 
 La app se maneja con cuatro pestañas en la barra de abajo (**Paquetes**, **Mensajes**, **Ruta** y **Cierres**) y el botón **Soporte** arriba, en el encabezado.
 
