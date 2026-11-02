@@ -331,6 +331,16 @@ En *Paquetes*, a la par de **📷 Escanear etiquetas** está **🖼️ Galería*
 
 Los botones de *Mensajes* se ven igual que antes; el cambio de botones fue solo en *Paquetes* y en *Ruta*.
 
+### Mensaje para coordinar (1.51.1)
+
+El mensaje **Coordinar** de *Mensajes* ahora dice:
+
+> Hola Ana , soy Victor tenemos un paquete de *TEMU* a su nombre y nos gustaria coordinar la entrega para el martes, 3 de noviembre.
+>
+> Nos puedes enviar la ubicación por acá para agrfegarlo a la ruta, una vez que tengamos la ubicacion nos contactamoos con usted para la hora.
+
+El nombre del cliente, tu nombre y la fecha de entrega se llenan solos. Si lo cambiás en la plantilla de Mensajes, la app respeta tu cambio.
+
 ### Botones de cada parada en Ruta (1.44.0)
 
 - Primera línea (desde 1.44.5): el tiempo estimado (🚗 minutos y km), **🚗 Waze** (naranja) y **WhatsApp** (verde), repartidos a lo ancho y alineados con la línea de abajo (1.44.2).
