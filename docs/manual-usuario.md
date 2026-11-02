@@ -460,6 +460,10 @@ No tenés que unir nada a mano: si corregís en *Paquetes* el nombre, el teléfo
 
 Cuando tocás **✓ Entregado** en *Ruta*, el número del paquete queda tachado y en gris, y la parada baja al final de la lista. En *Paquetes* el número también sale tachado, la tarjeta entera se ve apagada en gris (1.40.1) y el paquete pasa con los entregados. Sus botones siguen sirviendo por si hay que corregir algo. Si te equivocaste, **↩ Deshacer** lo devuelve.
 
+### Etiqueta de devueltos (1.56.0)
+
+Un paquete devuelto muestra la etiqueta gris **⛔ Devuelto** (igual a la de **⛔ Devolver**), en *Paquetes*, *Mensajes* y *Ruta*.
+
 ### Botón Coordinar en Paquetes (1.53.0)
 
 En cada tarjeta de *Paquetes*, a la par del nombre, está **1. Coordinar**: abre WhatsApp con el primer mensaje listo. Después de abrirlo sale **1. Coordinar ✓**. Si sale gris, el teléfono no es válido: corregilo con **Editar**. Los entregados y devueltos muestran su estado en vez del botón. El estado (Confirmado, No responde…) se sigue viendo en *Mensajes*.

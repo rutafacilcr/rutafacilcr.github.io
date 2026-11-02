@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.56.0 · Etiqueta de devueltos:** los paquetes devueltos llevan la misma etiqueta gris con ⛔ que *Devolver*, pero dice **⛔ Devuelto** (en *Paquetes*, *Mensajes* y *Ruta*). Tocarla en *Paquetes* o *Mensajes* sigue cambiando el estado.
 - **1.55.0 · Vehículo en Ruta:** a la par de 📋 Lista hay tres botones 🏍 🚙 🚐 para elegir moto, carro o buseta (uno a la vez, se guarda). Todavía no cambian tiempos ni ruta. Corrige los km del reporte, que sumaban dos veces el extra por calles.
 - **1.54.2 · Reporte con nombre:** la columna "No. teléfono 2" se cambia por **Nombre** del cliente y en el encabezado "Paquetes devueltos" queda debajo de "Paquetes entregados".
 - **1.54.1 · Encabezado del reporte:** el PDF trae arriba fecha, mensajero, paquetes recibidos, entregados y devueltos, km recorridos (aprox.) y horas invertidas.
