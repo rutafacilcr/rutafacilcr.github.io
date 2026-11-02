@@ -268,19 +268,24 @@ En *Paquetes*, cada paquete tiene el botón **↩ Devuelto**. Usalo cuando el pa
 Arriba salen los paquetes que faltan (pendientes, confirmados, sin respuesta), en el orden en que los agregaste. Los **entregados** bajan al final y los **devueltos** quedan de últimos.
 
 
+### Botones de cada paquete (1.41.0)
+
+En *Paquetes*, cada tarjeta trae en este orden: **📋 Pegar respuesta**, **Editar**, **Waze** (si tiene ubicación), **Borrar** (antes *Quitar*), **↩ Devuelto**, **📷 Escáner** y, debajo, **WhatsApp**. El botón **Maps** ya no sale en *Paquetes*; en *Ruta* sigue igual.
+
+
 ### Corregir un paquete mal escaneado (1.31.0)
 
-En *Paquetes*, tocá **📷 Etiqueta** en el paquete que quedó mal. Se abre la cámara: tomale foto a la etiqueta otra vez. La app vuelve a leer guía, nombre, teléfono y dirección; lo que no logre leer se queda con el dato que ya tenía. Revisá, corregí a mano si hace falta y tocá **Guardar corrección**. Se actualiza ese mismo paquete, sin crear uno nuevo, y conserva su estado, su ubicación y su evidencia.
+En *Paquetes*, tocá **📷 Escáner** (antes *Etiqueta*) en el paquete que quedó mal. Se abre la cámara: tomale foto a la etiqueta otra vez. La app vuelve a leer guía, nombre, teléfono y dirección; lo que no logre leer se queda con el dato que ya tenía. Revisá, corregí a mano si hace falta y tocá **Guardar corrección**. Se actualiza ese mismo paquete, sin crear uno nuevo, y conserva su estado, su ubicación y su evidencia.
 
 
 ### WhatsApp desde Paquetes (1.32.0)
 
-A la par de **Quitar** está el botón verde **WhatsApp**, que abre el chat con ese cliente (sin mensaje escrito). Si el paquete no tiene teléfono válido, el botón no aparece.
+Debajo de **📷 Escáner** está el botón verde **WhatsApp**, que abre el chat con ese cliente (sin mensaje escrito). Si el paquete no tiene teléfono válido, el botón no aparece.
 
 
 ### Cambios de teléfono llegan a Entrega (1.34.0)
 
-Si corregís el teléfono de un paquete en *Paquetes* (con **Editar** o **📷 Etiqueta**), la parada de ese cliente en *Entrega* se actualiza sola con el número nuevo, y el botón WhatsApp ya abre el chat correcto. También se actualizan el nombre y la guía. Desde la 1.35.1, cada vez que abrís la app las paradas toman el teléfono que está en *Paquetes*, aunque lo hayas corregido antes.
+Si corregís el teléfono de un paquete en *Paquetes* (con **Editar** o **📷 Escáner**), la parada de ese cliente en *Entrega* se actualiza sola con el número nuevo, y el botón WhatsApp ya abre el chat correcto. También se actualizan el nombre y la guía. Desde la 1.35.1, cada vez que abrís la app las paradas toman el teléfono que está en *Paquetes*, aunque lo hayas corregido antes.
 
 
 ### Orden de la lista en Entrega (1.35.0)
