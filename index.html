@@ -338,7 +338,7 @@ details summary{cursor:pointer;font-weight:600}
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.61.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.62.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -754,7 +754,7 @@ async function cerrarDia(b){
     catch(err){b.disabled=false;b.textContent='Vaciar lista';toast('No se pudo guardar el cierre (revisá internet). No se borró nada.');return}
     finally{b.disabled=false}}
   else if(!confirm('No hay cuenta conectada: el cierre NO se va a guardar en la base.\n¿Vaciar igual?'))return;
-  const t=Date.now();S.pk=[];S.ex=false;S.nums={};S.route=null;
+  const t=Date.now();S.pk=[];S.ex=false;S.nums={};S.route=null;S.jor={}; // totalmente limpio: la jornada ya va dentro del cierre (ruta.jor)
   S.ent={nombre:'',at:t,mod:t,stops:[],cerrada:fc}; // ruta vacía y más nueva que la de la nube, para que la sincronización no la reviva
   ESEL=-1;save();render();if(typeof renderEnt==='function')renderEnt();if(NUBE.on)nubeSync(true);
   b.textContent='Vaciar lista';toast(`Cierre guardado (${new Date(fc).toLocaleString('es-CR')}). Listo para una ruta nueva.`)}
@@ -860,7 +860,9 @@ function repTotales(L){const TR=repTramos(L),T=[...TR.values()].filter(x=>!x.ini
 function repResumen(L){
   const rec=L.length,ent=L.filter(p=>p.st==='entregado').length,dev=L.filter(p=>p.st==='devuelto'||(p.devolver&&p.st!=='entregado')).length;
   const {km,min}=repTotales(L);
-  return {rec,ent,dev,km,min}}
+  const E=L.filter(p=>p.st==='entregado'&&repT(p)),dias=new Set(E.map(p=>repDia(repT(p)))).size;
+  const pMin=min!=null&&E.length?min/E.length:null,pKm=km!=null&&E.length?km/E.length:null; // promedio por paquete entregado (1.62.0)
+  return {rec,ent,dev,km,min,pMin,pKm,dias}}
 function repPdf(k){
   const G=repGrupos().find(x=>x.k===k);const L=G?G.pk:[];
   const fil=repFilas(L);if(!fil.length){toast('Esa fecha no tiene paquetes entregados ni devueltos');return}
@@ -871,7 +873,8 @@ function repPdf(k){
   // Encabezado (1.54.1): fecha, mensajero, recibidos, entregados, devueltos, km y horas
   // Posiciones fijas (1.56.2), cuadrícula de 4 columnas: col. 1 fecha y mensajero debajo; col. 2 km y horas; col. 3 fecha de recibido (1.57.0); col. 4 recibidos, entregados y devueltos
   const KM=['Km recorridos',R.km==null||R.km<0.05?'—':R.km.toFixed(1)+' km aprox.'],HR=['Horas invertidas',R.min==null?'—':`${Math.floor(R.min/60)} h ${String(Math.round(R.min%60)).padStart(2,'0')} min`];
-  const enc=[['Fecha',fd],KM,['Recibidos el',repDiaTxt(k)],['Paquetes recibidos',String(R.rec)],['Mensajero',S.yo||'—'],HR,null,['Paquetes entregados',String(R.ent)],null,null,null,['Paquetes devueltos',String(R.dev)]];
+  const PR=['Promedio por entrega',R.pMin==null?'—':`${Math.round(R.pMin)} min${R.pKm!=null?' · '+R.pKm.toFixed(1)+' km':''}`];
+  const enc=[['Fecha',fd],KM,['Recibidos el',repDiaTxt(k)],['Paquetes recibidos',String(R.rec)],['Mensajero',S.yo||'—'],HR,['Días de entrega',String(R.dias)],['Paquetes entregados',String(R.ent)],null,PR,null,['Paquetes devueltos',String(R.dev)]];
   doc.setFontSize(10);enc.forEach((e,i)=>{if(!e)return;const [kk,v]=e,x=14+(i%4)*64,y=23+Math.floor(i/4)*6;doc.setFont(undefined,'bold');doc.text(kk+':',x,y);const w=doc.getTextWidth(kk+': ')+1;doc.setFont(undefined,'normal');doc.text(v,x+w,y)});
   doc.autoTable({startY:40,head:[['No. paquete','No. guía / pedido','No. teléfono','Nombre','Estado','Fecha recibido','Fecha entrega','Hora entrega','Tiempo desde anterior','Km desde anterior']],body:fil,
     styles:{fontSize:8.5,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},
@@ -880,7 +883,7 @@ function repPdf(k){
   if(IOS&&navigator.canShare){const file=new File([doc.output('blob')],name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Reporte guardado')).catch(()=>{});return}}
   doc.save(name);toast(`Reporte con ${fil.length} paquete(s)`)}
 function repLista(){const G=repGrupos(),el=$('#repLista');if(!el)return;
-  el.innerHTML=G.length?G.map(g=>{const R=repResumen(g.pk),n=repFilas(g.pk).length;return `<div class="replin"><div><b>📦 ${repEntregasDe(g.k)}</b><div class="small muted">${R.rec} recibidos · ${R.ent} entregados · ${R.dev} devueltos</div></div><button class="btn sm primary" type="button" data-rep="${g.k}"${n?'':' disabled'}>📄 PDF</button></div>`}).join(''):'<p class="small muted">Todavía no hay paquetes.</p>'}
+  el.innerHTML=G.length?G.map(g=>{const R=repResumen(g.pk),n=repFilas(g.pk).length;return `<div class="replin"><div><b>📦 ${repEntregasDe(g.k)}</b><div class="small muted">${R.rec} recibidos · ${R.ent} entregados · ${R.dev} devueltos${R.pMin!=null?` · prom. ${Math.round(R.pMin)} min${R.pKm!=null?' / '+R.pKm.toFixed(1)+' km':''} por entrega`:''}</div></div><button class="btn sm primary" type="button" data-rep="${g.k}"${n?'':' disabled'}>📄 PDF</button></div>`}).join(''):'<p class="small muted">Todavía no hay paquetes.</p>'}
 $('#repLista').addEventListener('click',e=>{const b=e.target.closest('[data-rep]');if(b)repPdf(b.dataset.rep)});
 document.querySelector('[data-tab="cierres"]').addEventListener('click',()=>{repLista();repCargar().catch(()=>{});
   $('#repInfo').textContent='Buscando reportes de cierres anteriores…';repCierres().then(()=>{repLista();$('#repInfo').textContent=''})});

@@ -460,6 +460,11 @@ No tenés que unir nada a mano: si corregís en *Paquetes* el nombre, el teléfo
 
 Cuando tocás **✓ Entregado** en *Ruta*, el número del paquete queda tachado y en gris, y la parada baja al final de la lista. En *Paquetes* el número también sale tachado, la tarjeta entera se ve apagada en gris (1.40.1) y el paquete pasa con los entregados. Sus botones siguen sirviendo por si hay que corregir algo. Si te equivocaste, **↩ Deshacer** lo devuelve.
 
+### Promedios y cierre (1.62.0)
+
+- El reporte trae **Promedio por entrega**: minutos y km por paquete entregado. Con **▶ Iniciar** y **■ Finalizar** cada día, el promedio es más real porque cuenta desde la salida hasta el final.
+- **Vaciar lista** deja la app totalmente limpia (paquetes, ruta y jornada); todo queda guardado en el cierre. Si te vuelven a dar un paquete de una ruta cerrada, cargalo de nuevo: toma la fecha de ese día y arranca otra vez su plazo de entrega.
+
 ### Paquete agregado a mano (1.61.0)
 
 Si al revisar encontrás un paquete con datos malos y lo borrás y lo volvés a agregar (o lo editás) otro día, en el formulario está **Pertenece a**. Ya viene elegida la ruta en curso (por ejemplo *Entregas del 2 de noviembre*), así el paquete sale en el reporte de esa ruta. Si es de otra, elegila en la lista.
