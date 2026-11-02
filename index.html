@@ -333,7 +333,7 @@ details summary{cursor:pointer;font-weight:600}
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.57.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.58.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -817,18 +817,24 @@ function repFilas(L){
   const f=t=>t?new Date(t).toLocaleDateString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric'}):'',h=t=>t?new Date(t).toLocaleTimeString('es-CR',{hour:'numeric',minute:'2-digit'}):'';
   const tl=x=>{const d=String(x||'').replace(/\D/g,'');return d.length===11&&d.startsWith('506')?d.slice(3):d};
   // Orden (1.56.1): por fecha y hora de entrega (o devolución), la más vieja primero; los que no tienen hora van al final por número
+  const TR=repTramos(L);
   return L.filter(p=>p.st==='entregado'||p.st==='devuelto'||p.devolver).sort((a,b)=>(repT(a)||Infinity)-(repT(b)||Infinity)||(+a.num||0)-(+b.num||0)).map(p=>{
-    const ent=p.st==='entregado',t=repT(p);
-    return [String(p.num||''),p.guia||'',tl(p.tel),tidyName(p.nombre||''),ent?'Entregado':'Devuelto',f(p.ing),f(t),h(t)]})}
+    const ent=p.st==='entregado',t=repT(p),r=TR.get(p.id);
+    const tt=!r?'—':r.inicio?'Inicio':`${r.min>=60?Math.floor(r.min/60)+' h ':''}${Math.round(r.min%60)} min`,kk=!r||r.inicio||r.km==null?(r&&r.inicio?'Inicio':'—'):r.km.toFixed(1)+' km';
+    return [String(p.num||''),p.guia||'',tl(p.tel),tidyName(p.nombre||''),ent?'Entregado':'Devuelto',f(p.ing),f(t),h(t),tt,kk]})}
+// Tramos (1.58.0): cada entrega mide tiempo y km desde la entrega ANTERIOR del mismo día (orden por hora real).
+// La primera entrega de cada día es el inicio: no tiene tramo. Los devueltos no cuentan (no son una parada de entrega).
+function repCoord(p){const g=p.entGps||(p.pod&&p.pod.lat!=null?p.pod:null),st=repParadas(p).find(x=>x.c);return g&&g.lat!=null?[g.lat,g.lng]:(st&&st.c)||parseCoord(p.ubic)}
+function repTramos(L){const out=new Map();let prev=null;
+  L.filter(p=>p.st==='entregado'&&repT(p)).map(p=>({p,t:repT(p),c:repCoord(p)})).sort((a,b)=>a.t-b.t).forEach(x=>{
+    if(prev&&repDia(prev.t)===repDia(x.t))out.set(x.p.id,{min:(x.t-prev.t)/60000,km:prev.c&&x.c?hav(prev.c,x.c):null});else out.set(x.p.id,{inicio:true});
+    prev=x});return out}
 // Resumen del encabezado: km = línea recta entre el inicio de la ruta y cada entrega en orden de hora (hav ya suma ×1,35 por calles); horas = de la primera a la última entrega o devolución
 function repResumen(L){
   const rec=L.length,ent=L.filter(p=>p.st==='entregado').length,dev=L.filter(p=>p.st==='devuelto'||(p.devolver&&p.st!=='entregado')).length;
-  const pts=L.filter(p=>p.st==='entregado').map(p=>{const t=repT(p),g=p.entGps||(p.pod&&p.pod.lat!=null?p.pod:null),st=repParadas(p)[0];
-    const c=g&&g.lat!=null?[g.lat,g.lng]:(st&&st.c)||parseCoord(p.ubic);return t&&c?{t,c}:null}).filter(Boolean).sort((a,b)=>a.t-b.t);
-  const ts=L.map(repT).filter(Boolean).sort((a,b)=>a-b);
-  const actual=L.some(p=>S.pk.includes(p));
-  let km=null;if(pts.length){km=0;let prev=(actual&&S.ent&&S.ent.inicio)||pts[0].c;pts.forEach(x=>{km+=hav(prev,x.c);prev=x.c})}
-  return {rec,ent,dev,km,min:ts.length>1?(ts[ts.length-1]-ts[0])/60000:null}}
+  const T=[...repTramos(L).values()].filter(x=>!x.inicio);
+  const km=T.some(x=>x.km!=null)?T.reduce((a,x)=>a+(x.km||0),0):null,min=T.length?T.reduce((a,x)=>a+x.min,0):null;
+  return {rec,ent,dev,km,min}}
 function repPdf(k){
   const G=repGrupos().find(x=>x.k===k);const L=G?G.pk:[];
   const fil=repFilas(L);if(!fil.length){toast('Esa fecha no tiene paquetes entregados ni devueltos');return}
@@ -841,8 +847,8 @@ function repPdf(k){
   const KM=['Km recorridos',R.km==null||R.km<0.05?'—':R.km.toFixed(1)+' km aprox.'],HR=['Horas invertidas',R.min==null?'—':`${Math.floor(R.min/60)} h ${String(Math.round(R.min%60)).padStart(2,'0')} min`];
   const enc=[['Fecha',fd],KM,['Fecha de recibido',repDiaTxt(k)],['Paquetes recibidos',String(R.rec)],['Mensajero',S.yo||'—'],HR,null,['Paquetes entregados',String(R.ent)],null,null,null,['Paquetes devueltos',String(R.dev)]];
   doc.setFontSize(10);enc.forEach((e,i)=>{if(!e)return;const [kk,v]=e,x=14+(i%4)*64,y=23+Math.floor(i/4)*6;doc.setFont(undefined,'bold');doc.text(kk+':',x,y);const w=doc.getTextWidth(kk+': ')+1;doc.setFont(undefined,'normal');doc.text(v,x+w,y)});
-  doc.autoTable({startY:40,head:[['No. paquete','No. guía / pedido','No. teléfono','Nombre','Estado','Fecha recibido','Fecha entrega','Hora entrega']],body:fil,
-    styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},
+  doc.autoTable({startY:40,head:[['No. paquete','No. guía / pedido','No. teléfono','Nombre','Estado','Fecha recibido','Fecha entrega','Hora entrega','Tiempo desde anterior','Km desde anterior']],body:fil,
+    styles:{fontSize:8.5,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},
     didParseCell:d=>{if(d.section==='body'&&d.column.index===4)d.cell.styles.textColor=d.cell.raw==='Entregado'?[30,130,60]:[200,40,40]}});
   const name=`reporte-recibidos-${k||'sin-fecha'}.pdf`;
   if(IOS&&navigator.canShare){const file=new File([doc.output('blob')],name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Reporte guardado')).catch(()=>{});return}}

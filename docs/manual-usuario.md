@@ -460,6 +460,15 @@ No tenés que unir nada a mano: si corregís en *Paquetes* el nombre, el teléfo
 
 Cuando tocás **✓ Entregado** en *Ruta*, el número del paquete queda tachado y en gris, y la parada baja al final de la lista. En *Paquetes* el número también sale tachado, la tarjeta entera se ve apagada en gris (1.40.1) y el paquete pasa con los entregados. Sus botones siguen sirviendo por si hay que corregir algo. Si te equivocaste, **↩ Deshacer** lo devuelve.
 
+### Cómo se calculan horas y km del reporte (1.58.0)
+
+- La **primera entrega del día** es el inicio (dice *Inicio* en la tabla).
+- Cada entrega siguiente mide **tiempo** y **km** desde la entrega anterior del mismo día. Se ven en las columnas *Tiempo desde anterior* y *Km desde anterior*.
+- **Horas invertidas** y **Km recorridos** son la suma de esos tramos. Si un reporte tiene entregas de dos días, cada día arranca de nuevo.
+- Los **devueltos** no suman horas ni km.
+- La hora de entrega es la de la evidencia (📸) o la del toque en **✓ Entregado**. Los km son en línea recta ×1,35 (aproximado), desde el GPS de la entrega o la ubicación del cliente.
+- Para que cuadre, marcá cada entrega en el momento en que la hacés.
+
 ### Etiqueta de devueltos (1.56.0)
 
 Un paquete devuelto muestra la etiqueta gris **⛔ Devuelto** (igual a la de **⛔ Devolver**), en *Paquetes*, *Mensajes* y *Ruta*.

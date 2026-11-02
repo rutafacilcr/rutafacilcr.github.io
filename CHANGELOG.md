@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.58.0 · Reporte por tramos:** horas y km del reporte se calculan entre entregas seguidas: la primera entrega del día es el **Inicio** y cada entrega siguiente mide el tiempo y los km desde la anterior del mismo día. *Horas invertidas* y *Km recorridos* son la suma de esos tramos. Antes las horas iban de la primera a la última marca del grupo (sumaba días distintos y la hora en que se marcaban los devueltos) y los km arrancaban en el punto desde donde se ordenó la ruta. El PDF trae dos columnas nuevas: **Tiempo desde anterior** y **Km desde anterior**. Los devueltos no cuentan en horas ni km.
 - **1.57.0 · Reportes por fecha de recibido:** en *Cierres* hay una lista con un reporte por cada fecha en que se recibieron paquetes (también de listas ya vaciadas, leídas de los cierres guardados); cada uno con su **📄 PDF** y la **Fecha de recibido** en el encabezado.
 - **1.56.4 · Vehículo en el mensaje:** el WhatsApp de "en camino" (en *Ruta* y en *Mensajes*) lleva después de la palabra "camino" el ícono del vehículo elegido en *Ruta*: 🏍️, 🚙 o 🚐.
 - **1.56.3 · Hora real de entrega:** si una parada se marcaba ✓ Entregado antes de estar unida a su paquete, al unirse el paquete quedaba con la hora de ese momento (varias entregas con la misma hora). Ahora toma la hora del toque y corrige las que ya estaban mal; el reporte usa esa hora.

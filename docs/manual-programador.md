@@ -113,6 +113,12 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - *Guardar* abre la cámara **dentro del mismo toque** (iPhone no deja abrirla después de un `await`) y agrega con `mkPkg()`. Las fotos de etiqueta no se guardan.
 - Prueba local: las CDN están bloqueadas en el sandbox; se instalan los paquetes con npm y Playwright sirve los archivos interceptando las URL de jsDelivr. Las etiquetas de prueba se generan con JsBarcode.
 
+## 3c-septies. Tramos del reporte (1.58.0)
+
+- `repTramos(L)` → `Map(id → {inicio:true} | {min,km})`: entregados con `repT`, ordenados por hora; el tramo se mide contra la entrega anterior solo si es el mismo `repDia`. `repCoord(p)`: `entGps`, `pod` lat/lng, parada con `c` o `parseCoord(p.ubic)`; `km` = `hav` (×1,35) o `null` sin coordenadas.
+- `repResumen`: `min` y `km` = suma de tramos (sin `inicio`). Ya no usa `S.ent.inicio` ni los `devAt`.
+- `repFilas` agrega las columnas 9 y 10 (*Tiempo desde anterior*, *Km desde anterior*); autotable a 8,5 pt.
+
 ## 3c-sexies. Etiqueta de devueltos (1.56.0)
 
 - `stChip(p)` con `st==='devuelto'` devuelve `button.chip.devtag` "⛔ Devuelto" (mismo `data-act="st"`). En `renderEnt`, la parada devuelta usa `span.devtag`.
