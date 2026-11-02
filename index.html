@@ -72,7 +72,7 @@ nav.tabs .n:empty{display:none}
 .epin{width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#d7261e;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center}
 .mepos{width:18px;height:18px;border-radius:50%;background:#1a73e8;border:3px solid #fff;box-shadow:0 0 0 2px rgba(26,115,232,.35),0 1px 4px rgba(0,0,0,.4)}
 .epin b{transform:rotate(45deg);color:#fff;font:700 12px var(--f-body)}
-.epin.ok{background:#9aa0a6;text-decoration:line-through}.epin.sel{background:var(--accent);width:36px;height:36px}
+.epin.hold{background:#f5c518}.epin.hold b{color:#1f2125}.epin.ok{background:#9aa0a6;text-decoration:line-through}.epin.sel{background:var(--accent);width:36px;height:36px}
 .estop{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;cursor:pointer}
 .estop.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
 .estop.ok{opacity:.6}
@@ -316,7 +316,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.48.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.48.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -1269,7 +1269,7 @@ async function renderEnt(){entSyncPk();
     const ini=EPOS?EPOS.c:(E.inicio||null),pend=conC.filter(s=>!entDone(s));
     L.polyline([...(ini&&pend.length?[ini]:[]),...pend.map(s=>s.c)],{color:'#29b6f6',weight:4,opacity:.85}).addTo(EMAP.layer);
     entMe();
-    E.stops.forEach((s,i)=>{if(!s.c)return;const m=L.marker(s.c,{icon:L.divIcon({className:'',html:`<div class="epin${entDone(s)?' ok':''}${i===ESEL?' sel':''}"><b>${eNum(s)}</b></div>`,iconSize:[30,30],iconAnchor:[15,30]}),zIndexOffset:i===ESEL?1000:0})
+    E.stops.forEach((s,i)=>{if(!s.c)return;const m=L.marker(s.c,{icon:L.divIcon({className:'',html:`<div class="epin${entDone(s)?' ok':s.hold?' hold':''}${i===ESEL?' sel':''}"><b>${eNum(s)}</b></div>`,iconSize:[30,30],iconAnchor:[15,30]}),zIndexOffset:i===ESEL?1000:0})
       .on('click',()=>entSel(i,true)).bindPopup(`<b>${eNum(s)}. ${esc(s.nombre)}</b>`).addTo(EMAP.layer);EMAP.mk[i]=m});
     EMAP.invalidateSize();if(EMAP.fitted!==E.at){EMAP.fitBounds(conC.map(s=>s.c),{padding:[24,24]});EMAP.fitted=E.at}
   }catch(e){$('#entMap').innerHTML='<p class="small muted" style="padding:12px">No se pudo cargar el mapa. Usá los botones de Waze o Maps.</p>'}

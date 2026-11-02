@@ -285,7 +285,7 @@ La ruta solo cambia cuando vos lo hacés: al cargar el archivo, al ordenar, con 
 
 ### Dejar una parada para el final: Hold (1.47.0)
 
-Si un cliente no está o te pide pasar más tarde, en su parada de *Ruta* tocá **⏸ Hold** (a la izquierda de ✓ Entregado, desde 1.47.1). La parada se va al final de la ruta y ahí se queda aunque reordenes. El botón cambia a **▶ Quitar hold** en amarillo; tocalo para devolverla a la ruta normal (se reordena desde donde estás).
+Si un cliente no está o te pide pasar más tarde, en su parada de *Ruta* tocá **⏸ Hold** (a la izquierda de ✓ Entregado, desde 1.47.1). La parada se va al final de la ruta y ahí se queda aunque reordenes. En el mapa su pin se pone **amarillo** (1.48.2). El botón cambia a **▶ Quitar hold** en amarillo; tocalo para devolverla a la ruta normal (se reordena desde donde estás).
 
 ### Lista de la ruta en orden (1.46.0)
 
