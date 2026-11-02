@@ -311,7 +311,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.32.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.33.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -495,7 +495,7 @@ function renderPk(){
     <div class="num">${i+1}</div>
     <div class="name">${esc(p.nombre||'(sin nombre)')} ${stChip(p)}</div>
     <div class="addr">${esc(p.dir||'Sin dirección')}${p.nota?` · <i>${esc(p.nota)}</i>`:''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
-    <div class="meta"><span class="mono">${esc(p.tel||'sin teléfono')}</span>${p.guia?`<span class="mono">${esc(p.guia)}</span>`:''}<span class="pin ${c?'yes':'no'}">${c?'● Ubicación lista':'○ Falta ubicación'}</span></div>${p.pod?`<div class="ev">📷 ${p.pod.n} fotos · ${fmtDT(p.pod.at)}${p.pod.lat!=null?' · 📍 ±'+Math.round(p.pod.acc)+' m':' · sin GPS'} · ${p.pod.up?'☁️ respaldada':'⏳ sin subir'} <button class="btn sm" data-act="ev" data-id="${p.id}" style="margin-left:4px">Ver evidencia</button></div>`:''}
+    <div class="meta"><span class="mono">${esc(p.tel||'sin teléfono')}</span>${p.guia?`<span class="mono">${esc(p.guia)}</span>`:''}<span class="pin ${c?'yes':'no'}">${c?'● Ubicación lista':'○ Falta ubicación'}</span></div>${p.pod?`<div class="ev">📷 ${p.pod.n} fotos · ${fmtDT(p.pod.at)}${p.pod.lat!=null?' · 📍 ±'+Math.round(p.pod.acc)+' m':' · sin GPS'} · ${p.pod.up?'☁️ respaldada':'⏳ sin subir'} <button class="btn sm" data-act="ev" data-id="${p.id}" style="margin-left:4px">Ver evidencia</button></div>`:p.entAt?`<div class="ev">✓ Entregado ${fmtDT(p.entAt)}${p.entGps?` · <a href="https://www.google.com/maps?q=${p.entGps.lat},${p.entGps.lng}" target="_blank" rel="noopener">📍 dónde (±${p.entGps.acc} m)</a>`:' · sin GPS'}</div>`:''}
     <div class="actions"><button class="btn sm primary" data-act="paste" data-id="${p.id}">📋 Pegar respuesta</button><button class="btn sm" data-act="edit" data-id="${p.id}">Editar</button>${c?`<a class="btn sm" href="${waze(c)}" target="_blank" rel="noopener">Waze</a><a class="btn sm" href="${gmaps(c)}" target="_blank" rel="noopener">Maps</a>`:''}<button class="btn sm" data-act="rescan" data-id="${p.id}" title="Volver a escanear la etiqueta de este paquete">📷 Etiqueta</button><button class="btn sm" data-act="dev" data-id="${p.id}">${p.st==='devuelto'?'↪ Quitar devuelto':'↩ Devuelto'}</button><button class="btn sm ghost danger" data-act="del" data-id="${p.id}">Quitar</button>${phoneWA(p.tel)?`<a class="btn sm wa" href="https://wa.me/${phoneWA(p.tel)}" target="_blank" rel="noopener">WhatsApp</a>`:''}</div>
   </div>`}).join('');
 }
@@ -1147,7 +1147,7 @@ async function renderEnt(){entSyncPk();
   $('#entInfo').innerHTML=`<b>${esc(E.nombre)}</b> · ${ok} de ${E.stops.length} entregadas${![hoy,man].includes(E.nombre)?' · <span style="color:var(--bad)">no es la de hoy ni la de mañana</span>':''}`;
   LI.innerHTML=E.stops.map((s,i)=>{const d=entDone(s),p=entPkg(s),ubx=s.ub!==undefined?s.ub:(p&&p.ubic&&!parseCoord(p.ubic)?String(p.ubic):undefined),nav=s.c?`https://www.google.com/maps/dir/?api=1&destination=${s.c[0]},${s.c[1]}&travelmode=driving`:'',wz=s.waze||(s.c?`https://waze.com/ul?ll=${s.c[0]},${s.c[1]}&navigate=yes`:''),wa=phoneWA(s.tel);
     return `<div class="estop${d?' ok':''}${i===ESEL?' sel':''}" data-ei="${i}"><div class="n${s.c?'':' no'}">${s.c?s.n:'?'}</div>
-    <div><b>${esc(s.nombre)}</b>${s.c?'':` <button class="eub" type="button" data-eub="${i}" title="Lo que dice la columna ubicación del archivo. Tocá para agregar la ubicación">📍 ${esc(ubx===undefined?'Sin dato':/^aplicaci[oó]n$/i.test(ubx.trim())?'Co-out':(ubx||'Vacío'))}</button>`}${d?' <span class="small" style="color:var(--ok);font-weight:700">✓ entregado</span>':''}<div class="small muted dir">${s.c?'':'<b>Sin ubicación</b> · '}${esc(s.dir||'')}</div>${s.nota?`<div class="small">📝 ${esc(s.nota)}</div>`:''}</div>
+    <div><b>${esc(s.nombre)}</b>${s.c?'':` <button class="eub" type="button" data-eub="${i}" title="Lo que dice la columna ubicación del archivo. Tocá para agregar la ubicación">📍 ${esc(ubx===undefined?'Sin dato':/^aplicaci[oó]n$/i.test(ubx.trim())?'Co-out':(ubx||'Vacío'))}</button>`}${d?` <span class="small" style="color:var(--ok);font-weight:700">✓ entregado${s.at?' '+hm(new Date(s.at).getHours()*60+new Date(s.at).getMinutes()):''}${s.gps?' 📍':''}</span>`:''}<div class="small muted dir">${s.c?'':'<b>Sin ubicación</b> · '}${esc(s.dir||'')}</div>${s.nota?`<div class="small">📝 ${esc(s.nota)}</div>`:''}</div>
     <div class="acts">${wz?`<a class="btn sm primary" href="${wz}" target="_blank" rel="noopener">🚗 Waze</a>`:''}${nav?`<a class="btn sm" href="${nav}" target="_blank" rel="noopener">🗺️ Maps</a>`:''}${wa?`<a class="btn sm" href="https://wa.me/${wa}" target="_blank" rel="noopener">WhatsApp</a>`:''}
       ${!d&&s.c?`<span class="eeta" data-eta="${i}"></span>`:''}<div class="acts2">${!d&&p?`<button class="btn sm" type="button" data-eok="${i}">📸 Evidencia</button>`:''}<a class="btn sm" href="shortcuts://run-shortcut?name=Co-out" title="Abre la app Co-out con el atajo de iPhone llamado Co-out">📲 Co-out</a>${d?(s.done?`<button class="btn sm ghost" type="button" data-eundo="${i}">↩ Deshacer</button>`:''):`<button class="btn sm" type="button" data-edone="${i}">✓ Entregado</button>`}</div></div></div>`}).join('');
   $('#entMap').hidden=!conC.length;if(!conC.length||$('#v-entrega').hidden)return;
@@ -1253,11 +1253,13 @@ $('#entList').addEventListener('click',e=>{
   const b=e.target.closest('[data-eok]');if(b){const s=S.ent.stops[+b.dataset.eok],p=entPkg(s);if(p&&p.st!=='entregado'){openPOD(p);return}s.done=true;save();renderEnt();return}
   const bub=e.target.closest('[data-eub]');if(bub){entUbicar(+bub.dataset.eub);return}
   const bd=e.target.closest('[data-edone]');if(bd){const s=S.ent.stops[+bd.dataset.edone],p=entPkg(s);s.done=true;
+    // Hora y ubicación real (GPS del celular en ese momento) de la entrega
+    s.at=Date.now();s.gps=EPOS?{lat:EPOS.c[0],lng:EPOS.c[1],acc:Math.round(EPOS.acc)}:null;
     // También en Paquetes: el mismo paquete pasa a entregado (se guarda el estado anterior por si se deshace)
-    if(p&&p.st!=='entregado'){s.prevSt=p.st;s.pkId=p.id;p.st='entregado';p.entAt=Date.now()}
+    if(p&&p.st!=='entregado'){s.prevSt=p.st;s.pkId=p.id;p.st='entregado';p.entAt=s.at;p.entGps=s.gps}
     save();render();toast(p?`Entregado, también en Paquetes (${p.nombre})`:'Parada marcada como entregada');return}
   const bu=e.target.closest('[data-eundo]');if(bu){const s=S.ent.stops[+bu.dataset.eundo];s.done=false;const p=s.pkId&&S.pk.find(x=>x.id===s.pkId);
-    if(p&&p.st==='entregado'&&!p.pod){p.st=s.prevSt||'confirmado';delete p.entAt}delete s.prevSt;delete s.pkId;save();render();toast('Listo, la parada vuelve a pendiente');return}
+    if(p&&p.st==='entregado'&&!p.pod){p.st=s.prevSt||'confirmado';delete p.entAt;delete p.entGps}delete s.at;delete s.gps;delete s.prevSt;delete s.pkId;save();render();toast('Listo, la parada vuelve a pendiente');return}
   if(e.target.closest('a'))return;const c=e.target.closest('[data-ei]');if(c)entSel(+c.dataset.ei)});
 document.querySelector('[data-tab="entrega"]').addEventListener('click',()=>{requestAnimationFrame(renderEnt);if(S.ent)entVigilar();if(NUBE.on)nubeSync().then(()=>renderEnt())}); // al abrir Entrega baja lo último de la nube
 

@@ -154,6 +154,8 @@ Orden de Paquetes (1.30.0): solo cambia cómo se muestra la lista; el orden guar
 
 Devuelto (1.29.0): nuevo valor `st='devuelto'` en los paquetes (con `stAntes` y `devAt`); viaja en `S.pk` por `rf_listas`, sin cambios en `supabase.sql`.
 
+Hora y GPS del Entregado (1.33.0): se guardan en la parada (`S.ent.stops[].at/gps`) y en el paquete (`entAt`, `entGps`), dentro de `rf_listas` (no en el bucket de evidencias). La evidencia con fotos sigue en "evidencias".
+
 Entregado en Paquetes (1.28.0, 1.29.1): `entSyncPk()` se corre al abrir la app y en cada `render()`. cambia `st` del paquete en `S.pk`, que se sincroniza con `rf_listas` como siempre. No hay cambios en `supabase.sql`.
 
 Pie con derechos (1.27.1): texto fijo en `index.html` y `admin.html`.
