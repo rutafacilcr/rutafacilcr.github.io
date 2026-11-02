@@ -326,8 +326,13 @@ details summary{cursor:pointer;font-weight:600}
     <h2>Cierres</h2>
     <p class="small muted">Aquí van a estar los cierres del día. Próximamente.</p>
   </div>
+  <div class="panel">
+    <h2>Reporte de entregas</h2>
+    <p class="small muted">PDF horizontal con los paquetes <b>entregados</b> y <b>devueltos</b> de la lista actual: número, guía / pedido, teléfonos, estado, fecha recibido y fecha y hora de entrega.</p>
+    <button class="btn sm primary" id="repPdf" type="button" style="width:auto;display:inline-flex">📄 Bajar reporte PDF</button> <span class="small muted" id="repInfo"></span>
+  </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.53.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.54.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -778,6 +783,35 @@ function saveExcel(){
   XLSX.writeFile(wb,name);toast(`Excel con ${pk.length} clientes`);if(IOS)$('#xlsIos').hidden=false;
 }
 $('#xlsBtn').onclick=saveExcel;
+// Reporte PDF (1.54.0): jsPDF + autotable (gratis, cdnjs) se cargan al abrir Cierres para que el botón genere el PDF al instante (iPhone pide el toque directo para compartir).
+const REP_JS=['https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js','https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js'];
+let repCarga=null;
+function repCargar(){if(window.jspdf&&window.jspdf.jsPDF&&window.jspdf.jsPDF.API.autoTable)return Promise.resolve();
+  if(!repCarga)repCarga=REP_JS.reduce((pr,u)=>pr.then(()=>new Promise((ok,no)=>{const x=document.createElement('script');x.src=u;x.onload=ok;x.onerror=()=>no(new Error(u));document.head.appendChild(x)})),Promise.resolve()).catch(e=>{repCarga=null;throw e});
+  return repCarga}
+function repFilas(){
+  const f=t=>t?new Date(t).toLocaleDateString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric'}):'',h=t=>t?new Date(t).toLocaleTimeString('es-CR',{hour:'numeric',minute:'2-digit'}):'';
+  const tl=x=>{const d=String(x||'').replace(/\D/g,'');return d.length===11&&d.startsWith('506')?d.slice(3):d};
+  return S.pk.filter(p=>p.st==='entregado'||p.st==='devuelto'||p.devolver).sort((a,b)=>(+a.num||0)-(+b.num||0)).map(p=>{
+    const ent=p.st==='entregado',t=ent?(p.entAt||(p.pod&&p.pod.at)):p.devAt;
+    // Teléfono 2: el teléfono anterior del paquete o el de la parada de la ruta, si es distinto del principal
+    const t2=[...(p.telsAnt||[]),...entParadasDe(p).map(x=>x.tel)].find(x=>x&&phoneWA(x)!==phoneWA(p.tel));
+    return [String(p.num||''),p.guia||'',tl(p.tel),tl(t2),ent?'Entregado':'Devuelto',f(p.ing),f(t),h(t)]})}
+function repPdf(){
+  const fil=repFilas();if(!fil.length){toast('No hay paquetes entregados ni devueltos en la lista');return}
+  if(!(window.jspdf&&window.jspdf.jsPDF&&window.jspdf.jsPDF.API.autoTable)){toast('Cargando el reporte… tocá otra vez en un momento');repCargar().catch(()=>toast('No se pudo cargar el PDF. Revisá el internet.'));return}
+  const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'letter'}),hoy=new Date();
+  const ne=fil.filter(r=>r[4]==='Entregado').length;
+  doc.setFontSize(15);doc.text('RutaFácil CR · Reporte de entregas',14,15);
+  doc.setFontSize(10);doc.text(`${S.yo?S.yo+' · ':''}${hoy.toLocaleString('es-CR')} · ${ne} entregado(s), ${fil.length-ne} devuelto(s)`,14,22);
+  doc.autoTable({startY:27,head:[['No. paquete','No. guía / pedido','No. teléfono','No. teléfono 2','Estado','Fecha recibido','Fecha entrega','Hora entrega']],body:fil,
+    styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},
+    didParseCell:d=>{if(d.section==='body'&&d.column.index===4)d.cell.styles.textColor=d.cell.raw==='Entregado'?[30,130,60]:[200,40,40]}});
+  const name=`reporte-${hoy.toISOString().slice(0,10)}.pdf`;
+  if(IOS&&navigator.canShare){const file=new File([doc.output('blob')],name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Reporte guardado')).catch(()=>{});return}}
+  doc.save(name);toast(`Reporte con ${fil.length} paquete(s)`)}
+$('#repPdf').onclick=repPdf;
+document.querySelector('[data-tab="cierres"]').addEventListener('click',()=>{const n=repFilas().length;$('#repInfo').textContent=`${n} paquete(s) para el reporte`;repCargar().catch(()=>{})});
 $('#m-pref').addEventListener('input',()=>{$('#vcfEj').textContent=vcfName({nombre:'Nombre',guia:'pedido'})});
 $('#m-buscar').addEventListener('input',()=>renderMsg());
 $('#p-buscar').addEventListener('input',()=>renderPk());

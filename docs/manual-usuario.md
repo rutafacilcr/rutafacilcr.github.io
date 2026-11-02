@@ -487,3 +487,8 @@ Desde la 1.53.1, la etiqueta **⛔ Devolver** de *Paquetes* también se puede to
 Si una parada no toma los datos de su paquete, abrí **Soporte** y tocá **🧪 Copiar diagnóstico de la ruta**. Se copia un texto con las paradas sin ubicación, el paquete al que está unida cada una y los paquetes con ubicación que no están en la ruta. Pegalo en el chat de soporte.
 
 Desde la 1.39.2 el botón se llama **🧪 Ver diagnóstico de la ruta** y muestra el texto en pantalla. Tomale captura (si es largo, bajá y tomá varias) o tocá **📤 Compartir** para mandarlo por WhatsApp. **📋 Copiar** sigue disponible.
+
+
+### Reporte PDF (1.54.0)
+
+En **Cierres**, tocá **📄 Bajar reporte PDF**. Se baja un PDF horizontal con los paquetes **entregados** y **devueltos** de la lista actual, con estas columnas: No. paquete, No. guía / pedido, No. teléfono, No. teléfono 2 (el teléfono anterior o el de la ruta, si es distinto), Estado, Fecha recibido, Fecha entrega y Hora entrega. En iPhone se abre el menú de compartir: elegí **Guardar en Archivos**. Sacalo **antes de Vaciar lista**, porque el reporte usa la lista actual.
