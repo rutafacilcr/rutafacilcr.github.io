@@ -268,6 +268,10 @@ En *Paquetes*, cada paquete tiene el botón **↩ Devuelto**. Usalo cuando el pa
 Arriba salen los paquetes que faltan (pendientes, confirmados, sin respuesta), en el orden en que los agregaste. Los **entregados** bajan al final y los **devueltos** quedan de últimos.
 
 
+### La ruta no cambia sola (1.47.2)
+
+La ruta solo cambia cuando vos lo hacés: al cargar el archivo, al ordenar, con Hold, Quitar, Agregar o Poner en la ruta, o al **editar** un paquete (si tiene ubicación y no estaba en la ruta, entra). La app ya no mete sola paquetes de la lista ni cambia una parada por otro cliente con un nombre parecido. Si una parada no se une a su paquete, usá **🔗 Unir a paquete** o **📍 Poner en la ruta**.
+
 ### Dejar una parada para el final: Hold (1.47.0)
 
 Si un cliente no está o te pide pasar más tarde, en su parada de *Ruta* tocá **⏸ Hold** (a la izquierda de ✓ Entregado, desde 1.47.1). La parada se va al final de la ruta y ahí se queda aunque reordenes. El botón cambia a **▶ Quitar hold** en amarillo; tocalo para devolverla a la ruta normal (se reordena desde donde estás).

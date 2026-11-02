@@ -316,7 +316,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.47.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.47.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -1201,8 +1201,9 @@ const nomN=t=>sinTilde(t).replace(/[^a-zñ0-9 ]/g,' ').replace(/\s+/g,' ').trim(
 const entDone=s=>{const p=entPkg(s);return s.done||(p&&p.st==='entregado')};
 setTimeout(()=>{try{entSyncPk()}catch(e){}},0); // al abrir la app (el render() inicial corre antes de que existan entPkg/sinTilde)
 // Al editar un paquete: se buscan sus paradas en Entrega ANTES del cambio y después se les copia el teléfono (y nombre/guía si los tiene)
-function entParadasDe(p){try{return S.ent&&S.ent.stops?S.ent.stops.filter(s=>s.pkId===p.id||entPkg(s)===p):[]}catch(e){return []}}
-function entCopiarPk(p,ps){(ps||[]).forEach(s=>{s.tel=p.tel||'';if(p.nombre)s.nombre=p.nombre;if(p.guia)s.guia=p.guia;s.pkId=s.pkId||p.id})}
+function entParadasDe(p){try{return S.ent&&S.ent.stops?S.ent.stops.filter(s=>s.pkFijo===p.id||(entPkg(s)===p&&entFuerte(s,p))):[]}catch(e){return []}}
+function entCopiarPk(p,ps){(ps||[]).forEach(s=>{s.tel=p.tel||'';if(p.nombre)s.nombre=p.nombre;if(p.guia)s.guia=p.guia;s.pkId=p.id;s.pkFijo=p.id});
+  if(!(ps||[]).length&&S.ent&&S.ent.stops&&parseCoord(p.ubic)&&p.st!=='entregado'&&p.st!=='devuelto'&&!(S.ent.quitadas||[]).includes(p.id))setTimeout(()=>entAgregarPk(p),0)}
 // Paradas marcadas Entregado (también las de antes de la 1.28 o de otro aparato) pasan su paquete a entregado en Paquetes
 // Paquete con ubicación que no está en la ruta: se agrega como parada nueva y se reordena desde donde estás
 function entAgregarPk(p){const c=parseCoord(p.ubic);if(!S.ent||!c){toast('Primero cargá la ruta en la pestaña Ruta');return}
@@ -1218,16 +1219,14 @@ function entAgregarPk(p){const c=parseCoord(p.ubic);if(!S.ent||!c){toast('Primer
   if(EPOS)entOrdenar(EPOS.c,'donde estás');else{save();render()}}
 // Segunda pasada: paradas que no encontraron paquete se unen al paquete libre (sin parada) que más palabras del nombre comparte
 // o el mismo número escrito (nota); y los paquetes libres con ubicación que siguen sin parada se agregan solos a la ruta.
-function entUnirLibres(){const E=S.ent;if(!E||!E.stops)return 0;const usados=new Set(),sueltas=[];let k=0;
-  E.stops.forEach(s=>{const p=entPkg(s);if(p)usados.add(p.id);else sueltas.push(s)});
-  const fuera=E.quitadas||[],libres=S.pk.filter(p=>!usados.has(p.id)&&p.st!=='devuelto'&&!fuera.includes(p.id)),pal=t=>nomN(t).split(' ').filter(w=>w.length>2);
-  sueltas.forEach(s=>{const ws=pal(s.nombre);let best=null,bs=0;libres.forEach(p=>{if(usados.has(p.id))return;const pw=pal(p.nombre);let sc=ws.filter(w=>pw.includes(w)).length*2;
-      if(s.nota&&p.nota&&String(s.nota).trim()===String(p.nota).trim())sc+=2;if(sc>bs){bs=sc;best=p}});
-    if(best&&bs>=2){s.pkId=best.id;usados.add(best.id);k++}});
-  const mx=()=>Math.max(0,...E.stops.filter(x=>x.c).map(x=>x.n||0));
-  libres.filter(p=>!usados.has(p.id)&&p.st!=='entregado'&&parseCoord(p.ubic)).forEach(p=>{E.stops.push({n:mx()+1,nombre:p.nombre||'',tel:p.tel||'',dir:p.dir||'',guia:p.guia||'',nota:p.nota||'',c:parseCoord(p.ubic),waze:'',done:false,pkId:p.id,agregada:true});k++;E.nuevas=(E.nuevas||0)+1});
-  return k}
-function entSyncPk(){const E=S.ent;if(!E||!E.stops)return false;const ul=entUnirLibres();let n=0,t=ul,nuevas=E.nuevas||0;delete E.nuevas;let maxN=Math.max(0,...E.stops.filter(x=>x.c).map(x=>x.n||0));E.stops.forEach(s=>{const p=entPkg(s);
+// 1.47.2: ya no se unen paradas por palabras sueltas ni se agregan paquetes solos (metía paquetes de otros días y cambiaba paradas).
+// Solo se limpian una vez las paradas que la app había agregado sola y no se entregaron.
+function entUnirLibres(){const E=S.ent;if(!E||!E.stops)return 0;if(E.limpia147)return 0;E.limpia147=true;const a=E.stops.length;
+  E.stops=E.stops.filter(x=>!(x.agregada&&!x.done));return a-E.stops.length}
+// Unión segura entre parada y paquete: unida a mano, misma guía, mismo nombre o mismo teléfono (también uno anterior)
+function entFuerte(s,p){if(!s||!p)return false;if(s.pkFijo===p.id)return true;if(s.guia&&p.guia&&guiaN(s.guia)===guiaN(p.guia))return true;
+  if(s.nombre&&p.nombre&&nomN(s.nombre)===nomN(p.nombre))return true;const t=phoneWA(s.tel);return !!t&&(phoneWA(p.tel)===t||(p.telsAnt||[]).some(x=>phoneWA(x)===t))}
+function entSyncPk(){const E=S.ent;if(!E||!E.stops)return false;const ul=entUnirLibres();let n=0,t=ul,nuevas=E.nuevas||0;delete E.nuevas;let maxN=Math.max(0,...E.stops.filter(x=>x.c).map(x=>x.n||0));E.stops.forEach(s=>{const p0=entPkg(s),p=entFuerte(s,p0)?p0:null; // solo se copian datos si la unión es segura
   // El teléfono manda el de Paquetes: si se corrigió allá (también antes de la 1.34), la parada lo toma
   if(p&&p.tel&&phoneWA(p.tel)&&phoneWA(p.tel)!==phoneWA(s.tel)){s.tel=p.tel;s.pkId=p.id;t++}
   if(p&&p.nombre&&p.nombre.trim()&&p.nombre.trim()!==s.nombre){s.nombre=p.nombre.trim();s.pkId=p.id;t++} // el nombre también manda el de Paquetes

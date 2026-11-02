@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.47.2 · Ruta sin cambios solos:** la app ya no agrega sola a la ruta paquetes de la lista (metía paquetes de otros días) ni une paradas a paquetes por palabras sueltas del nombre (cambiaba paradas por otros clientes). Una sola vez quita de la ruta las paradas que había agregado sola y no se entregaron. Una parada solo toma datos de su paquete si coinciden guía, nombre o teléfono, o si se unió a mano. Al **editar** un paquete con ubicación que no está en la ruta, sí se agrega.
 - **1.47.1 · Hold a la izquierda:** el botón **⏸ Hold** queda a la izquierda de **✓ Entregado**.
 - **1.47.0 · Hold:** en *Ruta*, a la par de **✓ Entregado** está **⏸ Hold**: la parada pasa al final de la ruta (antes de las sin ubicación y las entregadas) y ahí se queda aunque la ruta se reordene. **▶ Quitar hold** (amarillo) la devuelve y reordena.
 - **1.46.0 · Lista de la ruta:** en *Ruta*, **📋 Lista** muestra la ruta en el orden de entrega con el número de cada paquete (1. #13 Suyapa · teléfono…). Se puede tomar captura, copiar o compartir por WhatsApp.
