@@ -337,7 +337,7 @@ En el resumen de arriba de *Paquetes*, el contador de paquetes pendientes sin ub
 
 ### Mensajes: entregados abajo (1.52.1)
 
-En *Mensajes*, cuando un paquete se entrega, su cliente se pone en gris con el número tachado y baja al final de la lista. Arriba quedan los que todavía faltan por entregar; los devueltos van de últimos. Sus botones siguen funcionando.
+En *Mensajes*, cuando un paquete se entrega, su cliente se pone en gris con el número tachado y baja al final de la lista. Arriba quedan los que todavía faltan por entregar. Desde la 1.52.4, los que están en **Hold** en *Ruta* también salen en gris con "⏸ hold", justo después de los pendientes. Después van los entregados y de últimos los devueltos. Sus botones siguen funcionando.
 
 ### Mensaje para coordinar (1.51.1)
 

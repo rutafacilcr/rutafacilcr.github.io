@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.52.4 · Hold en Mensajes:** en *Mensajes*, los clientes cuya parada está en Hold en *Ruta* también salen en gris con "⏸ hold", después de los pendientes y antes de los entregados.
 - **1.52.3 · Ortografía de Coordinar:** el mensaje Coordinar queda corregido (gustaría, puede, agregarlo, ubicación, contactamos y comas).
 - **1.52.2 · "Sin 📍":** en el resumen de *Paquetes* el contador "Sin ubicación" dice **Sin 📍**.
 - **1.52.1 · Mensajes ordenados:** en *Mensajes*, los clientes con paquete entregado se ven en gris (número tachado) y bajan; al final van los devueltos. Arriba quedan los que faltan.
