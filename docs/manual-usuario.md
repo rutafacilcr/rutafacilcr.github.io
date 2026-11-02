@@ -315,7 +315,7 @@ Lo que corrijás en *Paquetes* (nombre, teléfono o ubicación) se copia solo a 
 
 ### Número del paquete (1.38.0)
 
-Cada paquete tiene un **número fijo**: el que tenía en la lista, y los nuevos toman el siguiente. Ese mismo número sale en *Paquetes*, en *Mensajes* y en el pin y la tarjeta de **Ruta**, para que coincida con tu codificación. No cambia al ordenar la lista ni al quitar otros paquetes. En la ruta el recorrido sigue el mejor orden, así que los números no van seguidos (por ejemplo 13, 4, 27…). Si vaciás la lista, se empieza otra vez desde 1.
+Cada paquete tiene un **número fijo**: el que tenía en la lista, y los nuevos toman el siguiente. Ese mismo número sale en *Paquetes*, en *Mensajes* y en el pin y la tarjeta de **Ruta**, para que coincida con tu codificación. No cambia al ordenar la lista, al quitar otros paquetes, al editarlo, al reescanearlo ni al sincronizar con la PC. Si quitás un paquete, su número no se vuelve a usar. En la ruta el recorrido sigue el mejor orden, así que los números no van seguidos (por ejemplo 13, 4, 27…). Si vaciás la lista, se empieza otra vez desde 1.
 
 
 ### ¿Está en la ruta? (1.38.1)

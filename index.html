@@ -310,7 +310,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.38.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.38.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -468,7 +468,7 @@ function parseText(t){
 }
 function addPkgs(list){
   if(!list.length){toast('No encontré filas para importar');return}
-  if(S.ex||$('#replaceChk').checked){S.pk=[];S.ex=false}
+  if(S.ex||$('#replaceChk').checked){S.pk=[];S.ex=false;S.nums={}}
   S.pk.push(...list);S.route=null;save();render();toast(`${list.length} paquete(s) agregado(s)`);
 }
 
@@ -617,8 +617,12 @@ function renderRoute(){
 const fmtT=m=>{m=Math.round(m);return m<60?`${m} min`:`${Math.floor(m/60)} h ${m%60} min`};
 
 // Cada paquete tiene un número fijo (p.num): los viejos toman su posición en la lista y los nuevos el siguiente; no cambia al ordenar ni al borrar otros
-function numerar(){let mx=0,ok=true;S.pk.forEach(p=>{if(p.num)mx=Math.max(mx,p.num);else ok=false});if(ok)return;
-  if(!mx)S.pk.forEach((p,i)=>p.num=i+1);else S.pk.forEach(p=>{if(!p.num)p.num=++mx});save()}
+// Copia de respaldo S.nums {id:num} (también en la nube): si un paquete pierde su número (p. ej. lo sobreescribe un aparato con versión vieja), lo recupera igual. Un número asignado nunca cambia.
+function numerar(){S.nums=S.nums||{};let mx=Math.max(0,...Object.values(S.nums)),cambio=false;
+  S.pk.forEach(p=>{if(!p.num&&S.nums[p.id]){p.num=S.nums[p.id];cambio=true}if(p.num)mx=Math.max(mx,p.num)});
+  const falta=S.pk.filter(p=>!p.num);if(falta.length){if(!mx)S.pk.forEach((p,i)=>p.num=i+1);else falta.forEach(p=>p.num=++mx);cambio=true}
+  S.pk.forEach(p=>{if(S.nums[p.id]!==p.num){if(S.nums[p.id])p.num=S.nums[p.id];else S.nums[p.id]=p.num;cambio=true}});
+  if(cambio)save()}
 function render(){numerar();$('#exampleBar').hidden=!S.ex;try{entSyncPk()}catch(e){}renderStats();renderPk();renderMsg();renderRoute();if(typeof renderTrack==='function')renderTrack();if(typeof renderEnt==='function'&&!$('#v-entrega').hidden)renderEnt()}
 
 // ---- eventos ----
@@ -653,7 +657,7 @@ $('#f-ubic').addEventListener('input',ubicCheck);
 $('#pkgForm').onsubmit=e=>{e.preventDefault();
   const v=['nombre','tel','dir','ubic','guia','nota'].map(k=>$('#f-'+k).value);
   if(editId){const p=S.pk.find(x=>x.id===editId);const n=mkPkg(v);const ps=entParadasDe(p);Object.assign(p,{nombre:n.nombre,tel:n.tel,dir:n.dir,ubic:n.ubic,guia:n.guia,nota:n.nota});entCopiarPk(p,ps);S.route=null;save();render();toast('Cambios guardados')}
-  else{if(S.ex){S.pk=[];S.ex=false}S.pk.push(mkPkg(v));S.route=null;save();render();toast('Paquete agregado')}
+  else{if(S.ex){S.pk=[];S.ex=false;S.nums={}}S.pk.push(mkPkg(v));S.route=null;save();render();toast('Paquete agregado')}
   resetForm();
 };
 $('#importBtn').onclick=()=>{addPkgs(parseText($('#pasteBox').value));$('#pasteBox').value=''};
@@ -661,8 +665,8 @@ $('#fileIn').onchange=async e=>{const f=e.target.files[0];if(!f)return;
   try{if(/\.(xlsx|xls|csv)$/i.test(f.name)){if(!window.XLSX){toast('No se pudo cargar el lector de Excel. Copiá y pegá las filas.');return}const wb=XLSX.read(await f.arrayBuffer());const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:false});addPkgs(rowsToPkgs(rows))}
   else addPkgs(parseText(await f.text()))}catch(err){toast('No pude leer ese archivo')}
   e.target.value=''};
-$('#clearExample').onclick=()=>{S.pk=[];S.ex=false;S.route=null;save();render()};
-$('#clearAll').onclick=e=>{const b=e.currentTarget;if(b.dataset.c){S.pk=[];S.ex=false;S.route=null;save();render();b.textContent='Vaciar lista';delete b.dataset.c}else{b.dataset.c=1;b.textContent='¿Seguro? Tocá otra vez';setTimeout(()=>{b.textContent='Vaciar lista';delete b.dataset.c},3000)}};
+$('#clearExample').onclick=()=>{S.pk=[];S.ex=false;S.nums={};S.route=null;save();render()};
+$('#clearAll').onclick=e=>{const b=e.currentTarget;if(b.dataset.c){S.pk=[];S.ex=false;S.nums={};S.route=null;save();render();b.textContent='Vaciar lista';delete b.dataset.c}else{b.dataset.c=1;b.textContent='¿Seguro? Tocá otra vez';setTimeout(()=>{b.textContent='Vaciar lista';delete b.dataset.c},3000)}};
 const bind=(sel,k,num)=>{const el=$(sel);el.value=S[k]??'';el.addEventListener(el.type==='checkbox'?'change':'input',()=>{S[k]=el.type==='checkbox'?el.checked:(num?+el.value:el.value);save();if(['coord','form','yo','fecha'].includes(k))renderMsg()})};
 $('#routeBtn').onclick=calcRoute;
 // ---- Contactos del día: un .vcf con todos los clientes como "TM-Nombre" ----
@@ -1310,7 +1314,7 @@ document.querySelector('[data-tab="entrega"]').addEventListener('click',()=>{req
 // ===== Lista en la nube: los mismos paquetes en el teléfono y en la PC (rf_lista_leer / rf_lista_guardar) =====
 // S.syncVer = última versión de la nube que vio este aparato; S.baseIds = ids que había en ese momento
 // (sirven para saber qué se borró en un lado y qué es nuevo). S.dirty = hay cambios sin subir.
-const NUBE_KEYS=['ent','pk','coord','form','camino','pref','fecha','hora','start','vel','min','ret','route'];
+const NUBE_KEYS=['nums','ent','pk','coord','form','camino','pref','fecha','hora','start','vel','min','ret','route'];
 const nubeMsg=t=>{const el=$('#nubeInfo');if(el)el.textContent=t?' · '+t:''};
 // Se sube todo lo que había en la nube (aunque esta versión no lo conozca) más las claves propias, para no borrar datos de otros aparatos.
 function nubeDatos(){const d={...(S.nubeOtros||{})};NUBE_KEYS.forEach(k=>{if(S[k]!==undefined)d[k]=S[k]});if(S.ex)d.pk=[];return d}
