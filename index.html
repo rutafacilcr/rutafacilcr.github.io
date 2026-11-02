@@ -237,6 +237,7 @@ details summary{cursor:pointer;font-weight:600}
         <label>Guía / pedido<input id="f-guia"></label>
       </div>
       <label>Nota<input id="f-nota" placeholder="Ej: solo después de las 2 pm"></label>
+      <label>Pertenece a<select id="f-lote"></select></label>
       <div class="row"><button class="btn primary" type="submit" id="saveBtn">Agregar</button><button class="btn ghost" type="button" id="cancelEdit" hidden>Cancelar</button></div>
     </form>
   </details>
@@ -337,7 +338,7 @@ details summary{cursor:pointer;font-weight:600}
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.60.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.61.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -714,18 +715,26 @@ document.addEventListener('click',async e=>{
   else if(a==='msgsel'&&p){p.msgSel=el.dataset.k;save();renderMsg();return}
   else if(a==='copy'&&p){const t=msgText(p);try{await navigator.clipboard.writeText(t);toast('Mensaje copiado')}catch(err){const d=el.closest('.pkg').querySelector('details');d.open=true;const r=document.createRange();r.selectNodeContents(d.querySelector('.preview'));getSelection().removeAllRanges();getSelection().addRange(r);toast('Texto seleccionado, copialo')}return}
   else if(a==='del'&&p){S.pk=S.pk.filter(x=>x!==p);S.route=null;toast('Paquete quitado')}
-  else if(a==='edit'&&p){editId=p.id;$('#f-nombre').value=p.nombre;$('#f-tel').value=p.tel;$('#f-dir').value=p.dir;$('#f-ubic').value=p.ubic;$('#f-guia').value=p.guia;$('#f-nota').value=p.nota||'';$('#formPanel').open=true;$('#formTitle').textContent='Editar paquete';$('#saveBtn').textContent='Guardar cambios';$('#cancelEdit').hidden=false;$('#formPanel').scrollIntoView({behavior:'smooth'});
+  else if(a==='edit'&&p){editId=p.id;$('#f-nombre').value=p.nombre;$('#f-tel').value=p.tel;$('#f-dir').value=p.dir;$('#f-ubic').value=p.ubic;$('#f-guia').value=p.guia;$('#f-nota').value=p.nota||'';loteLlenar(repDia(p.ing));$('#formPanel').open=true;$('#formTitle').textContent='Editar paquete';$('#saveBtn').textContent='Guardar cambios';$('#cancelEdit').hidden=false;$('#formPanel').scrollIntoView({behavior:'smooth'});
     document.querySelector('[data-tab="paquetes"]').click();setTimeout(()=>$('#formPanel').scrollIntoView(),50);return}
   save();render();
 });
-function resetForm(){editId=null;$('#pkgForm').reset();$('#f-ubic-ok').textContent='';$('#formTitle').textContent='Agregar un paquete a mano';$('#saveBtn').textContent='Agregar';$('#cancelEdit').hidden=true}
+// Lote (1.61.0): un paquete agregado a mano o editado pertenece a unas "Entregas del …" (su fecha de recibido, p.ing).
+// Por defecto, el día con más paquetes en la lista (la ruta en curso); se puede elegir otro de la lista u hoy.
+function loteDias(){const n={};(S.ex?[]:S.pk).forEach(p=>{const k=repDia(p.ing);if(k)n[k]=(n[k]||0)+1});return n}
+function loteLlenar(sel){const n=loteDias(),hoy=repDia(Date.now()),dias=[...new Set([...Object.keys(n),hoy])].sort().reverse();
+  const def=sel||Object.keys(n).sort((a,b)=>n[b]-n[a]||a.localeCompare(b))[0]||hoy;
+  $('#f-lote').innerHTML=dias.map(k=>`<option value="${k}"${k===def?' selected':''}>${repEntregasDe(k)}${k===hoy?' (hoy)':''}${n[k]?` · ${n[k]} paquetes`:''}</option>`).join('')}
+function loteIng(k,prev){if(!k)return prev||Date.now();if(prev&&repDia(prev)===k)return prev;if(k===repDia(Date.now()))return Date.now();const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d,12).getTime()}
+function resetForm(){editId=null;$('#pkgForm').reset();setTimeout(()=>loteLlenar(),0);$('#f-ubic-ok').textContent='';$('#formTitle').textContent='Agregar un paquete a mano';$('#saveBtn').textContent='Agregar';$('#cancelEdit').hidden=true}
 $('#cancelEdit').onclick=resetForm;
+$('#formPanel').addEventListener('toggle',()=>{if($('#formPanel').open&&!editId)loteLlenar()});
 const ubicCheck=()=>{const v=$('#f-ubic').value.trim(),c=parseCoord(v),o=$('#f-ubic-ok');o.textContent=!v?'':c?`✓ Coordenadas detectadas: ${c.join(', ')}`:'No encontré coordenadas en ese texto';o.style.color=c?'var(--ok)':'var(--warn)'};
 $('#f-ubic').addEventListener('input',ubicCheck);
 $('#pkgForm').onsubmit=e=>{e.preventDefault();
   const v=['nombre','tel','dir','ubic','guia','nota'].map(k=>$('#f-'+k).value);
-  if(editId){const p=S.pk.find(x=>x.id===editId);const n=mkPkg(v);const ps=entParadasDe(p);if(p.tel&&phoneWA(p.tel)!==phoneWA(n.tel))p.telsAnt=[...new Set([...(p.telsAnt||[]),p.tel])];Object.assign(p,{nombre:n.nombre,tel:n.tel,dir:n.dir,ubic:n.ubic,guia:n.guia,nota:n.nota});entCopiarPk(p,ps);S.route=null;save();render();toast('Cambios guardados')}
-  else{if(S.ex){S.pk=[];S.ex=false;S.nums={}}S.pk.push(mkPkg(v));S.route=null;save();render();toast('Paquete agregado')}
+  if(editId){const p=S.pk.find(x=>x.id===editId);const n=mkPkg(v);const ps=entParadasDe(p);if(p.tel&&phoneWA(p.tel)!==phoneWA(n.tel))p.telsAnt=[...new Set([...(p.telsAnt||[]),p.tel])];Object.assign(p,{nombre:n.nombre,tel:n.tel,dir:n.dir,ubic:n.ubic,guia:n.guia,nota:n.nota,ing:loteIng($('#f-lote').value,p.ing)});entCopiarPk(p,ps);S.route=null;save();render();toast('Cambios guardados')}
+  else{const k=$('#f-lote').value;if(S.ex){S.pk=[];S.ex=false;S.nums={}}const n=mkPkg(v);n.ing=loteIng(k);S.pk.push(n);S.route=null;save();render();toast(`Paquete agregado a ${repEntregasDe(repDia(n.ing))}`)}
   resetForm();
 };
 $('#importBtn').onclick=()=>{addPkgs(parseText($('#pasteBox').value));$('#pasteBox').value=''};

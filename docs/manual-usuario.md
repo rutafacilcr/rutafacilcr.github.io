@@ -460,6 +460,10 @@ No tenés que unir nada a mano: si corregís en *Paquetes* el nombre, el teléfo
 
 Cuando tocás **✓ Entregado** en *Ruta*, el número del paquete queda tachado y en gris, y la parada baja al final de la lista. En *Paquetes* el número también sale tachado, la tarjeta entera se ve apagada en gris (1.40.1) y el paquete pasa con los entregados. Sus botones siguen sirviendo por si hay que corregir algo. Si te equivocaste, **↩ Deshacer** lo devuelve.
 
+### Paquete agregado a mano (1.61.0)
+
+Si al revisar encontrás un paquete con datos malos y lo borrás y lo volvés a agregar (o lo editás) otro día, en el formulario está **Pertenece a**. Ya viene elegida la ruta en curso (por ejemplo *Entregas del 2 de noviembre*), así el paquete sale en el reporte de esa ruta. Si es de otra, elegila en la lista.
+
 ### Entregas del día (1.60.0)
 
 Los paquetes que te dan un día (por ejemplo 70 el 2 de noviembre) forman las **Entregas del 2 de noviembre**. Tenés varios días para entregarlos: los que entregués el 2 salen con fecha de entrega 2, los del 3 con fecha 3, y así. Todos quedan en el mismo reporte *Entregas del 2 de noviembre* en *Cierres*. Hacé **Vaciar lista** cuando terminés todos.

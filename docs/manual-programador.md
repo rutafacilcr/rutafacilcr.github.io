@@ -113,6 +113,10 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - *Guardar* abre la cámara **dentro del mismo toque** (iPhone no deja abrirla después de un `await`) y agrega con `mkPkg()`. Las fotos de etiqueta no se guardan.
 - Prueba local: las CDN están bloqueadas en el sandbox; se instalan los paquetes con npm y Playwright sirve los archivos interceptando las URL de jsDelivr. Las etiquetas de prueba se generan con JsBarcode.
 
+## 3c-decies. Lote del paquete a mano (1.61.0)
+
+- `#f-lote` (select) lo llena `loteLlenar(sel)`: los días `repDia(p.ing)` de la lista más hoy; por defecto el día con más paquetes (o `sel` al editar). `loteIng(k,prev)` da el `ing`: el mismo si no cambió el día, `Date.now()` si es hoy, o las 12:00 de ese día. Se usa al agregar a mano y al guardar *Editar*. Las cargas en lote (Excel, pegar, escáner) siguen con `Date.now()`.
+
 ## 3c-nonies. Nombre del grupo (1.60.0)
 
 - `repEntregasDe(k)` → "Entregas del 2 de noviembre" (de `repDia(p.ing)`); se usa en la lista de *Cierres*, el título del PDF y el nombre del archivo (`entregas-del-AAAA-MM-DD.pdf`). El campo del encabezado pasa a "Recibidos el".
