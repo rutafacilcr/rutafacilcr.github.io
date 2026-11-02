@@ -235,6 +235,7 @@ details summary{cursor:pointer;font-weight:600}
   </details>
 
   <div class="row" style="justify-content:space-between"><h2>Lista del día</h2><button class="btn sm danger" id="clearAll">Vaciar lista</button></div>
+  <input id="p-buscar" type="search" placeholder="🔍 Buscar por nombre, teléfono, guía o número" autocomplete="off" aria-label="Buscar paquete" style="width:100%;font-size:16px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:inherit;margin:0 0 10px">
   <div class="list" id="pkgList"></div>
 </section>
 
@@ -314,7 +315,7 @@ details summary{cursor:pointer;font-weight:600}
     <ol class="tracklist" id="trackList"></ol>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.44.5</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.45.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -506,7 +507,11 @@ function renderPk(){
   const rk=p=>p.st==='entregado'?1:p.st==='devuelto'?2:0;
   // Qué paquetes ya tienen parada en la ruta cargada (para avisar y ofrecer agregarlos)
   const enR={};try{(S.ent&&S.ent.stops||[]).forEach(s=>{const q=entPkg(s);if(q&&!enR[q.id])enR[q.id]=s})}catch(e){}
-  L.innerHTML=S.pk.map((p,i)=>[p,i]).sort((a,b)=>rk(a[0])-rk(b[0])||a[1]-b[1]).map(([p],i)=>{const c=parseCoord(p.ubic);return `<div class="pkg${p.st==='entregado'?' entregado':''}">
+  // Buscar (1.45.0): nombre sin tildes, guía, número de paquete exacto o 3+ dígitos del teléfono
+  const nt=t=>String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(),bq=nt(($('#p-buscar')||{}).value||'').trim(),bd=bq.replace(/\D/g,'');
+  const ok=p=>!bq||bq.split(/\s+/).every(w=>nt(p.nombre).includes(w))||nt(p.guia).includes(bq)||(/^\d{1,3}$/.test(bq)&&String(p.num)===bq)||(bd.length>=3&&String(p.tel||'').replace(/\D/g,'').includes(bd.slice(-8)));
+  const vis=S.pk.map((p,i)=>[p,i]).filter(([p])=>ok(p));if(!vis.length){L.innerHTML='<div class="empty">Ningún paquete coincide con la búsqueda.</div>';return}
+  L.innerHTML=vis.sort((a,b)=>rk(a[0])-rk(b[0])||a[1]-b[1]).map(([p],i)=>{const c=parseCoord(p.ubic);return `<div class="pkg${p.st==='entregado'?' entregado':''}">
     <div class="num${p.st==='entregado'?' tachado':''}">${p.num||i+1}</div>
     <div class="name">${esc(p.nombre||'(sin nombre)')} ${stChip(p)}</div>
     <div class="addr">${esc(p.dir||'Sin dirección')}${p.nota?` · <i>${esc(p.nota)}</i>`:''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
@@ -723,6 +728,7 @@ function saveExcel(){
 $('#xlsBtn').onclick=saveExcel;
 $('#m-pref').addEventListener('input',()=>{$('#vcfEj').textContent=vcfName({nombre:'Nombre',guia:'pedido'})});
 $('#m-buscar').addEventListener('input',()=>renderMsg());
+$('#p-buscar').addEventListener('input',()=>renderPk());
 $('#r-here').onclick=()=>{const b=$('#r-here');if(!navigator.geolocation){toast('Este navegador no da la ubicación');return}b.textContent='Buscando…';
   navigator.geolocation.getCurrentPosition(g=>{S.start=g.coords.latitude.toFixed(6)+','+g.coords.longitude.toFixed(6);$('#r-start').value=S.start;
     const d=new Date();S.hora=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');$('#r-hora').value=S.hora;save();b.textContent='📍 Usar mi ubicación actual';toast('Listo: salida desde aquí y ahora')},

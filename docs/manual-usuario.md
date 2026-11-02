@@ -268,6 +268,17 @@ En *Paquetes*, cada paquete tiene el botón **↩ Devuelto**. Usalo cuando el pa
 Arriba salen los paquetes que faltan (pendientes, confirmados, sin respuesta), en el orden en que los agregaste. Los **entregados** bajan al final y los **devueltos** quedan de últimos.
 
 
+### Buscar un paquete (1.45.0)
+
+En *Paquetes*, debajo de "Lista del día", escribí en **🔍 Buscar**:
+
+- **Nombre:** una o varias palabras, con o sin tildes (por ejemplo "ana grisela").
+- **Teléfono:** 3 o más dígitos (por ejemplo los últimos 4).
+- **Guía:** una parte del código.
+- **Número de paquete:** el número exacto (por ejemplo 13).
+
+Para ver toda la lista otra vez, borrá lo que escribiste.
+
 ### Galería junto al escáner (1.44.3)
 
 En *Paquetes*, a la par de **📷 Escanear etiquetas** está **🖼️ Galería**, para elegir fotos de etiquetas que ya tenés en el celular.
