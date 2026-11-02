@@ -268,6 +268,12 @@ En *Paquetes*, cada paquete tiene el botón **↩ Devuelto**. Usalo cuando el pa
 Arriba salen los paquetes que faltan (pendientes, confirmados, sin respuesta), en el orden en que los agregaste. Los **entregados** bajan al final y los **devueltos** quedan de últimos.
 
 
+### Quitar una parada de la ruta (1.42.0)
+
+Si una parada está repetida o no va (por ejemplo, una que salió con texto raro del escáner), tocá **🗑️ Quitar** en su tarjeta de *Ruta* y confirmá. La parada sale de la ruta, pero el paquete sigue en *Paquetes* y la app no lo vuelve a meter sola. Si después sí querés llevarlo, en *Paquetes* tocá **➕ Agregar a la ruta**.
+
+Si el paquete en realidad ya se entregó, mejor tocá **✓ Entregado**: así queda marcado también en *Paquetes*.
+
 ### Botones de cada paquete (1.41.2)
 
 Desde la 1.41.2 los botones quedan siempre en dos líneas:

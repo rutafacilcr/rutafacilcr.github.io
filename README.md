@@ -10,6 +10,8 @@ Herramienta web para repartidores de paquetes en Costa Rica. Cargás la lista de
 
 Al marcar un paquete como entregado en *Ruta*, su número queda tachado y baja al final de la lista; en *Paquetes* su tarjeta se ve en gris.
 
+En *Ruta* también se puede quitar una parada repetida con **🗑️ Quitar**; el paquete sigue en *Paquetes*.
+
 La app se maneja con tres pestañas en la barra de abajo (**Paquetes**, **Mensajes** y **Ruta**) más el botón **Soporte**.
 
 | Paso | Qué resuelve |

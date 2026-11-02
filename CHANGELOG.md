@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.42.0 · Quitar parada:** en *Ruta*, cada parada trae **🗑️ Quitar** (pide confirmación). La parada sale de la ruta, el paquete sigue en *Paquetes* y ya no se vuelve a agregar solo; con **➕ Agregar a la ruta** en *Paquetes* vuelve.
 - **1.41.2 · Botones en dos líneas:** en *Paquetes*, primera línea 📋 Pegar respuesta · Editar · 📷 Escáner; segunda Borrar · ↩ Devuelto · WhatsApp. Siempre en dos líneas a todo el ancho de la tarjeta; Waze sale de *Paquetes* (sigue en *Ruta*).
 - **1.41.1 · WhatsApp bajo Escáner:** en *Paquetes*, el botón **WhatsApp** queda siempre justo debajo de **📷 Escáner**.
 - **1.41.0 · Botones de Paquetes:** sin **Maps**; nuevo orden: Pegar respuesta, Editar, Waze, **Borrar** (antes Quitar), **↩ Devuelto**, **📷 Escáner** (antes Etiqueta) y WhatsApp debajo.
