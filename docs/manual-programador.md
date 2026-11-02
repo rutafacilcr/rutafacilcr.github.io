@@ -113,6 +113,12 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - *Guardar* abre la cámara **dentro del mismo toque** (iPhone no deja abrirla después de un `await`) y agrega con `mkPkg()`. Las fotos de etiqueta no se guardan.
 - Prueba local: las CDN están bloqueadas en el sandbox; se instalan los paquetes con npm y Playwright sirve los archivos interceptando las URL de jsDelivr. Las etiquetas de prueba se generan con JsBarcode.
 
+## 3c-octies. Jornada (1.59.0)
+
+- `S.jor['AAAA-MM-DD'] = {ini:{t,c}, fin:{t,c}}` (en `NUBE_KEYS`; también va en `p_ruta.jor` del cierre y `repCierres` lo junta en `REPC.jor`). `#jorBar` lo pinta `jorRender()` (desde `renderEnt`); `jorGps()` usa `getCurrentPosition` (o `EPOS`).
+- `repTramos`: al empezar un día, si `repJor(d).ini.t <= primera entrega`, la primera mide desde `ini` (`desdeIni`, "▶" en la fila).
+- `repTotales`: con `ini` y `fin`, cambia la suma de tramos del día por `fin − ini` y suma `hav(última entrega, fin.c)`.
+
 ## 3c-septies. Tramos del reporte (1.58.0)
 
 - `repTramos(L)` → `Map(id → {inicio:true} | {min,km})`: entregados con `repT`, ordenados por hora; el tramo se mide contra la entrega anterior solo si es el mismo `repDia`. `repCoord(p)`: `entGps`, `pod` lat/lng, parada con `c` o `parseCoord(p.ubic)`; `km` = `hav` (×1,35) o `null` sin coordenadas.

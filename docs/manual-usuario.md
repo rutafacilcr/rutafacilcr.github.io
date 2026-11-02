@@ -460,6 +460,15 @@ No tenés que unir nada a mano: si corregís en *Paquetes* el nombre, el teléfo
 
 Cuando tocás **✓ Entregado** en *Ruta*, el número del paquete queda tachado y en gris, y la parada baja al final de la lista. En *Paquetes* el número también sale tachado, la tarjeta entera se ve apagada en gris (1.40.1) y el paquete pasa con los entregados. Sus botones siguen sirviendo por si hay que corregir algo. Si te equivocaste, **↩ Deshacer** lo devuelve.
 
+### Iniciar y Finalizar entregas (1.59.0)
+
+Arriba de *Ruta* está la barra de la jornada:
+1. Al salir a repartir tocá **▶ Iniciar entregas**: guarda la hora y tu ubicación.
+2. Al terminar el día tocá **■ Finalizar** (pide confirmar): guarda la hora y dónde terminaste.
+3. Si finalizaste antes de tiempo, tocá **▶ Seguir entregando**.
+
+Con eso el reporte mide la primera entrega desde la salida (sale con ▶ en *Tiempo desde anterior*), suma los km de la última entrega al punto final y las *Horas invertidas* son de Iniciar a Finalizar. Dale permiso de ubicación a la app para que guarde los puntos.
+
 ### Cómo se calculan horas y km del reporte (1.58.0)
 
 - La **primera entrega del día** es el inicio (dice *Inicio* en la tabla).

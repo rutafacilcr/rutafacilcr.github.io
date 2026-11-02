@@ -72,6 +72,9 @@ nav.tabs .n:empty{display:none}
 .trackmap{height:320px;border-radius:10px;overflow:hidden;background:var(--bg);z-index:0}
 .tracklist{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px;font-size:14px}
 .enthead{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.jorbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:8px 0}
+.jorbar .jtxt{flex:1 1 140px;font-size:13px;line-height:1.3}.jorbar .jtxt b{white-space:nowrap}
+.jorbar .jini{background:#1f9d55;border-color:#1f9d55;color:#fff;font-weight:700}.jorbar .jfin{background:#c0392b;border-color:#c0392b;color:#fff;font-weight:700}
 .entmap{position:sticky;top:0;z-index:5;height:42vh;min-height:220px;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--surface)}
 .epin{width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#d7261e;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center}
 .mepos{width:18px;height:18px;border-radius:50%;background:#1a73e8;border:3px solid #fff;box-shadow:0 0 0 2px rgba(26,115,232,.35),0 1px 4px rgba(0,0,0,.4)}
@@ -280,6 +283,7 @@ details summary{cursor:pointer;font-weight:600}
     <label class="btn sm primary" for="entFile">📂 Cargar ruta</label><input type="file" id="entFile" accept=".xlsx,.xls,.csv" hidden>
     <span class="small muted" id="entInfo"></span>
   </div>
+  <div class="jorbar" id="jorBar"></div>
   <div class="enthead" id="entTools" hidden>
     <button class="btn sm road" id="entAqui" type="button">📍 Ordenar desde aquí</button>
     <button class="btn sm" id="entPick" type="button">🎯 Elegir en el mapa</button>
@@ -333,7 +337,7 @@ details summary{cursor:pointer;font-weight:600}
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.58.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.59.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -736,7 +740,7 @@ async function cerrarDia(b){
   const fc=new Date().toISOString(),pk=S.ex?[]:S.pk,E=S.ent&&S.ent.stops&&S.ent.stops.length?S.ent:null;
   if(!pk.length&&!E){toast('No hay paquetes ni ruta que cerrar');return}
   if(NUBE.on&&window.RF_AUTH){b.disabled=true;b.textContent='Guardando cierre…';
-    try{const r=await RF_AUTH.rpc('rf_cierre_guardar',{p_paquetes:pk.map(p=>({...p,fecha_cierre:fc})),p_ruta:E?{...E,fecha_cierre:fc,stops:E.stops.map(x=>({...x,fecha_cierre:fc}))}:null});
+    try{const r=await RF_AUTH.rpc('rf_cierre_guardar',{p_paquetes:pk.map(p=>({...p,fecha_cierre:fc})),p_ruta:E?{...E,jor:S.jor||{},fecha_cierre:fc,stops:E.stops.map(x=>({...x,fecha_cierre:fc}))}:{jor:S.jor||{},stops:[],fecha_cierre:fc}});
       if(!r||!r.ok)throw new Error('sin respuesta')}
     catch(err){b.disabled=false;b.textContent='Vaciar lista';toast('No se pudo guardar el cierre (revisá internet). No se borró nada.');return}
     finally{b.disabled=false}}
@@ -796,7 +800,7 @@ function repCargar(){if(window.jspdf&&window.jspdf.jsPDF&&window.jspdf.jsPDF.API
   return repCarga}
 // Reportes por fecha de recibido (1.57.0): un reporte por cada fecha de ingreso (p.ing). Junta la lista actual con los cierres
 // guardados en la base (rf_cierres_listar + rf_cierre_leer), así las fechas viejas siguen saliendo después de Vaciar lista.
-let REPC={ids:new Set(),pk:[],st:{},carga:null};
+let REPC={ids:new Set(),pk:[],st:{},jor:{},carga:null};
 // Paradas de cada paquete: las de la ruta actual o las guardadas en el cierre
 function repParadas(p){return REPC.st[p.id]||entParadasDe(p)}
 // Hora real de entrega (1.56.3): evidencia, o el toque de ✓ Entregado en la parada, o entAt; devueltos: devAt
@@ -810,6 +814,7 @@ async function repCierres(){
   REPC.carga=(async()=>{try{const l=await RF_AUTH.rpc('rf_cierres_listar',{p_limite:60})||[];
     for(const c of l){if(REPC.ids.has(c.id))continue;const d=await RF_AUTH.rpc('rf_cierre_leer',{p_id:c.id});REPC.ids.add(c.id);if(!d)continue;
       (d.paquetes||[]).forEach(p=>{if(p&&p.id&&!REPC.pk.some(x=>x.id===p.id))REPC.pk.push(p)});
+      if(d.ruta&&d.ruta.jor)Object.keys(d.ruta.jor).forEach(k=>{if(!REPC.jor[k])REPC.jor[k]=d.ruta.jor[k]});
       ((d.ruta&&d.ruta.stops)||[]).forEach(x=>{const id=x.pkFijo||x.pkId;if(id)(REPC.st[id]=REPC.st[id]||[]).push(x)})}}
     catch(e){console.warn('cierres',e)}finally{REPC.carga=null}})();
   return REPC.carga}
@@ -820,20 +825,30 @@ function repFilas(L){
   const TR=repTramos(L);
   return L.filter(p=>p.st==='entregado'||p.st==='devuelto'||p.devolver).sort((a,b)=>(repT(a)||Infinity)-(repT(b)||Infinity)||(+a.num||0)-(+b.num||0)).map(p=>{
     const ent=p.st==='entregado',t=repT(p),r=TR.get(p.id);
-    const tt=!r?'—':r.inicio?'Inicio':`${r.min>=60?Math.floor(r.min/60)+' h ':''}${Math.round(r.min%60)} min`,kk=!r||r.inicio||r.km==null?(r&&r.inicio?'Inicio':'—'):r.km.toFixed(1)+' km';
+    const tt=!r?'—':r.inicio?'Inicio':`${r.desdeIni?'▶ ':''}${r.min>=60?Math.floor(r.min/60)+' h ':''}${Math.round(r.min%60)} min`,kk=!r||r.inicio||r.km==null?(r&&r.inicio?'Inicio':'—'):r.km.toFixed(1)+' km';
     return [String(p.num||''),p.guia||'',tl(p.tel),tidyName(p.nombre||''),ent?'Entregado':'Devuelto',f(p.ing),f(t),h(t),tt,kk]})}
 // Tramos (1.58.0): cada entrega mide tiempo y km desde la entrega ANTERIOR del mismo día (orden por hora real).
 // La primera entrega de cada día es el inicio: no tiene tramo. Los devueltos no cuentan (no son una parada de entrega).
 function repCoord(p){const g=p.entGps||(p.pod&&p.pod.lat!=null?p.pod:null),st=repParadas(p).find(x=>x.c);return g&&g.lat!=null?[g.lat,g.lng]:(st&&st.c)||parseCoord(p.ubic)}
+function repJor(d){return (S.jor||{})[d]||REPC.jor[d]||null}
 function repTramos(L){const out=new Map();let prev=null;
-  L.filter(p=>p.st==='entregado'&&repT(p)).map(p=>({p,t:repT(p),c:repCoord(p)})).sort((a,b)=>a.t-b.t).forEach(x=>{
-    if(prev&&repDia(prev.t)===repDia(x.t))out.set(x.p.id,{min:(x.t-prev.t)/60000,km:prev.c&&x.c?hav(prev.c,x.c):null});else out.set(x.p.id,{inicio:true});
+  L.filter(p=>p.st==='entregado'&&repT(p)).map(p=>({p,t:repT(p),c:repCoord(p)})).sort((a,b)=>a.t-b.t).forEach(x=>{const d=repDia(x.t);
+    if(!prev||repDia(prev.t)!==d){const J=repJor(d);prev=J&&J.ini&&J.ini.t<=x.t?{t:J.ini.t,c:J.ini.c,ini:true}:null} // con ▶ Iniciar, la primera entrega mide desde el inicio
+    if(prev)out.set(x.p.id,{min:(x.t-prev.t)/60000,km:prev.c&&x.c?hav(prev.c,x.c):null,desdeIni:!!prev.ini});else out.set(x.p.id,{inicio:true});
     prev=x});return out}
+// Totales con jornada: por cada día con ▶ Iniciar y ■ Finalizar, horas = fin − inicio y se suma el tramo de la última entrega al punto final
+function repTotales(L){const TR=repTramos(L),T=[...TR.values()].filter(x=>!x.inicio);let km=T.some(x=>x.km!=null)?T.reduce((a,x)=>a+(x.km||0),0):null,min=T.length?T.reduce((a,x)=>a+x.min,0):null;
+  const E=L.filter(p=>p.st==='entregado'&&repT(p)).map(p=>({t:repT(p),c:repCoord(p)})).sort((a,b)=>a.t-b.t),dias=[...new Set(E.map(x=>repDia(x.t)))];
+  dias.forEach(d=>{const J=repJor(d);if(!J||!J.ini||!J.fin)return;const ed=E.filter(x=>repDia(x.t)===d),u=ed[ed.length-1],tr=ed.map(x=>x.t).sort((a,b)=>a-b);
+    // horas del día: se cambia la suma de tramos de ese día por fin − inicio
+    const sumDia=ed.slice(1).reduce((a,x,i)=>a+(x.t-ed[i].t)/60000,0)+(J.ini.t<=ed[0].t?(ed[0].t-J.ini.t)/60000:0);
+    min=(min||0)-sumDia+Math.max(0,(J.fin.t-J.ini.t)/60000);
+    if(u&&u.c&&J.fin.c&&J.fin.t>=u.t)km=(km||0)+hav(u.c,J.fin.c)});
+  return {km,min}}
 // Resumen del encabezado: km = línea recta entre el inicio de la ruta y cada entrega en orden de hora (hav ya suma ×1,35 por calles); horas = de la primera a la última entrega o devolución
 function repResumen(L){
   const rec=L.length,ent=L.filter(p=>p.st==='entregado').length,dev=L.filter(p=>p.st==='devuelto'||(p.devolver&&p.st!=='entregado')).length;
-  const T=[...repTramos(L).values()].filter(x=>!x.inicio);
-  const km=T.some(x=>x.km!=null)?T.reduce((a,x)=>a+(x.km||0),0):null,min=T.length?T.reduce((a,x)=>a+x.min,0):null;
+  const {km,min}=repTotales(L);
   return {rec,ent,dev,km,min}}
 function repPdf(k){
   const G=repGrupos().find(x=>x.k===k);const L=G?G.pk:[];
@@ -1383,7 +1398,24 @@ function entSyncPk(){const E=S.ent;if(!E||!E.stops)return false;const ul=entUnir
   if(n||t){save();renderStats();renderPk();if(t&&!$('#v-entrega').hidden)setTimeout(renderEnt,0)}return n>0}
 // Número de la parada = el número fijo del paquete en Paquetes (codificación de Victor); si no hay paquete, el orden de la ruta
 const eNum=s=>{const p=entPkg(s);return p&&p.num?p.num:'–'}; // sin paquete unido no se inventa número (se confundía con los de Paquetes)
-async function renderEnt(){entSyncPk();
+// ===== Jornada (1.59.0): ▶ Iniciar entregas y ■ Finalizar guardan hora y GPS del día en S.jor[AAAA-MM-DD] = {ini:{t,c}, fin:{t,c}}.
+// El reporte mide la primera entrega desde el inicio, suma el tramo de la última entrega al final, y las horas son fin − inicio.
+const jorHoy=()=>repDia(Date.now());
+function jorGps(){return new Promise(ok=>{if(!navigator.geolocation)return ok(EPOS?EPOS.c:null);
+  navigator.geolocation.getCurrentPosition(g=>ok([+g.coords.latitude.toFixed(6),+g.coords.longitude.toFixed(6)]),()=>ok(EPOS?EPOS.c:null),{enableHighAccuracy:true,timeout:12000,maximumAge:30000})})}
+const jorHm=t=>new Date(t).toLocaleTimeString('es-CR',{hour:'numeric',minute:'2-digit'});
+const jorDur=m=>`${Math.floor(m/60)} h ${String(Math.round(m%60)).padStart(2,'0')} min`;
+function jorRender(){const el=$('#jorBar');if(!el)return;const J=(S.jor||{})[jorHoy()];
+  el.innerHTML=!J||!J.ini?`<span class="jtxt">Tocá <b>▶ Iniciar</b> al salir a repartir: guarda la hora y el punto de salida para el reporte.</span><button class="btn sm jini" type="button" data-jor="ini">▶ Iniciar entregas</button>`
+   :!J.fin?`<span class="jtxt">En ruta desde <b>${jorHm(J.ini.t)}</b>${J.ini.c?' 📍':' (sin GPS)'}</span><button class="btn sm jfin" type="button" data-jor="fin">■ Finalizar</button>`
+   :`<span class="jtxt">Jornada <b>${jorHm(J.ini.t)}–${jorHm(J.fin.t)}</b> · ${jorDur((J.fin.t-J.ini.t)/60000)}</span><button class="btn sm" type="button" data-jor="seguir" title="Borra la hora de fin para seguir entregando">▶ Seguir entregando</button>`}
+$('#jorBar').addEventListener('click',async e=>{const b=e.target.closest('[data-jor]');if(!b)return;const k=jorHoy(),a=b.dataset.jor;S.jor=S.jor||{};
+  if(a==='seguir'){if(S.jor[k])delete S.jor[k].fin;save();jorRender();toast('Seguís en ruta: tocá ■ Finalizar al terminar');return}
+  if(a==='fin'&&!confirm('¿Finalizar las entregas de hoy?'))return;
+  b.disabled=true;b.textContent='Tomando ubicación…';const c=await jorGps(),t=Date.now();
+  if(a==='ini')S.jor[k]={ini:{t,c}};else S.jor[k]={...S.jor[k],fin:{t,c}};
+  save();jorRender();toast(a==='ini'?`Entregas iniciadas a las ${jorHm(t)}${c?'':' (sin GPS)'}`:`Entregas finalizadas a las ${jorHm(t)}`)});
+async function renderEnt(){entSyncPk();jorRender();
   // La ruta se arma el día antes: vale la de hoy o la de mañana (fecha local del celular).
   const dia=d=>'Ruta '+new Date(Date.now()+d*864e5).toLocaleDateString('en-CA'),hoy=dia(0),man=dia(1);const E=S.ent,LI=$('#entList');
   if(!E||!E.stops||!E.stops.length){$('#entMap').hidden=true;$('#entTools').hidden=true;$('#entBus').hidden=true;$('#entInfo').textContent=`Cargá el archivo de la ruta ("${hoy}.xlsx" o "${man}.xlsx")`;LI.innerHTML='<div class="empty">Tocá <b>📂 Cargar ruta</b> y elegí el Excel de la ruta del día. Arriba sale el mapa con las paradas en orden y abajo la lista: tocá una parada para verla en el mapa e ir con Waze o Google Maps.</div>';return}
@@ -1536,7 +1568,7 @@ document.querySelector('[data-tab="entrega"]').addEventListener('click',()=>{req
 // ===== Lista en la nube: los mismos paquetes en el teléfono y en la PC (rf_lista_leer / rf_lista_guardar) =====
 // S.syncVer = última versión de la nube que vio este aparato; S.baseIds = ids que había en ese momento
 // (sirven para saber qué se borró en un lado y qué es nuevo). S.dirty = hay cambios sin subir.
-const NUBE_KEYS=['nums','ent','pk','coord','form','camino','pref','fecha','hora','start','vel','min','ret','route','veh'];
+const NUBE_KEYS=['nums','jor','ent','pk','coord','form','camino','pref','fecha','hora','start','vel','min','ret','route','veh'];
 const nubeMsg=t=>{const el=$('#nubeInfo');if(el)el.textContent=t?' · '+t:''};
 // Se sube todo lo que había en la nube (aunque esta versión no lo conozca) más las claves propias, para no borrar datos de otros aparatos.
 function nubeDatos(){const d={...(S.nubeOtros||{})};NUBE_KEYS.forEach(k=>{if(S[k]!==undefined)d[k]=S[k]});if(S.ex)d.pk=[];return d}
