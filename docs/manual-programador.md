@@ -113,6 +113,10 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - *Guardar* abre la cámara **dentro del mismo toque** (iPhone no deja abrirla después de un `await`) y agrega con `mkPkg()`. Las fotos de etiqueta no se guardan.
 - Prueba local: las CDN están bloqueadas en el sandbox; se instalan los paquetes con npm y Playwright sirve los archivos interceptando las URL de jsDelivr. Las etiquetas de prueba se generan con JsBarcode.
 
+## 3c-terdecies. Subpaneles de Paquetes (1.64.0)
+
+- `.subbtns` con `data-sub="pnScan|pnImp"`; los paneles son `.panel.subpn` (ocultos sin `.on`). `subAbrir(id)` pone `.on` al panel y `.sub-open` en `#v-paquetes`, que oculta todo lo demás de la sección; `.subback` y el cambio de pestaña llaman `subAbrir(null)`. `#importBtn` regresa al terminar.
+
 ## 3c-duodecies. Datos relacionados (1.63.0)
 
 - 1.63.2: en `renderEnt` el WhatsApp es `phoneWA(p&&entFuerte(s,p)?p.tel:s.tel)`; `entSyncPk` copia `p.tel` a `s.tel` siempre que difieran los dígitos (antes solo si el nuevo era válido). `telsAnt` sigue guardando los anteriores para `entFuerte`.

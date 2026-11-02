@@ -460,6 +460,10 @@ No tenés que unir nada a mano: si corregís en *Paquetes* el nombre, el teléfo
 
 Cuando tocás **✓ Entregado** en *Ruta*, el número del paquete queda tachado y en gris, y la parada baja al final de la lista. En *Paquetes* el número también sale tachado, la tarjeta entera se ve apagada en gris (1.40.1) y el paquete pasa con los entregados. Sus botones siguen sirviendo por si hay que corregir algo. Si te equivocaste, **↩ Deshacer** lo devuelve.
 
+### Escanear e Importar (1.64.0)
+
+Debajo de los contadores de *Paquetes* hay dos botones pequeños: **📷 Escanear etiquetas** y **📥 Importar lista**. Al tocar uno se abre su pantalla; **← Regresar** te devuelve a la lista. Al pegar filas y tocar *Agregar a la lista* regresa solo.
+
 ### Todo está conectado (1.63.0)
 
 *Paquetes*, *Mensajes* y *Ruta* usan el mismo paquete:
