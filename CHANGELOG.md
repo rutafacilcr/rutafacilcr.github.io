@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.67.2 · Buscador arriba:** en *Paquetes* el buscador 🔍 va primero y el título **Lista del día** debajo, justo antes de las tarjetas.
 - **1.67.1 · Orden de botones:** en *Paquetes* quedan **Vaciar lista**, **Agregar a mano**, **Importar** y **Escanear**.
 - **1.67.0 · Vaciar lista como botón:** en *Paquetes* hay un cuarto botón de sistema, **🧹 Vaciar lista** (en rojo), junto a Agregar a mano, Importar y Escanear. Pide confirmar, dice cuántos paquetes se guardan y avisa si quedan sin entregar ni devolver; después hace el mismo cierre de siempre. Se quitó el botón pequeño de la línea *Lista del día*.
 - **1.66.4 · Pines juntos en abanico:** si varias paradas están en el mismo lugar (a menos de ~15 m), cada pin se corre un poco hacia la derecha para que se vea su borde. Las pendientes quedan primero y las entregadas o devueltas al final.
