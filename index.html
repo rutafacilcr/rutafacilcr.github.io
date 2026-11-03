@@ -380,7 +380,7 @@ details summary{cursor:pointer;font-weight:600}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.75.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.75.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -960,7 +960,7 @@ function repFilas(L){
   const TR=repTramos(L);
   return L.filter(p=>p.st==='entregado'||p.st==='devuelto'||p.devolver).sort((a,b)=>(repT(a)||Infinity)-(repT(b)||Infinity)||(+a.num||0)-(+b.num||0)).map(p=>{
     const ent=p.st==='entregado',t=repT(p),r=TR.get(p.id);
-    const tt=!r?'—':r.inicio?'Inicio':`${r.desdeIni?'▶ ':''}${r.min>=60?Math.floor(r.min/60)+' h ':''}${Math.round(r.min%60)} min`,kk=!r||r.inicio||r.km==null?(r&&r.inicio?'Inicio':'—'):r.km.toFixed(1)+' km';
+    const tt=!r?'—':r.inicio?'Inicio':`${r.desdeIni?'desde inicio: ':''}${r.min>=60?Math.floor(r.min/60)+' h ':''}${Math.round(r.min%60)} min`,kk=!r||r.inicio||r.km==null?(r&&r.inicio?'Inicio':'—'):r.km.toFixed(1)+' km';
     return [String(p.num||''),p.guia||'',tl(p.tel),tidyName(p.nombre||''),ent?'Entregado':'Devuelto',f(p.ing),f(t),h(t),tt,kk]})}
 // Tramos (1.58.0): cada entrega mide tiempo y km desde la entrega ANTERIOR del mismo día (orden por hora real).
 // La primera entrega de cada día es el inicio: no tiene tramo. Los devueltos no cuentan (no son una parada de entrega).

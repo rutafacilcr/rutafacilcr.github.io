@@ -69,7 +69,7 @@ La app está preparada para unas **150 cuentas a la vez** en el plan gratis de S
 
 ## Soporte
 
-Dentro de la app, el botón **Soporte** (ícono de audífonos) abre WhatsApp con soporte (+506 6270-0666) y los videos de cómo se usa. También trae **🧪 Ver diagnóstico de la ruta**, que muestra en pantalla cómo están unidas las paradas con sus paquetes para mandarlo a soporte (captura o Compartir).
+Dentro de la app, el botón **Soporte** (ícono de audífonos) abre WhatsApp con soporte (+506 6270-0666) y seis videos cortos de cómo se usa (grabados con la versión 1.74: entrar, paquetes, mensajes, ruta, entregar y cierres). También trae **🧪 Ver diagnóstico de la ruta**, que muestra en pantalla cómo están unidas las paradas con sus paquetes para mandarlo a soporte (captura o Compartir).
 
 ## Documentación
 

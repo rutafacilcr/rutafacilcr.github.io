@@ -1,38 +1,38 @@
 [
  {
-  "titulo": "1. Entrar a la app",
+  "titulo": "1. Entrar y conocer la app",
   "url": "videos/01-entrar.mp4",
-  "dur": "1:06",
-  "desc": "Crear tu cuenta, entrar con número y PIN, y pedir soporte."
+  "dur": "1:30",
+  "desc": "Crear la cuenta, las 4 pestañas y Soporte."
  },
  {
   "titulo": "2. Cargar los paquetes",
-  "url": "videos/02-cargar-paquetes.mp4",
-  "dur": "1:01",
-  "desc": "Escanear etiquetas con la cámara o subir el Excel."
+  "url": "videos/02-paquetes.mp4",
+  "dur": "1:06",
+  "desc": "Escanear etiquetas, importar el Excel o agregar a mano."
  },
  {
-  "titulo": "3. Avisar por WhatsApp",
+  "titulo": "3. Mensajes por WhatsApp",
   "url": "videos/03-mensajes.mp4",
-  "dur": "0:52",
-  "desc": "Mandar el mensaje a cada cliente y el formulario."
+  "dur": "1:22",
+  "desc": "Los 5 mensajes, enviar y pegar la respuesta del cliente."
  },
  {
-  "titulo": "4. Pegar la respuesta del cliente",
-  "url": "videos/04-pegar-respuesta.mp4",
+  "titulo": "4. La ruta del día",
+  "url": "videos/04-ruta.mp4",
+  "dur": "1:11",
+  "desc": "Cargar la ruta, el mapa, el vehículo e Iniciar entregas."
+ },
+ {
+  "titulo": "5. Entregar con prueba",
+  "url": "videos/05-entregar.mp4",
+  "dur": "0:59",
+  "desc": "Fotos, firma, Hold, Devolver y Finalizar."
+ },
+ {
+  "titulo": "6. Cierres y reportes",
+  "url": "videos/06-cierres.mp4",
   "dur": "0:46",
-  "desc": "Sacar la hora y la ubicación de lo que el cliente contestó."
- },
- {
-  "titulo": "5. Armar la ruta",
-  "url": "videos/05-ruta.mp4",
-  "dur": "0:58",
-  "desc": "Calcular el mejor orden respetando los horarios."
- },
- {
-  "titulo": "6. Prueba de entrega",
-  "url": "videos/06-prueba-de-entrega.mp4",
-  "dur": "0:55",
-  "desc": "Marcar entregado con GPS y 3 fotos."
+  "desc": "El reporte PDF y las guías por fecha de recibido."
  }
 ]

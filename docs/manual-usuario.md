@@ -263,14 +263,16 @@ Tocá la etiqueta de color para pasar al siguiente estado.
 
 **Ayuda:** tocá **Soporte** (el botón con audífonos arriba, en el encabezado, o *Soporte* al final de la pantalla). Ahí podés escribirnos por WhatsApp al **6270-0666** (el mensaje ya lleva tu versión de la app) y ver los **videos** de cómo se usa cada parte:
 
-1. Entrar a la app (crear cuenta, número y PIN, soporte)
-2. Cargar los paquetes (escanear etiquetas, subir el Excel)
-3. Avisar por WhatsApp (mensaje y formulario)
-4. Pegar la respuesta del cliente
-5. Armar la ruta (horarios, Google Maps y Waze, voy en camino)
-6. Prueba de entrega (GPS y 3 fotos)
+1. Entrar y conocer la app (crear cuenta, código de recuperación, activación, las 4 pestañas y Soporte)
+2. Cargar los paquetes (Escanear, Importar el Excel, Agregar a mano, contadores y buscador)
+3. Mensajes por WhatsApp (los 5 mensajes, Abrir WhatsApp, Pegar respuesta, 4. Comprensión y 5. Horario extendido)
+4. La ruta del día (Cargar ruta, mapa, vehículo, Ordenar desde aquí, Iniciar entregas, Waze, en camino y Tráfico)
+5. Entregar con prueba (Evidencia con 3 fotos y firma, Hold, Devolver y Finalizar)
+6. Cierres y reportes (reporte PDF, Guías por fecha de recibido y Vaciar lista)
 
-**¿Qué versión tengo?** Bajá hasta el final de cualquier pestaña: dice *RutaFácil CR · versión 1.8.1*. Se lee **mayor.menor.corrección**: el primer número cambia con cambios grandes, el segundo con funciones nuevas y el tercero con arreglos.
+Los videos se regrabaron con la versión 1.74 (antes eran de la 1.9 y mostraban pantallas viejas). En los videos el mapa sale con fondo liso: en tu celular se ven las calles.
+
+**¿Qué versión tengo?** Bajá hasta el final de cualquier pestaña: dice *RutaFácil CR · versión 1.75.1* (o la que tengás). Se lee **mayor.menor.corrección**: el primer número cambia con cambios grandes, el segundo con funciones nuevas y el tercero con arreglos.
 
 
 **¿Veo los colores o el ícono viejo?** El celular guarda la versión anterior. Cerrá la app por completo (deslizala hacia arriba) y abrila de nuevo; al final de la pestaña tiene que decir la versión nueva (ej. *versión 1.8.1*). Si el ícono sigue viejo, borrá el acceso directo y agregalo otra vez desde https://rutafacilcr.github.io/.
@@ -600,7 +602,7 @@ Arriba de *Ruta* está la barra de la jornada:
 2. Al terminar el día tocá **■ Finalizar** (pide confirmar): guarda la hora y dónde terminaste.
 3. Si finalizaste antes de tiempo, tocá **▶ Seguir entregando**.
 
-Con eso el reporte mide la primera entrega desde la salida (sale con ▶ en *Tiempo desde anterior*), suma los km de la última entrega al punto final y las *Horas invertidas* son de Iniciar a Finalizar. Dale permiso de ubicación a la app para que guarde los puntos.
+Con eso el reporte mide la primera entrega desde la salida (sale como *desde inicio:* en *Tiempo desde anterior*; antes de la 1.75.1 salía con un ▶ que el PDF mostraba como «%¶»), suma los km de la última entrega al punto final y las *Horas invertidas* son de Iniciar a Finalizar. Dale permiso de ubicación a la app para que guarde los puntos.
 
 **La ruta queda fija (1.72.0).** Desde que tocás **▶ Iniciar entregas** hasta **■ Finalizar**, el orden de las paradas no cambia solo: si la ruta dice 1, 3, 2, 4, así se queda aunque te movás, agregués paquetes o pongás alguno en Hold. Los paquetes nuevos van al final de la ruta y el que sale de Hold vuelve a su puesto. Si querés reordenar, tocá **📍 Ordenar desde aquí** o **🎯 Elegir en el mapa**; la app te pregunta antes.
 

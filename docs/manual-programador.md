@@ -13,7 +13,7 @@ Para quien vaya a modificar el código o el diseño.
 
 ## 1b. Páginas públicas (1.75.0)
 
-- `conoce.html` (voseo, para el mensajero) y `privacidad.html` (usted, porque la leen también los clientes) son páginas sueltas con su propio `<style>`: mismos tokens de color que `index.html` (grafito `#1f2125`, naranja `#f26b1d`), modo oscuro por `prefers-color-scheme`, primero para celular (una columna; desde 640 px los pasos van con la captura a la par). Botones compactos naranja con letra blanca y alineados a la derecha.
+- `conoce.html` (voseo, para el mensajero) y `privacidad.html` (usted, porque la leen también los clientes) son páginas sueltas con su propio `<style>`: mismos tokens de color que `index.html` (grafito `#1f2125`, naranja `#f26b1d`), modo oscuro por `prefers-color-scheme`, primero para celular (una columna; desde 640 px los pasos van con la captura a la par). Botones compactos naranja con letra blanca y alineados a la derecha. Los videos de `conoce.html` apuntan a los mismos archivos de `videos/` que *Soporte* (1.75.1: `01-entrar`, `02-paquetes`, `03-mensajes` y `04-ruta`, con su póster en `img/video-*.jpg`); si se renombra un video, hay que cambiarlo en `videos.json` y en `conoce.html`.
 - En celular los videos van en una fila que se desliza de lado (`overflow-x:auto` con `scroll-snap`), sin mover la página. Probado a 390 px y 1280 px sin desborde horizontal.
 - `auth.js`: la constante `intro` (vacía en el panel, `RF_AUTH_ADMIN`) se pinta antes de `<h2>Entrar</h2>` y `<h2>Crear cuenta</h2>` con estilos en línea (`.rfmsg`), para no tocar el CSS del portero.
 - `entrega.html`: una línea `.hint` después del formulario con el enlace a `privacidad.html`.
@@ -282,6 +282,8 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - Botón `#supTab` (cuarto botón de `nav.tabs`, ícono `.ico-sop`, sin `role=tab`: abre la hoja y no cambia de pestaña; el manejador de pestañas filtra `nav.tabs [role=tab]`) y enlace `#supPie` en el pie → `openSupport()` abre `#supSheet`.
 - WhatsApp: `wa.me/SOPORTE_WA` con texto que incluye la versión (`#appVer`).
 - Videos: `fetch('videos.json',{cache:'no-cache'})`; si la URL es de YouTube usa un `<iframe>` de youtube-nocookie, si no un `<video controls playsinline preload=metadata>`. Al cerrar (`#supClose`, arriba a la derecha junto al título; mismo tamaño que `.btn.pri` del panel: 14 px, 8×12 px de relleno, radio 8 px) se pausan y se vacía la lista para no gastar datos.
+- Grabación de los videos (1.75.1): `record3.js` usa un escenario de 540×960 escalado ×2 con la app en un `<iframe>`, simula Supabase con `ctx.route` (incluye `rf_codigo_nuevo`, `rf_lista_leer` y `rf_lista_guardar`), el GPS con un `navigator.geolocation` falso (`window.__geo`) y el reloj con `ctx.clock` (adelanta minutos para que el reporte tenga horas y km). Las escenas salen de `scenes.json` (subtítulo `cap` y texto para la voz `say`).
+- Reporte PDF (1.75.1): en *Tiempo desde anterior* la primera entrega después de ▶ Iniciar dice `desde inicio: N min`. Antes llevaba el carácter ▶, que la fuente estándar de jsPDF no tiene y salía como «%¶». En los PDF de jsPDF usá solo texto latino, sin emojis ni símbolos.
 - El pie también lo usa `auth.js` (`.rfcuenta`, cuenta y Salir): el enlace de soporte va al inicio del pie para no tocar ese bloque.
 
 ## 3b. Prueba de entrega
