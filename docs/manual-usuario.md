@@ -504,7 +504,7 @@ No tenés que unir nada a mano: si corregís en *Paquetes* el nombre, el teléfo
 
 ### Entregados tachados (1.40.0)
 
-> Desde la **1.73.0** el número de los entregados en *Paquetes* y *Mensajes* ya no va tachado: solo en gris. En *Ruta* la parada hecha sigue tachada.
+> Desde la **1.73.0** el número de los entregados en *Paquetes* y *Mensajes* ya no va tachado: solo en gris. Desde la **1.73.1** tampoco en *Ruta*: los entregados en el mapa y en la lista quedan en gris, sin tachar.
 
 Cuando tocás **✓ Entregado** en *Ruta*, el número del paquete queda tachado y en gris, y la parada baja al final de la lista. En *Paquetes* el número también sale tachado, la tarjeta entera se ve apagada en gris (1.40.1) y el paquete pasa con los entregados. Sus botones siguen sirviendo por si hay que corregir algo. Si te equivocaste, **↩ Deshacer** lo devuelve.
 
