@@ -460,6 +460,10 @@ No tenés que unir nada a mano: si corregís en *Paquetes* el nombre, el teléfo
 
 Cuando tocás **✓ Entregado** en *Ruta*, el número del paquete queda tachado y en gris, y la parada baja al final de la lista. En *Paquetes* el número también sale tachado, la tarjeta entera se ve apagada en gris (1.40.1) y el paquete pasa con los entregados. Sus botones siguen sirviendo por si hay que corregir algo. Si te equivocaste, **↩ Deshacer** lo devuelve.
 
+### Vaciar lista (1.67.0)
+
+En *Paquetes*, el cuarto botón **🧹 Vaciar lista** cierra la ruta: pide confirmar, te dice cuántos paquetes se guardan y te avisa si todavía hay sin entregar ni devolver. Al aceptar guarda todo en la base y deja la app limpia.
+
 ### Paradas en el mismo lugar (1.66.4)
 
 Si dos o más clientes están en el mismo punto, sus pines salen un poco corridos, en abanico, para que se vean todos. El de adelante es el pendiente; los grises (entregados) quedan detrás.

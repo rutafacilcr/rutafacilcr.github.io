@@ -57,7 +57,7 @@ header.top{border-bottom:3px solid var(--accent)}
 .devkeep{grid-column:1/-1;display:flex;gap:8px;align-items:center;justify-content:space-between;border-top:1px dashed var(--line);padding-top:8px}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .pkg.devol,:root:not([data-theme="light"]) .estop.devol{background:#26282c}}:root[data-theme="dark"] .pkg.devol,:root[data-theme="dark"] .estop.devol{background:#26282c}
 /* 1.64.0: Escanear e Importar como botones pequeños; al tocarlos se abre solo ese panel con ← Regresar */
-.subbtns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0}
+.subbtns{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:10px 0}.sysbtn.sysdanger{color:#c0392b}
 /* Botones estilo sistema (iOS): relleno gris suave, esquinas redondeadas, ícono arriba y texto debajo, sin borde */
 .sysbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:64px;padding:8px 4px;border:0;border-radius:14px;background:rgba(120,120,128,.12);color:var(--ink);font:600 13px -apple-system,BlinkMacSystemFont,"SF Pro Text",var(--f-body);letter-spacing:-.1px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .15s,transform .1s}
 .sysbtn span{font-size:22px;line-height:1}.sysbtn:active{background:rgba(120,120,128,.24);transform:scale(.97)}.sysbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -215,7 +215,7 @@ details summary{cursor:pointer;font-weight:600}
   <div class="example" id="exampleBar" hidden><span>Estás viendo datos de ejemplo. Importá tu lista para empezar.</span><button class="btn sm" id="clearExample">Borrar ejemplo</button></div>
   <div class="stats" id="stats"></div>
 
-  <div class="subbtns"><button class="sysbtn" type="button" data-sub="formPanel"><span aria-hidden="true">✍️</span>Agregar a mano</button><button class="sysbtn" type="button" data-sub="pnImp"><span aria-hidden="true">📥</span>Importar</button><button class="sysbtn" type="button" data-sub="pnScan"><span aria-hidden="true">📷</span>Escanear</button></div>
+  <div class="subbtns"><button class="sysbtn" type="button" data-sub="formPanel"><span aria-hidden="true">✍️</span>Agregar a mano</button><button class="sysbtn" type="button" data-sub="pnImp"><span aria-hidden="true">📥</span>Importar</button><button class="sysbtn" type="button" data-sub="pnScan"><span aria-hidden="true">📷</span>Escanear</button><button class="sysbtn sysdanger" type="button" id="vaciarTile"><span aria-hidden="true">🧹</span>Vaciar lista</button></div>
 
   <div class="panel subpn" id="pnScan">
     <button class="btn sm ghost subback" type="button">← Regresar</button>
@@ -261,7 +261,7 @@ details summary{cursor:pointer;font-weight:600}
     </form>
   </details>
 
-  <div class="row" style="justify-content:space-between"><h2>Lista del día</h2><button class="btn sm danger" id="clearAll">Vaciar lista</button></div>
+  <div class="row" style="justify-content:space-between"><h2>Lista del día</h2><button class="btn sm danger" id="clearAll" hidden>Vaciar lista</button></div>
   <input id="p-buscar" type="search" placeholder="🔍 Buscar por nombre, teléfono, guía o número" autocomplete="off" aria-label="Buscar paquete" style="width:100%;font-size:16px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:inherit;margin:0 0 10px">
   <div class="list" id="pkgList"></div>
 </section>
@@ -357,7 +357,7 @@ details summary{cursor:pointer;font-weight:600}
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.66.4</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.67.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -800,6 +800,9 @@ async function cerrarDia(b){
   S.ent={nombre:'',at:t,mod:t,stops:[],cerrada:fc}; // ruta vacía y más nueva que la de la nube, para que la sincronización no la reviva
   ESEL=-1;save();render();if(typeof renderEnt==='function')renderEnt();if(NUBE.on)nubeSync(true);
   b.textContent='Vaciar lista';toast(`Cierre guardado (${new Date(fc).toLocaleString('es-CR')}). Listo para una ruta nueva.`)}
+$('#vaciarTile').onclick=()=>{const pk=S.ex?[]:S.pk,pend=pk.filter(p=>p.st!=='entregado'&&p.st!=='devuelto'&&!p.devolver).length;
+  if(!confirm(`¿Vaciar la lista y cerrar la ruta?\nSe guardan en la base ${pk.length} paquete(s) y la ruta con la fecha de hoy, y la app queda limpia.${pend?`\n\nOjo: todavía hay ${pend} sin entregar ni devolver.`:''}`))return;
+  cerrarDia($('#clearAll'))};
 $('#clearAll').onclick=e=>{const b=e.currentTarget;if(b.disabled)return;if(b.dataset.c){delete b.dataset.c;cerrarDia(b)}else{b.dataset.c=1;b.textContent='¿Cerrar el día? Tocá otra vez';setTimeout(()=>{if(b.dataset.c){b.textContent='Vaciar lista';delete b.dataset.c}},3000)}};
 const bind=(sel,k,num)=>{const el=$(sel);el.value=S[k]??'';el.addEventListener(el.type==='checkbox'?'change':'input',()=>{S[k]=el.type==='checkbox'?el.checked:(num?+el.value:el.value);save();if(['coord','form','yo','fecha'].includes(k))renderMsg()})};
 $('#routeBtn').onclick=calcRoute;
