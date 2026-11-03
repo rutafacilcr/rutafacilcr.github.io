@@ -327,6 +327,10 @@ Medición (Playwright, Chromium con CPU 6× más lenta para imitar un celular se
 
 Solo CSS en `index.html` (bloque `/* 1.76.2 · Contraste */` al final del `<style>`); no toca Supabase, `auth.js` ni la lógica. Se revisó con axe-core (el mismo motor de la auditoría de accesibilidad de Lighthouse), regla `color-contrast`, en tema claro y oscuro a 390 px. Quedan avisos conocidos que son decisión de marca: texto blanco sobre el naranja `#f26b1d` de los botones principales (3,0:1), el verde de WhatsApp y el verde de «● Ubicación lista» en claro (4,3:1).
 
+### Botones naranja (1.77.1)
+
+Solo CSS en `index.html`: token `--accent-btn` (`#c4510f` en claro, 4,6:1 con blanco; en oscuro = `--accent`) para el fondo de `.btn.primary`, `.devno`/`.subback`/`[data-edevno]`, `.rfdlg-si`, `.dot.start` y el globito `nav.tabs .n`. Con esto el aviso de Lighthouse sobre `button.btn.sm.devno` desaparece. Las pantallas de entrar (`auth.js`) siguen con `--accent`. Quedan como decisión de marca los verdes de WhatsApp y «● Ubicación lista».
+
 ### Límites del plan gratis
 
 500 MB de base de datos y pausa automática del proyecto tras ~1 semana sin uso. Si se pausa, el formulario deja de guardar: entrar al panel y tocar **Restore**. Cada respuesta ocupa menos de 1 KB.

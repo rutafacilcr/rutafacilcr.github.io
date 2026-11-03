@@ -735,3 +735,8 @@ Al tocar **Paquetes**, **Cierres**, **Mensajes** o **Ruta**, el botón se pone n
 ### Paquetes devueltos más fáciles de leer (1.76.2)
 
 Cuando un paquete está **⛔ Devuelto** (o marcado **⛔ Devolver**), la tarjeta queda gris pero el nombre, la dirección, el teléfono y la guía se leen completos. Los botones de ese paquete (*Editar*, *Escáner*, *Eliminar*, *WhatsApp*, *Pegar respuesta*) se ven con **borde punteado** y no se pueden tocar. El único que se toca es el naranja **↪ Regresar a Ruta** (o **↩ Quitar devolver**). También se lee mejor el nombre de la pestaña en la que estás y el botón **🧹 Vaciar lista**, en tema claro y oscuro.
+
+
+### Botones naranja más legibles (1.77.1)
+
+En tema claro, los botones naranja con letra blanca (**↪ Regresar a Ruta**, **↩ Quitar devolver**, **📋 Pegar respuesta** y los demás botones principales) tienen un naranja un poco más oscuro para que la letra se lea mejor. Funcionan igual. En tema oscuro se ven como antes.

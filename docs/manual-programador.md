@@ -383,6 +383,7 @@ respuestas(id, token UNIQUE, guia, horario, senas, recibe, lat, lng,
 | `--bg` / `--surface` | `#f5f5f4` / `#ffffff` | `#121315` / `#1b1d21` | Fondo / tarjetas. |
 | `--ink` / `--muted` / `--line` | `#1c1917` / `#6b6560` / `#e2dfdc` | `#ececeb` / `#a8a4a0` / `#2e3137` | Texto y bordes. |
 | `--accent-text` | `#b8470f` | = `--accent` | Texto naranja sobre fondo claro (pestaña seleccionada, 1.76.2): `#f26b1d` sobre blanco da 3,0:1 y no pasa; `#b8470f` da 5,3:1. |
+| `--accent-btn` | `#c4510f` | = `--accent` | Fondo de botones naranja con letra blanca (1.77.1). `#f26b1d` con blanco da 3,0:1; `#c4510f` da 4,6:1. Para botones nuevos naranja con letra blanca usar `--accent-btn`, no `--accent`. |
 | `--wa` | `#1f9d55` | `#3cc37a` | Solo botones de WhatsApp. |
 | `--ok` `--warn` `--bad` | verde / naranja / rojo | | Estados. No se usan como acento. |
 
