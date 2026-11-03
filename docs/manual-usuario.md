@@ -571,6 +571,8 @@ Arriba de *Ruta* está la barra de la jornada:
 
 Con eso el reporte mide la primera entrega desde la salida (sale con ▶ en *Tiempo desde anterior*), suma los km de la última entrega al punto final y las *Horas invertidas* son de Iniciar a Finalizar. Dale permiso de ubicación a la app para que guarde los puntos.
 
+**La ruta queda fija (1.72.0).** Desde que tocás **▶ Iniciar entregas** hasta **■ Finalizar**, el orden de las paradas no cambia solo: si la ruta dice 1, 3, 2, 4, así se queda aunque te movás, agregués paquetes o pongás alguno en Hold. Los paquetes nuevos van al final de la ruta y el que sale de Hold vuelve a su puesto. Si querés reordenar, tocá **📍 Ordenar desde aquí** o **🎯 Elegir en el mapa**; la app te pregunta antes.
+
 ### Cómo se calculan horas y km del reporte (1.58.0)
 
 - La **primera entrega del día** es el inicio (dice *Inicio* en la tabla).

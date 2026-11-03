@@ -19,7 +19,7 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
 - **Ruta:**
   - Mapa con la línea por calles reales (OSRM, gratis).
   - Ordenar desde tu GPS o desde un punto del mapa.
-  - ▶ Iniciar / ■ Finalizar entregas para el reporte.
+  - ▶ Iniciar / ■ Finalizar entregas para el reporte. Desde ▶ Iniciar el orden de la ruta queda fijo (solo cambia si lo reordenás a mano).
   - Vehículo 🏍️ 🚙 🚐 (carro por defecto), que va en el WhatsApp "Estamos en camino 🏍️…".
   - 📋 Lista en orden.
   - 🚦 Tráfico en vivo para la próxima parada (TomTom, plan gratis con clave propia).
@@ -40,7 +40,7 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
 | **Nube** | La lista de paquetes y la ruta del día se guardan en la cuenta: las mismas en el teléfono y en la PC. |
 | **3. Respuestas** | Con un toque (*📋 Pegar respuesta*) la app saca la hora y la ubicación de lo que el cliente respondió por WhatsApp y lo marca *Confirmado*. Lo que llena en el formulario entra solo. |
 | **Cierres** | Reportes PDF por día de recibido, con horas, km y promedios; incluye los cierres guardados en la base al vaciar la lista. |
-| **4. Ruta** (antes *Entrega*) | Carga el Excel *Ruta AAAA-MM-DD* y divide la pantalla: arriba el mapa con las paradas numeradas en orden, abajo la lista; cada parada abre Waze o Google Maps y la prueba de entrega (botón Evidencia) o la marca como entregada (botón Entregado, que la pone en gris). Muestra tu punto actual y, apenas te ubica, reordena sola las paradas que faltan desde donde estás, con el tiempo aproximado hasta cada cliente y el tiempo y los km de toda la ruta; tiene lupa para buscar un cliente. Marcar una parada como entregada también actualiza el paquete en la lista, y un paquete se puede marcar como devuelto al almacén o volver a escanear su etiqueta para corregirlo. |
+| **4. Ruta** (antes *Entrega*) | Carga el Excel *Ruta AAAA-MM-DD* y divide la pantalla: arriba el mapa con las paradas numeradas en orden, abajo la lista; cada parada abre Waze o Google Maps y la prueba de entrega (botón Evidencia) o la marca como entregada (botón Entregado, que la pone en gris). Muestra tu punto actual y, apenas te ubica, reordena sola las paradas que faltan desde donde estás (hasta que tocás ▶ Iniciar entregas: ahí el orden queda fijo), con el tiempo aproximado hasta cada cliente y el tiempo y los km de toda la ruta; tiene lupa para buscar un cliente. Marcar una parada como entregada también actualiza el paquete en la lista, y un paquete se puede marcar como devuelto al almacén o volver a escanear su etiqueta para corregirlo. |
 | **5. Prueba de entrega** | Al marcar *Entregado* guarda ubicación GPS, fecha, hora, mínimo 3 fotos con sello y la **firma con el dedo** de quien recibe (si falta algo, la app dice qué; si el GPS falla, se puede confirmar sin él); se respalda en Supabase. En *Ruta*, el **recorrido del día** muestra las entregas numeradas en un mapa. |
 
 Funciona desde el celular, se puede instalar como ícono en la pantalla de inicio y no necesita servidor propio.

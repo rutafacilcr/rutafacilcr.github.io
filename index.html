@@ -379,7 +379,7 @@ details summary{cursor:pointer;font-weight:600}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.71.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.72.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -1557,7 +1557,7 @@ $('#jorBar').addEventListener('click',async e=>{const b=e.target.closest('[data-
   if(a==='seguir'){if(S.jor[k])delete S.jor[k].fin;save();jorRender();toast('Seguís en ruta: tocá ■ Finalizar al terminar');return}
   if(a==='fin'&&!await rfConfirm('¿Finalizar las entregas de hoy?'))return;
   b.disabled=true;b.textContent='Tomando ubicación…';const c=await jorGps(),t=Date.now();
-  if(a==='ini')S.jor[k]={ini:{t,c}};else S.jor[k]={...S.jor[k],fin:{t,c}};
+  if(a==='ini'){S.jor[k]={ini:{t,c}};if(S.ent)S.ent.stops.forEach(s=>delete s.o)}else S.jor[k]={...S.jor[k],fin:{t,c}};
   save();jorRender();toast(a==='ini'?`Entregas iniciadas a las ${jorHm(t)}${c?'':' (sin GPS)'}`:`Entregas finalizadas a las ${jorHm(t)}`)});
 async function renderEnt(){entSyncPk();jorRender();vehPintar();ttPintar();
   // La ruta se arma el día antes: vale la de hoy o la de mañana (fecha local del celular).
@@ -1577,7 +1577,7 @@ async function renderEnt(){entSyncPk();jorRender();vehPintar();ttPintar();
   try{
     if(!document.querySelector('link[data-leaflet]')){const l=document.createElement('link');l.rel='stylesheet';l.href=CSS_MAP;l.dataset.leaflet=1;document.head.appendChild(l)}
     await loadScript(LIB_MAP);
-    if(!EMAP){EMAP=L.map('entMap');L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(EMAP);EMAP.layer=L.layerGroup().addTo(EMAP);EMAP.fitted=null;EMAP.on('click',e=>{if(EMAP.pickStop!=null){const i=EMAP.pickStop;EMAP.pickStop=null;$('#entMap').style.cursor='';entPonerC(i,[+e.latlng.lat.toFixed(6),+e.latlng.lng.toFixed(6)]);return}if(EMAP.pick){EMAP.pick=false;$('#entMap').style.cursor='';entOrdenar([+e.latlng.lat.toFixed(6),+e.latlng.lng.toFixed(6)],'el punto que elegiste')}})}
+    if(!EMAP){EMAP=L.map('entMap');L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(EMAP);EMAP.layer=L.layerGroup().addTo(EMAP);EMAP.fitted=null;EMAP.on('click',e=>{if(EMAP.pickStop!=null){const i=EMAP.pickStop;EMAP.pickStop=null;$('#entMap').style.cursor='';entPonerC(i,[+e.latlng.lat.toFixed(6),+e.latlng.lng.toFixed(6)]);return}if(EMAP.pick){EMAP.pick=false;$('#entMap').style.cursor='';entOrdenar([+e.latlng.lat.toFixed(6),+e.latlng.lng.toFixed(6)],'el punto que elegiste',true)}})}
     EMAP.layer.clearLayers();EMAP.mk={};
     const ini=EPOS?EPOS.c:(E.inicio||null),pend=conC.filter(s=>!entDone(s));
     EMAP.linea=L.polyline([],{color:'#29b6f6',weight:4,opacity:.85}).addTo(EMAP.layer);entLinea();
@@ -1676,20 +1676,30 @@ function entVigilar(){if(EWATCH!=null||!navigator.geolocation)return;try{EWATCH=
 async function osrmMatriz(pts){if(pts.length>100)return null;try{const ac=new AbortController(),to=setTimeout(()=>ac.abort(),8000);
   const j=await (await fetch('https://router.project-osrm.org/table/v1/driving/'+pts.map(c=>c[1]+','+c[0]).join(';')+'?annotations=duration',{signal:ac.signal})).json();clearTimeout(to);
   if(j.code!=='Ok'||j.durations.some(r=>r.some(v=>v==null)))return null;return j.durations.map(r=>r.map(v=>v/60*1.3))}catch(e){return null}}
-async function entOrdenar(start,desde){
-  const E=S.ent;if(!E)return;let pend=E.stops.filter(s=>s.c&&!entDone(s)&&!s.hold),held=E.stops.filter(s=>s.c&&!entDone(s)&&s.hold);const hechas=E.stops.filter(s=>s.c&&entDone(s)),sinC=E.stops.filter(s=>!s.c);
+// 1.72.0: con las entregas iniciadas (▶ Iniciar, sin ■ Finalizar) la ruta queda FIJA: nada la reordena solo (GPS, Hold, agregar o editar paquetes).
+// Las paradas nuevas van al final de las pendientes y una parada que sale de Hold vuelve a su lugar. Solo 📍 Ordenar desde aquí o 🎯 Elegir en el mapa
+// la reordenan, y piden confirmar.
+function jorEnCurso(){try{const J=(S.jor||{})[jorHoy()];return !!(J&&J.ini&&!J.fin)}catch(e){return false}}
+async function entOrdenar(start,desde,manual){
+  const E=S.ent;if(!E)return;
+  if(jorEnCurso()){
+    if(!manual){const pn=E.stops.filter(s=>s.c&&!entDone(s));let mx=Math.max(0,...E.stops.map(s=>s.o||0));[...pn].sort((a,b)=>(a.n??1e9)-(b.n??1e9)).forEach(s=>{if(!s.o)s.o=++mx});const por=(a,b)=>a.o-b.o; // s.o = puesto fijo desde ▶ Iniciar
+      E.stops=[...pn.filter(s=>!s.hold).sort(por),...pn.filter(s=>s.hold).sort(por),...E.stops.filter(s=>s.c&&entDone(s)),...E.stops.filter(s=>!s.c)];
+      let k=0;E.stops.forEach(s=>{if(s.c&&!entDone(s))s.n=++k});E.stops.forEach(s=>{if(s.c&&entDone(s))s.n=++k});save();renderEnt();if(NUBE.on)nubeSoon();return}
+    if(!await rfConfirm('¿Reordenar la ruta?\nYa iniciaste las entregas: el orden de las paradas que faltan va a cambiar.'))return}
+  let pend=E.stops.filter(s=>s.c&&!entDone(s)&&!s.hold),held=E.stops.filter(s=>s.c&&!entDone(s)&&s.hold);const hechas=E.stops.filter(s=>s.c&&entDone(s)),sinC=E.stops.filter(s=>!s.c);
   if(!pend.length&&held.length){pend=held;held=[]} // solo quedan las de Hold: se ordenan entre ellas
   if(!pend.length){toast('No quedan paradas pendientes con ubicación');return}
   const pts=[start,...pend.map(s=>s.c)],W=[null,...pend.map(s=>{const p=entPkg(s);return p?parseWin(p.horario):null})],d=new Date();
   $('#entGps').textContent='Calculando la ruta por calle…';const Mx=await osrmMatriz(pts);if(EPOS)$('#entGps').textContent=`📍 Estás aquí (±${Math.round(EPOS.acc)} m)`;
   const ord=optimize(pts,W,d.getHours()*60+d.getMinutes(),+S.min||0,+S.vel||25,false,Mx);
-  entMod();let k=0;E.stops=[...ord.map(i=>pend[i-1]),...held,...hechas,...sinC];E.stops.forEach(s=>{if(s.c)s.n=++k});E.inicio=start;ESEL=-1;
+  entMod();let k=0;E.stops=[...ord.map(i=>pend[i-1]),...held,...hechas,...sinC];E.stops.forEach(s=>{delete s.o;if(s.c)s.n=++k});E.inicio=start;ESEL=-1;
   if(EMAP)EMAP.fitted=null;save();renderEnt().then(()=>{if(EMAP)EMAP.fitBounds([start,...pend.map(s=>s.c)],{padding:[24,24]})});
   toast(`Ruta ordenada ${Mx?'por calle ':''}desde ${desde} (${pend.length} paradas)`);if(NUBE.on)nubeSoon();
 }
 $('#entAqui').onclick=()=>{if(!navigator.geolocation){gpsFail();return}EAUTO=true;$('#entGps').textContent='Buscando tu ubicación…';
-  navigator.geolocation.getCurrentPosition(g=>{gpsOk(g);entOrdenar(EPOS.c,'tu ubicación');entVigilar()},
-    e=>{if(e.code===1)return gpsFail(e);navigator.geolocation.getCurrentPosition(g=>{gpsOk(g);entOrdenar(EPOS.c,'tu ubicación')},gpsFail,{enableHighAccuracy:false,timeout:20000,maximumAge:120000})},
+  navigator.geolocation.getCurrentPosition(g=>{gpsOk(g);entOrdenar(EPOS.c,'tu ubicación',true);entVigilar()},
+    e=>{if(e.code===1)return gpsFail(e);navigator.geolocation.getCurrentPosition(g=>{gpsOk(g);entOrdenar(EPOS.c,'tu ubicación',true)},gpsFail,{enableHighAccuracy:false,timeout:20000,maximumAge:120000})},
     {enableHighAccuracy:true,timeout:15000,maximumAge:30000})};
 $('#entPick').onclick=()=>{if(!EMAP){toast('Primero cargá la ruta');return}EMAP.pick=true;$('#entMap').style.cursor='crosshair';$('#entMap').scrollIntoView({behavior:'smooth',block:'start'});toast('Tocá el mapa donde estás');};
 // Parada sin ubicación: pegar link/coordenadas o tocar el mapa; entra a la ruta y se reordena desde tu punto
@@ -1714,7 +1724,7 @@ $('#entList').addEventListener('click',async e=>{if(e.target.closest('[data-edon
   const bh=e.target.closest('[data-ehold]');if(bh){const E=S.ent,s=E.stops[+bh.dataset.ehold];if(!s)return;s.hold=!s.hold;
     if(s.hold){E.stops=E.stops.filter(x=>x!==s);const k=E.stops.reduce((a,x,j)=>x.c&&!entDone(x)?j:a,-1);E.stops.splice(k+1,0,s);toast(`${s.nombre||'Parada'} en hold: pasa al final de la ruta`)}
     else toast(`${s.nombre||'Parada'} vuelve a la ruta`);
-    let n=0;E.stops.forEach(x=>{if(x.c)x.n=++n});ESEL=-1;if(!s.hold&&EPOS){entOrdenar(EPOS.c,'donde estás');return}save();renderEnt();return}
+    let n=0;E.stops.forEach(x=>{if(x.c)x.n=++n});ESEL=-1;if(!s.hold&&(EPOS||jorEnCurso())){entOrdenar(EPOS?EPOS.c:null,'donde estás');return}save();renderEnt();return}
   const bq=e.target.closest('[data-equitar]');if(bq){const k=+bq.dataset.equitar,s=S.ent.stops[k];if(!s||!await rfConfirm(`¿Quitar a ${s.nombre||'esta parada'} de la ruta?\nEl paquete sigue en Paquetes.`))return;
     const p=entPkg(s);if(p){S.ent.quitadas=S.ent.quitadas||[];if(!S.ent.quitadas.includes(p.id))S.ent.quitadas.push(p.id)}
     S.ent.stops.splice(k,1);ESEL=-1;save();render();renderEnt();toast(`${s.nombre||'Parada'} quitada de la ruta`);return}
@@ -1722,7 +1732,7 @@ $('#entList').addEventListener('click',async e=>{if(e.target.closest('[data-edon
   const bv=e.target.closest('[data-edevol]');if(bv){const s=S.ent.stops[+bv.dataset.edevol],p=entPkg(s);if(!s||!await rfConfirm(`¿Devolver el paquete de ${s.nombre||'esta parada'}?\nQueda en la ruta pero desactivado.`))return;
     s.devolver=true;s.hold=false;if(p){s.pkId=p.id;p.devolver=true}ESEL=-1;save();render();renderEnt();toast(`${s.nombre||'Parada'}: para devolver`);return}
   const bvn=e.target.closest('[data-edevno]');if(bvn){const s=S.ent.stops[+bvn.dataset.edevno],p=entPkg(s);if(!s)return;if(!await rfConfirm(`¿Quitar "Devolver" a ${s.nombre||'esta parada'}?\nVuelve a estar activo en Paquetes, Mensajes y Ruta.`))return;delete s.devolver;if(p)delete p.devolver;
-    save();render();if(EPOS){entOrdenar(EPOS.c,'donde estás');return}renderEnt();toast(`${s.nombre||'Parada'} vuelve a la ruta`);return}
+    save();render();if(EPOS||jorEnCurso()){entOrdenar(EPOS?EPOS.c:null,'donde estás');return}renderEnt();toast(`${s.nombre||'Parada'} vuelve a la ruta`);return}
   const bd=e.target.closest('[data-edone]');if(bd){const s=S.ent.stops[+bd.dataset.edone],p=entPkg(s);s.done=true;
     // Hora y ubicación real (GPS del celular en ese momento) de la entrega
     s.at=Date.now();s.gps=EPOS?{lat:EPOS.c[0],lng:EPOS.c[1],acc:Math.round(EPOS.acc)}:null;

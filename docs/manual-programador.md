@@ -199,6 +199,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - `S.jor['AAAA-MM-DD'] = {ini:{t,c}, fin:{t,c}}` (en `NUBE_KEYS`; también va en `p_ruta.jor` del cierre y `repCierres` lo junta en `REPC.jor`). `#jorBar` lo pinta `jorRender()` (desde `renderEnt`); `jorGps()` usa `getCurrentPosition` (o `EPOS`).
 - `repTramos`: al empezar un día, si `repJor(d).ini.t <= primera entrega`, la primera mide desde `ini` (`desdeIni`, "▶" en la fila).
 - `repTotales`: con `ini` y `fin`, cambia la suma de tramos del día por `fin − ini` y suma `hav(última entrega, fin.c)`.
+- **Ruta fija (1.72.0):** `jorEnCurso()` = hay `ini` y no `fin` hoy. Con jornada en curso, `entOrdenar(start,desde,manual)` sin `manual` no llama a OSRM: asigna `s.o` (puesto fijo; los que no tienen, en orden de `n`, al final) y ordena pendientes por `o`, luego Hold por `o`, luego hechas y sin ubicación; renumera `n`. Solo `#entAqui` y el clic de 🎯 pasan `manual=true` (piden `rfConfirm`) y una reordenada real borra `s.o`. ▶ Iniciar también borra `s.o`. Sacar de Hold llama `entOrdenar` aunque no haya GPS si la jornada está en curso.
 
 ## 3c-septies. Tramos del reporte (1.58.0)
 
