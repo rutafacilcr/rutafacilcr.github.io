@@ -24,6 +24,8 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.70.8 · En la ruta junto a la ubicación:** en la tarjeta de *Paquetes*, **🗺️ En la ruta** (o *No está en la ruta*) va en la misma línea, a la par de **● Ubicación lista**. Los botones *Agregar* o *Poner en la ruta* siguen abajo. En *Ruta*, **↩ Quitar devolver** ya no sale desteñido.
+- **1.70.7 · Regresar en naranja (corrección):** **← Regresar** se veía en blanco sobre blanco (el estilo de botón fantasma tapaba el naranja); ahora es naranja con letra blanca. También **↩ Quitar devolver** en *Ruta*. En la tarjeta gris de un devuelto se quita el botón gris repetido: queda solo el naranja de abajo.
 - **1.70.6 · Regresar en naranja:** los botones **↪ Regresar a Ruta**, **↩ Quitar devolver** y **← Regresar** (de Escanear, Importar y Agregar a mano) van en naranja con letra blanca, para que se note que son botones.
 - **1.70.5 · Ícono de código de barras:** los botones **Escanear** (arriba en *Paquetes*) y **Escáner** (en cada tarjeta) usan un ícono de código de barras en vez de la cámara.
 - **1.70.4 · Tel.:** la etiqueta del teléfono en *Paquetes* queda más corta: **Tel. 62700667**.

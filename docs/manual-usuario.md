@@ -676,4 +676,9 @@ En *Paquetes*, debajo del nombre, la tarjeta muestra el teléfono y la guía con
 
 ### Botones de regresar en naranja (1.70.6)
 
-**↪ Regresar a Ruta**, **↩ Quitar devolver** y **← Regresar** van en naranja: aunque la tarjeta esté gris, ese botón sí se puede tocar.
+**↪ Regresar a Ruta**, **↩ Quitar devolver** y **← Regresar** van en naranja con letra blanca: aunque la tarjeta esté gris, ese botón sí se puede tocar (corregido en la 1.70.7).
+
+
+### En la ruta a la par de la ubicación (1.70.8)
+
+En la tarjeta de *Paquetes*, la línea del teléfono dice por ejemplo: **Tel. 62700667 · Guía: 29293393 · ● Ubicación lista · 🗺️ En la ruta**.

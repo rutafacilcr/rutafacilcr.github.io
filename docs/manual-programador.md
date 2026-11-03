@@ -128,6 +128,8 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 ## 3c-quindecies. Tarjeta desactivada por Devolver (1.66.0)
 
+- 1.70.8: el aviso "🗺️ En la ruta" / "No está en la ruta" pasa de `.pkruta` a `.meta` (después de `.pin`); `.pkruta` deja solo los botones `aruta` y Pegar respuesta. `.estop.ok.devol{opacity:1}` para que `.estop.ok` no destiña `.acts3`.
+- 1.70.7: el naranja va con `!important` y selectores `.btn.ghost.subback`, `.btn.sm.subback` y `.estop .btn[data-edevno]` (antes `.btn.ghost` lo dejaba transparente con letra blanca). `.pkg.devol .actions [data-act="dev"]` se oculta. En *Ruta*, `.estop.devol` apaga los hijos con `:has(.acts3)` para que `.acts3` (Quitar devolver) no herede la opacidad.
 - 1.70.6: `.devkeep .btn.devno` y `.btn.subback` con `--accent` (naranja) y letra `--accent-ink` en negrita.
 - 1.70.5: ícono de código de barras en SVG en línea (`svg.bcico`, `currentColor`, 28 px en `.sysbtn` y 16 px en la tarjeta) en lugar del emoji 📷 (no existe emoji de código de barras).
 - 1.70.4: la etiqueta es `Tel. …`.
