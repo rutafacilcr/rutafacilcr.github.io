@@ -113,6 +113,10 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - *Guardar* abre la cámara **dentro del mismo toque** (iPhone no deja abrirla después de un `await`) y agrega con `mkPkg()`. Las fotos de etiqueta no se guardan.
 - Prueba local: las CDN están bloqueadas en el sandbox; se instalan los paquetes con npm y Playwright sirve los archivos interceptando las URL de jsDelivr. Las etiquetas de prueba se generan con JsBarcode.
 
+## 3c-quattuordecies. Botones de sistema (1.65.0)
+
+- `.subbtns` es una cuadrícula de 3 `.sysbtn` (fondo `rgba(120,120,128,.12)`, radio 14 px, ícono de 22 px arriba, fuente del sistema). `#formPanel` es `details.panel.subpn[open]` con el `summary` oculto, `.subback` y `h2#formTitle`. `subAbrir('formPanel')` lo abre y llena `#f-lote`; *Editar* cambia a la pestaña y llama `subAbrir`; guardar, Cancelar y Regresar (con `resetForm` si se editaba) llaman `subAbrir(null)`.
+
 ## 3c-terdecies. Subpaneles de Paquetes (1.64.0)
 
 - `.subbtns` con `data-sub="pnScan|pnImp"`; los paneles son `.panel.subpn` (ocultos sin `.on`). `subAbrir(id)` pone `.on` al panel y `.sub-open` en `#v-paquetes`, que oculta todo lo demás de la sección; `.subback` y el cambio de pestaña llaman `subAbrir(null)`. `#importBtn` regresa al terminar.
