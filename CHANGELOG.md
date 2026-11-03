@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.66.4 · Pines juntos en abanico:** si varias paradas están en el mismo lugar (a menos de ~15 m), cada pin se corre un poco hacia la derecha para que se vea su borde. Las pendientes quedan primero y las entregadas o devueltas al final.
 - **1.66.3 · Pines pendientes encima:** en el mapa de *Ruta*, cuando dos paradas están en el mismo lugar, el pin de la pendiente queda encima del gris de la entregada (antes la entregada podía tapar a la pendiente y parecía desactivada). Orden: seleccionada, pendientes, Hold, cerradas.
 - **1.66.2 · Devueltos desactivados:** los paquetes **devueltos** también se ven grises y sin botones en *Paquetes* y *Mensajes*, con la etiqueta roja **⛔ Devuelto** y el botón activo **↪ Quitar devuelto** (pide confirmar y lo reactiva en las tres pantallas).
 - **1.66.1 · Orden de botones:** en *Paquetes* quedan **Agregar a mano**, **Importar** y **Escanear**.

@@ -357,7 +357,7 @@ details summary{cursor:pointer;font-weight:600}
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.66.3</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.66.4</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -1495,7 +1495,10 @@ async function renderEnt(){entSyncPk();jorRender();
     const ini=EPOS?EPOS.c:(E.inicio||null),pend=conC.filter(s=>!entDone(s));
     L.polyline([...(ini&&pend.length?[ini]:[]),...pend.map(s=>s.c)],{color:'#29b6f6',weight:4,opacity:.85}).addTo(EMAP.layer);
     entMe();
-    E.stops.forEach((s,i)=>{if(!s.c)return;const m=L.marker(s.c,{icon:L.divIcon({className:'',html:`<div class="epin${entDone(s)?' ok':s.hold?' hold':''}${i===ESEL?' sel':''}"><b>${eNum(s)}</b></div>`,iconSize:[30,30],iconAnchor:[15,30]}),zIndexOffset:i===ESEL?3000:entDone(s)?-1000:s.hold?500:1000})
+    // 1.66.4: pines en el mismo lugar (a menos de ~15 m) se corren 12 px cada uno para que se vean todos; las pendientes quedan en su sitio y las cerradas se corren
+    const EPILA={},eOrd=E.stops.map((s,i)=>[s,i]).filter(([s])=>s.c).sort((a,b)=>(entDone(a[0])?1:0)-(entDone(b[0])?1:0)||a[1]-b[1]),eDx={};
+    eOrd.forEach(([s,i])=>{const k=s.c[0].toFixed(4)+','+s.c[1].toFixed(4);const n=EPILA[k]=(EPILA[k]||0)+1;eDx[i]=(n-1)*12});
+    E.stops.forEach((s,i)=>{if(!s.c)return;const m=L.marker(s.c,{icon:L.divIcon({className:'',html:`<div class="epin${entDone(s)?' ok':s.hold?' hold':''}${i===ESEL?' sel':''}"><b>${eNum(s)}</b></div>`,iconSize:[30,30],iconAnchor:[15-(eDx[i]||0),30]}),zIndexOffset:i===ESEL?3000:entDone(s)?-1000:s.hold?500:1000})
       .on('click',()=>entSel(i,true)).bindPopup(`<b>${eNum(s)}. ${esc(s.nombre)}</b>`).addTo(EMAP.layer);EMAP.mk[i]=m});
     EMAP.invalidateSize();if(EMAP.fitted!==E.at){EMAP.fitBounds(conC.map(s=>s.c),{padding:[24,24]});EMAP.fitted=E.at}
   }catch(e){$('#entMap').innerHTML='<p class="small muted" style="padding:12px">No se pudo cargar el mapa. Usá los botones de Waze o Maps.</p>'}
