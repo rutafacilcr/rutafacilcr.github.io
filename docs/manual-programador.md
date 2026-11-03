@@ -136,6 +136,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 ## 3c-quindecies. Tarjeta desactivada por Devolver (1.66.0)
 
+- 1.73.2: `#v-cierres` ya no tiene el primer `.panel` ("Cierres … Próximamente"); empieza con *Reporte de entregas* (`#repLista`).
 - 1.73.1: `.epin.ok` y `.estop.ok .n` sin `line-through` (siguen en gris; `.estop.ok` con opacidad).
 - 1.73.0: `msgOpts()` numera solo (`i+1`) y suma `comp` (Comprensión) y `ext` (Horario extendido); textos en `DEF_COMP` / `DEF_EXT`, guardados en `S.comp` / `S.ext` (en `NUBE_KEYS`, `bind`, `nubeAplicar`, textareas `#m-comp` y `#m-ext`). Al abrir `data-act="sent"` con esas claves marca `p.compSent` / `p.extSent`. CSS: `.pkg .num.tachado` sin `line-through` y `.pkg .name>.coordbtn{margin-left:auto}`.
 - 1.72.3: `guiGrupos()` agrupa por fecha de recibido `repDia(p.ing)` (clave `sin` si no hay `ing`), `guiTit(k)` arma "Paquetes recibidos DD/MM/AAAA"; dentro del PDF, un título "Entregados DD/MM/AAAA (n)" y una tabla por día de entrega (`repDia(repT(p))`). Lo de abajo describe la versión anterior. `fixIng1031()` (llamado en `nubeAplicar` y al abrir *Cierres*) es un arreglo único para la cuenta de Victor; borrarlo cuando esa lista se vacíe.

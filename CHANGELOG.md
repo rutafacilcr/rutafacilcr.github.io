@@ -27,6 +27,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 - **1.75.0 · Página pública y privacidad:** nueva página **conoce.html** que explica qué hace la app, para quién es y qué ahorra, con capturas y videos de datos de ejemplo, preguntas frecuentes y botones para crear cuenta o escribir por WhatsApp. Nueva **privacidad.html** con la política de privacidad (por qué se pide el teléfono, qué datos se guardan, dónde, cuánto tiempo, cómo pedir la baja y cómo recuperar la cuenta). La pantalla de entrar y la de crear cuenta muestran un recuadro corto *¿Qué es?* con enlaces a las dos páginas, y el formulario del cliente enlaza a la privacidad.
 
 ## 2026-11-02
+- **1.73.2 · Cierres sin "Próximamente":** se quitó el panel vacío de arriba; la pestaña empieza directo en *Reporte de entregas*.
 - **1.73.1 · Ruta sin tachado:** en el mapa y la lista de *Ruta* los entregados quedan en gris, sin tachar.
 - **1.73.0 · Mensajes 4 y 5:** en *Mensajes* hay **4. Comprensión** y **5. Horario extendido** con los textos de Victor (editables). En *Paquetes* el número de los entregados ya no va tachado y **1. Coordinar** queda a la derecha del nombre.
 - **1.72.3 · Guías por fecha de recibido:** en *Cierres* sale un solo reporte por fecha de recibido (**Guías · Paquetes recibidos 31/10/2026**) con todos sus entregados; adentro, un título por día de entrega.
