@@ -79,7 +79,21 @@ const CSS=`html.rf-bloq body>*:not(#rfGate){display:none!important}
 #rfGate .rfmuted{color:var(--muted,#6b6560);font-size:14px}
 #rfGate .rfpago{font-family:var(--f-mono,monospace);font-size:15px}
 #rfGate .rflisto{border-color:var(--ok,#2f8a4e);background:var(--ok-bg,#e3f3e8)}
-.rfcuenta a{color:inherit;text-decoration:underline;cursor:pointer}`;
+.rfcuenta a{color:inherit;text-decoration:underline;cursor:pointer}
+.rfcuenta a.rfcod{white-space:nowrap}
+.rfadlg{position:fixed;inset:0;z-index:10000;background:rgba(20,22,26,.5);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:grid;place-items:center;padding:20px;opacity:0;transition:opacity .18s;font-family:var(--f-body,system-ui,sans-serif)}
+.rfadlg.on{opacity:1}
+.rfadlg-box{width:min(360px,100%);max-height:calc(100dvh - 40px);overflow:auto;background:var(--surface,#fff);color:var(--ink,#1c1917);border-radius:20px;padding:22px 20px 16px;box-shadow:0 20px 60px rgba(0,0,0,.28),0 2px 8px rgba(0,0,0,.08);transform:scale(.94);transition:transform .2s cubic-bezier(.2,.9,.3,1.2)}
+.rfadlg.on .rfadlg-box{transform:scale(1)}
+.rfadlg-top{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+.rfadlg-ico{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:21px;background:rgba(242,107,29,.12)}
+.rfadlg-ico.mal{background:rgba(192,57,43,.12)}
+.rfadlg h3{margin:0;font-size:17px;line-height:1.3}
+.rfadlg p{margin:0 0 6px;font-size:14px;line-height:1.5;color:var(--muted,#6b6560)}
+.rfadlg-btns{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;flex-wrap:wrap}
+.rfadlg-btns button{font:inherit;font-size:15px;font-weight:700;padding:10px 16px;border-radius:10px;border:1px solid var(--line,#e2dfdc);background:var(--surface,#fff);color:var(--ink,#1c1917);cursor:pointer}
+.rfadlg-btns .rfadlg-si{background:var(--accent,#f26b1d);border-color:transparent;color:#fff}
+.rfadlg-btns button:focus-visible{outline:2px solid var(--accent,#f26b1d);outline-offset:2px}`;
 
 let gate,body;
 function montar(){
@@ -224,6 +238,16 @@ function vPinAdmin(c){
     try{guardar(await authReq('token?grant_type=password',{email:tel8(c.telefono)+'@'+DOMINIO,password:pin}));ls.set(KA,Date.now());abrir(c)}
     catch(x){er.textContent=x.status===400?'PIN incorrecto':'No se pudo: '+x.message}};
 }
+// 1.75.1: diálogo propio (en vez del confirm/alert del navegador), con el estilo de la app:
+// ícono, título, explicación y botones a la derecha (el principal naranja con letra blanca). si='' = solo un botón.
+function dialogo({ico='❔',titulo,texto='',si='Aceptar',no='Cancelar',mal=false}){return new Promise(fin=>{
+  const w=document.createElement('div');w.className='rfadlg';
+  w.innerHTML=`<div class="rfadlg-box" role="alertdialog" aria-modal="true" aria-labelledby="rfadlgT"><div class="rfadlg-top"><div class="rfadlg-ico${mal?' mal':''}" aria-hidden="true">${ico}</div><h3 id="rfadlgT">${esc(titulo)}</h3></div>${texto?`<p>${texto}</p>`:''}<div class="rfadlg-btns">${no?`<button type="button" class="rfadlg-no">${esc(no)}</button>`:''}<button type="button" class="rfadlg-si">${esc(si)}</button></div></div>`;
+  const cerrar=v=>{document.removeEventListener('keydown',tec);w.classList.remove('on');setTimeout(()=>w.remove(),180);fin(v)};
+  const tec=e=>{if(e.key==='Escape')cerrar(false)};document.addEventListener('keydown',tec);
+  w.onclick=e=>{if(e.target===w)cerrar(false)};w.querySelector('.rfadlg-si').onclick=()=>cerrar(true);const n=w.querySelector('.rfadlg-no');if(n)n.onclick=()=>cerrar(false);
+  document.body.appendChild(w);requestAnimationFrame(()=>w.classList.add('on'));
+})}
 function vListo(c){
   vista(`<div class="rfmsg rflisto"><h2>✅ Cuenta habilitada</h2><p>¡Listo, ${esc((c.nombre||'').split(' ')[0])}! Tu cuenta ya está activa${c.vence_en?' hasta el '+fecha(c.vence_en):''}.</p></div><button class="rfbtn pri" id="rfEntrar">Entrar</button>`);
   body.querySelector('#rfEntrar').onclick=()=>{esperando=false;abrir(c)};
@@ -245,10 +269,12 @@ function pie(c,aviso){
   let s=f.querySelector('.rfcuenta');if(!s){s=document.createElement('span');s.className='rfcuenta';f.appendChild(s)}
   if(!c){s.innerHTML=aviso?`<br>${esc(aviso)}`:'';return}
   const venc=c.rol==='admin'?'':c.en_gracia?` · <b style="color:var(--bad)">venció el ${fecha(c.vence_en)}, pagá para no perder acceso</b>`:c.vence_en?` · al día hasta el ${fecha(c.vence_en)}`:'';
-  s.innerHTML=`<br>Cuenta de ${esc(c.nombre)}${venc} · ${c.rol==='admin'&&!ADMIN?'<a href="admin.html">Panel</a> · ':''}<a id="rfCodPie">Código de recuperación</a> · <a id="rfSalirPie">Salir</a>`;
-  s.querySelector('#rfSalirPie').onclick=()=>{if(confirm('¿Salir de la cuenta en este teléfono?'))salir()};
-  s.querySelector('#rfCodPie').onclick=async()=>{if(!confirm('¿Sacar un código de recuperación nuevo? El anterior deja de servir.'))return;
-    try{const r=await rpc('rf_codigo_nuevo');if(r&&r.codigo){abierta=false;vCodigo(r.codigo,()=>abrir(cuenta||c))}}catch(e){alert(e.status===404?'Falta actualizar la base (supabase.sql 1.74.0).':'No se pudo: '+e.message)}};
+  s.innerHTML=`<br>Cuenta de ${esc(c.nombre)}${venc} · ${c.rol==='admin'&&!ADMIN?'<a href="admin.html">Panel</a> · ':''}<a id="rfCodPie" class="rfcod">🔑 Código de recuperación</a> · <a id="rfSalirPie">Salir</a>`;
+  s.querySelector('#rfSalirPie').onclick=async()=>{if(await dialogo({ico:'🚪',titulo:'¿Salir de la cuenta?',texto:'Para volver a entrar en este teléfono vas a necesitar tu número y tu PIN. Tus paquetes quedan guardados en la nube.',si:'Salir'}))salir()};
+  s.querySelector('#rfCodPie').onclick=async()=>{
+    if(!await dialogo({ico:'🔑',titulo:'Código de recuperación',texto:'Te damos un código de 12 letras para <b>poner un PIN nuevo</b> o <b>pasar la cuenta a otro celular</b> sin esperar al administrador.<br><br>Si ya tenías uno, el anterior deja de servir.',si:'Sacar código'}))return;
+    try{const r=await rpc('rf_codigo_nuevo');if(r&&r.codigo){abierta=false;vCodigo(r.codigo,()=>abrir(cuenta||c))}}
+    catch(e){dialogo({ico:'⚠️',mal:true,titulo:'No se pudo sacar el código',texto:esc(e.status===404?'Falta actualizar la base de datos (supabase.sql 1.74.0). Avisale al administrador.':e.message||'Revisá que tengás internet.'),si:'Entendido',no:''})}};
 }
 async function revisar(manual){
   if(!ON)return;
