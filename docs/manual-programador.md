@@ -372,6 +372,7 @@ respuestas(id, token UNIQUE, guia, horario, senas, recibe, lat, lng,
 | `--accent` / `--accent-ink` | `#f26b1d` / `#ffffff` | `#f5803a` / `#1f2125` | Acción principal, borde de pestañas, línea de ruta, "Fácil" del título. |
 | `--bg` / `--surface` | `#f5f5f4` / `#ffffff` | `#121315` / `#1b1d21` | Fondo / tarjetas. |
 | `--ink` / `--muted` / `--line` | `#1c1917` / `#6b6560` / `#e2dfdc` | `#ececeb` / `#a8a4a0` / `#2e3137` | Texto y bordes. |
+| `--accent-text` | `#b8470f` | = `--accent` | Texto naranja sobre fondo claro (pestaña seleccionada, 1.76.2): `#f26b1d` sobre blanco da 3,0:1 y no pasa; `#b8470f` da 5,3:1. |
 | `--wa` | `#1f9d55` | `#3cc37a` | Solo botones de WhatsApp. |
 | `--ok` `--warn` `--bad` | verde / naranja / rojo | | Estados. No se usan como acento. |
 
@@ -394,6 +395,8 @@ Antes era Barlow Condensed en mayúsculas; se cambió porque se veía menos prof
 - `.pkg`: tarjeta de paquete (grilla de 2 columnas) con número grande a la izquierda. Todo bloque nuevo dentro de la tarjeta va en `grid-column:2` (como `.actions` y `.ev`), si no cae bajo el número y aprieta el contenido.
 - `.stop` + `.dot`: línea de ruta punteada naranja entre paradas.
 - `nav.tabs`: barra inferior fija tipo app (fondo `--surface`, activa en `--accent` con raya arriba). Respeta `safe-area-inset-bottom` del iPhone; `main.wrap` deja 96 px abajo y el `.toast` sube a 84 px para no taparse.
+- Tarjeta desactivada (`.pkg.devol`, `.estop.devol`, 1.76.2): **no usar `opacity` ni `filter` sobre el texto** (Lighthouse lo marca y no se lee). El texto queda en `--ink`/`--muted` sobre el fondo gris; lo que no se toca sigue con `pointer-events:none` y los botones se ven apagados con fondo transparente, letra `--muted` y borde punteado. La etiqueta `.devtag` (⛔ Devuelto) y el botón naranja de regresar no se apagan.
+- Contraste mínimo 4,5:1 para texto normal en ambos temas. Para revisarlo: axe-core `color-contrast` (ver manual técnico, *Contraste 1.76.2*).
 - `.sheet`: hojas que suben desde abajo (prueba de entrega, pegar respuesta, evidencia, escanear etiquetas).
 - `.toast`: confirmación breve abajo (encima de las hojas).
 
