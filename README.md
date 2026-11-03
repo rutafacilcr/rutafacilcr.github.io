@@ -22,6 +22,7 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
   - ▶ Iniciar / ■ Finalizar entregas para el reporte.
   - Vehículo 🏍️ 🚙 🚐 (carro por defecto), que va en el WhatsApp "Estamos en camino 🏍️…".
   - 📋 Lista en orden.
+  - 🚦 Tráfico en vivo para la próxima parada (TomTom, plan gratis con clave propia).
   - En cada parada: Hold, ⛔ Devolver y ✓ Entregado. ✓ Entregado guarda la fecha y la hora reales.
 - **Cierres:**
   - Un reporte PDF horizontal por cada grupo de *Entregas del …* (el día en que se recibieron los paquetes), también de listas ya vaciadas.

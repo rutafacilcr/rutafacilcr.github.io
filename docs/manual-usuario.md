@@ -646,3 +646,17 @@ Un paquete tiene **una sola parada** en *Ruta*. Si tocás **➕ Agregar a la rut
 
 - **Eliminar** (en *Paquetes*) borra el paquete de la lista, de *Mensajes* y de *Ruta*. Pide confirmar y no se puede deshacer.
 - **🗑️ Quitar** (en *Ruta*) solo saca la parada de la ruta. El paquete sigue en *Paquetes* y en *Mensajes*, y se puede volver a meter con **➕ Agregar a la ruta**.
+
+
+### Tráfico en vivo (1.70.0)
+
+El tiempo a la **próxima parada** puede tomar en cuenta el tráfico de ese momento (presas, accidentes, cierres). Es gratis.
+
+**Activarlo (una sola vez):**
+1. Entrá a **developer.tomtom.com** y creá una cuenta. Es gratis y no pide tarjeta.
+2. Abrí **Keys** (o *API Keys*) y copiá la clave.
+3. En *Ruta*, tocá **🚦 Tráfico** y pegá la clave. El botón se pone verde y dice **🚦 Tráfico en vivo**.
+
+**Cómo se ve:** la próxima parada muestra **🚦 ~10 min (+5 tráfico)**: 10 minutos con el tráfico de ahora, 5 de ellos por el tráfico. Se actualiza cada 2 minutos o cuando avanzás 300 m. Las demás paradas siguen con 🚗 (estimado sin tráfico). El WhatsApp de "en camino" de esa parada manda ese tiempo.
+
+Tocá el botón otra vez para apagarlo o encenderlo. Si dice **"revisar clave"**, tocá y pegá la clave de nuevo. El plan gratis permite 2.500 consultas al día y la app usa unas 300 en un día largo.

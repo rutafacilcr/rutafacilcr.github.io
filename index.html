@@ -111,7 +111,7 @@ nav.tabs .n:empty{display:none}
 .epin.hold{background:#f5c518}.epin.hold b{color:#1f2125}.epin.ok{background:#9aa0a6;text-decoration:line-through}.epin.sel{background:var(--accent);width:36px;height:36px}.epin.hold.sel{background:#f5c518}
 .estop{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;cursor:pointer}
 .estop.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
-.estop.ok{opacity:.6}.estop.devol{background:#eceef0}.estop.devol>*:not(.acts3){opacity:.45;filter:grayscale(1);pointer-events:none}.estop.devol .acts3{align-items:center}.estop.devol .acts a,.estop.devol .acts button,.estop.devol .acts2 a,.estop.devol .acts2 button,.estop.devol .eub{pointer-events:none;opacity:.45}.estop.devol .acts3{filter:none}.coordbtn{display:inline-flex;align-items:center;font:600 12px var(--f-body);padding:5px 10px;border-radius:999px;background:var(--road);color:var(--road-ink);border:1px solid var(--road);text-decoration:none;min-height:30px;vertical-align:1px;white-space:nowrap}.coordbtn.off{background:var(--surface);color:var(--muted);border-color:var(--line)}.vehsel{display:inline-flex;gap:4px;vertical-align:middle}.vehsel button{font-size:20px;line-height:1;min-width:40px;min-height:34px;padding:4px 6px;border-radius:10px;border:1px solid var(--line);background:var(--surface);cursor:pointer;filter:grayscale(1);opacity:.6}.vehsel button.on{filter:none;opacity:1;border-color:#f26b1d;box-shadow:0 0 0 2px rgba(242,107,29,.25)}.replin{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line)}.replin:first-child{border-top:0}.replin .btn{width:auto;flex:none}.chips1{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;vertical-align:1px}button.devtag{border:0;cursor:pointer;font-family:inherit;min-height:28px}button.devtag:active{transform:scale(.96)}.devtag,.chip.devtag{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:#5f6368;color:#fff;vertical-align:1px}.estop .acts3 .edevol{font-weight:700;padding:7px 14px;color:var(--bad);border-color:var(--bad)}
+.estop.ok{opacity:.6}.estop.devol{background:#eceef0}.estop.devol>*:not(.acts3){opacity:.45;filter:grayscale(1);pointer-events:none}.estop.devol .acts3{align-items:center}.estop.devol .acts a,.estop.devol .acts button,.estop.devol .acts2 a,.estop.devol .acts2 button,.estop.devol .eub{pointer-events:none;opacity:.45}.estop.devol .acts3{filter:none}.coordbtn{display:inline-flex;align-items:center;font:600 12px var(--f-body);padding:5px 10px;border-radius:999px;background:var(--road);color:var(--road-ink);border:1px solid var(--road);text-decoration:none;min-height:30px;vertical-align:1px;white-space:nowrap}.coordbtn.off{background:var(--surface);color:var(--muted);border-color:var(--line)}.ttbtn-on{background:#e8f6ee;border-color:#1f9d55;color:#146c3b;font-weight:700}.vehsel{display:inline-flex;gap:4px;vertical-align:middle}.vehsel button{font-size:20px;line-height:1;min-width:40px;min-height:34px;padding:4px 6px;border-radius:10px;border:1px solid var(--line);background:var(--surface);cursor:pointer;filter:grayscale(1);opacity:.6}.vehsel button.on{filter:none;opacity:1;border-color:#f26b1d;box-shadow:0 0 0 2px rgba(242,107,29,.25)}.replin{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line)}.replin:first-child{border-top:0}.replin .btn{width:auto;flex:none}.chips1{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;vertical-align:1px}button.devtag{border:0;cursor:pointer;font-family:inherit;min-height:28px}button.devtag:active{transform:scale(.96)}.devtag,.chip.devtag{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:#5f6368;color:#fff;vertical-align:1px}.estop .acts3 .edevol{font-weight:700;padding:7px 14px;color:var(--bad);border-color:var(--bad)}
 .estop .n{width:30px;height:30px;border-radius:50%;background:#d7261e;color:#fff;font:700 13px var(--f-body);display:flex;align-items:center;justify-content:center;grid-row:span 2}
 .estop.ok .n{background:#9aa0a6;text-decoration:line-through;text-decoration-thickness:2px}#pkgList .pkg.sinub{border:2px solid var(--bad,#d93025)}.pkg.entregado{background:#eceef0;filter:grayscale(1);opacity:.6}.pkg.entregado:focus-within{opacity:1}.pkg .num.tachado{text-decoration:line-through;text-decoration-thickness:2px;color:#9aa0a6}.estop .n.no{background:#f5c518;color:#1f2125}
 .estop .dir{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -327,6 +327,7 @@ details summary{cursor:pointer;font-weight:600}
     <span class="vehsel" id="vehSel" role="group" aria-label="Vehículo"><button type="button" data-veh="moto" title="Moto">🏍</button><button type="button" data-veh="carro" title="Carro">🚙</button><button type="button" data-veh="buseta" title="Buseta">🚐</button></span>
     <button class="btn sm" id="entPick" type="button">🎯 Elegir en el mapa</button>
     <button class="btn sm" id="entLista" type="button">📋 Lista</button>
+    <button class="btn sm" id="ttBtn" type="button" title="Tiempo a la próxima parada con el tráfico de ahora (TomTom, gratis)">🚦 Tráfico</button>
   </div>
   <div class="entbus" id="entBus" hidden><input type="search" id="entBuscar" placeholder="🔍 Buscar cliente, teléfono o guía" autocomplete="off" enterkeyhint="search"><span class="small muted" id="entBusN"></span></div>
   <div class="entmap" id="entMap" hidden></div>
@@ -374,7 +375,7 @@ details summary{cursor:pointer;font-weight:600}
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.69.9</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.70.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -1301,6 +1302,10 @@ $('#supDiag').onclick=async()=>{let t=`RutaFácil ${$('#appVer').textContent} ·
 // Vehículo (1.55.0): se elige uno de los 3 y se guarda en S.veh (carro por defecto desde la 1.69.2). Todavía no cambia tiempos, km ni ruta; su uso viene después.
 function vehPintar(){const v=['moto','carro','buseta'].includes(S.veh)?S.veh:'carro';document.querySelectorAll('#vehSel [data-veh]').forEach(b=>{b.classList.toggle('on',b.dataset.veh===v);b.setAttribute('aria-pressed',b.dataset.veh===v)})}
 $('#vehSel').onclick=e=>{const b=e.target.closest('[data-veh]');if(!b)return;S.veh=b.dataset.veh;save();vehPintar();toast(`Vehículo: ${b.title}`)};vehPintar();
+$('#ttBtn').onclick=()=>{
+  if(!S.ttKey||TT.err){const k=(prompt('Tráfico en vivo (gratis)\n\n1. Entrá a developer.tomtom.com y creá una cuenta (no pide tarjeta).\n2. En tu cuenta, abrí "Keys" y copiá la clave (API Key).\n3. Pegala aquí:',S.ttKey||'')||'').trim();
+    if(!k)return;S.ttKey=k;S.ttOn=true;TT.err='';TT.k='';save();ttPintar();toast('Tráfico en vivo activado');ttPedir(true);return}
+  S.ttOn=S.ttOn===false;save();TT.k='';ttPintar();entEta(true);toast(S.ttOn?'Tráfico en vivo activado':'Tráfico en vivo apagado');if(S.ttOn)ttPedir(true)};
 $('#entLista').onclick=()=>{const E=S.ent;if(!E||!E.stops)return;const erk=s=>entDone(s)?2:s.c?(s.hold?0.5:0):1;let k=0;
   const L=E.stops.map((s,i)=>[s,i]).sort((a,b)=>erk(a[0])-erk(b[0])||a[1]-b[1]).map(([s])=>{const p=entPkg(s);return `${++k}. #${eNum(s)} ${s.nombre||''}${p&&p.tel?' · '+p.tel:''}${s.devolver?' ⛔ devolver':entDev(s)?' ↩ devuelto':entDone(s)?' ✓ entregado':s.hold?' ⏸ hold':!s.c?' (sin ubicación)':''}`});
   $('#diagTitle').textContent='📋 Ruta en orden';$('#diagTxt').textContent=`${E.nombre} · ${new Date().toLocaleString('es-CR')}\n\n`+L.join('\n');$('#diagSheet').hidden=false;document.body.style.overflow='hidden'};
@@ -1533,7 +1538,7 @@ $('#jorBar').addEventListener('click',async e=>{const b=e.target.closest('[data-
   b.disabled=true;b.textContent='Tomando ubicación…';const c=await jorGps(),t=Date.now();
   if(a==='ini')S.jor[k]={ini:{t,c}};else S.jor[k]={...S.jor[k],fin:{t,c}};
   save();jorRender();toast(a==='ini'?`Entregas iniciadas a las ${jorHm(t)}${c?'':' (sin GPS)'}`:`Entregas finalizadas a las ${jorHm(t)}`)});
-async function renderEnt(){entSyncPk();jorRender();vehPintar();
+async function renderEnt(){entSyncPk();jorRender();vehPintar();ttPintar();
   // La ruta se arma el día antes: vale la de hoy o la de mañana (fecha local del celular).
   const dia=d=>'Ruta '+new Date(Date.now()+d*864e5).toLocaleDateString('en-CA'),hoy=dia(0),man=dia(1);const E=S.ent,LI=$('#entList');
   if(!E||!E.stops||!E.stops.length){$('#entMap').hidden=true;$('#entTools').hidden=true;$('#entAqui').hidden=true;$('#entGps').hidden=true;$('#entBus').hidden=true;$('#entInfo').textContent=`Cargá el archivo de la ruta ("${hoy}.xlsx" o "${man}.xlsx")`;LI.innerHTML='<div class="empty">Tocá <b>📂 Cargar ruta</b> y elegí el Excel de la ruta del día. Arriba sale el mapa con las paradas en orden y abajo la lista: tocá una parada para verla en el mapa e ir con Waze o Google Maps.</div>';return}
@@ -1593,12 +1598,31 @@ async function osrmPedir(){
   catch(e){OSRM.at=Date.now()}finally{OSRM.busy=false}}
 // WhatsApp desde Ruta: mensaje de "en camino" con el tiempo estimado que muestra la parada (si no hay, sin el tiempo)
 function entWaUrl(wa,t){return `https://wa.me/${wa}?text=${encodeURIComponent(`Estamos en camino ${vehIcono()}, le estaremos entregando su paquete${t?`, en ${t}`:''}\n\n*IMPORTANTE*\n- Mostrar la cédula para verificar la etiqueta del paquete.\n\n* POLÍTICA DE ENTREGA*\n- Si previo se había coordinado la entrega y se llega al lugar  y nadie puede recibirlo, el paquete será devuelto a bodega para una reprogramacion.`)}`}
+// Tráfico en vivo (1.70.0): TomTom Routing con traffic=true, plan gratis (2.500 consultas al día, sin tarjeta).
+// Solo se consulta la PRÓXIMA parada, cada 2 min o si te moviste 300 m: unas 300 consultas en un día largo.
+// La clave la pega el repartidor (🚦 Tráfico) y viaja con su lista en la nube; no está en el repositorio.
+const TT={at:0,pos:null,k:'',min:null,del:null,busy:false,err:''};
+function ttActivo(){return !!(S.ttKey&&S.ttOn!==false)}
+function entProxima(){const E=S.ent;if(!E||!E.stops)return null;return E.stops.find(s=>s.c&&!entDone(s)&&!s.hold)||E.stops.find(s=>s.c&&!entDone(s))||null}
+function ttPintar(){const b=$('#ttBtn');if(!b)return;b.classList.toggle('ttbtn-on',ttActivo()&&!TT.err);b.textContent=ttActivo()?(TT.err?'🚦 Tráfico: revisar clave':'🚦 Tráfico en vivo'):'🚦 Tráfico'}
+async function ttPedir(force){if(!ttActivo()||!EPOS||TT.busy)return;const nx=entProxima();if(!nx)return;const k=ckey(nx.c);
+  if(!force&&k===TT.k&&TT.pos&&hav(TT.pos,EPOS.c)<0.3&&Date.now()-TT.at<120000)return;if(!force&&Date.now()-TT.at<20000)return;
+  TT.busy=true;TT.at=Date.now();const pos=EPOS.c.slice();
+  try{const r=await fetch(`https://api.tomtom.com/routing/1/calculateRoute/${pos[0]},${pos[1]}:${nx.c[0]},${nx.c[1]}/json?key=${encodeURIComponent(S.ttKey)}&traffic=true&travelMode=car&routeType=fastest`);
+    if(r.status===401||r.status===403){TT.err=r.status===403?'límite o clave':'clave';ttPintar();return}
+    const j=await r.json(),sm=j&&j.routes&&j.routes[0]&&j.routes[0].summary;
+    if(sm){TT.err='';TT.k=k;TT.pos=pos;TT.min=sm.travelTimeInSeconds/60;TT.del=(sm.trafficDelayInSeconds||0)/60;ttPintar();entEta(true)}}
+  catch(e){}finally{TT.busy=false}}
 function entEta(sinPedir){
+  if(!sinPedir)ttPedir();
   if(!sinPedir&&EPOS&&(!OSRM.pos||hav(OSRM.pos,EPOS.c)>0.15||Date.now()-OSRM.at>120000)&&Date.now()-OSRM.at>8000)osrmPedir();
   const fresco=OSRM.pos&&EPOS&&hav(OSRM.pos,EPOS.c)<=0.3;
   document.querySelectorAll('[data-eta]').forEach(el=>{const s=S.ent&&S.ent.stops[+el.dataset.eta];if(!EPOS||!s||!s.c){el.textContent='';return}
-    const o=fresco&&OSRM.r[ckey(s.c)],km=o?o[0]:hav(EPOS.c,s.c),base=o?o[1]*1.3:0,m=Math.max(1,Math.round(Math.max(base,km/18*60)+1));
-    el.dataset.min=m;el.innerHTML=`🚗 ~${fmtT(m)}<br>${km<1?Math.round(km*1000)+' m':km.toFixed(1).replace('.',',')+' km'}`;el.title=o?'Por calle (OSRM), sin tráfico':'Aproximado en línea recta, sin tráfico'})}
+    const o=fresco&&OSRM.r[ckey(s.c)],km=o?o[0]:hav(EPOS.c,s.c),base=o?o[1]*1.3:0;let m=Math.max(1,Math.round(Math.max(base,km/18*60)+1));
+    // Con tráfico en vivo: la próxima parada usa el tiempo de TomTom (+1 min de parquear) si es de hace menos de 6 min y desde cerca de donde estás
+    const tt=ttActivo()&&!TT.err&&TT.min!=null&&TT.k===ckey(s.c)&&TT.pos&&hav(TT.pos,EPOS.c)<0.5&&Date.now()-TT.at<360000;
+    if(tt)m=Math.max(1,Math.round(TT.min+1));const dl=tt&&TT.del>=1?Math.round(TT.del):0;
+    el.dataset.min=m;el.innerHTML=`${tt?'🚦':'🚗'} ~${fmtT(m)}${dl?` <span style="color:var(--bad,#c0392b)">(+${dl} tráfico)</span>`:''}<br>${km<1?Math.round(km*1000)+' m':km.toFixed(1).replace('.',',')+' km'}`;el.title=tt?'Con el tráfico de ahora (TomTom)':o?'Por calle (OSRM), sin tráfico':'Aproximado en línea recta, sin tráfico'})}
 // Tiempo estimado de toda la ruta: desde tu punto, por cada parada pendiente en orden, hasta la última; +3 a 5 min por entrega
 const RTOT={k:'',at:0,busy:false,r:null,geo:null};
 // Línea de la ruta en el mapa (1.68.0): por las calles (trazo de OSRM, gratis) si ya llegó para estas mismas paradas; si no, en línea recta
@@ -1617,7 +1641,7 @@ function entTotal(sinPedir){const el=$('#entTot'),E=S.ent;if(!el)return;if(!E){e
   const n=pend.length,lo=maneja+n*3,hi=maneja+n*5,ahora=new Date(),fin=m=>hm(ahora.getHours()*60+ahora.getMinutes()+m);
   const corto=m=>fmtT(m).replace(' min','m').replace(' h ','h ');el.innerHTML=`<b>⏱ Ruta: ${corto(lo)} – ${corto(hi)}</b><br>🛣️ ${km.toFixed(1).replace('.',',')} km · ${n} entregas<br>Inicio ${fin(0)} · fin ${fin(lo)} – ${fin(hi)}`;
   el.title=`Manejo ${fmtT(maneja)} ${calle?'por calle':'aprox. en línea recta'} + 3 a 5 min por entrega`}
-setInterval(()=>{if(S.ent&&!$('#v-entrega').hidden)entTotal(true)},60000); // la hora de inicio es la actual: se refresca cada minuto
+setInterval(()=>{if(S.ent&&!$('#v-entrega').hidden){entTotal(true);ttPedir()}},60000); // la hora de inicio es la actual: se refresca cada minuto
 function entMe(){entEta();entTotal();if(!EMAP||!window.L)return;const c=EPOS?EPOS.c:null;
   if(!c){if(EMAP.me){EMAP.removeLayer(EMAP.me);EMAP.me=null}return}
   if(!EMAP.me)EMAP.me=L.marker(c,{icon:L.divIcon({className:'',html:'<div class="mepos"></div>',iconSize:[18,18],iconAnchor:[9,9]}),zIndexOffset:2000,interactive:false}).addTo(EMAP);else EMAP.me.setLatLng(c)}
@@ -1692,7 +1716,7 @@ document.querySelector('[data-tab="entrega"]').addEventListener('click',()=>{req
 // ===== Lista en la nube: los mismos paquetes en el teléfono y en la PC (rf_lista_leer / rf_lista_guardar) =====
 // S.syncVer = última versión de la nube que vio este aparato; S.baseIds = ids que había en ese momento
 // (sirven para saber qué se borró en un lado y qué es nuevo). S.dirty = hay cambios sin subir.
-const NUBE_KEYS=['nums','jor','ent','pk','coord','form','camino','pref','fecha','hora','start','vel','min','ret','route','veh'];
+const NUBE_KEYS=['nums','jor','ent','pk','coord','form','camino','pref','fecha','hora','start','vel','min','ret','route','veh','ttKey','ttOn'];
 const nubeMsg=t=>{const el=$('#nubeInfo');if(el)el.textContent=t?' · '+t:''};
 // Se sube todo lo que había en la nube (aunque esta versión no lo conozca) más las claves propias, para no borrar datos de otros aparatos.
 function nubeDatos(){const d={...(S.nubeOtros||{})};NUBE_KEYS.forEach(k=>{if(S[k]!==undefined)d[k]=S[k]});if(S.ex)d.pk=[];return d}
