@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-03
+- **1.75.0 · Página pública y privacidad:** nueva página **conoce.html** que explica qué hace la app, para quién es y qué ahorra, con capturas y videos de datos de ejemplo, preguntas frecuentes y botones para crear cuenta o escribir por WhatsApp. Nueva **privacidad.html** con la política de privacidad (por qué se pide el teléfono, qué datos se guardan, dónde, cuánto tiempo, cómo pedir la baja y cómo recuperar la cuenta). La pantalla de entrar y la de crear cuenta muestran un recuadro corto *¿Qué es?* con enlaces a las dos páginas, y el formulario del cliente enlaza a la privacidad.
 - **1.74.0 · Listo para 150 mensajeros:** los datos de cada cuenta nunca se mezclan (ni en la base ni en un celular compartido); la app gasta mucho menos del plan gratis (la nube, las respuestas y los cierres ya no se bajan enteros cada vez); las fotos de entrega quedan en el celular de fábrica (se pueden subir desde el Panel); los cierres se guardan 15 días; **código de recuperación** para poner un PIN nuevo o pasar la cuenta a otro celular sin esperar al administrador (5 intentos fallidos bloquean 30 minutos); el Panel pide el PIN cada 12 horas y muestra el uso del plan gratis. Corregido: con más de 300 paquetes no llegaban las respuestas del formulario; listas de cientos de paquetes se pintan unas 8 veces más rápido. **Hay que volver a correr `supabase.sql`.**
 
 ## 2026-11-02

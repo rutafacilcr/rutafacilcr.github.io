@@ -36,6 +36,14 @@ Servicios externos sin cuenta: wa.me (WhatsApp), Google Maps, Waze
 - Cada push a `main` dispara el workflow automático *pages-build-deployment* (1 a 2 minutos). Se revisa en la pestaña **Actions**.
 - Los celulares pueden tener la versión anterior en caché: GitHub Pages manda el HTML con `Cache-Control: max-age=600` (10 min). No hay service worker. La app compara su versión con la publicada (`checkUpdate()`, al abrir y al volver a la app) y, si cambió, muestra *Actualizar*, que recarga con `?v=<versión>` para saltarse el caché.
 
+### Páginas públicas (1.75.0)
+
+- `conoce.html` y `privacidad.html` son HTML estáticos **sin** `config.js` ni `auth.js`: no consultan Supabase y se ven sin cuenta. Solo cargan la fuente de Google Fonts; los videos (`videos/*.mp4`, 2–3 MB) van con `preload="none"` y solo se bajan al darles Play.
+- Las capturas de `img/` (`demo-*.jpg`, `video-*.jpg`) se sacaron con Playwright de la app en modo ejemplo (sin Supabase, la app carga la lista `EXAMPLE` de nombres inventados). **Nunca** poner capturas con datos de clientes reales.
+- La política promete borrar una cuenta dada de baja en máximo 30 días. Para hacerlo: borrar el usuario en Supabase **Authentication > Users** (por `on delete cascade` se borran `rf_perfiles`, `rf_pagos`, `rf_eventos`, `rf_listas` y `rf_cierres`) y borrar sus fotos en **Storage > evidencias** y sus filas de `entregas` (columna `owner_id`).
+- La política describe lo que trae la 1.74.0 (PR #10): código de recuperación cifrado (bcrypt), 5 intentos y bloqueo de 30 min, cierres guardados 15 días, fotos 30 días en el celular y en la nube solo si el administrador lo activa. Mergear el #10 antes o junto con este.
+- Si cambia algún servicio externo (Supabase, OSRM, OpenStreetMap, TomTom, Resend), el número de soporte o el proceso de recuperación, actualizar `privacidad.html` y su fecha.
+
 ### Mudanza a la organización (30-oct-2026)
 
 - **Por qué:** el link viejo (`victormenav.github.io/RutafacilCR`) mostraba el nombre del dueño. Un dominio propio (ej. subdominio de infolinkcr.com) se descartó.

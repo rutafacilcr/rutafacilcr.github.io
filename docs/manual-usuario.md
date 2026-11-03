@@ -67,6 +67,15 @@ Vas a ver el pin naranja con el paquete sobre fondo grafito. Después abrí siem
 
 **Importante:** instalá el ícono **antes** de crear la cuenta o entrar. En iPhone, Safari y el ícono cuentan como teléfonos distintos.
 
+### Conocer la app antes de crear la cuenta (1.75.0)
+
+En la pantalla de entrar hay un recuadro corto que explica la app, con dos enlaces:
+
+- **Ver cómo funciona** abre https://rutafacilcr.github.io/conoce.html: para quién es, qué te ahorra, los 4 pasos con capturas, videos de un minuto y preguntas frecuentes. Se ve sin cuenta, así que podés mandar ese link a un compañero que quiera probarla. Las capturas y los videos tienen datos inventados.
+- **Privacidad** abre https://rutafacilcr.github.io/privacidad.html: por qué se pide tu número, qué datos se guardan, quién los ve y cómo pedir la baja (WhatsApp al 6270 0666 desde el número de tu cuenta).
+
+El formulario que llena el cliente también tiene el enlace a *Privacidad* al final.
+
 ### Tu cuenta
 
 La app pide entrar con **tu número de teléfono** y un **PIN de 6 números**.
