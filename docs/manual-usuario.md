@@ -466,7 +466,7 @@ Cuando marcás **⛔ Devolver** en *Ruta*, ese paquete queda gris y sin botones 
 
 ### Escanear, Importar y Agregar a mano (1.65.0)
 
-Debajo de los contadores hay tres botones: **📷 Escanear**, **📥 Importar** y **✍️ Agregar a mano**. Cada uno abre su pantalla con **← Regresar**. **Editar** en un paquete abre la pantalla de *Agregar a mano* con sus datos; al guardar volvés a la lista.
+Debajo de los contadores hay tres botones: **✍️ Agregar a mano**, **📥 Importar** y **📷 Escanear** (en ese orden desde la 1.66.1). Cada uno abre su pantalla con **← Regresar**. **Editar** en un paquete abre la pantalla de *Agregar a mano* con sus datos; al guardar volvés a la lista.
 
 ### Escanear e Importar (1.64.0)
 
