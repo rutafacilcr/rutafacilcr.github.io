@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.69.4 · Regresar a Ruta:** en *Paquetes*, el botón de un paquete devuelto dice **↪ Regresar a Ruta** (antes "Quitar devuelto"); hace lo mismo. En *Mensajes* no cambia.
 - **1.69.3 · Mensajes en orden de ruta:** en *Mensajes* los clientes salen en el mismo orden que en *Ruta* (si la ruta va 1, 29, 65, Mensajes también); se mantiene que Hold, entregados y devueltos van al final en gris. Los que no están en la ruta van después.
 - **1.69.2 · Carro por defecto:** en *Ruta* el vehículo marcado de entrada es el 🚙 carro (antes la moto); si elegís otro, se queda guardado.
 - **1.69.1 · Sin título en Paquetes y documentación al día:** se quita el título *Lista del día* (las tarjetas van justo después del buscador). Manuales y README actualizados con todo lo de la 1.53 a la 1.69: resumen "La app hoy" en el manual de usuario, detalles de pantalla, datos y funciones nuevas.
