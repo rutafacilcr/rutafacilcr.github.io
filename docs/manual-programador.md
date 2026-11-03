@@ -115,6 +115,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 ## 3c-quindecies. Tarjeta desactivada por Devolver (1.66.0)
 
+- 1.69.0: `rfConfirm(texto)` → `Promise<boolean>` reemplaza todos los `confirm()` (las funciones que lo usan pasaron a `async`). Primera línea = título; la etiqueta del botón sale del verbo de la pregunta; rojo (`.mal`) para borrar/quitar/vaciar/devolver/finalizar o textos de riesgo. `cTxt(c)` guarda coordenadas con 6 decimales (`mkPkg`, Excel, Pegar respuesta, `entPonerC`); `parseCoord` acepta además un texto que sea solo `lat,lng` con 1-2 decimales. *Editar* rellena con `||""` y compara teléfono por dígitos y ubicación por coordenadas.
 - 1.68.0: `osrmCadena` pide `overview=full&geometries=geojson` y guarda `RTOT.geo` ([lat,lng]); `entLinea()` pone en `EMAP.linea` el trazo si `RTOT.k` coincide con las paradas pendientes (si no, recta). Se llama al dibujar el mapa y cuando llega la respuesta.
 - 1.67.8: `#vehSel` va dentro de `#entTools` antes de `#entPick`, con `margin-left:auto` y botones de 32 px; queda a la derecha de `#entTot`.
 - 1.67.5: al inicio del `<script>` principal, `window.RF_TAB(t)` y un listener de `click` en captura sobre `nav.tabs [role=tab]` cambian la pestaña sin depender del resto; un listener de `error` muestra una vez un aviso rojo con mensaje, línea y versión.

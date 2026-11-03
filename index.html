@@ -52,6 +52,13 @@ h1 span{color:var(--accent)}
 .daypill{font-family:var(--f-mono);font-size:12px;background:rgba(255,255,255,.12);padding:4px 10px;border-radius:999px}
 main.wrap{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 header.top{border-bottom:3px solid var(--accent)}
+.rfdlg{position:fixed;inset:0;z-index:60;background:rgba(20,22,26,.45);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:flex;align-items:flex-end;justify-content:center;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));opacity:0;transition:opacity .15s}
+.rfdlg.on{opacity:1}.rfdlg-box{width:100%;max-width:420px;background:var(--surface);color:var(--ink);border-radius:20px;padding:20px 18px 16px;box-shadow:0 12px 40px rgba(0,0,0,.25);transform:translateY(16px);transition:transform .18s ease-out;text-align:center}
+.rfdlg.on .rfdlg-box{transform:none}@media (min-width:600px){.rfdlg{align-items:center}}
+.rfdlg-ico{width:48px;height:48px;margin:0 auto 10px;border-radius:50%;display:grid;place-items:center;font-size:24px;background:rgba(242,107,29,.12)}.rfdlg-ico.mal{background:rgba(192,57,43,.12)}
+.rfdlg h3{margin:0 0 6px;font:700 18px/1.3 var(--f-body)}.rfdlg p{margin:0 0 4px;font-size:14px;line-height:1.45;color:var(--muted);white-space:pre-line;text-align:center}
+.rfdlg-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}.rfdlg-btns button{min-height:46px;border:0;border-radius:12px;font:600 15px var(--f-body);cursor:pointer}
+.rfdlg-no{background:rgba(120,120,128,.14);color:var(--ink)}.rfdlg-si{background:var(--accent);color:#fff}.rfdlg-si.mal{background:#c0392b;color:#fff}.rfdlg-btns button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .devtag.on{background:#c0392b;color:#fff}.btn.devno{border-color:#c0392b;color:#c0392b;font-weight:700;background:var(--surface)}
 .pkg.devol{background:#eceef0}.pkg.devol>*:not(.devkeep){opacity:.45;filter:grayscale(1);pointer-events:none}
 .devkeep{grid-column:1/-1;display:flex;gap:8px;align-items:center;justify-content:space-between;border-top:1px dashed var(--line);padding-top:8px}
@@ -358,7 +365,7 @@ details summary{cursor:pointer;font-weight:600}
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.68.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.69.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -441,6 +448,16 @@ details summary{cursor:pointer;font-weight:600}
 <div class="toast" id="toast" hidden></div>
 
 <script>
+// 1.69.0: cuadro de confirmación propio (en vez del confirm() del navegador). rfConfirm(texto) → Promise<boolean>.
+// La primera línea va como título; el botón de aceptar toma el verbo de la pregunta (Borrar, Quitar, Vaciar…) y sale en rojo si la acción borra o desactiva.
+function rfConfirm(msg){return new Promise(ok=>{const t=String(msg).split('\n'),tit=t.shift(),body=t.join('\n').trim();
+  const verbo=(tit.match(/^¿\s*(?:Ya\s+)?([A-Za-zÁÉÍÓÚáéíóúñ]+)/)||[])[1]||'',mal=/^(borrar|quitar|vaciar|devolver|devolviste|finalizar|cambiarlo)$/i.test(verbo)||/no se puede deshacer|NO se va a guardar|sin GPS/i.test(msg);
+  const lab=/^devolviste$/i.test(verbo)?'Sí, devuelto':/^vaciar$/i.test(verbo)?'Vaciar y cerrar':verbo&&/^[a-záéíóú]+r$/i.test(verbo)?verbo.charAt(0).toUpperCase()+verbo.slice(1).toLowerCase():'Aceptar';
+  const w=document.createElement('div');w.className='rfdlg';w.innerHTML=`<div class="rfdlg-box" role="alertdialog" aria-modal="true" aria-labelledby="rfdlgT"><div class="rfdlg-ico ${mal?'mal':''}" aria-hidden="true">${mal?'⚠️':'❔'}</div><h3 id="rfdlgT"></h3>${body?'<p></p>':''}<div class="rfdlg-btns"><button type="button" class="rfdlg-no">Cancelar</button><button type="button" class="rfdlg-si ${mal?'mal':''}"></button></div></div>`;
+  w.querySelector('h3').textContent=tit;if(body){const pe=w.querySelector('p');pe.textContent=body;if(/•/.test(body))pe.style.textAlign='left'}w.querySelector('.rfdlg-si').textContent=lab;
+  const fin=v=>{document.removeEventListener('keydown',kd);w.classList.remove('on');setTimeout(()=>w.remove(),150);ok(v)},kd=e=>{if(e.key==='Escape')fin(false);if(e.key==='Enter')fin(true)};
+  w.querySelector('.rfdlg-no').onclick=()=>fin(false);w.querySelector('.rfdlg-si').onclick=()=>fin(true);w.onclick=e=>{if(e.target===w)fin(false)};
+  document.addEventListener('keydown',kd);document.body.appendChild(w);requestAnimationFrame(()=>{w.classList.add('on');w.querySelector(mal?'.rfdlg-no':'.rfdlg-si').focus()})})}
 // 1.67.5: el cambio de pestaña se registra de primero y no depende del resto del código: si algo falla más abajo
 // (por ejemplo con datos viejos de otro aparato), Paquetes, Cierres, Mensajes y Ruta siguen funcionando.
 window.RF_TAB=t=>{document.querySelectorAll('nav.tabs [role=tab]').forEach(x=>x.setAttribute('aria-selected',x.dataset.tab===t));
@@ -498,6 +515,7 @@ function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTim
 function geohash(h){const B='0123456789bcdefghjkmnpqrstuvwxyz';let la=[-90,90],lo=[-180,180],ev=true;
   for(const ch of h.toLowerCase()){const v=B.indexOf(ch);if(v<0)return null;for(let b=4;b>=0;b--){const r=ev?lo:la,mid=(r[0]+r[1])/2;if(v>>b&1)r[0]=mid;else r[1]=mid;ev=!ev}}
   const lat=+((la[0]+la[1])/2).toFixed(6),lng=+((lo[0]+lo[1])/2).toFixed(6);return lat<7.5||lat>11.6||lng<-86.5||lng>-82?null:[lat,lng]}
+const cTxt=c=>(+c[0]).toFixed(6)+','+(+c[1]).toFixed(6); // 1.69.0: coordenadas siempre con 6 decimales (sin perder ceros)
 function parseCoord(s){
   if(!s)return null;
   let t=String(s);try{t=decodeURIComponent(t)}catch(e){}
@@ -505,7 +523,8 @@ function parseCoord(s){
   const dms=t.match(/(\d{1,2})\s*°\s*(\d{1,2})\s*['′’]\s*([\d.,]+)\s*(?:["″”]|'')?\s*([NS])[\s,;]*(\d{1,3})\s*°\s*(\d{1,2})\s*['′’]\s*([\d.,]+)\s*(?:["″”]|'')?\s*([EWO])/i);
   if(dms){const g=(d,m,x)=>+d+ +m/60+ +String(x).replace(',','.')/3600;let la=g(dms[1],dms[2],dms[3]),lo=g(dms[5],dms[6],dms[7]);if(/s/i.test(dms[4]))la=-la;if(/[wo]/i.test(dms[8]))lo=-lo;
     if(la>=7.5&&la<=11.6&&lo>=-86.5&&lo<=-82)return [+la.toFixed(6),+lo.toFixed(6)]}
-  const m=t.match(/(-?\d{1,2}\.\d{3,})\s*,\s*(-?\d{1,3}\.\d{3,})/);
+  // 1.69.0: también acepta un texto que sea solo coordenadas con pocos decimales (9.92,-84.06): así se guardaban antes al quitar ceros
+  const m=t.match(/(-?\d{1,2}\.\d{3,})\s*,\s*(-?\d{1,3}\.\d{3,})/)||t.trim().match(/^(-?\d{1,2}(?:\.\d{1,2})?)\s*,\s*(-?\d{1,3}(?:\.\d{1,2})?)$/);
   if(!m){const g=t.match(/waze\.com\/ul\/h([0-9b-hjkmnp-z]{6,12})/i);return g?geohash(g[1]):null} // link de Waze para compartir (waze.com/ul/hd1u0r6dv2)
   const lat=+m[1],lng=+m[2];
   if(lat<7.5||lat>11.6||lng<-86.5||lng>-82)return null; // fuera de Costa Rica
@@ -517,7 +536,7 @@ function phoneWA(p){
   return d.length>=10?d:'';
 }
 function mkPkg(a){const p={id:uid(),ing:Date.now(),nombre:(a[0]||'').trim(),tel:(a[1]||'').trim(),dir:(a[2]||'').trim(),ubic:(a[3]||'').trim(),guia:(a[4]||'').trim(),nota:(a[5]||'').trim(),st:'pendiente',sent:false,tok:tok(),horario:'',senas:''};
-  const c=parseCoord(p.ubic)||parseCoord(p.dir);if(c)p.ubic=c.join(','); // deja solo las coordenadas aunque peguen el link completo
+  const c=parseCoord(p.ubic)||parseCoord(p.dir);if(c)p.ubic=cTxt(c); // deja solo las coordenadas aunque peguen el link completo
   return p}
 
 const COLS={nombre:/nombre|cliente|destinatario|name/,tel:/tel|cel|whats|phone|móvil|movil/,dir:/direc|señas|senas|address|domicilio/,ubic:/ubic|coord|maps|link|gps|waze|lat/,guia:/gu[ií]a|track|pedido|orden|order|c[oó]digo/,nota:/nota|observ|comentario/};
@@ -733,19 +752,19 @@ document.addEventListener('click',async e=>{
   const el=e.target.closest('[data-act]');if(!el)return;
   const p=S.pk.find(x=>x.id===el.dataset.id);const a=el.dataset.act;
   if(a==='st'&&p){const i=STATUS.findIndex(s=>s[0]===p.st);const nx=STATUS[(i+1)%STATUS.length][0];if(nx==='entregado'){openPOD(p);return}
-    if((p.st==='entregado'||p.st==='devuelto')&&!confirm(`${p.nombre||'Este paquete'} está ${SLABEL[p.st].toLowerCase()}. ¿Cambiarlo a "${SLABEL[nx]}"?${p.st==='entregado'?'\nSu parada en Ruta vuelve a pendiente.':''}`))return;
+    if((p.st==='entregado'||p.st==='devuelto')&&!await rfConfirm(`${p.nombre||'Este paquete'} está ${SLABEL[p.st].toLowerCase()}. ¿Cambiarlo a "${SLABEL[nx]}"?${p.st==='entregado'?'\nSu parada en Ruta vuelve a pendiente.':''}`))return;
     p.st=nx;pkReflejar(p)}
   // Devuelto al almacén (por ejemplo sin dirección); tocar otra vez lo regresa al estado que tenía
   else if(a==='aruta'&&p){entAgregarPk(p);return}
   else if(a==='rescan'&&p){scanCorregir(p);return}
-  else if(a==='dev'&&p){if(!confirm(p.st==='devuelto'?`¿Quitar "devuelto" a ${p.nombre||'este paquete'}?`:`¿Marcar a ${p.nombre||'este paquete'} como devuelto al almacén?${p.st==='entregado'?'\nAhora está ENTREGADO.':''}`))return;
+  else if(a==='dev'&&p){if(!await rfConfirm(p.st==='devuelto'?`¿Quitar "devuelto" a ${p.nombre||'este paquete'}?`:`¿Marcar a ${p.nombre||'este paquete'} como devuelto al almacén?${p.st==='entregado'?'\nAhora está ENTREGADO.':''}`))return;
     if(p.st==='devuelto'){p.st=p.stAntes||'pendiente';delete p.stAntes;delete p.devAt;toast(`${p.nombre}: vuelve a ${SLABEL[p.st]}`)}else{p.stAntes=p.st;p.st='devuelto';p.devAt=Date.now();toast(`${p.nombre}: devuelto al almacén`)}pkReflejar(p);if(typeof renderEnt==='function')setTimeout(renderEnt,0)}
   // Etiqueta ⛔ Devolver (marcada desde Ruta): tocarla lo marca como devuelto, o quita la marca
-  else if(a==='devno'&&p){if(!confirm(`¿Quitar "Devolver" a ${p.nombre||'este paquete'}?\nVuelve a estar activo en Paquetes, Mensajes y Ruta.`))return;
+  else if(a==='devno'&&p){if(!await rfConfirm(`¿Quitar "Devolver" a ${p.nombre||'este paquete'}?\nVuelve a estar activo en Paquetes, Mensajes y Ruta.`))return;
     delete p.devolver;(S.ent&&S.ent.stops||[]).filter(x=>x.devolver&&(entParadasDe(p).includes(x)||entPkg(x)===p)).forEach(x=>delete x.devolver);entMod();save();render();if(typeof renderEnt==='function')renderEnt();toast(`${p.nombre}: activo otra vez`);return}
   else if(a==='devok'&&p){const st=(S.ent&&S.ent.stops||[]).filter(x=>x.devolver&&entPkg(x)===p);
-    if(confirm(`¿Ya devolviste el paquete de ${p.nombre||'este cliente'} al almacén?\nAceptar = marcarlo como devuelto.`)){if(p.st!=='devuelto'){p.stAntes=p.st;p.st='devuelto';p.devAt=Date.now()}delete p.devolver;st.forEach(x=>delete x.devolver);toast(`${p.nombre}: devuelto al almacén`)}
-    else if(confirm(`¿Quitar la marca "Devolver" a ${p.nombre||'este paquete'}?\nVuelve a estar activo en la ruta.`)){delete p.devolver;st.forEach(x=>delete x.devolver);toast(`${p.nombre}: ya no está para devolver`)}
+    if(await rfConfirm(`¿Ya devolviste el paquete de ${p.nombre||'este cliente'} al almacén?\nAceptar = marcarlo como devuelto.`)){if(p.st!=='devuelto'){p.stAntes=p.st;p.st='devuelto';p.devAt=Date.now()}delete p.devolver;st.forEach(x=>delete x.devolver);toast(`${p.nombre}: devuelto al almacén`)}
+    else if(await rfConfirm(`¿Quitar la marca "Devolver" a ${p.nombre||'este paquete'}?\nVuelve a estar activo en la ruta.`)){delete p.devolver;st.forEach(x=>delete x.devolver);toast(`${p.nombre}: ya no está para devolver`)}
     else return;entMod();save();render();if(typeof renderEnt==='function')renderEnt();return}
   else if(a==='set'&&p){if(el.dataset.st==='entregado'&&p.st!=='entregado'){openPOD(p);return}p.st=el.dataset.st;pkReflejar(p);toast(`${p.nombre}: ${SLABEL[p.st]}`)}
   else if(a==='ev'&&p){openEvidence(p);return}
@@ -754,10 +773,10 @@ document.addEventListener('click',async e=>{
   else if(a==='msgsel'&&p){p.msgSel=el.dataset.k;save();renderMsg();return}
   else if(a==='copy'&&p){const t=msgText(p);try{await navigator.clipboard.writeText(t);toast('Mensaje copiado')}catch(err){const d=el.closest('.pkg').querySelector('details');d.open=true;const r=document.createRange();r.selectNodeContents(d.querySelector('.preview'));getSelection().removeAllRanges();getSelection().addRange(r);toast('Texto seleccionado, copialo')}return}
   else if(a==='del'&&p){const ps=entParadasDe(p);
-    if(!confirm(`¿Borrar el paquete #${p.num||''} de ${p.nombre||'este cliente'}?\n${ps.length?'También se quita su parada de la Ruta.\n':''}Esto no se puede deshacer.`))return;
+    if(!await rfConfirm(`¿Borrar el paquete #${p.num||''} de ${p.nombre||'este cliente'}?\n${ps.length?'También se quita su parada de la Ruta.\n':''}Esto no se puede deshacer.`))return;
     if(ps.length&&S.ent){S.ent.stops=S.ent.stops.filter(x=>!ps.includes(x));let k=0;S.ent.stops.forEach(x=>{if(x.c)x.n=++k});ESEL=-1;entMod()}
     S.pk=S.pk.filter(x=>x!==p);S.route=null;toast(ps.length?'Paquete borrado de Paquetes, Mensajes y Ruta':'Paquete borrado');save();render();if(typeof renderEnt==='function')renderEnt();return}
-  else if(a==='edit'&&p){document.querySelector('[data-tab="paquetes"]').click();editId=p.id;$('#f-nombre').value=p.nombre;$('#f-tel').value=p.tel;$('#f-dir').value=p.dir;$('#f-ubic').value=p.ubic;$('#f-guia').value=p.guia;$('#f-nota').value=p.nota||'';loteLlenar(repDia(p.ing));subAbrir('formPanel');$('#formTitle').textContent='Editar paquete';$('#saveBtn').textContent='Guardar cambios';$('#cancelEdit').hidden=false;return}
+  else if(a==='edit'&&p){document.querySelector('[data-tab="paquetes"]').click();editId=p.id;$('#f-nombre').value=p.nombre||'';$('#f-tel').value=p.tel||'';$('#f-dir').value=p.dir||'';$('#f-ubic').value=p.ubic||'';$('#f-guia').value=p.guia||'';$('#f-nota').value=p.nota||'';loteLlenar(repDia(p.ing));subAbrir('formPanel');$('#formTitle').textContent='Editar paquete';$('#saveBtn').textContent='Guardar cambios';$('#cancelEdit').hidden=false;return}
   save();render();
 });
 // Lote (1.61.0): un paquete agregado a mano o editado pertenece a unas "Entregas del …" (su fecha de recibido, p.ing).
@@ -781,11 +800,11 @@ document.querySelectorAll('nav.tabs [role=tab]').forEach(b=>b.addEventListener('
 $('#formPanel').addEventListener('toggle',()=>{if($('#formPanel').open&&!editId)loteLlenar()});
 const ubicCheck=()=>{const v=$('#f-ubic').value.trim(),c=parseCoord(v),o=$('#f-ubic-ok');o.textContent=!v?'':c?`✓ Coordenadas detectadas: ${c.join(', ')}`:'No encontré coordenadas en ese texto';o.style.color=c?'var(--ok)':'var(--warn)'};
 $('#f-ubic').addEventListener('input',ubicCheck);
-$('#pkgForm').onsubmit=e=>{e.preventDefault();
+$('#pkgForm').onsubmit=async e=>{e.preventDefault();
   const v=['nombre','tel','dir','ubic','guia','nota'].map(k=>$('#f-'+k).value);
   if(editId){const p=S.pk.find(x=>x.id===editId);const n=mkPkg(v);
-    const cam=[['Nombre','nombre'],['Teléfono','tel'],['Dirección','dir'],['Ubicación','ubic'],['Guía','guia']].filter(([l,k])=>String(p[k]||'').trim()!==String(n[k]||'').trim()).map(([l,k])=>`• ${l}: "${p[k]||'—'}" → "${n[k]||'—'}"`);
-    if(cam.length&&!confirm(`¿Guardar estos cambios de ${p.nombre||'este paquete'}?\n${cam.join('\n')}\n\nSe actualizan en Paquetes, Mensajes y Ruta.`))return;const ps=entParadasDe(p);if(p.tel&&phoneWA(p.tel)!==phoneWA(n.tel))p.telsAnt=[...new Set([...(p.telsAnt||[]),p.tel])];Object.assign(p,{nombre:n.nombre,tel:n.tel,dir:n.dir,ubic:n.ubic,guia:n.guia,nota:n.nota,ing:loteIng($('#f-lote').value,p.ing)});entCopiarPk(p,ps);S.route=null;save();render();toast('Cambios guardados')}
+    const cam=[['Nombre','nombre'],['Teléfono','tel'],['Dirección','dir'],['Ubicación','ubic'],['Guía','guia']].filter(([l,k])=>{const a=String(p[k]||'').trim(),b=String(n[k]||'').trim();if(k==='ubic'){const ca=parseCoord(a),cb=parseCoord(b);if(ca&&cb)return Math.abs(ca[0]-cb[0])>1e-6||Math.abs(ca[1]-cb[1])>1e-6}if(k==='tel')return a.replace(/\D/g,'')!==b.replace(/\D/g,'');return a!==b}).map(([l,k])=>`• ${l}: "${p[k]||'—'}" → "${n[k]||'—'}"`);
+    if(cam.length&&!await rfConfirm(`¿Guardar estos cambios de ${p.nombre||'este paquete'}?\n${cam.join('\n')}\n\nSe actualizan en Paquetes, Mensajes y Ruta.`))return;const ps=entParadasDe(p);if(p.tel&&phoneWA(p.tel)!==phoneWA(n.tel))p.telsAnt=[...new Set([...(p.telsAnt||[]),p.tel])];Object.assign(p,{nombre:n.nombre,tel:n.tel,dir:n.dir,ubic:n.ubic,guia:n.guia,nota:n.nota,ing:loteIng($('#f-lote').value,p.ing)});entCopiarPk(p,ps);S.route=null;save();render();toast('Cambios guardados')}
   else{const k=$('#f-lote').value;if(S.ex){S.pk=[];S.ex=false;S.nums={}}const n=mkPkg(v);n.ing=loteIng(k);S.pk.push(n);S.route=null;save();render();toast(`Paquete agregado a ${repEntregasDe(repDia(n.ing))}`)}
   resetForm();subAbrir(null);
 };
@@ -805,13 +824,13 @@ async function cerrarDia(b){
       if(!r||!r.ok)throw new Error('sin respuesta')}
     catch(err){b.disabled=false;b.textContent='Vaciar lista';toast('No se pudo guardar el cierre (revisá internet). No se borró nada.');return}
     finally{b.disabled=false}}
-  else if(!confirm('No hay cuenta conectada: el cierre NO se va a guardar en la base.\n¿Vaciar igual?'))return;
+  else if(!await rfConfirm('No hay cuenta conectada: el cierre NO se va a guardar en la base.\n¿Vaciar igual?'))return;
   const t=Date.now();S.pk=[];S.ex=false;S.nums={};S.route=null;S.jor={}; // totalmente limpio: la jornada ya va dentro del cierre (ruta.jor)
   S.ent={nombre:'',at:t,mod:t,stops:[],cerrada:fc}; // ruta vacía y más nueva que la de la nube, para que la sincronización no la reviva
   ESEL=-1;save();render();if(typeof renderEnt==='function')renderEnt();if(NUBE.on)nubeSync(true);
   b.textContent='Vaciar lista';toast(`Cierre guardado (${new Date(fc).toLocaleString('es-CR')}). Listo para una ruta nueva.`)}
-$('#vaciarTile').onclick=()=>{const pk=S.ex?[]:S.pk,pend=pk.filter(p=>p.st!=='entregado'&&p.st!=='devuelto'&&!p.devolver).length;
-  if(!confirm(`¿Vaciar la lista y cerrar la ruta?\nSe guardan en la base ${pk.length} paquete(s) y la ruta con la fecha de hoy, y la app queda limpia.${pend?`\n\nOjo: todavía hay ${pend} sin entregar ni devolver.`:''}`))return;
+$('#vaciarTile').onclick=async()=>{const pk=S.ex?[]:S.pk,pend=pk.filter(p=>p.st!=='entregado'&&p.st!=='devuelto'&&!p.devolver).length;
+  if(!await rfConfirm(`¿Vaciar la lista y cerrar la ruta?\nSe guardan en la base ${pk.length} paquete(s) y la ruta con la fecha de hoy, y la app queda limpia.${pend?`\n\nOjo: todavía hay ${pend} sin entregar ni devolver.`:''}`))return;
   cerrarDia($('#clearAll'))};
 $('#clearAll').onclick=e=>{const b=e.currentTarget;if(b.disabled)return;if(b.dataset.c){delete b.dataset.c;cerrarDia(b)}else{b.dataset.c=1;b.textContent='¿Cerrar el día? Tocá otra vez';setTimeout(()=>{if(b.dataset.c){b.textContent='Vaciar lista';delete b.dataset.c}},3000)}};
 const bind=(sel,k,num)=>{const el=$(sel);el.value=S[k]??'';el.addEventListener(el.type==='checkbox'?'change':'input',()=>{S[k]=el.type==='checkbox'?el.checked:(num?+el.value:el.value);save();if(['coord','form','yo','fecha'].includes(k))renderMsg()})};
@@ -963,7 +982,7 @@ async function syncResp(manual){
     for(const row of rows){const p=S.pk.find(x=>x.tok===row.token);if(!p)continue;
       const stamp=row.updated_at||row.created_at;if(p.respAt===stamp)continue;
       p.respAt=stamp;p.resp=true;p.horario=row.horario||'';p.senas=row.senas||'';p.recibe=row.recibe||'';
-      if(row.lat!=null&&row.lng!=null)p.ubic=row.lat+','+row.lng;
+      if(row.lat!=null&&row.lng!=null)p.ubic=cTxt([row.lat,row.lng]);
       if(p.st==='pendiente'||p.st==='noresponde')p.st='confirmado';nuevos++}
     $('#syncInfo').textContent=`${S.pk.filter(p=>p.resp).length} de ${S.pk.length} respondieron · ${new Date().toLocaleTimeString('es-CR',{hour:'numeric',minute:'2-digit'})}`;
     if(nuevos){S.route=null;save();render();toast(`${nuevos} respuesta(s) nueva(s)`)}else if(manual)toast('Sin respuestas nuevas');
@@ -988,7 +1007,7 @@ let PASTE=null;
 async function applyReply(p,t){
   const c=parseCoord(t)||await geocodeText(t);const h=findTime(t);
   if(!c&&!h){toast('No encontré hora ni ubicación en lo que pegaste');return false}
-  if(c)p.ubic=c.join(',');if(h)p.horario=h;
+  if(c)p.ubic=cTxt(c);if(h)p.horario=h;
   if(p.st==='pendiente'||p.st==='noresponde')p.st='confirmado';
   S.route=null;save();render();
   toast(`${p.nombre}: ${[h&&'🕓 '+h,c&&'📍 ubicación lista'].filter(Boolean).join(' · ')}${!c?' · falta ubicación':''}${!h?' · falta hora':''}`);return true;
@@ -1060,7 +1079,7 @@ $('#podOk').onclick=async()=>{
   if(!POD.signed&&!$('#podNoSig').checked){toast('Falta la firma, o marcá "No quiso firmar"');ver('#podSig');return}
   if(!POD.geo){
     if($('#podGeoRetry').hidden){toast('Esperando la ubicación GPS…');ver('#podGeo');return}
-    if(!confirm('No se pudo obtener la ubicación GPS. ¿Confirmar la entrega sin GPS?'))return}
+    if(!await rfConfirm('No se pudo obtener la ubicación GPS. ¿Confirmar la entrega sin GPS?'))return}
   const btn=$('#podOk');btn.disabled=true;
   try{
   const {p,fotos,at}=POD,geo=POD.geo||{lat:null,lng:null,acc:null};const id=tok()+tok();
@@ -1481,7 +1500,7 @@ function jorRender(){const el=$('#jorBar');if(!el)return;const J=(S.jor||{})[jor
    :`<span class="jtxt">Jornada <b>${jorHm(J.ini.t)}–${jorHm(J.fin.t)}</b> · ${jorDur((J.fin.t-J.ini.t)/60000)}</span><button class="btn sm" type="button" data-jor="seguir" title="Borra la hora de fin para seguir entregando">▶ Seguir entregando</button>`}
 $('#jorBar').addEventListener('click',async e=>{const b=e.target.closest('[data-jor]');if(!b)return;const k=jorHoy(),a=b.dataset.jor;S.jor=S.jor||{};
   if(a==='seguir'){if(S.jor[k])delete S.jor[k].fin;save();jorRender();toast('Seguís en ruta: tocá ■ Finalizar al terminar');return}
-  if(a==='fin'&&!confirm('¿Finalizar las entregas de hoy?'))return;
+  if(a==='fin'&&!await rfConfirm('¿Finalizar las entregas de hoy?'))return;
   b.disabled=true;b.textContent='Tomando ubicación…';const c=await jorGps(),t=Date.now();
   if(a==='ini')S.jor[k]={ini:{t,c}};else S.jor[k]={...S.jor[k],fin:{t,c}};
   save();jorRender();toast(a==='ini'?`Entregas iniciadas a las ${jorHm(t)}${c?'':' (sin GPS)'}`:`Entregas finalizadas a las ${jorHm(t)}`)});
@@ -1600,14 +1619,14 @@ $('#entAqui').onclick=()=>{if(!navigator.geolocation){gpsFail();return}EAUTO=tru
     {enableHighAccuracy:true,timeout:15000,maximumAge:30000})};
 $('#entPick').onclick=()=>{if(!EMAP){toast('Primero cargá la ruta');return}EMAP.pick=true;$('#entMap').style.cursor='crosshair';$('#entMap').scrollIntoView({behavior:'smooth',block:'start'});toast('Tocá el mapa donde estás');};
 // Parada sin ubicación: pegar link/coordenadas o tocar el mapa; entra a la ruta y se reordena desde tu punto
-function entPonerC(i,c){entMod();const s=S.ent.stops[i];s.c=c;delete s.ub;try{const p=entPkg(s);if(p&&entFuerte(s,p)&&!parseCoord(p.ubic)){p.ubic=c[0]+','+c[1];s.pkId=p.id}}catch(e){} // la ubicación también queda en Paquetess.n=Math.max(0,...S.ent.stops.filter(x=>x.c&&x!==s).map(x=>x.n||0))+1;
+function entPonerC(i,c){entMod();const s=S.ent.stops[i];s.c=c;delete s.ub;try{const p=entPkg(s);if(p&&entFuerte(s,p)&&!parseCoord(p.ubic)){p.ubic=cTxt(c);s.pkId=p.id}}catch(e){} // la ubicación también queda en Paquetess.n=Math.max(0,...S.ent.stops.filter(x=>x.c&&x!==s).map(x=>x.n||0))+1;
   const sinC=S.ent.stops.filter(x=>!x.c);S.ent.stops=[...S.ent.stops.filter(x=>x.c),...sinC];
   toast(`Ubicación agregada a ${s.nombre}`);if(EPOS)entOrdenar(EPOS.c,'donde estás');else{save();renderEnt()}}
 function entUbicar(i){const s=S.ent.stops[i];const t=prompt(`Ubicación de ${s.nombre}\nPegá el link de Google Maps o Waze, o las coordenadas.\nDejalo vacío para tocar el punto en el mapa.`,'');if(t===null)return;
   if(t.trim()){const c=parseCoord(t.trim());if(!c){toast('No reconocí esa ubicación. Probá con el link completo o las coordenadas');return}entPonerC(i,c);return}
   if(!EMAP){toast('Primero tiene que verse el mapa');return}EMAP.pickStop=i;$('#entMap').style.cursor='crosshair';$('#entMap').scrollIntoView({behavior:'smooth',block:'start'});toast(`Tocá el mapa donde vive ${s.nombre}`)}
 $('#entFile').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)entCargar(f).catch(()=>toast('No se pudo leer ese archivo'))};
-$('#entList').addEventListener('click',e=>{if(e.target.closest('[data-edone],[data-eundo],[data-edevol],[data-edevno],[data-ehold],[data-equitar],[data-elink],[data-eok]'))entMod();
+$('#entList').addEventListener('click',async e=>{if(e.target.closest('[data-edone],[data-eundo],[data-edevol],[data-edevno],[data-ehold],[data-equitar],[data-elink],[data-eok]'))entMod();
   const b=e.target.closest('[data-eok]');if(b){const s=S.ent.stops[+b.dataset.eok],p=entPkg(s);if(p&&p.st!=='entregado'){openPOD(p);return}s.done=true;save();renderEnt();return}
   const bl=e.target.closest('[data-elink]');if(bl){const s=S.ent.stops[+bl.dataset.elink];const q=prompt(`¿Cuál paquete es ${s.nombre}?${entPkg(s)?`\n(Ahora está unida a: ${entPkg(s).nombre} · ${entPkg(s).tel||'sin tel'})`:''}\nEscribí el número del paquete (ej. 62), parte del nombre, la guía o el teléfono:`,(s.nombre||'').split(' ')[0]);if(!q)return;
     const qq=nomN(q),dg=q.replace(/\D/g,''),c=/^\s*#?\d{1,3}\s*$/.test(q)?S.pk.filter(p=>String(p.num)===dg):S.pk.filter(p=>nomN(p.nombre).includes(qq)||(dg.length>=4&&String(p.tel||'').replace(/\D/g,'').includes(dg))||(p.guia&&guiaN(p.guia).includes(guiaN(q))));
@@ -1622,13 +1641,13 @@ $('#entList').addEventListener('click',e=>{if(e.target.closest('[data-edone],[da
     if(s.hold){E.stops=E.stops.filter(x=>x!==s);const k=E.stops.reduce((a,x,j)=>x.c&&!entDone(x)?j:a,-1);E.stops.splice(k+1,0,s);toast(`${s.nombre||'Parada'} en hold: pasa al final de la ruta`)}
     else toast(`${s.nombre||'Parada'} vuelve a la ruta`);
     let n=0;E.stops.forEach(x=>{if(x.c)x.n=++n});ESEL=-1;if(!s.hold&&EPOS){entOrdenar(EPOS.c,'donde estás');return}save();renderEnt();return}
-  const bq=e.target.closest('[data-equitar]');if(bq){const k=+bq.dataset.equitar,s=S.ent.stops[k];if(!s||!confirm(`¿Quitar a ${s.nombre||'esta parada'} de la ruta?\nEl paquete sigue en Paquetes.`))return;
+  const bq=e.target.closest('[data-equitar]');if(bq){const k=+bq.dataset.equitar,s=S.ent.stops[k];if(!s||!await rfConfirm(`¿Quitar a ${s.nombre||'esta parada'} de la ruta?\nEl paquete sigue en Paquetes.`))return;
     const p=entPkg(s);if(p){S.ent.quitadas=S.ent.quitadas||[];if(!S.ent.quitadas.includes(p.id))S.ent.quitadas.push(p.id)}
     S.ent.stops.splice(k,1);ESEL=-1;save();render();renderEnt();toast(`${s.nombre||'Parada'} quitada de la ruta`);return}
   // Devolver: la parada queda en la ruta pero desactivada (gris, sin botones, fuera del orden y del tiempo) y el paquete lleva la etiqueta "Devolver"
-  const bv=e.target.closest('[data-edevol]');if(bv){const s=S.ent.stops[+bv.dataset.edevol],p=entPkg(s);if(!s||!confirm(`¿Devolver el paquete de ${s.nombre||'esta parada'}?\nQueda en la ruta pero desactivado.`))return;
+  const bv=e.target.closest('[data-edevol]');if(bv){const s=S.ent.stops[+bv.dataset.edevol],p=entPkg(s);if(!s||!await rfConfirm(`¿Devolver el paquete de ${s.nombre||'esta parada'}?\nQueda en la ruta pero desactivado.`))return;
     s.devolver=true;s.hold=false;if(p){s.pkId=p.id;p.devolver=true}ESEL=-1;save();render();renderEnt();toast(`${s.nombre||'Parada'}: para devolver`);return}
-  const bvn=e.target.closest('[data-edevno]');if(bvn){const s=S.ent.stops[+bvn.dataset.edevno],p=entPkg(s);if(!s)return;if(!confirm(`¿Quitar "Devolver" a ${s.nombre||'esta parada'}?\nVuelve a estar activo en Paquetes, Mensajes y Ruta.`))return;delete s.devolver;if(p)delete p.devolver;
+  const bvn=e.target.closest('[data-edevno]');if(bvn){const s=S.ent.stops[+bvn.dataset.edevno],p=entPkg(s);if(!s)return;if(!await rfConfirm(`¿Quitar "Devolver" a ${s.nombre||'esta parada'}?\nVuelve a estar activo en Paquetes, Mensajes y Ruta.`))return;delete s.devolver;if(p)delete p.devolver;
     save();render();if(EPOS){entOrdenar(EPOS.c,'donde estás');return}renderEnt();toast(`${s.nombre||'Parada'} vuelve a la ruta`);return}
   const bd=e.target.closest('[data-edone]');if(bd){const s=S.ent.stops[+bd.dataset.edone],p=entPkg(s);s.done=true;
     // Hora y ubicación real (GPS del celular en ese momento) de la entrega

@@ -464,6 +464,10 @@ Cuando tocás **✓ Entregado** en *Ruta*, el número del paquete queda tachado 
 
 Si arriba sale un **aviso rojo "Error en la app…"**, tomale captura y mandala a soporte; tocalo para cerrarlo. En computadora, para cargar la última versión apretá **Ctrl + Shift + R** (Windows) o **Cmd + Shift + R** (Mac).
 
+### Avisos de confirmar (1.69.0)
+
+Cuando la app pide confirmar algo, sale una hoja abajo con el detalle y dos botones: **Cancelar** y la acción (por ejemplo **Borrar**, **Quitar**, **Vaciar y cerrar**, **Guardar**). Si la acción borra o desactiva, el botón sale en rojo. Tocar fuera de la hoja también cancela.
+
 ### Ruta por calles (1.68.0)
 
 La línea azul del mapa en *Ruta* va por las calles, desde donde estás y por las paradas pendientes en orden. Tarda unos segundos en aparecer; mientras tanto (o sin internet) se ve en línea recta.

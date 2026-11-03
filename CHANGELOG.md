@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.69.0 · Confirmaciones con diseño propio:** los avisos de confirmar (borrar, devolver, vaciar, guardar cambios, finalizar…) ya no usan el cuadro gris del navegador: salen como una hoja abajo con ícono, título, detalle y dos botones grandes (**Cancelar** y la acción, en rojo si borra o desactiva). Correcciones: *Editar* ya no pone "undefined" en los campos vacíos ni marca como cambio una ubicación igual; las coordenadas se guardan con 6 decimales (antes se perdían los ceros, por ejemplo 9.9300 → 9.93, y la app dejaba de reconocer la ubicación). Las que quedaron así se vuelven a leer bien.
 - **1.68.0 · Ruta por calles en el mapa:** la línea azul de *Ruta* sigue las calles reales (trazo de OSRM, el mismo servicio gratis que ya calcula tiempos y km). Mientras llega, o si no hay internet o el servicio falla, se dibuja en línea recta como antes.
 - **1.67.8 · Vehículo junto al resumen:** en *Ruta*, los botones 🏍 🚙 🚐 pasan a la derecha del resumen de tiempo y km, más pequeños; **Elegir en el mapa** y **Lista** quedan debajo, a la derecha.
 - **1.67.7 · Tiempo de la ruta a la izquierda:** el resumen (⏱ tiempo, km, inicio y fin) queda a la izquierda, en la misma línea que 🎯 Elegir en el mapa, 📋 Lista y el vehículo, que van a la derecha.
