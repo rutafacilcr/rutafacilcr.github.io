@@ -373,8 +373,13 @@ details summary{cursor:pointer;font-weight:600}
     <p class="small muted">Un reporte por cada día en que se recibieron paquetes (<b>Entregas del 2 de noviembre</b>, por ejemplo), aunque se entreguen en los días siguientes; cada paquete lleva su fecha y hora real de entrega. También salen los de listas ya vaciadas. Tocá <b>📄 PDF</b> para bajar el de esa fecha: entregados y devueltos con número, guía / pedido, teléfono, nombre, estado, fecha recibido y fecha y hora de entrega.</p>
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
+  <div class="panel">
+    <h2>Guías por fecha de entrega</h2>
+    <p class="small muted">Un PDF horizontal por cada día en que entregaste paquetes (<b>Guías 03/11/2026</b>, por ejemplo) con nombre, teléfono, guía y nota de cada paquete entregado ese día, en el orden en que se entregaron.</p>
+    <div id="guiLista"></div>
+  </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.70.10</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.71.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -974,8 +979,25 @@ function repPdf(k){
 function repLista(){const G=repGrupos(),el=$('#repLista');if(!el)return;
   el.innerHTML=G.length?G.map(g=>{const R=repResumen(g.pk),n=repFilas(g.pk).length;return `<div class="replin"><div><b>📦 ${repEntregasDe(g.k)}</b><div class="small muted">${R.rec} recibidos · ${R.ent} entregados · ${R.dev} devueltos${R.pMin!=null?` · prom. ${Math.round(R.pMin)} min${R.pKm!=null?' / '+R.pKm.toFixed(1)+' km':''} por entrega`:''}</div></div><button class="btn sm primary" type="button" data-rep="${g.k}"${n?'':' disabled'}>📄 PDF</button></div>`}).join(''):'<p class="small muted">Todavía no hay paquetes.</p>'}
 $('#repLista').addEventListener('click',e=>{const b=e.target.closest('[data-rep]');if(b)repPdf(b.dataset.rep)});
-document.querySelector('[data-tab="cierres"]').addEventListener('click',()=>{repLista();repCargar().catch(()=>{});
-  $('#repInfo').textContent='Buscando reportes de cierres anteriores…';repCierres().then(()=>{repLista();$('#repInfo').textContent=''})});
+// Reporte "Guías + fecha" (1.71.0): entregados agrupados por día de ENTREGA (repT), con Nombre, Tel., Guía y Nota
+function guiGrupos(){const g={};repTodos().filter(p=>p.st==='entregado').forEach(p=>{const k=repDia(repT(p));if(!k)return;(g[k]=g[k]||[]).push(p)});
+  return Object.keys(g).sort((a,b)=>b.localeCompare(a)).map(k=>({k,pk:g[k].sort((a,b)=>(repT(a)||0)-(repT(b)||0))}))}
+function guiLista(){const el=$('#guiLista');if(!el)return;const G=guiGrupos();
+  el.innerHTML=G.length?G.map(g=>`<div class="replin"><div><b>🧾 Guías ${repDiaTxt(g.k)}</b><div class="small muted">${g.pk.length} entregado(s)</div></div><button class="btn sm primary" type="button" data-gui="${g.k}">📄 PDF</button></div>`).join(''):'<p class="small muted">Todavía no hay paquetes entregados.</p>'}
+function guiPdf(k){const G=guiGrupos().find(x=>x.k===k);if(!G){toast('No hay entregas ese día');return}
+  if(!(window.jspdf&&window.jspdf.jsPDF&&window.jspdf.jsPDF.API.autoTable)){toast('Cargando el reporte… tocá otra vez en un momento');repCargar().catch(()=>toast('No se pudo cargar el PDF. Revisá el internet.'));return}
+  const tl=x=>{const d=String(x||'').replace(/\D/g,'');return d.length===11&&d.startsWith('506')?d.slice(3):d};
+  const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'letter'}),tit=`Guías ${repDiaTxt(k)}`;
+  doc.setFontSize(15);doc.text(`RutaFácil CR · ${tit}`,14,15);doc.setFontSize(10);
+  doc.text(`Mensajero: ${S.yo||'—'}   ·   Fecha de entrega: ${repDiaTxt(k)}   ·   Paquetes entregados: ${G.pk.length}`,14,22);
+  doc.autoTable({startY:27,head:[['Nombre','Tel.','Guía','Nota']],body:G.pk.map(p=>[tidyName(p.nombre||''),tl(p.tel),p.guia||'',p.nota||'']),
+    styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},columnStyles:{0:{cellWidth:65},1:{cellWidth:30},2:{cellWidth:55}}});
+  const name=`guias-${k}.pdf`;
+  if(IOS&&navigator.canShare){const file=new File([doc.output('blob')],name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Reporte guardado')).catch(()=>{});return}}
+  doc.save(name);toast(`${tit}: ${G.pk.length} guía(s)`)}
+$('#guiLista').addEventListener('click',e=>{const b=e.target.closest('[data-gui]');if(b)guiPdf(b.dataset.gui)});
+document.querySelector('[data-tab="cierres"]').addEventListener('click',()=>{repLista();guiLista();repCargar().catch(()=>{});
+  $('#repInfo').textContent='Buscando reportes de cierres anteriores…';repCierres().then(()=>{repLista();guiLista();$('#repInfo').textContent=''})});
 $('#m-pref').addEventListener('input',()=>{$('#vcfEj').textContent=vcfName({nombre:'Nombre',guia:'pedido'})});
 $('#m-buscar').addEventListener('input',()=>renderMsg());
 $('#p-buscar').addEventListener('input',()=>renderPk());

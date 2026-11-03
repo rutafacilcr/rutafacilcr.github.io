@@ -682,3 +682,8 @@ En *Paquetes*, debajo del nombre, la tarjeta muestra el teléfono y la guía con
 ### En la ruta a la par de la ubicación (1.70.8)
 
 En la tarjeta de *Paquetes*, la línea del teléfono dice por ejemplo: **Tel. 62700667 · Guía: 29293393 · ● Ubicación lista · 🗺️ En la ruta**.
+
+
+### Reporte de guías por fecha de entrega (1.71.0)
+
+En **Cierres**, debajo de *Reporte de entregas*, está **Guías por fecha de entrega**. Hay una línea por cada día en que entregaste paquetes (por ejemplo **🧾 Guías 03/11/2026 · 25 entregado(s)**). Tocá **📄 PDF** para bajar un PDF horizontal con **Nombre, Tel., Guía y Nota** de cada paquete entregado ese día, en el orden de entrega. Arriba dice el mensajero, la fecha de entrega y cuántos paquetes son. La fecha es la del toque de **✓ Entregado** (o la de la evidencia).
