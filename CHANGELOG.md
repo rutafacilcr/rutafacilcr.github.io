@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.66.2 · Devueltos desactivados:** los paquetes **devueltos** también se ven grises y sin botones en *Paquetes* y *Mensajes*, con la etiqueta roja **⛔ Devuelto** y el botón activo **↪ Quitar devuelto** (pide confirmar y lo reactiva en las tres pantallas).
 - **1.66.1 · Orden de botones:** en *Paquetes* quedan **Agregar a mano**, **Importar** y **Escanear**.
 - **1.66.0 · Devolver desactiva la tarjeta:** un paquete marcado **⛔ Devolver** se ve gris y sin botones en *Paquetes*, *Mensajes* y *Ruta*; abajo queda la etiqueta **⛔ Devolver** en rojo y el botón activo **↩ Quitar devolver**. Al quitarlo (pide confirmar) el paquete vuelve a estar activo en las tres pantallas.
 - **1.65.0 · Botones de sistema:** en *Paquetes*, **Escanear**, **Importar** y **Agregar a mano** son tres botones estilo iPhone (relleno gris, esquinas redondeadas, ícono arriba). *Agregar a mano* también se abre en su propia pantalla con **← Regresar**; *Editar* usa esa misma pantalla y al guardar vuelve a la lista.

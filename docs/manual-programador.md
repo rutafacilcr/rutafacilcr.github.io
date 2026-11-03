@@ -115,6 +115,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 ## 3c-quindecies. Tarjeta desactivada por Devolver (1.66.0)
 
+- 1.66.2: `pkOff(p)` = `pkDevol(p)` o `st==="devuelto"` pone `.devol`; `devBar` para devueltos usa `data-act="dev"` ("↪ Quitar devuelto").
 - `pkDevol(p)` (devolver y no entregado ni devuelto) agrega `.devol` a `.pkg` en `renderPk` y `renderMsg`; `devBar(p)` agrega `.devkeep` con `span.devtag.on` y `data-act="devno"`. CSS: los hijos que no son `.devkeep` van al 45 %, gris y sin `pointer-events`.
 - `devno`: `confirm`, borra `p.devolver` y `devolver` de sus paradas, `entMod`, render de todo. En *Ruta*, `.estop.devol` deja activo solo `.acts3` (etiqueta roja + `data-edevno`, ahora con `confirm`).
 

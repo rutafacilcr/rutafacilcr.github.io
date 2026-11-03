@@ -357,7 +357,7 @@ details summary{cursor:pointer;font-weight:600}
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.66.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.66.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -544,7 +544,8 @@ const waze=c=>`https://waze.com/ul?ll=${c[0]},${c[1]}&navigate=yes`;
 // Entregados y devueltos siguen mostrando su estado.
 // ⛔ Devolver (1.66.0): la tarjeta queda desactivada (gris) y solo quedan la etiqueta en color y ↩ Quitar devolver
 const pkDevol=p=>!!p.devolver&&p.st!=='devuelto'&&p.st!=='entregado';
-function devBar(p){return pkDevol(p)?`<div class="devkeep"><span class="devtag on">⛔ Devolver</span><button type="button" class="btn sm devno" data-act="devno" data-id="${p.id}">↩ Quitar devolver</button></div>`:''}
+const pkOff=p=>pkDevol(p)||p.st==='devuelto'; // 1.66.2: los devueltos también quedan desactivados
+function devBar(p){if(p.st==='devuelto')return `<div class="devkeep"><span class="devtag on">⛔ Devuelto</span><button type="button" class="btn sm devno" data-act="dev" data-id="${p.id}">↪ Quitar devuelto</button></div>`;return pkDevol(p)?`<div class="devkeep"><span class="devtag on">⛔ Devolver</span><button type="button" class="btn sm devno" data-act="devno" data-id="${p.id}">↩ Quitar devolver</button></div>`:''}
 function pkChip(p){if(p.st==='entregado'||p.st==='devuelto')return stChip(p);const l=waLink(p,coordText(p));
   return l?`<a class="coordbtn" href="${l}" target="_blank" rel="noopener" data-act="sent" data-k="coord" data-id="${p.id}" title="Abrir WhatsApp con el mensaje de coordinar">1. Coordinar${p.sent?' ✓':''}</a>`:`<span class="coordbtn off" title="Teléfono inválido: corregilo con Editar">1. Coordinar</span>`}
 function stChip(p){if(p.st==='devuelto')return `<button class="chip devtag" data-act="st" data-id="${p.id}" title="Devuelto al almacén. Tocá para cambiar el estado">⛔ Devuelto</button>`; // 1.56.0: devueltos con la misma etiqueta que ⛔ Devolver
@@ -573,7 +574,7 @@ function renderPk(){
   const nt=t=>String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(),bq=nt(($('#p-buscar')||{}).value||'').trim(),bd=bq.replace(/\D/g,'');
   const ok=p=>!bq||bq.split(/\s+/).every(w=>nt(p.nombre).includes(w))||nt(p.guia).includes(bq)||(/^\d{1,3}$/.test(bq)&&String(p.num)===bq)||(bd.length>=3&&String(p.tel||'').replace(/\D/g,'').includes(bd.slice(-8)));
   const vis=S.pk.map((p,i)=>[p,i]).filter(([p])=>ok(p));if(!vis.length){L.innerHTML='<div class="empty">Ningún paquete coincide con la búsqueda.</div>';return}
-  L.innerHTML=vis.sort((a,b)=>rk(a[0])-rk(b[0])||a[1]-b[1]).map(([p],i)=>{const c=parseCoord(p.ubic);return `<div class="pkg${p.st==='entregado'?' entregado':''}${pkDevol(p)?' devol':''}${!c&&p.st!=='entregado'&&p.st!=='devuelto'&&!pkDevol(p)?' sinub':''}">
+  L.innerHTML=vis.sort((a,b)=>rk(a[0])-rk(b[0])||a[1]-b[1]).map(([p],i)=>{const c=parseCoord(p.ubic);return `<div class="pkg${p.st==='entregado'?' entregado':''}${pkOff(p)?' devol':''}${!c&&p.st!=='entregado'&&p.st!=='devuelto'&&!pkDevol(p)?' sinub':''}">
     <div class="num${p.st==='entregado'?' tachado':''}">${p.num||i+1}</div>
     <div class="name">${esc(p.nombre||'(sin nombre)')} ${pkChip(p)}</div>
     <div class="addr">${esc(p.dir||'Sin dirección')}${p.nota?` · <i>${esc(p.nota)}</i>`:''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
@@ -602,7 +603,7 @@ function renderMsg(){
   // 1.52.4: los que están en Hold en la Ruta también van en gris, después de los pendientes y antes de los entregados
   const enHold=p=>{if(p.st==='entregado'||p.st==='devuelto')return false;try{return entParadasDe(p).some(x=>x.hold&&!x.done)}catch(e){return false}};
   const rk=p=>p.st==='entregado'?2:p.st==='devuelto'?3:enHold(p)?1:0;
-  L.innerHTML=S.pk.map((p,i)=>[p,i]).sort((a,b)=>rk(a[0])-rk(b[0])||a[1]-b[1]).map(([p,i])=>{const sel=msgSel(p),txt=msgText(p,sel);const l=waLink(p,txt);return `<div class="pkg${p.st==='entregado'||enHold(p)?' entregado':''}${pkDevol(p)?' devol':''}"${hit(p)?'':' style="display:none"'}>
+  L.innerHTML=S.pk.map((p,i)=>[p,i]).sort((a,b)=>rk(a[0])-rk(b[0])||a[1]-b[1]).map(([p,i])=>{const sel=msgSel(p),txt=msgText(p,sel);const l=waLink(p,txt);return `<div class="pkg${p.st==='entregado'||enHold(p)?' entregado':''}${pkOff(p)?' devol':''}"${hit(p)?'':' style="display:none"'}>
     <div class="num${p.st==='entregado'?' tachado':''}">${p.num||i+1}</div>
     <div class="name">${esc(p.nombre)} ${stChip(p)}${enHold(p)?' <span class="small" style="font-weight:700">⏸ hold</span>':''} ${p.sent?'<span class="small muted">✓ mensaje abierto</span>':''}${p.formSent?'<span class="small muted">· formulario enviado</span>':''}</div>
     <div class="addr"><span class="mono">${esc(p.tel||'sin teléfono')}</span>${p.resp?' <span class="small" style="color:var(--ok);font-weight:600">✓ llenó el formulario</span>':''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
