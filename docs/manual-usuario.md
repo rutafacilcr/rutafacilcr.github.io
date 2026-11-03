@@ -23,7 +23,7 @@ Resumen de cómo está la app ahora. Más abajo se explica cada parte con la ver
 **Ruta**
 - **Primera línea:** 📂 Cargar ruta, el nombre de la ruta, 📍 Ordenar desde aquí y, a la derecha, 📍 Estás aquí (tu GPS).
 - **Segunda línea:** ▶ Iniciar entregas / ■ Finalizar. Guardan la hora y el punto de salida y de cierre para el reporte.
-- **Tercera línea:** a la izquierda, el resumen (⏱ tiempo, km, inicio y fin) y los vehículos 🏍️ 🚙 🚐. A la derecha, 🎯 Elegir en el mapa y 📋 Lista.
+- **Tercera línea:** a la izquierda, el resumen (⏱ tiempo, km, inicio y fin) y los vehículos 🏍️ 🚙 🚐 (🚙 carro marcado de entrada). A la derecha, 🎯 Elegir en el mapa y 📋 Lista.
 - **El mapa:** la línea va por las calles reales. Los pines pendientes quedan encima, Hold en amarillo y los que están en el mismo lugar se abren en abanico.
 - **Cada parada:** Waze, Maps, WhatsApp "Estamos en camino 🏍️…" (con el ícono del vehículo elegido), Quitar, Evidencia, Co-out, Hold, ⛔ Devolver y ✓ Entregado.
 - **✓ Entregado** guarda la fecha y la hora reales del toque.
@@ -614,7 +614,7 @@ En **Cierres** aparece una lista de reportes, uno por cada **fecha de recibido**
 
 ### Vehículo (1.55.0)
 
-En **Ruta**, a la par de **📋 Lista**, hay tres botones: **🏍 moto**, **🚙 carro** y **🚐 buseta**. Tocá el que vas a usar; queda marcado en naranja y se guarda (moto viene marcado al inicio). No cambia los tiempos, los km ni el orden de la ruta. Desde la 1.56.4, el ícono elegido va en el WhatsApp de "en camino", justo después de la palabra *camino* (por ejemplo "Estamos en camino 🏍️, le estaremos entregando…"), tanto en *Ruta* como en el mensaje 3 de *Mensajes*.
+En **Ruta**, a la par de **📋 Lista**, hay tres botones: **🏍 moto**, **🚙 carro** y **🚐 buseta**. Tocá el que vas a usar; queda marcado en naranja y se guarda (desde la 1.69.2 viene marcado el 🚙 carro; antes la moto). No cambia los tiempos, los km ni el orden de la ruta. Desde la 1.56.4, el ícono elegido va en el WhatsApp de "en camino", justo después de la palabra *camino* (por ejemplo "Estamos en camino 🏍️, le estaremos entregando…"), tanto en *Ruta* como en el mensaje 3 de *Mensajes*.
 
 
 ### Arriba de Ruta (1.67.6)

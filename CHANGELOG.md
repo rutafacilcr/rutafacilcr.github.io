@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.69.2 · Carro por defecto:** en *Ruta* el vehículo marcado de entrada es el 🚙 carro (antes la moto); si elegís otro, se queda guardado.
 - **1.69.1 · Sin título en Paquetes y documentación al día:** se quita el título *Lista del día* (las tarjetas van justo después del buscador). Manuales y README actualizados con todo lo de la 1.53 a la 1.69: resumen "La app hoy" en el manual de usuario, detalles de pantalla, datos y funciones nuevas.
 - **1.69.0 · Confirmaciones con diseño propio:** los avisos de confirmar (borrar, devolver, vaciar, guardar cambios, finalizar…) ya no usan el cuadro gris del navegador: salen como una hoja abajo con ícono, título, detalle y dos botones grandes (**Cancelar** y la acción, en rojo si borra o desactiva). Correcciones: *Editar* ya no pone "undefined" en los campos vacíos ni marca como cambio una ubicación igual; las coordenadas se guardan con 6 decimales (antes se perdían los ceros, por ejemplo 9.9300 → 9.93, y la app dejaba de reconocer la ubicación). Las que quedaron así se vuelven a leer bien.
 - **1.68.0 · Ruta por calles en el mapa:** la línea azul de *Ruta* sigue las calles reales (trazo de OSRM, el mismo servicio gratis que ya calcula tiempos y km). Mientras llega, o si no hay internet o el servicio falla, se dibuja en línea recta como antes.

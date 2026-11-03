@@ -20,7 +20,7 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
   - Mapa con la línea por calles reales (OSRM, gratis).
   - Ordenar desde tu GPS o desde un punto del mapa.
   - ▶ Iniciar / ■ Finalizar entregas para el reporte.
-  - Vehículo 🏍️ 🚙 🚐, que va en el WhatsApp "Estamos en camino 🏍️…".
+  - Vehículo 🏍️ 🚙 🚐 (carro por defecto), que va en el WhatsApp "Estamos en camino 🏍️…".
   - 📋 Lista en orden.
   - En cada parada: Hold, ⛔ Devolver y ✓ Entregado. ✓ Entregado guarda la fecha y la hora reales.
 - **Cierres:**
