@@ -568,3 +568,8 @@ En **Cierres** aparece una lista de reportes, uno por cada **fecha de recibido**
 ### Vehículo (1.55.0)
 
 En **Ruta**, a la par de **📋 Lista**, hay tres botones: **🏍 moto**, **🚙 carro** y **🚐 buseta**. Tocá el que vas a usar; queda marcado en naranja y se guarda (moto viene marcado al inicio). No cambia los tiempos, los km ni el orden de la ruta. Desde la 1.56.4, el ícono elegido va en el WhatsApp de "en camino", justo después de la palabra *camino* (por ejemplo "Estamos en camino 🏍️, le estaremos entregando…"), tanto en *Ruta* como en el mensaje 3 de *Mensajes*.
+
+
+### Arriba de Ruta (1.67.6)
+
+En la primera línea de *Ruta* están **📂 Cargar ruta**, el nombre de la ruta, **📍 Ordenar desde aquí** y, a la derecha, **📍 Estás aquí (±m)** (tu GPS). Debajo va **▶ Iniciar entregas** y después **🎯 Elegir en el mapa** (para ordenar desde otro punto, útil en la computadora o si el GPS falla), **📋 Lista** y el vehículo.

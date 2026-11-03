@@ -84,7 +84,7 @@ nav.tabs .n:empty{display:none}
 .sig.ok{border-style:solid;border-color:var(--ok)}
 .trackmap{height:320px;border-radius:10px;overflow:hidden;background:var(--bg);z-index:0}
 .tracklist{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px;font-size:14px}
-.enthead{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.enthead{display:flex;gap:10px;align-items:center;flex-wrap:wrap}#entGps{margin-left:auto;max-width:100%}#entGps:empty{display:none}
 .jorbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:8px 0}
 .jorbar .jtxt{flex:1 1 140px;font-size:13px;line-height:1.3}.jorbar .jtxt b{white-space:nowrap}
 .jorbar .jini{background:#1f9d55;border-color:#1f9d55;color:#fff;font-weight:700}.jorbar .jfin{background:#c0392b;border-color:#c0392b;color:#fff;font-weight:700}
@@ -101,7 +101,7 @@ nav.tabs .n:empty{display:none}
 .estop .dir{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .estop.sel .dir{-webkit-line-clamp:unset}
 .eub{font:600 11px var(--f-body);border:1px dashed var(--muted);border-radius:999px;padding:1px 8px;background:transparent;color:var(--muted);cursor:pointer;vertical-align:1px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.entrow #entGps{flex:0 1 auto}.entrow{flex-basis:100%;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.enttot{text-align:right;font-size:12px;line-height:1.35;color:var(--ink,inherit)}.enttot:empty{display:none}
+.entrow{flex-basis:100%;display:flex;justify-content:flex-end;align-items:flex-start;gap:10px}.enttot{text-align:right;font-size:12px;line-height:1.35;color:var(--ink,inherit)}.enttot:empty{display:none}
 .estop .eeta{flex:0 1 auto;font-size:11.5px;line-height:1.2;font-weight:700;color:var(--muted);white-space:nowrap;text-align:center;align-self:center}.estop .eeta:empty{display:none}
 .entbus{display:flex;align-items:center;gap:8px;margin:2px 0 10px}.entbus input{flex:1;min-width:0;font-size:16px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:inherit}
 .estop .acts3{grid-column:1/-1;display:flex;justify-content:center}.estop .acts3:empty{display:none}.estop .acts3{gap:8px}.estop .acts3 .ehold{font-weight:700;padding:7px 14px}.estop .acts3 .ehold.on{background:#f5c518;border-color:#f5c518;color:#1f2125}.estop .acts3 .edone{background:#1f2125;color:#fff;border-color:#1f2125;font-weight:700;padding:7px 22px}
@@ -302,14 +302,15 @@ details summary{cursor:pointer;font-weight:600}
   <div class="enthead">
     <label class="btn sm primary" for="entFile">📂 Cargar ruta</label><input type="file" id="entFile" accept=".xlsx,.xls,.csv" hidden>
     <span class="small muted" id="entInfo"></span>
+    <button class="btn sm road" id="entAqui" type="button" hidden>📍 Ordenar desde aquí</button>
+    <span class="small muted" id="entGps"></span>
   </div>
   <div class="jorbar" id="jorBar"></div>
   <div class="enthead" id="entTools" hidden>
-    <button class="btn sm road" id="entAqui" type="button">📍 Ordenar desde aquí</button>
     <button class="btn sm" id="entPick" type="button">🎯 Elegir en el mapa</button>
     <button class="btn sm" id="entLista" type="button">📋 Lista</button>
     <span class="vehsel" id="vehSel" role="group" aria-label="Vehículo"><button type="button" data-veh="moto" title="Moto">🏍</button><button type="button" data-veh="carro" title="Carro">🚙</button><button type="button" data-veh="buseta" title="Buseta">🚐</button></span>
-    <div class="entrow"><span class="small muted" id="entGps"></span><span class="enttot" id="entTot"></span></div>
+    <div class="entrow"><span class="enttot" id="entTot"></span></div>
   </div>
   <div class="entbus" id="entBus" hidden><input type="search" id="entBuscar" placeholder="🔍 Buscar cliente, teléfono o guía" autocomplete="off" enterkeyhint="search"><span class="small muted" id="entBusN"></span></div>
   <div class="entmap" id="entMap" hidden></div>
@@ -357,7 +358,7 @@ details summary{cursor:pointer;font-weight:600}
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.67.5</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.67.6</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -1487,8 +1488,8 @@ $('#jorBar').addEventListener('click',async e=>{const b=e.target.closest('[data-
 async function renderEnt(){entSyncPk();jorRender();
   // La ruta se arma el día antes: vale la de hoy o la de mañana (fecha local del celular).
   const dia=d=>'Ruta '+new Date(Date.now()+d*864e5).toLocaleDateString('en-CA'),hoy=dia(0),man=dia(1);const E=S.ent,LI=$('#entList');
-  if(!E||!E.stops||!E.stops.length){$('#entMap').hidden=true;$('#entTools').hidden=true;$('#entBus').hidden=true;$('#entInfo').textContent=`Cargá el archivo de la ruta ("${hoy}.xlsx" o "${man}.xlsx")`;LI.innerHTML='<div class="empty">Tocá <b>📂 Cargar ruta</b> y elegí el Excel de la ruta del día. Arriba sale el mapa con las paradas en orden y abajo la lista: tocá una parada para verla en el mapa e ir con Waze o Google Maps.</div>';return}
-  $('#entTools').hidden=false;$('#entBus').hidden=false;const ok=E.stops.filter(x=>entDone(x)&&!entDev(x)).length,conC=E.stops.filter(s=>s.c);
+  if(!E||!E.stops||!E.stops.length){$('#entMap').hidden=true;$('#entTools').hidden=true;$('#entAqui').hidden=true;$('#entGps').hidden=true;$('#entBus').hidden=true;$('#entInfo').textContent=`Cargá el archivo de la ruta ("${hoy}.xlsx" o "${man}.xlsx")`;LI.innerHTML='<div class="empty">Tocá <b>📂 Cargar ruta</b> y elegí el Excel de la ruta del día. Arriba sale el mapa con las paradas en orden y abajo la lista: tocá una parada para verla en el mapa e ir con Waze o Google Maps.</div>';return}
+  $('#entTools').hidden=false;$('#entAqui').hidden=false;$('#entGps').hidden=false;$('#entBus').hidden=false;const ok=E.stops.filter(x=>entDone(x)&&!entDev(x)).length,conC=E.stops.filter(s=>s.c);
   $('#entInfo').innerHTML=`<b>${esc(E.nombre)}</b> · ${ok} de ${E.stops.length} entregadas`;
   // Pendientes arriba (en orden de ruta; las sin ubicación después) y las entregadas totalmente de últimas
   const erk=s=>entDone(s)?2:s.c?(s.hold?0.5:0):1;
