@@ -55,6 +55,9 @@ input,select{font:inherit;padding:9px 11px;border:1px solid var(--line);border-r
 .btn{font:inherit;font-weight:600;font-size:14px;padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:inherit;cursor:pointer}
 .btn.pri{background:var(--accent);color:var(--accent-ink);border-color:transparent}
 .btn.bad{color:var(--bad)}
+.uso{display:flex;flex-direction:column;gap:10px}
+.ubar{height:10px;border-radius:6px;background:var(--line);overflow:hidden;margin-top:4px}.ubar span{display:block;height:100%}
+#u-cuentas{overflow-x:auto}.utab{border-collapse:collapse;width:100%;font-size:14px}.utab th,.utab td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}.utab th{font-size:12px;color:var(--muted)}
 .btn:disabled{opacity:.6}
 .chip{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--info-bg);color:var(--info)}
 .chip.ok{background:var(--ok-bg);color:var(--ok)}.chip.warn{background:var(--warn-bg);color:var(--warn)}.chip.bad{background:var(--bad-bg);color:var(--bad)}
@@ -128,10 +131,32 @@ input:not([type=checkbox]):not([type=radio]),textarea,select{font-size:16px!impo
   </div>
 </section>
 
+<section aria-labelledby="t-uso">
+  <h2 id="t-uso">Uso del plan gratis</h2>
+  <div class="panel">
+    <p class="small muted">Supabase gratis: 500 MB de base y 1 GB de fotos. Si una barra pasa de 80 %, bajá los días de fotos o pasá a "1 foto chica".</p>
+    <div id="u-barras" class="uso"></div>
+    <div class="row" style="justify-content:flex-end"><button class="btn pri" id="u-ver">Actualizar</button></div>
+    <p class="small muted">Los <b>cierres</b> (lo que guarda "Vaciar lista") son lo que más llena la base: con 150 mensajeros, unos 340 MB al mes. De fábrica se guardan 15 días (unos 170 MB); cada mensajero borra los suyos vencidos al cerrar el día. 0 = se guardan siempre.</p>
+    <div class="row" style="justify-content:flex-end"><label style="flex-direction:row;align-items:center;gap:8px">Guardar cierres <input id="u-cierres" type="number" min="0" max="3650" style="width:90px"> días</label><button class="btn pri" id="u-cierres-ok">Guardar</button></div>
+    <div id="u-cuentas"></div>
+  </div>
+</section>
+
 <section aria-labelledby="t-fotos">
   <h2 id="t-fotos">Fotos de entrega</h2>
   <div class="panel">
-    <p class="small muted">El plan gratis de Supabase tiene 1 GB. Cada entrega ocupa unos 0,4 MB, así que conviene borrar las fotos viejas cada mes. Las fotos se guardan por día.</p>
+    <h3>Qué se sube a la nube</h3>
+    <p class="small muted"><b>Ninguna</b> (de fábrica): las fotos quedan 30 días en el celular de cada mensajero y a la nube va la entrega sin fotos (hora, GPS, quién recibió); así el plan gratis aguanta 150 mensajeros. <b>1 foto chica</b> sube la primera foto reducida (~40 KB) y la firma: el 1 GB alcanza para unos 20 mensajeros con 14 días. <b>Las 3 fotos</b> solo con pocos mensajeros o con Supabase Pro. Cada app borra sola sus fotos de la nube cuando pasan los días de abajo (0 = no se borran).</p>
+    <div class="grid">
+      <label>Fotos en la nube<select id="f-modo"><option value="ninguna">Ninguna (solo en el celular)</option><option value="una">1 foto chica + firma</option><option value="todas">Las 3 fotos + firma</option></select></label>
+      <label>Días en la nube<input id="f-nube" type="number" min="0" max="365"></label>
+    </div>
+    <div class="row" style="justify-content:flex-end"><button class="btn pri" id="f-guardar">Guardar fotos</button></div>
+  </div>
+  <div class="panel">
+    <h3>Borrar a mano</h3>
+    <p class="small muted">Las fotos se guardan por día. Esto borra las de todos los mensajeros.</p>
     <div class="row"><button class="btn" id="f-calc">Calcular espacio usado</button><span id="f-uso" class="small"></span></div>
     <div class="row"><label style="flex-direction:row;align-items:center;gap:8px">Borrar fotos de más de <input id="f-dias" type="number" min="7" value="30" style="width:80px"> días</label><button class="btn bad" id="f-borrar">Borrar</button></div>
   </div>
@@ -142,7 +167,7 @@ input:not([type=checkbox]):not([type=radio]),textarea,select{font-size:16px!impo
   <div class="panel" id="eventos"></div>
 </section>
 
-<footer class="appver">RutaFácil CR · panel · versión <span id="appVer">1.73.3</span></footer>
+<footer class="appver">RutaFácil CR · panel · versión <span id="appVer">1.74.0</span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="toast" id="toast" hidden></div>
@@ -159,7 +184,7 @@ const dias=d=>d?Math.ceil((new Date(d)-Date.now())/864e5):null;
 function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2600)}
 let CU=[],AJ={precio:5000,sinpe:'',dias_gracia:3,exigir_cuenta:false},FIL='todas';
 
-const EVENTO={cuenta_nueva:'Cuenta nueva',telefono_nuevo:'Pidió usar otro teléfono',telefono_aprobado:'Teléfono aprobado',telefono_rechazado:'Teléfono rechazado',telefono_liberado:'Teléfono liberado',renovada:'Pago registrado',estado:'Cambio de estado',pin:'PIN nuevo',aviso_error:'Aviso no enviado'};
+const EVENTO={cuenta_nueva:'Cuenta nueva',codigo_nuevo:'Sacó código de recuperación',codigo_fallido:'Código de recuperación incorrecto',recuperada:'Usó su código de recuperación (PIN nuevo)',telefono_nuevo:'Pidió usar otro teléfono',telefono_aprobado:'Teléfono aprobado',telefono_rechazado:'Teléfono rechazado',telefono_liberado:'Teléfono liberado',renovada:'Pago registrado',estado:'Cambio de estado',pin:'PIN nuevo',aviso_error:'Aviso no enviado'};
 
 function estadoDe(c){
   if(c.rol==='admin')return ['Administrador','ok'];
@@ -291,7 +316,26 @@ $('#f-borrar').onclick=async()=>{
   catch(e){toast('No se pudo borrar: '+e.message)}finally{b.disabled=false}
 };
 
-RF_AUTH.listo.then(c=>{if(c&&c.rol==='admin'){cargar();RF_AUTH.rpc('rf_admin_avisos',{p_whatsapp:null,p_callmebot_key:null,p_correo:null,p_resend_key:null}).then(pintarAvisos).catch(()=>{})}else if(!RF_AUTH.on)$('#lista').innerHTML='<p class="muted">Falta configurar Supabase en config.js.</p>'});
+// ---- Uso del plan gratis (1.74.0): rf_admin_uso ----
+const MB=b=>(Number(b||0)/1048576).toLocaleString('es-CR',{maximumFractionDigits:b<10485760?1:0})+' MB';
+function barra(t,usado,limite){const pc=Math.min(100,Math.round(usado/limite*100));
+  return `<div><div class="row" style="justify-content:space-between"><b>${t}</b><span class="small">${MB(usado)} de ${MB(limite)} · ${pc} %</span></div><div class="ubar"><span style="width:${pc}%;background:${pc>=80?'var(--bad)':pc>=60?'var(--warn)':'var(--ok)'}"></span></div></div>`}
+async function verUso(){
+  try{const u=await RF_AUTH.rpc('rf_admin_uso');
+    $('#u-barras').innerHTML=barra(`Base de datos (cierres: ${MB(u.cierres_bytes)})`,u.base_bytes,500*1048576)+barra(`Fotos (${u.fotos})`,u.fotos_bytes,1024*1048576);
+    $('#f-modo').value=u.fotos_nube||'ninguna';$('#u-cierres').value=u.dias_cierres??15;$('#f-nube').value=u.dias_fotos??21;
+    $('#u-cuentas').innerHTML=(u.cuentas||[]).length?`<table class="utab"><thead><tr><th>Cuenta</th><th>Fotos</th><th>Lista</th><th>Cierres</th><th>Entregas 30 d</th></tr></thead><tbody>${u.cuentas.map(c=>`<tr><td>${esc(c.nombre||'(sin nombre)')}<br><span class="small muted">${tel(c.telefono)}</span></td><td>${MB(c.fotos_bytes)}</td><td>${MB(c.lista_bytes)}</td><td>${c.cierres}</td><td>${c.entregas_30d}</td></tr>`).join('')}</tbody></table>`:'';
+  }catch(e){$('#u-barras').innerHTML=`<p class="small muted">${/PGRST202|could not find|404/i.test(e.message+e.status)?'Falta correr el supabase.sql nuevo (1.74.0) para ver el uso.':'No se pudo: '+esc(e.message)}</p>`}
+}
+$('#u-ver').onclick=verUso;
+$('#u-cierres-ok').onclick=async()=>{const d=parseInt($('#u-cierres').value,10);if(isNaN(d))return;
+  if(d>0&&!confirm(`Los cierres de más de ${d} días se van a borrar de la base (los reportes de esas fechas dejan de salir, salvo en los celulares que ya los tenían). ¿Seguir?`))return;
+  try{const r=await RF_AUTH.rpc('rf_admin_cierres',{p_dias:d});$('#u-cierres').value=r.dias_cierres;toast(r.dias_cierres?`Cierres: se guardan ${r.dias_cierres} días`:'Cierres: se guardan siempre')}catch(e){toast('No se pudo: '+e.message)}};
+$('#f-guardar').onclick=async()=>{const d=parseInt($('#f-nube').value,10);
+  try{const r=await RF_AUTH.rpc('rf_admin_fotos',{p_modo:$('#f-modo').value,p_dias:isNaN(d)?null:d});$('#f-modo').value=r.fotos_nube;$('#f-nube').value=r.dias_fotos;toast('Fotos guardadas. Cada celular lo toma en 15 minutos o al abrir la app.')}
+  catch(e){toast('No se pudo: '+e.message)}};
+
+RF_AUTH.listo.then(c=>{if(c&&c.rol==='admin'){cargar();verUso();RF_AUTH.rpc('rf_admin_avisos',{p_whatsapp:null,p_callmebot_key:null,p_correo:null,p_resend_key:null}).then(pintarAvisos).catch(()=>{})}else if(!RF_AUTH.on)$('#lista').innerHTML='<p class="muted">Falta configurar Supabase en config.js.</p>'});
 </script>
 </body>
 </html>

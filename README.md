@@ -51,6 +51,18 @@ Desde la versión 1.7.0 cada repartidor entra con **su número de teléfono y un
 
 Cuando alguien crea cuenta, al administrador le llega un **WhatsApp y un correo** (servicios gratis). Al activarla, el panel deja listo el mensaje de WhatsApp para avisarle al repartidor, y en la app del repartidor el botón gris *Esperando activación* se pone naranja (*Cuenta habilitada · Entrar*) en menos de un minuto.
 
+## Varios mensajeros (1.74.0)
+
+La app está preparada para unas **150 cuentas a la vez** en el plan gratis de Supabase (con las fotos de entrega guardadas en el celular):
+
+- **Nada se mezcla entre cuentas.** Paquetes, rutas, cierres, respuestas de clientes y fotos quedan amarrados a la cuenta que los creó; la base no le entrega a una cuenta datos de otra. Si en un mismo celular entra otra cuenta, la app aparta los datos de la anterior y abre los de la nueva.
+- **Gasta poco del plan gratis.** La revisión de cada minuto solo baja lo que cambió.
+- **Fotos de entrega a la medida del plan gratis:** de fábrica quedan en el celular; el administrador puede subir *1 foto chica + firma* o las 3 fotos, y elegir cuántos días se guardan en la nube.
+- **Cierres por 15 días** (se cambia en el Panel).
+- **Código de recuperación:** cada mensajero puede poner un PIN nuevo o pasar su cuenta a otro celular sin esperar al administrador. Cinco intentos fallidos bloquean ese número 30 minutos. El Panel pide el PIN cada 12 horas.
+- Listas grandes (cientos de paquetes) abren rápido también en celulares sencillos.
+- El Panel muestra **cuánto se usa** del plan gratis (base y fotos) y cuánto ocupa cada cuenta.
+
 ## Cierre del día
 
 **🧹 Vaciar lista** (en *Paquetes*) guarda en la base todos los paquetes, la ruta y la jornada con la fecha del cierre (tabla `rf_cierres`) y deja la app limpia para una ruta nueva. Esos cierres siguen saliendo en los reportes de *Cierres*.
