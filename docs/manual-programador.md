@@ -139,6 +139,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - 1.67.3: orden de `nav.tabs`: paquetes, cierres, mensajes, entrega (Ruta).
 - 1.67.2: `#p-buscar` va antes del encabezado de la lista en `#v-paquetes`.
 - 1.67.1 y 1.66.1: orden de `.subbtns`: `#vaciarTile`, Agregar a mano, Importar, Escanear.
+- 1.70.1: regla base `input,textarea,select` a 16 px en `index.html` (y `!important` en `admin.html`): con menos, Safari de iPhone hace zoom al enfocar y la vista queda corrida.
 - 1.69.8: `data-act="dev"` sobre un devuelto: texto "¿Regresar a Ruta…?" (botón "Regresar a Ruta"); vuelve a `stAntes` (nunca a entregado), borra `devolver`; si no tiene parada y hay ruta abierta, `entAgregarPk(p)` (con ubicación) o avisa.
 - 1.69.6: `.pkruta` (ancho completo, sin salto) lleva el estado de ruta (`aruta` / En la ruta) y `data-act="paste"`; al final del `<script>` principal se llama `render()` otra vez (el primero corre antes de `entPkg` y el `enR` quedaba vacío).
 - 1.69.5: `.rfdlg-box` centrado con `position:fixed;left:50%;top:50%;transform:translate(-50%,-50%)`, ancho `min(340px,100vw-40px)`; botones en columna (acción arriba); un último párrafo que empieza con "Ojo" va en `.rfdlg-ojo`; el foco inicial solo con `(hover:hover)`.

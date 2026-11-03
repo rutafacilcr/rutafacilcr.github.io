@@ -501,6 +501,8 @@ Cuando tocás **✓ Entregado** en *Ruta*, el número del paquete queda tachado 
 
 ### Si algo no responde (1.67.5)
 
+Si la pantalla quedó agrandada o corrida hacia un lado, pellizcá con dos dedos para achicarla. Desde la 1.70.1 ya no debería pasar al tocar un campo.
+
 Si arriba sale un **aviso rojo "Error en la app…"**, tomale captura y mandala a soporte; tocalo para cerrarlo. En computadora, para cargar la última versión apretá **Ctrl + Shift + R** (Windows) o **Cmd + Shift + R** (Mac).
 
 ### Avisos de confirmar (1.69.0)
