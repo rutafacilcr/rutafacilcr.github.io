@@ -61,6 +61,7 @@ La app está preparada para unas **150 cuentas a la vez** en el plan gratis de S
 - **Cierres por 15 días** (se cambia en el Panel).
 - **Código de recuperación** (enlace 🔑 al final de la app, con su propio aviso explicativo): cada mensajero puede poner un PIN nuevo o pasar su cuenta a otro celular sin esperar al administrador. Cinco intentos fallidos bloquean ese número 30 minutos. El Panel pide el PIN cada 12 horas.
 - Listas grandes (cientos de paquetes) abren rápido también en celulares sencillos.
+- **Pestañas al instante (1.77.0):** Paquetes, Cierres, Mensajes y Ruta cambian apenas se tocan, aun con muchos paquetes.
 - **Avisos propios (1.75.2):** ni la app ni el Panel usan los cuadros grises del navegador; toda pregunta o dato que se pide sale en un aviso de RutaFácil con botones a la derecha (el principal naranja).
 - **Mejor contraste (1.76.2):** los paquetes devueltos se leen completos (sus botones siguen desactivados), y la pestaña seleccionada y «Vaciar lista» se leen bien en tema claro y oscuro, según la revisión de Lighthouse.
 - **Uno o dos números SINPE (1.76.1):** el administrador puede poner dos números para recibir la mensualidad y el mensajero ve los dos.

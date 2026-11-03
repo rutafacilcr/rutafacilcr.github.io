@@ -317,6 +317,12 @@ Recomendado al pasar a varios mensajeros: en el Panel encender **Exigir cuenta a
 
 Si más adelante hace falta guardar las 3 fotos por meses, la única opción es pagar (Supabase Pro, 25 USD al mes, 100 GB).
 
+### Pestañas más rápidas (1.77.0)
+
+Solo JavaScript en `index.html`; no toca Supabase, `auth.js`, `supabase.sql` ni el diseño. No hace falta correr nada en la base. Al abrir Ruta la app sigue pidiendo la lista a la nube (`rf_lista_leer`) como antes, pero ya no vuelve a pintar la ruta si la nube no trajo cambios.
+
+Medición (Playwright, Chromium con CPU 6× más lenta para imitar un celular sencillo, 90 paquetes y 90 paradas): tiempo hasta que se ve el cambio de pestaña. Mensajes con lista pendiente: 14,4 s → 0,03 s; Ruta: ~0,5 s → ~0,13 s; Paquetes y Cierres ya estaban bien (~0,03 s). Un celular real va unas 6 veces más rápido que esa prueba.
+
 ### Contraste (1.76.2)
 
 Solo CSS en `index.html` (bloque `/* 1.76.2 · Contraste */` al final del `<style>`); no toca Supabase, `auth.js` ni la lógica. Se revisó con axe-core (el mismo motor de la auditoría de accesibilidad de Lighthouse), regla `color-contrast`, en tema claro y oscuro a 390 px. Quedan avisos conocidos que son decisión de marca: texto blanco sobre el naranja `#f26b1d` de los botones principales (3,0:1), el verde de WhatsApp y el verde de «● Ubicación lista» en claro (4,3:1).

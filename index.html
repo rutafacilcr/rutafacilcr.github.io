@@ -391,7 +391,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.76.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.77.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -493,6 +493,12 @@ document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.targ
 window.addEventListener('error',e=>{try{if(window.RF_ERR||!e.message||/Script error|ResizeObserver/.test(e.message))return;window.RF_ERR=1;const d=document.createElement('div');
   d.style.cssText='position:fixed;left:8px;right:8px;top:calc(8px + env(safe-area-inset-top,0px));z-index:99;background:#c0392b;color:#fff;padding:10px 12px;border-radius:10px;font:13px system-ui;box-shadow:0 2px 10px rgba(0,0,0,.3)';
   d.textContent=`Error en la app (versión ${(document.getElementById('appVer')||{}).textContent||''}): ${e.message} · línea ${e.lineno||'?'}. Tocá para cerrar y mandá captura a soporte.`;d.onclick=()=>d.remove();document.body.appendChild(d)}catch(x){}});
+// 1.77.0: memoria para funciones de texto puras (el mismo texto siempre da lo mismo). Unir paradas con paquetes compara
+// nombres, teléfonos, guías y ubicaciones miles de veces al pintar; así cada texto se normaliza una sola vez.
+function memoTxt(fn,copia){const M=new Map();return function(x){if(typeof x!=='string')return fn(x);let r=M.get(x);
+  if(r===undefined&&!M.has(x)){if(M.size>5000)M.clear();r=fn(x);M.set(x,r)}return copia&&r?r.slice():r}}
+// 1.77.0: lo pesado de una pestaña corre después de que la pantalla ya cambió (el botón se ilumina al instante)
+const trasPintar=fn=>requestAnimationFrame(()=>setTimeout(fn,0));
 const KEY='rutafacil-cr-v1';
 const STATUS=[['pendiente','Pendiente'],['confirmado','Confirmado'],['noresponde','No responde'],['entregado','Entregado'],['fallido','No se entregó'],['devuelto','Devuelto']];
 const SLABEL=Object.fromEntries(STATUS);
@@ -554,7 +560,8 @@ function geohash(h){const B='0123456789bcdefghjkmnpqrstuvwxyz';let la=[-90,90],l
   for(const ch of h.toLowerCase()){const v=B.indexOf(ch);if(v<0)return null;for(let b=4;b>=0;b--){const r=ev?lo:la,mid=(r[0]+r[1])/2;if(v>>b&1)r[0]=mid;else r[1]=mid;ev=!ev}}
   const lat=+((la[0]+la[1])/2).toFixed(6),lng=+((lo[0]+lo[1])/2).toFixed(6);return lat<7.5||lat>11.6||lng<-86.5||lng>-82?null:[lat,lng]}
 const cTxt=c=>(+c[0]).toFixed(6)+','+(+c[1]).toFixed(6); // 1.69.0: coordenadas siempre con 6 decimales (sin perder ceros)
-function parseCoord(s){
+function parseCoord(s){return (parseCoord.m||(parseCoord.m=memoTxt(parseCoordTxt,1)))(s)}
+function parseCoordTxt(s){
   if(!s)return null;
   let t=String(s);try{t=decodeURIComponent(t)}catch(e){}
   // Grados, minutos y segundos como los copia Google Maps: 9°54'24.5"N 84°03'45.1"W (W u O = oeste)
@@ -568,7 +575,8 @@ function parseCoord(s){
   if(lat<7.5||lat>11.6||lng<-86.5||lng>-82)return null; // fuera de Costa Rica
   return [lat,lng];
 }
-function phoneWA(p){
+function phoneWA(p){return (phoneWA.m||(phoneWA.m=memoTxt(phoneWATxt)))(p)}
+function phoneWATxt(p){
   let d=String(p||'').replace(/\D/g,'');
   if(d.length===8)d='506'+d;
   return d.length>=10?d:'';
@@ -620,7 +628,7 @@ function stChip(p){if(p.st==='devuelto')return `<button class="chip devtag" data
 
 function renderStats(){
   // Cada paquete cae en un solo grupo, así: recibidos = entregados + hold + devueltos + sin ubicación + por entregar (con ubicación)
-  const pk=S.ex?[]:S.pk,par=p=>{try{return entParadasDe(p)}catch(e){return []}};
+  const pk=S.ex?[]:S.pk,PAR=new Map(),par=p=>{if(!PAR.has(p)){let r=[];try{r=entParadasDe(p)}catch(e){}PAR.set(p,r)}return PAR.get(p)}; // 1.77.0: una vez por paquete
   const cerr=p=>p.st==='entregado'||p.st==='devuelto'||p.devolver;
   const ent=pk.filter(p=>p.st==='entregado').length,dev=pk.filter(p=>p.st!=='entregado'&&(p.st==='devuelto'||p.devolver)).length;
   const hold=pk.filter(p=>!cerr(p)&&par(p).some(x=>x.hold&&!x.done)).length;
@@ -633,7 +641,7 @@ function renderPk(){
   const L=$('#pkgList');
   if(!S.pk.length){L.innerHTML='<div class="empty">Todavía no hay paquetes. Pegá tu lista arriba o agregá uno a mano.</div>';return}
   // Orden (1.53.2): activos, Hold, devueltos (y ⛔ Devolver) y al final los entregados (tarjeta gris)
-  const pkHold=p=>{try{return entParadasDe(p).some(x=>x.hold&&!x.done)}catch(e){return false}};
+  const HOLD=new Map(),pkHold=p=>{if(!HOLD.has(p)){let h=false;try{h=entParadasDe(p).some(x=>x.hold&&!x.done)}catch(e){}HOLD.set(p,h)}return HOLD.get(p)}; // 1.77.0: una vez por paquete
   const rk=p=>p.st==='entregado'?3:p.st==='devuelto'||p.devolver?2:pkHold(p)?1:0;
   // Qué paquetes ya tienen parada en la ruta cargada (para avisar y ofrecer agregarlos)
   const enR={};try{(S.ent&&S.ent.stops||[]).forEach(s=>{const q=entPkg(s);if(q&&!enR[q.id])enR[q.id]=s})}catch(e){}
@@ -674,7 +682,7 @@ function renderMsg(){
   const hit=p=>!q||(p.nombre||'').toLowerCase().includes(q)||(p.guia||'').toLowerCase().includes(q)||(qd.length>=3&&String(p.tel||'').replace(/\D/g,'').includes(qd.slice(-8)));
   // 1.52.1: como en Paquetes, los entregados se ven en gris (número tachado) y bajan; al final los devueltos
   // 1.52.4: los que están en Hold en la Ruta también van en gris, después de los pendientes y antes de los entregados
-  const enHold=p=>{if(p.st==='entregado'||p.st==='devuelto')return false;try{return entParadasDe(p).some(x=>x.hold&&!x.done)}catch(e){return false}};
+  const HOLD=new Map(),enHold=p=>{if(p.st==='entregado'||p.st==='devuelto')return false;if(!HOLD.has(p)){let h=false;try{h=entParadasDe(p).some(x=>x.hold&&!x.done)}catch(e){}HOLD.set(p,h)}return HOLD.get(p)}; // 1.77.0: se calcula una vez por paquete
   const rk=p=>p.st==='entregado'?2:p.st==='devuelto'?3:enHold(p)?1:0;
   // 1.69.3: dentro de cada grupo, el mismo orden que en Ruta (posición de su parada en la lista de Ruta); los que no están en la ruta van después, en el orden de la lista
   const rpos={};try{const E=S.ent;if(E&&E.stops){const erk=s=>entDone(s)?2:s.c?(s.hold?0.5:0):1;let k=0;E.stops.map((s,i)=>[s,i]).sort((a,b)=>erk(a[0])-erk(b[0])||a[1]-b[1]).forEach(([s])=>{const q=entPkg(s);if(q&&rpos[q.id]===undefined)rpos[q.id]=k;k++})}}catch(e){}
@@ -793,11 +801,10 @@ function render(){numerar();$('#exampleBar').hidden=!S.ex;try{entSyncPk()}catch(
   if(aLaVista('paquetes')){PEND.pk=false;renderPk()}else PEND.pk=true;if(aLaVista('mensajes')){PEND.msg=false;renderMsg()}else PEND.msg=true;renderRoute();if(typeof renderTrack==='function')renderTrack();if(typeof renderEnt==='function'&&!$('#v-entrega').hidden)renderEnt()}
 
 // ---- eventos ----
-document.querySelectorAll('nav.tabs [role=tab]').forEach(b=>b.onclick=()=>{
-  document.querySelectorAll('nav.tabs [role=tab]').forEach(x=>x.setAttribute('aria-selected',x===b));
-  ['paquetes','mensajes','ruta','entrega','cierres'].forEach(t=>$('#v-'+t).hidden=t!==b.dataset.tab);
-  if(b.dataset.tab==='paquetes'&&PEND.pk){PEND.pk=false;renderPk()}if(b.dataset.tab==='mensajes'&&PEND.msg){PEND.msg=false;renderMsg()}
-  window.scrollTo({top:0});
+// 1.77.0: el cambio de pestaña (botón y pantalla) ya lo hizo RF_TAB; aquí solo se pinta lo pendiente, después de que se vea el cambio
+document.querySelectorAll('nav.tabs [role=tab]').forEach(b=>b.onclick=()=>{const t=b.dataset.tab;
+  if(t==='paquetes'&&PEND.pk)trasPintar(()=>{if(PEND.pk&&aLaVista('paquetes')){PEND.pk=false;renderPk()}});
+  if(t==='mensajes'&&PEND.msg)trasPintar(()=>{if(PEND.msg&&aLaVista('mensajes')){PEND.msg=false;renderMsg()}});
 });
 document.addEventListener('click',async e=>{
   const el=e.target.closest('[data-act]');if(!el)return;
@@ -849,7 +856,6 @@ $('#cancelEdit').onclick=()=>{resetForm();subAbrir(null)};
 function subAbrir(id){if(id==='formPanel'){$('#formPanel').open=true;if(!editId)loteLlenar()}document.querySelectorAll('.subpn').forEach(x=>x.classList.toggle('on',x.id===id));$('#v-paquetes').classList.toggle('sub-open',!!id);window.scrollTo({top:0})}
 document.querySelectorAll('[data-sub]').forEach(b=>b.onclick=()=>subAbrir(b.dataset.sub));
 document.querySelectorAll('.subback').forEach(b=>b.onclick=()=>{if(editId)resetForm();subAbrir(null)});
-document.querySelectorAll('nav.tabs [role=tab]').forEach(b=>b.addEventListener('click',()=>subAbrir(null)));
 $('#formPanel').addEventListener('toggle',()=>{if($('#formPanel').open&&!editId)loteLlenar()});
 const ubicCheck=()=>{const v=$('#f-ubic').value.trim(),c=parseCoord(v),o=$('#f-ubic-ok');o.textContent=!v?'':c?`✓ Coordenadas detectadas: ${c.join(', ')}`:'No encontré coordenadas en ese texto';o.style.color=c?'var(--ok)':'var(--warn)'};
 $('#f-ubic').addEventListener('input',ubicCheck);
@@ -1059,8 +1065,8 @@ function guiPdf(k){const G=guiGrupos().find(x=>x.k===k);if(!G){toast('No hay ent
   if(IOS&&navigator.canShare){const file=new File([doc.output('blob')],name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Reporte guardado')).catch(()=>{});return}}
   doc.save(name);toast(`${tit}: ${G.pk.length} guía(s)`)}
 $('#guiLista').addEventListener('click',e=>{const b=e.target.closest('[data-gui]');if(b)guiPdf(b.dataset.gui)});
-document.querySelector('[data-tab="cierres"]').addEventListener('click',()=>{fixIng1031();repLista();guiLista();repCargar().catch(()=>{});
-  $('#repInfo').textContent='Buscando reportes de cierres anteriores…';repCierres().then(()=>{repLista();guiLista();$('#repInfo').textContent=''})});
+document.querySelector('[data-tab="cierres"]').addEventListener('click',()=>trasPintar(()=>{fixIng1031();repLista();guiLista();repCargar().catch(()=>{});
+  $('#repInfo').textContent='Buscando reportes de cierres anteriores…';repCierres().then(()=>{repLista();guiLista();$('#repInfo').textContent=''})}));
 $('#m-pref').addEventListener('input',()=>{$('#vcfEj').textContent=vcfName({nombre:'Nombre',guia:'pedido'})});
 $('#m-buscar').addEventListener('input',()=>renderMsg());
 $('#p-buscar').addEventListener('input',()=>renderPk());
@@ -1511,7 +1517,7 @@ $('#r-return').checked=!!S.ret;$('#r-return').onchange=e=>{S.ret=e.target.checke
 $('#m-fecha').placeholder=tomorrow();
 const grow=el=>{el.style.height='auto';el.style.height=el.scrollHeight+2+'px'};
 ['#m-coord','#m-form','#m-camino','#m-comp','#m-ext'].forEach(id=>{const el=$(id);el.addEventListener('input',()=>grow(el));requestAnimationFrame(()=>grow(el))});
-document.querySelector('[data-tab="mensajes"]').addEventListener('click',()=>requestAnimationFrame(()=>['#m-coord','#m-form','#m-camino','#m-comp','#m-ext'].forEach(id=>grow($(id)))));
+document.querySelector('[data-tab="mensajes"]').addEventListener('click',()=>trasPintar(()=>{if(aLaVista('mensajes'))['#m-coord','#m-form','#m-camino','#m-comp','#m-ext'].forEach(id=>grow($(id)))}));
 $('#tplPanel').addEventListener('toggle',()=>['#m-coord','#m-form','#m-camino','#m-comp','#m-ext'].forEach(id=>grow($(id))));
 $('#daypill').textContent='Entrega: '+tomorrow();
 S.pk.forEach(p=>{if(!p.tok)p.tok=tok()});
@@ -1553,7 +1559,7 @@ async function entCargar(file){
 }
 // Paquete de la lista que corresponde a la parada: por guía o teléfono; si no, por el mismo nombre (sin tildes ni mayúsculas)
 // La guía viene del escáner (OCR) y a veces confunde O con 0 o I con 1: se comparan normalizadas
-const guiaN=g=>String(g||'').toUpperCase().replace(/\s/g,'').replace(/O/g,'0').replace(/[IL]/g,'1');
+const guiaN=memoTxt(g=>String(g||'').toUpperCase().replace(/\s/g,'').replace(/O/g,'0').replace(/[IL]/g,'1'));
 // Paquete de la lista que corresponde a la parada. Si se unió a mano (pkFijo) manda ese; si no, gana el que más coincide:
 // guía (+4), nombre igual (+3) o primeras dos palabras (+2), teléfono (+1), el ya unido (+2, cuenta aunque haya cambiado todo lo demás), con ubicación (+2); empate: el más nuevo.
 // Así un paquete repetido con el teléfono viejo no le gana al que se corrigió.
@@ -1564,7 +1570,7 @@ const entPkgCand=s=>{if(s.pkFijo){const f=S.pk.find(p=>p.id===s.pkFijo);if(f)ret
     if(k>bs||(k===bs&&(p.ing||0)>(best.ing||0))){best=p;bs=k}}
   return best}
 // Nombre normalizado (sin tildes, espacios simples) y sus dos primeras palabras, por si un lado trae apellidos de más
-const nomN=t=>sinTilde(t).replace(/[^a-zñ0-9 ]/g,' ').replace(/\s+/g,' ').trim(),nom2=t=>{const w=nomN(t).split(' ').filter(x=>x.length>1);return w.length>=2?w[0]+' '+w[1]:''};
+const nomN=memoTxt(t=>sinTilde(t).replace(/[^a-zñ0-9 ]/g,' ').replace(/\s+/g,' ').trim()),nom2=memoTxt(t=>{const w=nomN(t).split(' ').filter(x=>x.length>1);return w.length>=2?w[0]+' '+w[1]:''});
 // Paquete de la parada: solo si la unión es segura (a mano, guía, nombre o teléfono). Así el número, el estado y el pin no salen de otro cliente.
 const entPkg=s=>{const p=entPkgCand(s);return p&&entFuerte(s,p)?p:null};
 // Cerrada = entregada o su paquete está entregado o devuelto: sale de la línea del mapa, del orden, del total y va gris al final
@@ -1684,7 +1690,7 @@ function entSel(i,desdeMapa){ESEL=i;const s=S.ent.stops[i];renderEnt().then(()=>
   if(s.c&&EMAP){EMAP.setView(s.c,Math.max(EMAP.getZoom(),16));EMAP.mk[i]&&EMAP.mk[i].openPopup()}
   if(desdeMapa){const el=document.querySelector(`[data-ei="${i}"]`);el&&el.scrollIntoView({behavior:'smooth',block:'center'})}})}
 // Lupa: busca por nombre (sin importar tildes ni mayúsculas), teléfono o guía y lleva a esa parada; Enter pasa a la siguiente
-const sinTilde=t=>String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();let EBUS={q:'',k:-1};
+const sinTilde=memoTxt(t=>String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase());let EBUS={q:'',k:-1};
 function entBuscar(sig){const q=sinTilde($('#entBuscar').value.trim()),N=$('#entBusN');if(!q||!S.ent){N.textContent='';EBUS={q:'',k:-1};return}
   const dig=q.replace(/\D/g,''),hits=S.ent.stops.map((s,i)=>[s,i]).filter(([s])=>q.split(/\s+/).every(w=>sinTilde(s.nombre).includes(w))||(dig.length>=3&&String(s.tel||'').replace(/\D/g,'').includes(dig))||sinTilde(s.guia).includes(q)).map(x=>x[1]);
   if(!hits.length){N.textContent='No está';return}
@@ -1831,7 +1837,8 @@ $('#entList').addEventListener('click',async e=>{if(e.target.closest('[data-edon
   const bu=e.target.closest('[data-eundo]');if(bu){const s=S.ent.stops[+bu.dataset.eundo];s.done=false;const p=s.pkId&&S.pk.find(x=>x.id===s.pkId);
     if(p&&p.st==='entregado'&&!p.pod){p.st=s.prevSt||'confirmado';delete p.entAt;delete p.entGps}delete s.at;delete s.gps;delete s.prevSt;delete s.pkId;save();render();toast('Listo, la parada vuelve a pendiente');return}
   if(e.target.closest('a'))return;const c=e.target.closest('[data-ei]');if(c&&!c.classList.contains('devol'))entSel(+c.dataset.ei)});
-document.querySelector('[data-tab="entrega"]').addEventListener('click',()=>{requestAnimationFrame(renderEnt);if(S.ent)entVigilar();if(NUBE.on)nubeSync().then(()=>renderEnt())}); // al abrir Entrega baja lo último de la nube
+// 1.77.0: la ruta se pinta después de mostrar la pestaña, una sola vez; si la nube trae cambios, nubeAplicar → render() la vuelve a pintar
+document.querySelector('[data-tab="entrega"]').addEventListener('click',()=>{trasPintar(()=>{if(aLaVista('entrega'))renderEnt()});if(S.ent)entVigilar();if(NUBE.on)nubeSync()}); // al abrir Entrega baja lo último de la nube
 
 // ===== Lista en la nube: los mismos paquetes en el teléfono y en la PC (rf_lista_leer / rf_lista_guardar) =====
 // S.syncVer = última versión de la nube que vio este aparato; S.baseIds = ids que había en ese momento
