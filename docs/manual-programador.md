@@ -121,6 +121,16 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - *Guardar* abre la cámara **dentro del mismo toque** (iPhone no deja abrirla después de un `await`) y agrega con `mkPkg()`. Las fotos de etiqueta no se guardan.
 - Prueba local: las CDN están bloqueadas en el sandbox; se instalan los paquetes con npm y Playwright sirve los archivos interceptando las URL de jsDelivr. Las etiquetas de prueba se generan con JsBarcode.
 
+## 3c-0b. Pestañas al instante (1.77.0)
+
+- **Por qué era lento:** el clic de una pestaña corría todo en el mismo turno (y `requestAnimationFrame` corre *antes* de pintar), así que el botón no se iluminaba hasta terminar de pintar la lista. Y `entPkg(s)` (paquete de una parada) recorre todos los paquetes normalizando nombre, teléfono, guía y ubicación; `entParadasDe(p)` lo llama por cada parada, y `renderMsg`/`renderPk`/`renderStats` lo llamaban varias veces por paquete (incluso dentro del `sort`): O(n³) normalizaciones.
+- **`memoTxt(fn, copia)`** (arriba de `KEY`): memoria `Map` para funciones de texto **puras** (solo strings; otros tipos pasan directo; se vacía a los 5000). La usan `parseCoord` (devuelve copia del arreglo), `phoneWA`, `guiaN`, `nomN`, `nom2` y `sinTilde`. Solo envolver funciones que no lean `S` ni nada externo.
+- **`trasPintar(fn)`** = `requestAnimationFrame` + `setTimeout 0`: corre `fn` después del primer pintado. El cambio de pestaña lo hace `RF_TAB` (captura); el `onclick` de cada pestaña solo agenda con `trasPintar` lo pesado (`renderPk`/`renderMsg` pendientes, Cierres, ajuste de alto de textos de Mensajes, `renderEnt`) y revisa con `aLaVista()` que la pestaña siga abierta.
+- `renderMsg`, `renderPk` y `renderStats` calculan el hold y las paradas de cada paquete **una vez** por pintada (`Map` local `HOLD`/`PAR`).
+- Ruta: se quitó el `nubeSync().then(renderEnt)`; si la nube trae cambios, `nubeAplicar()` → `render()` ya repinta la pestaña visible.
+- Se quitó el `addEventListener('click', subAbrir(null))` repetido de las pestañas (`RF_TAB` ya lo hace).
+- Verificación: el HTML de `#stats`, `#pkgList`, `#msgList`, `#entList`, `#entInfo` y `#repLista` es idéntico antes y después con 40 paquetes mezclados (tildes, hold, devueltos, sin ubicación, paradas unidas por nombre/teléfono/guía).
+
 ## 3c-0a. 20 mensajeros (1.74.0)
 
 - **Datos locales por cuenta:** `cuentaLocal(c)` (junto a `toast`) se llama en `RF_AUTH.listo` y en el evento `rf-cuenta`. `S.owner` guarda el número (8 dígitos) de la cuenta dueña de `localStorage['rutafacil-cr-v1']`. Si entra otra cuenta: si `S.dirty`, la lista vieja se aparta en `rutafacil-cr-v1@<número>`; si no, se borra (ya está en la nube). Se carga la de la nueva (o `{owner}` vacío) y se recarga la página. Las fotos en IndexedDB no se tocan: sus ids son aleatorios y solo se suben desde los paquetes de la lista abierta. `fixIng1031()` sigue igual (corre en `nubeAplicar`).
