@@ -32,6 +32,8 @@ async function authReq(path,body,tk){
   if(!r.ok){const e=new Error(j.msg||j.error_description||j.message||('error '+r.status));e.code=j.error_code||j.code||j.error||'';e.status=r.status;throw e}
   return j;
 }
+// 1.76.0: número alterno del administrador → número principal de su cuenta (rf_numero_entrar). Si falla, el mismo.
+async function numeroEntrar(t){try{const r=await rpc('rf_numero_entrar',{p_telefono:t});return /^\d{8}$/.test(r||'')?r:t}catch(e){return t}}
 function guardar(j){ses={access_token:j.access_token,refresh_token:j.refresh_token,expires_at:j.expires_at||Math.floor(Date.now()/1000)+(j.expires_in||3600)};ls.set(KS,ses)}
 let renovando=null;
 async function token(){
@@ -138,7 +140,7 @@ function vEntrar(err){
     if(t.length!==8){er.textContent='Escribí tu número de 8 dígitos';return}
     if(!/^\d{6}$/.test(pin)){er.textContent='El PIN tiene 6 números';return}
     b.disabled=true;b.textContent='Entrando…';er.textContent='';
-    try{guardar(await authReq('token?grant_type=password',{email:t+'@'+DOMINIO,password:pin}));ls.set(KA,Date.now());await revisar(true)}
+    try{const tc=await numeroEntrar(t);guardar(await authReq('token?grant_type=password',{email:tc+'@'+DOMINIO,password:pin}));ls.set(KA,Date.now());await revisar(true)}
     catch(x){b.disabled=false;b.textContent='Entrar';er.textContent=/confirm/i.test(x.message+x.code)?'Tu cuenta existe, pero falta un ajuste en Supabase (desactivar "Confirm email"). Avisale al administrador.':x.status===400?'Número o PIN incorrecto. Si es tu primera vez, tocá Crear cuenta.':'No se pudo entrar: '+x.message}
   };
 }
@@ -164,6 +166,7 @@ function vCrear(){
     if(pin!==q('#rfPin2').value.trim()){er.textContent='Los dos PIN no coinciden';return}
     b.disabled=true;b.textContent='Creando…';er.textContent='';
     try{
+      if(await numeroEntrar(t)!==t){b.disabled=false;b.textContent='Crear cuenta';er.textContent='Ese número ya tiene cuenta. Entrá con tu PIN.';return}
       const j=await authReq('signup',{email:t+'@'+DOMINIO,password:pin,data:{nombre:nom,telefono:t}});
       if(!j.access_token){b.disabled=false;b.textContent='Crear cuenta';er.textContent='La cuenta se creó, pero falta un ajuste en Supabase (desactivar "Confirm email"). Avisale al administrador.';return}
       guardar(j);ls.set(KA,Date.now());await mostrarCodigoNuevo(()=>revisar(true));
@@ -229,7 +232,7 @@ function vRecuperar(tel,cambio){
     b.disabled=true;b.textContent='Revisando…';er.textContent='';
     try{const r=await rpc('rf_recuperar',{p_telefono:t,p_codigo:cod,p_pin:pin,p_dispositivo:dev});
       if(!r||!r.ok){b.disabled=false;b.textContent=cambio?'Pasar la cuenta':'Cambiar PIN y entrar';er.textContent=(r&&r.error)||'Número o código incorrecto';return}
-      guardar(await authReq('token?grant_type=password',{email:t+'@'+DOMINIO,password:pin}));ls.set(KA,Date.now());
+      guardar(await authReq('token?grant_type=password',{email:(await numeroEntrar(t))+'@'+DOMINIO,password:pin}));ls.set(KA,Date.now());
       vCodigo(r.codigo,()=>revisar(true));
     }catch(x){b.disabled=false;b.textContent=cambio?'Pasar la cuenta':'Cambiar PIN y entrar';
       er.textContent=x.status===404?'Esta opción todavía no está activa. Pedile un PIN nuevo al administrador.':(x.message||'No se pudo')}

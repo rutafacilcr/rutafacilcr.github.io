@@ -162,7 +162,8 @@ begin
     'activo', p.rol = 'admin' or (p.estado = 'activo' and p.vence_en + make_interval(days => a.dias_gracia) > now()),
     'en_gracia', p.rol <> 'admin' and p.estado = 'activo' and p.vence_en < now(),
     'sinpe', a.sinpe, 'precio', a.precio, 'exigir', a.exigir_cuenta,
-    'fotos_nube', a.fotos_nube, 'dias_fotos', a.dias_fotos, 'dias_cierres', a.dias_cierres);
+    'fotos_nube', a.fotos_nube, 'dias_fotos', a.dias_fotos, 'dias_cierres', a.dias_cierres,
+    'telefono_alterno', case when p.rol = 'admin' then p.telefono_alterno end);
 end $$;
 
 -- ---------- Funciones del panel de Victor (solo rol admin) ----------
@@ -777,7 +778,7 @@ declare
   d text := nullif(left(coalesce(p_dispositivo,''),64),'');
 begin
   if coalesce(p_pin,'') !~ '^\d{6}$' then raise exception 'RF_CUENTA: el PIN debe tener 6 números'; end if;
-  select * into p from rf_perfiles where telefono = t;
+  select * into p from rf_perfiles where telefono = t or (rol = 'admin' and telefono_alterno = t) limit 1;  -- 1.76.0: número alterno
   if not found or p.rec_hash is null then
     raise exception 'RF_CUENTA: número o código incorrecto';
   end if;
@@ -819,3 +820,50 @@ begin
 end $$;
 revoke all on function public.rf_admin_cierres(int) from public, anon;
 grant execute on function public.rf_admin_cierres(int) to authenticated;
+
+-- =====================================================================
+-- Número alterno del administrador (1.76.0). Agregado 2026-11-03.
+-- El administrador puede entrar a SU MISMA cuenta con un segundo número (ej. su teléfono personal):
+-- mismos paquetes, cierres y Panel. No crea otra cuenta ni comparte datos con nadie más.
+-- Solo para rol admin; el número no puede ser de otra cuenta.
+-- =====================================================================
+alter table public.rf_perfiles add column if not exists telefono_alterno text;
+create unique index if not exists rf_perfiles_telefono_alterno on public.rf_perfiles (telefono_alterno) where telefono_alterno is not null;
+
+-- Antes de entrar: si el número es el alterno de un administrador, devuelve el número principal; si no, el mismo.
+create or replace function public.rf_numero_entrar(p_telefono text)
+returns text language sql stable security definer set search_path = public as $$
+  select coalesce((select telefono from rf_perfiles
+                    where rol = 'admin' and telefono_alterno = right(regexp_replace(coalesce(p_telefono,''),'\D','','g'), 8) limit 1),
+                  right(regexp_replace(coalesce(p_telefono,''),'\D','','g'), 8));
+$$;
+
+-- Panel > Ajustes: el administrador pone (o borra con '') su número alterno.
+create or replace function public.rf_admin_alterno(p_telefono text)
+returns json language plpgsql security definer set search_path = public as $$
+declare t text := right(regexp_replace(coalesce(p_telefono,''),'\D','','g'), 8);
+begin
+  perform public.rf_admin_check();
+  if t = '' then
+    update rf_perfiles set telefono_alterno = null where id = auth.uid();
+    return json_build_object('telefono_alterno', null);
+  end if;
+  if length(t) <> 8 then raise exception 'RF_ADMIN: el número debe tener 8 dígitos'; end if;
+  if exists (select 1 from rf_perfiles where telefono = t and id <> auth.uid()) then
+    raise exception 'RF_ADMIN: ese número ya tiene su propia cuenta; borrala primero (ver manual técnico)';
+  end if;
+  if exists (select 1 from rf_perfiles where telefono_alterno = t and id <> auth.uid()) then
+    raise exception 'RF_ADMIN: ese número ya es alterno de otra cuenta';
+  end if;
+  if exists (select 1 from rf_perfiles where id = auth.uid() and telefono = t) then
+    raise exception 'RF_ADMIN: ese ya es tu número principal';
+  end if;
+  update rf_perfiles set telefono_alterno = t where id = auth.uid();
+  insert into rf_eventos (user_id, tipo, detalle) values (auth.uid(), 'alterno', json_build_object('telefono', t)::jsonb);
+  return json_build_object('telefono_alterno', t);
+end $$;
+
+revoke all on function public.rf_numero_entrar(text) from public;
+revoke all on function public.rf_admin_alterno(text) from public, anon;
+grant execute on function public.rf_numero_entrar(text) to anon, authenticated;
+grant execute on function public.rf_admin_alterno(text) to authenticated;

@@ -119,6 +119,11 @@ input:not([type=checkbox]):not([type=radio]),textarea,select{font-size:16px!impo
     <div class="row"><button class="btn pri" id="a-guardar">Guardar ajustes</button></div>
   </div>
   <div class="panel">
+    <h3>Tu número alterno</h3>
+    <p class="small muted">Un segundo número (por ejemplo, tu teléfono personal) para entrar a <b>esta misma cuenta</b>: mismos paquetes, cierres y Panel, con el mismo PIN. No crea otra cuenta. Si ese número ya tiene su propia cuenta, hay que borrarla primero (manual técnico). Vacío = sin número alterno.</p>
+    <div class="row" style="justify-content:flex-end"><label style="flex:1;min-width:160px">Número alterno<input id="a-alterno" inputmode="numeric" maxlength="12" placeholder="8820 2220"></label><button class="btn pri" id="a-alterno-ok" style="align-self:flex-end">Guardar número</button></div>
+  </div>
+  <div class="panel">
     <h3>Avisos cuando alguien crea cuenta</h3>
     <p class="small muted">Te llega un WhatsApp y un correo cuando alguien crea cuenta o pide usar otro teléfono. Los dos servicios son gratis; los pasos para sacar cada llave están en el manual técnico. Las llaves no se vuelven a mostrar: dejá el campo vacío para no cambiarlas.</p>
     <div class="grid">
@@ -167,7 +172,7 @@ input:not([type=checkbox]):not([type=radio]),textarea,select{font-size:16px!impo
   <div class="panel" id="eventos"></div>
 </section>
 
-<footer class="appver">RutaFácil CR · panel · versión <span id="appVer">1.75.2</span></footer>
+<footer class="appver">RutaFácil CR · panel · versión <span id="appVer">1.76.0</span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="toast" id="toast" hidden></div>
@@ -184,7 +189,7 @@ const dias=d=>d?Math.ceil((new Date(d)-Date.now())/864e5):null;
 function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2600)}
 let CU=[],AJ={precio:5000,sinpe:'',dias_gracia:3,exigir_cuenta:false},FIL='todas';
 
-const EVENTO={cuenta_nueva:'Cuenta nueva',codigo_nuevo:'Sacó código de recuperación',codigo_fallido:'Código de recuperación incorrecto',recuperada:'Usó su código de recuperación (PIN nuevo)',telefono_nuevo:'Pidió usar otro teléfono',telefono_aprobado:'Teléfono aprobado',telefono_rechazado:'Teléfono rechazado',telefono_liberado:'Teléfono liberado',renovada:'Pago registrado',estado:'Cambio de estado',pin:'PIN nuevo',aviso_error:'Aviso no enviado'};
+const EVENTO={cuenta_nueva:'Cuenta nueva',alterno:'Número alterno del administrador',codigo_nuevo:'Sacó código de recuperación',codigo_fallido:'Código de recuperación incorrecto',recuperada:'Usó su código de recuperación (PIN nuevo)',telefono_nuevo:'Pidió usar otro teléfono',telefono_aprobado:'Teléfono aprobado',telefono_rechazado:'Teléfono rechazado',telefono_liberado:'Teléfono liberado',renovada:'Pago registrado',estado:'Cambio de estado',pin:'PIN nuevo',aviso_error:'Aviso no enviado'};
 
 function estadoDe(c){
   if(c.rol==='admin')return ['Administrador','ok'];
@@ -339,7 +344,12 @@ $('#f-guardar').onclick=async()=>{const d=parseInt($('#f-nube').value,10);
   try{const r=await RF_AUTH.rpc('rf_admin_fotos',{p_modo:$('#f-modo').value,p_dias:isNaN(d)?null:d});$('#f-modo').value=r.fotos_nube;$('#f-nube').value=r.dias_fotos;toast('Fotos guardadas. Cada celular lo toma en 15 minutos o al abrir la app.')}
   catch(e){toast('No se pudo: '+e.message)}};
 
-RF_AUTH.listo.then(c=>{if(c&&c.rol==='admin'){cargar();verUso();RF_AUTH.rpc('rf_admin_avisos',{p_whatsapp:null,p_callmebot_key:null,p_correo:null,p_resend_key:null}).then(pintarAvisos).catch(()=>{})}else if(!RF_AUTH.on)$('#lista').innerHTML='<p class="muted">Falta configurar Supabase en config.js.</p>'});
+$('#a-alterno-ok').onclick=async()=>{const t=$('#a-alterno').value.replace(/\D/g,'');
+  if(t&&t.length!==8){toast('Escribí los 8 dígitos');return}
+  try{const r=await RF_AUTH.rpc('rf_admin_alterno',{p_telefono:t});$('#a-alterno').value=r.telefono_alterno?tel(r.telefono_alterno):'';
+    toast(r.telefono_alterno?`Listo: con el ${tel(r.telefono_alterno)} entrás a esta cuenta`:'Número alterno quitado')}
+  catch(e){D({ico:'⚠️',mal:true,titulo:'No se pudo guardar',texto:E(/PGRST202|could not find/i.test(e.message)?'Falta correr el supabase.sql nuevo (1.76.0).':e.message),si:'Entendido',no:''})}};
+RF_AUTH.listo.then(c=>{if(c&&c.rol==='admin'){cargar();verUso();if(c.telefono_alterno)$('#a-alterno').value=tel(c.telefono_alterno);RF_AUTH.rpc('rf_admin_avisos',{p_whatsapp:null,p_callmebot_key:null,p_correo:null,p_resend_key:null}).then(pintarAvisos).catch(()=>{})}else if(!RF_AUTH.on)$('#lista').innerHTML='<p class="muted">Falta configurar Supabase en config.js.</p>'});
 </script>
 </body>
 </html>
