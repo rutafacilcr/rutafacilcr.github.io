@@ -4,7 +4,7 @@
 
 Herramienta web para repartidores de paquetes en Costa Rica. Cargás la lista de entregas del día, le mandás a cada cliente un WhatsApp con el mensaje ya escrito, el cliente confirma su horario y ubicación en un formulario (que le recuerda presentar la cédula), y la app arma la ruta más corta.
 
-**Usar la app:** https://rutafacilcr.github.io/
+**Usar la app:** https://rutafacilcr.github.io/ · **Cómo funciona (sin cuenta):** https://rutafacilcr.github.io/conoce.html · **Privacidad:** https://rutafacilcr.github.io/privacidad.html
 
 ## Qué hace
 
@@ -71,6 +71,9 @@ Dentro de la app, el botón **Soporte** (ícono de audífonos) abre WhatsApp con
 | Archivo | Para qué es |
 |---|---|
 | `index.html` | La app del repartidor (todo en un archivo). |
+| `conoce.html` | Página pública: qué es la app, para quién, beneficios, capturas y videos con datos de ejemplo, preguntas frecuentes. No pide cuenta. |
+| `privacidad.html` | Política de privacidad: datos que se guardan, para qué, dónde, cuánto tiempo, baja y recuperación de la cuenta. |
+| `img/` | Capturas de la app con datos de ejemplo para `conoce.html`. |
 | `entrega.html` | Formulario que llena el cliente (se manda en un segundo mensaje). |
 | `f.html` | Redirige links viejos a `entrega.html`. |
 | `auth.js` | Cuentas: pantalla de entrada (número + PIN), un teléfono por cuenta y estado de la mensualidad. |

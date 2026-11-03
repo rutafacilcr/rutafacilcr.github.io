@@ -93,10 +93,12 @@ function vista(html){bloquear();body.innerHTML=html;const f=body.querySelector('
 const waSoporte=t=>`https://wa.me/506${SOPORTE}?text=${encodeURIComponent(t||'Hola, necesito ayuda con RutaFácil')}`;
 const contacto=()=>`<a class="rfbtn" href="${waSoporte()}" target="_blank" rel="noopener"><svg style="vertical-align:-3px" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2.5" y="13" width="4" height="6" rx="1.5"/><rect x="17.5" y="13" width="4" height="6" rx="1.5"/><path d="M19.5 19c0 1.7-1.8 2.5-4.5 2.5h-2"/></svg> Escribir a soporte por WhatsApp</a>`;
 const ayuda=`<p class="rfmuted"><svg style="vertical-align:-3px" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2.5" y="13" width="4" height="6" rx="1.5"/><rect x="17.5" y="13" width="4" height="6" rx="1.5"/><path d="M19.5 19c0 1.7-1.8 2.5-4.5 2.5h-2"/></svg> ¿Necesitás ayuda? <a href="${waSoporte()}" target="_blank" rel="noopener" style="color:var(--accent,#f26b1d);font-weight:600">Escribinos por WhatsApp al ${SOPORTE.replace(/(\d{4})(\d{4})/,'$1 $2')}</a></p>`;
+// 1.75.0: qué es la app, para quien llega sin cuenta (no se muestra en el panel del administrador)
+const intro=ADMIN?'':`<div class="rfmsg"><p><b>Ordená tus entregas del día desde el celular.</b> Cargás los paquetes, avisás a cada cliente por WhatsApp y salís con la ruta más corta. Para mensajeros en Costa Rica.</p><p class="rfmuted"><a href="conoce.html" style="color:var(--accent,#f26b1d);font-weight:600">Ver cómo funciona</a> · <a href="privacidad.html" style="color:var(--accent,#f26b1d);font-weight:600">Privacidad</a></p></div>`;
 const pagar=c=>c&&c.sinpe?`<p>Pagá <b>${colones(c.precio)}</b> por SINPE Móvil al <b class="rfpago">${esc(c.sinpe)}</b> con el detalle <b class="rfpago">RF ${esc(c.telefono)}</b> y avisale al administrador.</p>`:`<p>Escribile al administrador para activarla.</p>`;
 
 function vEntrar(err){
-  vista(`<h2>Entrar</h2>
+  vista(`${intro}<h2>Entrar</h2>
   <form id="rfForm" class="rfbox" style="gap:14px" novalidate>
     <label>Tu número de teléfono<input id="rfTel" inputmode="numeric" autocomplete="username" placeholder="8888 1234" maxlength="12" required></label>
     <label>PIN de 6 números<input id="rfPin" type="password" inputmode="numeric" autocomplete="current-password" maxlength="6" placeholder="••••••" required></label>
@@ -116,7 +118,7 @@ function vEntrar(err){
   };
 }
 function vCrear(){
-  vista(`<h2>Crear cuenta</h2>
+  vista(`${intro}<h2>Crear cuenta</h2>
   <form id="rfForm" class="rfbox" style="gap:14px" novalidate>
     <label>Tu nombre (así lo ven tus clientes)<input id="rfNom" autocomplete="off" maxlength="60" required></label>
     <label>Tu número de WhatsApp<input id="rfTel" inputmode="numeric" autocomplete="off" maxlength="12" required></label>

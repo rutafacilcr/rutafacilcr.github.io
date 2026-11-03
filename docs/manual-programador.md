@@ -11,6 +11,14 @@ Para quien vaya a modificar el código o el diseño.
 - **Celular primero:** se diseña para 400 px de ancho y se agranda hasta 760 px.
 - **Funciona sin backend:** si `config.js` está vacío, todo lo que no sea el formulario sigue funcionando.
 
+## 1b. Páginas públicas (1.75.0)
+
+- `conoce.html` (voseo, para el mensajero) y `privacidad.html` (usted, porque la leen también los clientes) son páginas sueltas con su propio `<style>`: mismos tokens de color que `index.html` (grafito `#1f2125`, naranja `#f26b1d`), modo oscuro por `prefers-color-scheme`, primero para celular (una columna; desde 640 px los pasos van con la captura a la par). Botones compactos naranja con letra blanca y alineados a la derecha.
+- En celular los videos van en una fila que se desliza de lado (`overflow-x:auto` con `scroll-snap`), sin mover la página. Probado a 390 px y 1280 px sin desborde horizontal.
+- `auth.js`: la constante `intro` (vacía en el panel, `RF_AUTH_ADMIN`) se pinta antes de `<h2>Entrar</h2>` y `<h2>Crear cuenta</h2>` con estilos en línea (`.rfmsg`), para no tocar el CSS del portero.
+- `entrega.html`: una línea `.hint` después del formulario con el enlace a `privacidad.html`.
+- No se nombra ninguna tienda en estas páginas (se dice "compras en línea").
+
 ## 2. Estructura de `index.html`
 
 | Bloque | Contenido |
