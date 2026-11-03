@@ -29,7 +29,7 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
   - Las filas van ordenadas por fecha y hora de entrega.
 - **Mensajes:**
   - Coordinar, Formulario y Voy en camino (con el ícono del vehículo).
-  - Los clientes cerrados o en Hold quedan en gris al final.
+  - Los clientes van en el mismo orden que en Ruta; los cerrados o en Hold quedan en gris al final.
 
 | Paso | Qué resuelve |
 |---|---|

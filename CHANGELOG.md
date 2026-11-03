@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.69.3 · Mensajes en orden de ruta:** en *Mensajes* los clientes salen en el mismo orden que en *Ruta* (si la ruta va 1, 29, 65, Mensajes también); se mantiene que Hold, entregados y devueltos van al final en gris. Los que no están en la ruta van después.
 - **1.69.2 · Carro por defecto:** en *Ruta* el vehículo marcado de entrada es el 🚙 carro (antes la moto); si elegís otro, se queda guardado.
 - **1.69.1 · Sin título en Paquetes y documentación al día:** se quita el título *Lista del día* (las tarjetas van justo después del buscador). Manuales y README actualizados con todo lo de la 1.53 a la 1.69: resumen "La app hoy" en el manual de usuario, detalles de pantalla, datos y funciones nuevas.
 - **1.69.0 · Confirmaciones con diseño propio:** los avisos de confirmar (borrar, devolver, vaciar, guardar cambios, finalizar…) ya no usan el cuadro gris del navegador: salen como una hoja abajo con ícono, título, detalle y dos botones grandes (**Cancelar** y la acción, en rojo si borra o desactiva). Correcciones: *Editar* ya no pone "undefined" en los campos vacíos ni marca como cambio una ubicación igual; las coordenadas se guardan con 6 decimales (antes se perdían los ceros, por ejemplo 9.9300 → 9.93, y la app dejaba de reconocer la ubicación). Las que quedaron así se vuelven a leer bien.

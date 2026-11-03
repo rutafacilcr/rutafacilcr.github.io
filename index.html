@@ -365,7 +365,7 @@ details summary{cursor:pointer;font-weight:600}
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.69.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.69.3</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -632,7 +632,10 @@ function renderMsg(){
   // 1.52.4: los que están en Hold en la Ruta también van en gris, después de los pendientes y antes de los entregados
   const enHold=p=>{if(p.st==='entregado'||p.st==='devuelto')return false;try{return entParadasDe(p).some(x=>x.hold&&!x.done)}catch(e){return false}};
   const rk=p=>p.st==='entregado'?2:p.st==='devuelto'?3:enHold(p)?1:0;
-  L.innerHTML=S.pk.map((p,i)=>[p,i]).sort((a,b)=>rk(a[0])-rk(b[0])||a[1]-b[1]).map(([p,i])=>{const sel=msgSel(p),txt=msgText(p,sel);const l=waLink(p,txt);return `<div class="pkg${p.st==='entregado'||enHold(p)?' entregado':''}${pkOff(p)?' devol':''}"${hit(p)?'':' style="display:none"'}>
+  // 1.69.3: dentro de cada grupo, el mismo orden que en Ruta (posición de su parada en la lista de Ruta); los que no están en la ruta van después, en el orden de la lista
+  const rpos={};try{const E=S.ent;if(E&&E.stops){const erk=s=>entDone(s)?2:s.c?(s.hold?0.5:0):1;let k=0;E.stops.map((s,i)=>[s,i]).sort((a,b)=>erk(a[0])-erk(b[0])||a[1]-b[1]).forEach(([s])=>{const q=entPkg(s);if(q&&rpos[q.id]===undefined)rpos[q.id]=k;k++})}}catch(e){}
+  const rp=(p,i)=>rpos[p.id]!==undefined?rpos[p.id]:1e6+i;
+  L.innerHTML=S.pk.map((p,i)=>[p,i]).sort((a,b)=>rk(a[0])-rk(b[0])||rp(a[0],a[1])-rp(b[0],b[1])).map(([p,i])=>{const sel=msgSel(p),txt=msgText(p,sel);const l=waLink(p,txt);return `<div class="pkg${p.st==='entregado'||enHold(p)?' entregado':''}${pkOff(p)?' devol':''}"${hit(p)?'':' style="display:none"'}>
     <div class="num${p.st==='entregado'?' tachado':''}">${p.num||i+1}</div>
     <div class="name">${esc(p.nombre)} ${stChip(p)}${enHold(p)?' <span class="small" style="font-weight:700">⏸ hold</span>':''} ${p.sent?'<span class="small muted">✓ mensaje abierto</span>':''}${p.formSent?'<span class="small muted">· formulario enviado</span>':''}</div>
     <div class="addr"><span class="mono">${esc(p.tel||'sin teléfono')}</span>${p.resp?' <span class="small" style="color:var(--ok);font-weight:600">✓ llenó el formulario</span>':''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>

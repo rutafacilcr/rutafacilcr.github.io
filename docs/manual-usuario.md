@@ -36,7 +36,7 @@ Resumen de cómo está la app ahora. Más abajo se explica cada parte con la ver
 
 **Mensajes**
 - Están **1. Coordinar**, **2. Formulario** y **3. Voy en camino**. Este último lleva el ícono del vehículo después de "camino".
-- Los clientes entregados, en Hold o devueltos se ven grises y bajan al final.
+- Los clientes salen en el **mismo orden que en Ruta** (1.69.3). Los entregados, en Hold o devueltos se ven grises y bajan al final, y los que no están en la ruta van después de los pendientes.
 
 **Confirmaciones:** desde la 1.69.0, al borrar, devolver, vaciar o guardar cambios sale una hoja abajo con dos botones grandes: **Cancelar** y la acción (en rojo si borra o desactiva).
 

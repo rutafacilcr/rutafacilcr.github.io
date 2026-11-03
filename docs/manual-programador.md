@@ -128,6 +128,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 ## 3c-quindecies. Tarjeta desactivada por Devolver (1.66.0)
 
+- 1.69.3: `renderMsg` ordena por `rk` y luego por `rpos[p.id]`: la posición de su parada en la lista de *Ruta* (mismo `erk` que `renderEnt`); sin parada, `1e6+índice`.
 - 1.69.2: vehículo por defecto `carro` en `vehPintar` y `vehIcono` cuando `S.veh` no está; `renderEnt` llama `vehPintar()` para reflejar el valor que llega de la nube.
 - 1.69.1: se quitó la fila con `<h2>Lista del día</h2>`; `#clearAll` (oculto) sigue en el DOM porque `cerrarDia` le cambia el texto.
 - 1.67.4: se quitó el aviso de `entInfo` "no es la de hoy ni la de mañana".
