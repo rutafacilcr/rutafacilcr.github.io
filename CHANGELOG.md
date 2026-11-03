@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.69.5 · Confirmación al centro:** el aviso de confirmar sale centrado en la pantalla, más angosto, con animación suave; el botón de la acción va arriba (rojo si borra o desactiva) y **Cancelar** debajo. El "Ojo" (por ejemplo, paquetes sin entregar) sale resaltado en amarillo.
 - **1.69.4 · Regresar a Ruta:** en *Paquetes*, el botón de un paquete devuelto dice **↪ Regresar a Ruta** (antes "Quitar devuelto"); hace lo mismo. En *Mensajes* no cambia.
 - **1.69.3 · Mensajes en orden de ruta:** en *Mensajes* los clientes salen en el mismo orden que en *Ruta* (si la ruta va 1, 29, 65, Mensajes también); se mantiene que Hold, entregados y devueltos van al final en gris. Los que no están en la ruta van después.
 - **1.69.2 · Carro por defecto:** en *Ruta* el vehículo marcado de entrada es el 🚙 carro (antes la moto); si elegís otro, se queda guardado.

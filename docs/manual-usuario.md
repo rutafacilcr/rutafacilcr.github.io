@@ -505,7 +505,7 @@ Si arriba sale un **aviso rojo "Error en la app…"**, tomale captura y mandala 
 
 ### Avisos de confirmar (1.69.0)
 
-Cuando la app pide confirmar algo, sale una hoja abajo con el detalle y dos botones: **Cancelar** y la acción (por ejemplo **Borrar**, **Quitar**, **Vaciar y cerrar**, **Guardar**). Si la acción borra o desactiva, el botón sale en rojo. Tocar fuera de la hoja también cancela.
+Cuando la app pide confirmar algo, sale un cuadro en el centro de la pantalla con el detalle y dos botones (desde la 1.69.5): **Cancelar** y la acción (por ejemplo **Borrar**, **Quitar**, **Vaciar y cerrar**, **Guardar**). Si la acción borra o desactiva, el botón sale en rojo. Tocar fuera de la hoja también cancela.
 
 ### Ruta por calles (1.68.0)
 
