@@ -17,7 +17,7 @@ Resumen de cómo está la app ahora. Más abajo se explica cada parte con la ver
 - Cuatro botones grandes: **🧹 Vaciar lista** (en rojo), **Agregar a mano**, **Importar** y **Escanear**.
 - Después, el buscador 🔍 y enseguida las tarjetas (desde la 1.69.1 ya no está el título *Lista del día*).
 - El orden de las tarjetas es: activos, Hold, devueltos y al final los entregados (en gris y con el número tachado).
-- Cada tarjeta tiene **1. Coordinar**, **Pegar respuesta**, **Editar**, **Escáner**, **Borrar**, **Devuelto** y **WhatsApp**.
+- Cada tarjeta tiene **1. Coordinar**, **Pegar respuesta**, **Editar**, **Escáner**, **Eliminar** (1.69.9; antes *Borrar*), **Devuelto** y **WhatsApp**.
 - Los paquetes **⛔ Devolver** y **⛔ Devuelto** se ven grises y sin botones. Solo queda activo el botón para quitar la marca: en un devuelto dice **↪ Regresar a Ruta** (1.69.4).
 
 **Ruta**
@@ -640,3 +640,9 @@ En la primera línea de *Ruta* están **📂 Cargar ruta**, el nombre de la ruta
 ### Sin paradas repetidas (1.69.7)
 
 Un paquete tiene **una sola parada** en *Ruta*. Si tocás **➕ Agregar a la ruta** y ya estaba, la app avisa "ya está en la ruta" y no agrega otra. Si quedaron repetidas de antes, al abrir la app se quitan solas (se queda la que ya se entregó o la que tiene ubicación) y sale un aviso con cuántas se quitaron.
+
+
+### Eliminar o quitar (1.69.9)
+
+- **Eliminar** (en *Paquetes*) borra el paquete de la lista, de *Mensajes* y de *Ruta*. Pide confirmar y no se puede deshacer.
+- **🗑️ Quitar** (en *Ruta*) solo saca la parada de la ruta. El paquete sigue en *Paquetes* y en *Mensajes*, y se puede volver a meter con **➕ Agregar a la ruta**.

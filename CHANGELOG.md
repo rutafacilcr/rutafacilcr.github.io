@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.69.9 · Eliminar:** en *Paquetes* el botón **Borrar** se llama **Eliminar** (y la confirmación dice "¿Eliminar el paquete…?"). Es el único que elimina un paquete; **🗑️ Quitar** en *Ruta* solo lo saca de la ruta.
 - **1.69.8 · Regresar a Ruta:** al tocar **↪ Regresar a Ruta** en un devuelto, el aviso dice: *Si regresa a Ruta, el paquete se agregará a la ruta de entrega y se activa en Paquetes* (botón **Regresar a Ruta**). Al aceptar, el paquete vuelve a pendiente; si su parada sigue en la ruta se reactiva, y si no estaba se agrega (cuando tiene ubicación).
 - **1.69.7 · Sin paradas repetidas:** **➕ Agregar a la ruta** (y agregar a la ruta al editar) ya no crea una segunda parada si el paquete ya está en la ruta; la pantalla se actualiza al instante para que un segundo toque no lo duplique mientras se reordena. Las paradas repetidas que ya existían se quitan solas, quedándose con la entregada o la que tiene ubicación.
 - **1.69.6 · Pegar respuesta junto a Ruta:** en la tarjeta de *Paquetes*, **📋 Pegar respuesta** va en la misma línea que *En la ruta* / *Agregar a la ruta*, a la derecha; debajo quedan Editar y Escáner. Corrige que al abrir la app un paquete que ya está en la ruta mostrara **➕ Agregar a la ruta** (la lista se pintaba antes de poder unirla con la ruta).
