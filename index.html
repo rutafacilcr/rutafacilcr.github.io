@@ -101,7 +101,7 @@ nav.tabs .n:empty{display:none}
 .estop .dir{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .estop.sel .dir{-webkit-line-clamp:unset}
 .eub{font:600 11px var(--f-body);border:1px dashed var(--muted);border-radius:999px;padding:1px 8px;background:transparent;color:var(--muted);cursor:pointer;vertical-align:1px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#entTools #entPick{margin-left:auto}.enttot{text-align:left;font-size:12px;line-height:1.35;color:var(--ink,inherit)}.enttot:empty{display:none}
+#entTools{gap:6px}#entTools .vehsel{margin-left:auto;gap:3px}#entTools #entPick{margin-left:auto}#entTools .vehsel button{min-width:32px;min-height:34px;font-size:18px;padding:3px 4px}#entTools #entPick,#entTools #entLista{white-space:nowrap}.enttot{text-align:left;font-size:12px;line-height:1.35;color:var(--ink,inherit)}.enttot:empty{display:none}
 .estop .eeta{flex:0 1 auto;font-size:11.5px;line-height:1.2;font-weight:700;color:var(--muted);white-space:nowrap;text-align:center;align-self:center}.estop .eeta:empty{display:none}
 .entbus{display:flex;align-items:center;gap:8px;margin:2px 0 10px}.entbus input{flex:1;min-width:0;font-size:16px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:inherit}
 .estop .acts3{grid-column:1/-1;display:flex;justify-content:center}.estop .acts3:empty{display:none}.estop .acts3{gap:8px}.estop .acts3 .ehold{font-weight:700;padding:7px 14px}.estop .acts3 .ehold.on{background:#f5c518;border-color:#f5c518;color:#1f2125}.estop .acts3 .edone{background:#1f2125;color:#fff;border-color:#1f2125;font-weight:700;padding:7px 22px}
@@ -308,9 +308,9 @@ details summary{cursor:pointer;font-weight:600}
   <div class="jorbar" id="jorBar"></div>
   <div class="enthead" id="entTools" hidden>
     <span class="enttot" id="entTot"></span>
+    <span class="vehsel" id="vehSel" role="group" aria-label="Vehículo"><button type="button" data-veh="moto" title="Moto">🏍</button><button type="button" data-veh="carro" title="Carro">🚙</button><button type="button" data-veh="buseta" title="Buseta">🚐</button></span>
     <button class="btn sm" id="entPick" type="button">🎯 Elegir en el mapa</button>
     <button class="btn sm" id="entLista" type="button">📋 Lista</button>
-    <span class="vehsel" id="vehSel" role="group" aria-label="Vehículo"><button type="button" data-veh="moto" title="Moto">🏍</button><button type="button" data-veh="carro" title="Carro">🚙</button><button type="button" data-veh="buseta" title="Buseta">🚐</button></span>
   </div>
   <div class="entbus" id="entBus" hidden><input type="search" id="entBuscar" placeholder="🔍 Buscar cliente, teléfono o guía" autocomplete="off" enterkeyhint="search"><span class="small muted" id="entBusN"></span></div>
   <div class="entmap" id="entMap" hidden></div>
@@ -358,7 +358,7 @@ details summary{cursor:pointer;font-weight:600}
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.67.7</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.67.8</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
