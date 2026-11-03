@@ -113,8 +113,26 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - *Guardar* abre la cámara **dentro del mismo toque** (iPhone no deja abrirla después de un `await`) y agrega con `mkPkg()`. Las fotos de etiqueta no se guardan.
 - Prueba local: las CDN están bloqueadas en el sandbox; se instalan los paquetes con npm y Playwright sirve los archivos interceptando las URL de jsDelivr. Las etiquetas de prueba se generan con JsBarcode.
 
+## 3c-0. Mapa rápido de lo agregado de la 1.53 a la 1.68
+
+| Tema | Dónde | Funciones / datos |
+|---|---|---|
+| Reportes (Cierres) | `#repLista`, `.replin`, `data-rep` | `repCargar` (jsPDF 2.5.1 + autotable 3.8.2, cdnjs), `repCierres` (`rf_cierres_listar`, `rf_cierre_leer`), `repTodos`, `repGrupos`, `repT`, `repTramos`, `repTotales`, `repResumen`, `repFilas`, `repPdf`, `repEntregasDe` |
+| Hora real de entrega | `entSyncPk`, `data-edone` | `s.at`, `p.entAt`, `p.entGps`, `p.devAt` |
+| Jornada | `#jorBar` | `S.jor`, `jorRender`, `jorGps` |
+| Vehículo | `#vehSel` | `S.veh` (en `NUBE_KEYS`), `vehPintar`, `vehIcono`, `conVeh` |
+| Devolver / Devuelto | `.devol`, `.devkeep`, `devBar` | `p.devolver`, `s.devolver`, `pkDevol`, `pkOff`, acciones `devok`, `devno`, `dev` |
+| Orden de Paquetes | `renderPk` | `rk`: activos 0, Hold 1, devueltos 2, entregados 3 |
+| Pestañas a prueba de fallas | inicio del `<script>` | `RF_TAB`, listener de `error` |
+| Ruta por calles | mapa | `osrmCadena`, `RTOT.geo`, `entLinea` |
+
 ## 3c-quindecies. Tarjeta desactivada por Devolver (1.66.0)
 
+- 1.69.1: se quitó la fila con `<h2>Lista del día</h2>`; `#clearAll` (oculto) sigue en el DOM porque `cerrarDia` le cambia el texto.
+- 1.67.4: se quitó el aviso de `entInfo` "no es la de hoy ni la de mañana".
+- 1.67.3: orden de `nav.tabs`: paquetes, cierres, mensajes, entrega (Ruta).
+- 1.67.2: `#p-buscar` va antes del encabezado de la lista en `#v-paquetes`.
+- 1.67.1 y 1.66.1: orden de `.subbtns`: `#vaciarTile`, Agregar a mano, Importar, Escanear.
 - 1.69.0: `rfConfirm(texto)` → `Promise<boolean>` reemplaza todos los `confirm()` (las funciones que lo usan pasaron a `async`). Primera línea = título; la etiqueta del botón sale del verbo de la pregunta; rojo (`.mal`) para borrar/quitar/vaciar/devolver/finalizar o textos de riesgo. `cTxt(c)` guarda coordenadas con 6 decimales (`mkPkg`, Excel, Pegar respuesta, `entPonerC`); `parseCoord` acepta además un texto que sea solo `lat,lng` con 1-2 decimales. *Editar* rellena con `||""` y compara teléfono por dígitos y ubicación por coordenadas.
 - 1.68.0: `osrmCadena` pide `overview=full&geometries=geojson` y guarda `RTOT.geo` ([lat,lng]); `entLinea()` pone en `EMAP.linea` el trazo si `RTOT.k` coincide con las paradas pendientes (si no, recta). Se llama al dibujar el mapa y cuando llega la respuesta.
 - 1.67.8: `#vehSel` va dentro de `#entTools` antes de `#entPick`, con `margin-left:auto` y botones de 32 px; queda a la derecha de `#entTot`.

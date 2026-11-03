@@ -283,6 +283,14 @@ from storage.objects where bucket_id = 'evidencias';
 delete from respuestas where updated_at < now() - interval '30 days';
 ```
 
+### Resumen de la 1.53 a la 1.68 (para hosting y Supabase)
+
+- **No hay tablas nuevas.** Todo lo nuevo viaja dentro del JSON de la lista (`rf_lista_guardar`): `veh` (vehículo), `jor` (jornada: hora y GPS de inicio y fin), `pk[].entAt`, `entGps`, `devAt`, `devolver` y `ent.stops[].at`, `gps`, `hold`, `devolver`. Al vaciar la lista se guarda en `rf_cierres` con `rf_cierre_guardar`.
+- **Funciones de la base que usa la app:** `rf_lista_leer`, `rf_lista_guardar`, `rf_cierre_guardar`, `rf_cierres_listar` y `rf_cierre_leer`. Las cinco exigen licencia (`rf_exigir_licencia`). Si `rf_cierres_listar` o `rf_cierre_leer` no están creadas en Supabase, *Cierres* muestra solo la lista actual: corré `supabase.sql` completo, porque se puede correr de nuevo sin borrar datos.
+- **Servicios externos gratis:** jsPDF 2.5.1 y jspdf-autotable 3.8.2 desde cdnjs para el PDF, y OSRM público para tiempos y la línea por calles. No hay llaves ni costos.
+- **Publicación:** push a `main` y GitHub Pages. En computadora, Ctrl + Shift + R fuerza la versión nueva. Si la app falla, sale un aviso rojo con la versión y la línea, para soporte.
+- **PIN olvidado del administrador:** en el SQL Editor, `update auth.users set encrypted_password = extensions.crypt('NUEVO', extensions.gen_salt('bf')), updated_at = now() where email = '<número>@rutafacilcr.github.io';`. El PIN no se puede leer, solo reemplazar.
+
 ## 4. Configuración (`config.js`)
 
 ```js

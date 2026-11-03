@@ -6,6 +6,45 @@ Guía para el repartidor. No hace falta saber de computadoras.
 
 ---
 
+## La app hoy (versión 1.69)
+
+Resumen de cómo está la app ahora. Más abajo se explica cada parte con la versión en que llegó.
+
+**Barra de abajo:** **Paquetes**, **Cierres**, **Mensajes** y **Ruta**. **Soporte** está arriba, en el encabezado. En la computadora, si no ves los cambios, apretá **Ctrl + Shift + R**.
+
+**Paquetes**
+- Arriba, cinco contadores: **Recibidos**, **Entregados**, **Hold**, **Devueltos** y **Sin 📍** (sin ubicación).
+- Cuatro botones grandes: **🧹 Vaciar lista** (en rojo), **Agregar a mano**, **Importar** y **Escanear**.
+- Después, el buscador 🔍 y enseguida las tarjetas (desde la 1.69.1 ya no está el título *Lista del día*).
+- El orden de las tarjetas es: activos, Hold, devueltos y al final los entregados (en gris y con el número tachado).
+- Cada tarjeta tiene **1. Coordinar**, **Pegar respuesta**, **Editar**, **Escáner**, **Borrar**, **Devuelto** y **WhatsApp**.
+- Los paquetes **⛔ Devolver** y **⛔ Devuelto** se ven grises y sin botones. Solo queda activo el botón para quitar la marca.
+
+**Ruta**
+- **Primera línea:** 📂 Cargar ruta, el nombre de la ruta, 📍 Ordenar desde aquí y, a la derecha, 📍 Estás aquí (tu GPS).
+- **Segunda línea:** ▶ Iniciar entregas / ■ Finalizar. Guardan la hora y el punto de salida y de cierre para el reporte.
+- **Tercera línea:** a la izquierda, el resumen (⏱ tiempo, km, inicio y fin) y los vehículos 🏍️ 🚙 🚐. A la derecha, 🎯 Elegir en el mapa y 📋 Lista.
+- **El mapa:** la línea va por las calles reales. Los pines pendientes quedan encima, Hold en amarillo y los que están en el mismo lugar se abren en abanico.
+- **Cada parada:** Waze, Maps, WhatsApp "Estamos en camino 🏍️…" (con el ícono del vehículo elegido), Quitar, Evidencia, Co-out, Hold, ⛔ Devolver y ✓ Entregado.
+- **✓ Entregado** guarda la fecha y la hora reales del toque.
+
+**Cierres**
+- Hay un reporte por cada grupo de *Entregas del …*, según el día en que se recibieron los paquetes. También salen las listas ya vaciadas.
+- Cada grupo tiene su botón **📄 PDF** horizontal.
+- El **encabezado** trae: fecha, mensajero, recibidos el, km, horas, días de entrega, promedio por entrega, y recibidos, entregados y devueltos.
+- Las **filas** van por fecha y hora de entrega, con estas columnas: número, guía / pedido, teléfono, nombre, estado, fecha recibido, fecha y hora de entrega, y tiempo y km desde la entrega anterior.
+
+**Mensajes**
+- Están **1. Coordinar**, **2. Formulario** y **3. Voy en camino**. Este último lleva el ícono del vehículo después de "camino".
+- Los clientes entregados, en Hold o devueltos se ven grises y bajan al final.
+
+**Confirmaciones:** desde la 1.69.0, al borrar, devolver, vaciar o guardar cambios sale una hoja abajo con dos botones grandes: **Cancelar** y la acción (en rojo si borra o desactiva).
+
+**Si algo falla**
+- Arriba sale un aviso rojo "Error en la app…". Mandale captura a soporte.
+
+---
+
 ## 1. Antes de empezar
 
 - Usá la app en el **mismo celular** donde tenés WhatsApp con el número que les escribe a los clientes. Los mensajes salen de la cuenta de WhatsApp abierta en ese celular.
@@ -570,7 +609,7 @@ Desde la 1.39.2 el botón se llama **🧪 Ver diagnóstico de la ruta** y muestr
 
 ### Reporte PDF (1.54.0)
 
-En **Cierres** aparece una lista de reportes, uno por cada **fecha de recibido** de los paquetes (la fecha en que los escaneaste o los ingresaste), con cuántos se recibieron, entregaron y devolvieron. Tocá **📄 PDF** en la fecha que querés. Desde la 1.57.0 también salen las fechas de listas que ya vaciaste, porque se leen de los cierres guardados en la base (necesita internet). Se baja un PDF horizontal con los paquetes **entregados** y **devueltos** recibidos ese día, con estas columnas: No. paquete, No. guía / pedido, No. teléfono, Nombre (desde la 1.54.2; antes era "teléfono 2"), Estado, Fecha recibido, Fecha entrega y Hora entrega. En iPhone se abre el menú de compartir: elegí **Guardar en Archivos**. La hora de entrega es la del momento en que tocaste **✓ Entregado** en *Ruta* (o la de la evidencia). Desde la 1.56.3 se corrigen solas las entregas que habían quedado todas con la misma hora. Desde la 1.56.1 las filas van ordenadas por **fecha y hora de entrega** (o de devolución), de la más vieja a la más nueva; los que no tienen hora quedan al final. Arriba trae un encabezado con: **Fecha** y debajo **Mensajero** (el nombre de *Tu nombre* en ajustes), **Paquetes recibidos**, **entregados** y **devueltos** (uno debajo del otro, a la derecha), **Km recorridos** y **Horas invertidas**. Los km son aproximados: la distancia entre el inicio de la ruta y cada entrega, en el orden en que entregaste, más un 35 % por las calles. Las horas van de la primera a la última entrega o devolución. El encabezado también trae la **Fecha de recibido** de ese grupo.
+En **Cierres** aparece una lista de reportes, uno por cada **fecha de recibido** de los paquetes (la fecha en que los escaneaste o los ingresaste), con cuántos se recibieron, entregaron y devolvieron. Tocá **📄 PDF** en la fecha que querés. Desde la 1.57.0 también salen las fechas de listas que ya vaciaste, porque se leen de los cierres guardados en la base (necesita internet). Se baja un PDF horizontal con los paquetes **entregados** y **devueltos** recibidos ese día, con estas columnas (más *Tiempo* y *Km desde anterior* desde la 1.58.0): No. paquete, No. guía / pedido, No. teléfono, Nombre (desde la 1.54.2; antes era "teléfono 2"), Estado, Fecha recibido, Fecha entrega y Hora entrega. En iPhone se abre el menú de compartir: elegí **Guardar en Archivos**. La hora de entrega es la del momento en que tocaste **✓ Entregado** en *Ruta* (o la de la evidencia). Desde la 1.56.3 se corrigen solas las entregas que habían quedado todas con la misma hora. Desde la 1.56.1 las filas van ordenadas por **fecha y hora de entrega** (o de devolución), de la más vieja a la más nueva; los que no tienen hora quedan al final. Arriba trae un encabezado con: **Fecha** y debajo **Mensajero** (el nombre de *Tu nombre* en ajustes), **Paquetes recibidos**, **entregados** y **devueltos** (uno debajo del otro, a la derecha), **Km recorridos** y **Horas invertidas**. Desde la 1.58.0 los km y las horas se calculan por tramos entre entregas seguidas, y desde la 1.59.0 con ▶ Iniciar / ■ Finalizar (ver esas secciones). El encabezado también trae la **Fecha de recibido** de ese grupo.
 
 
 ### Vehículo (1.55.0)
@@ -580,4 +619,15 @@ En **Ruta**, a la par de **📋 Lista**, hay tres botones: **🏍 moto**, **🚙
 
 ### Arriba de Ruta (1.67.6)
 
-En la primera línea de *Ruta* están **📂 Cargar ruta**, el nombre de la ruta, **📍 Ordenar desde aquí** y, a la derecha, **📍 Estás aquí (±m)** (tu GPS). Debajo va **▶ Iniciar entregas**. En la tercera línea, a la izquierda, el resumen de la ruta (⏱ tiempo, km, inicio y fin; 1.67.7) y a la derecha **🎯 Elegir en el mapa** (para ordenar desde otro punto, útil en la computadora o si el GPS falla), **📋 Lista** y el vehículo.
+En la primera línea de *Ruta* están **📂 Cargar ruta**, el nombre de la ruta, **📍 Ordenar desde aquí** y, a la derecha, **📍 Estás aquí (±m)** (tu GPS). Debajo va **▶ Iniciar entregas**. En la tercera línea, a la izquierda, el resumen de la ruta (⏱ tiempo, km, inicio y fin; 1.67.7) y a la derecha **🎯 Elegir en el mapa** (para ordenar desde otro punto, útil en la computadora o si el GPS falla), **📋 Lista** y el vehículo (desde la 1.67.8 el vehículo va junto al resumen).
+
+
+### Detalles de pantalla (1.63.1 a 1.67.8)
+
+- **1.63.1 y 1.63.2:** al editar un paquete, su parada en *Ruta* también toma la nota, la dirección, la guía y el teléfono. El WhatsApp de *Ruta* usa siempre el teléfono del paquete.
+- **1.66.1 y 1.67.1:** en *Paquetes* los botones grandes van en este orden: Vaciar lista, Agregar a mano, Importar y Escanear.
+- **1.66.3:** en el mapa, el pin de una parada pendiente queda encima del pin gris de una entregada.
+- **1.67.2:** en *Paquetes* el buscador va primero y **Lista del día** debajo (1.69.1: el título se quitó).
+- **1.67.3:** la barra de abajo va en el orden Paquetes, Cierres, Mensajes y Ruta.
+- **1.67.4:** en *Ruta* ya no sale el aviso "no es la de hoy ni la de mañana", porque una ruta se puede repartir en varios días.
+- **1.67.8:** los vehículos 🏍️ 🚙 🚐 van a la derecha del resumen de tiempo y km, y **Elegir en el mapa** y **Lista** quedan debajo.

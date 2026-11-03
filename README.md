@@ -8,13 +8,28 @@ Herramienta web para repartidores de paquetes en Costa Rica. Cargás la lista de
 
 ## Qué hace
 
-Al marcar un paquete como entregado en *Ruta*, su número queda tachado y baja al final de la lista; en *Paquetes* su tarjeta se ve en gris.
+La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cierres**, **Mensajes** y **Ruta**. El botón **Soporte** está arriba, en el encabezado.
 
-En *Ruta*, el botón WhatsApp de cada parada abre el chat con el aviso "Estamos en camino" y el tiempo estimado. También se puede quitar una parada repetida con **🗑️ Quitar**; el paquete sigue en *Paquetes*.
-
-En *Ruta*, **📋 Lista** da la ruta en orden con el número de cada paquete para copiar o compartir. En *Paquetes* hay un buscador por nombre, teléfono, guía o número. En *Ruta*, junto a 📋 Lista, se elige el vehículo (🏍 moto, 🚙 carro o 🚐 buseta). En *Cierres* hay un reporte PDF por cada fecha de recibido (también de listas ya vaciadas): horizontal, de entregados y devueltos, ordenado por fecha y hora de entrega, con un encabezado de fecha, mensajero, recibidos, entregados, devueltos, km y horas. La lista de *Paquetes* va ordenada: activos, Hold, devueltos y al final los entregados en gris. Un paquete marcado **⛔ Devolver** en *Ruta* muestra esa etiqueta en *Paquetes*; al tocarla se confirma como devuelto (o se quita la marca).
-
-La app se maneja con cuatro pestañas en la barra de abajo (**Paquetes**, **Cierres**, **Mensajes** y **Ruta**) y el botón **Soporte** arriba, en el encabezado.
+- **Paquetes:**
+  - Cinco contadores: Recibidos, Entregados, Hold, Devueltos y Sin 📍.
+  - Cuatro botones grandes: 🧹 Vaciar lista, Agregar a mano, Importar y Escanear.
+  - Un buscador por nombre, teléfono, guía o número.
+  - Las tarjetas van en orden: activos, Hold, devueltos y al final los entregados en gris con el número tachado.
+  - Los paquetes ⛔ Devolver y ⛔ Devuelto quedan desactivados, con un solo botón para quitar la marca.
+- **Ruta:**
+  - Mapa con la línea por calles reales (OSRM, gratis).
+  - Ordenar desde tu GPS o desde un punto del mapa.
+  - ▶ Iniciar / ■ Finalizar entregas para el reporte.
+  - Vehículo 🏍️ 🚙 🚐, que va en el WhatsApp "Estamos en camino 🏍️…".
+  - 📋 Lista en orden.
+  - En cada parada: Hold, ⛔ Devolver y ✓ Entregado. ✓ Entregado guarda la fecha y la hora reales.
+- **Cierres:**
+  - Un reporte PDF horizontal por cada grupo de *Entregas del …* (el día en que se recibieron los paquetes), también de listas ya vaciadas.
+  - Trae fecha, mensajero, km y horas por tramos, promedio por entrega, y recibidos, entregados y devueltos.
+  - Las filas van ordenadas por fecha y hora de entrega.
+- **Mensajes:**
+  - Coordinar, Formulario y Voy en camino (con el ícono del vehículo).
+  - Los clientes cerrados o en Hold quedan en gris al final.
 
 | Paso | Qué resuelve |
 |---|---|
@@ -22,6 +37,7 @@ La app se maneja con cuatro pestañas en la barra de abajo (**Paquetes**, **Cier
 | **2. Mensajes** | Un botón por cliente abre WhatsApp con el mensaje de coordinación listo. El primer mensaje es corto, sin links y recuerda presentar la cédula: el cliente responde por el mismo chat. A quien ya contestó se le puede mandar aparte un formulario corto (en WhatsApp sale solo el link, sin tarjeta de vista previa), y el día de entrega el aviso de "voy en camino" (que recuerda presentar la cédula): en cada cliente se elige cuál de los mensajes mandar. Los mensajes van con tu nombre (sale de la cuenta y se puede cambiar). Con un toque guarda a todos los clientes del día en los contactos del celular como *TM-Nombre-pedido*, también baja un Excel del día (la misma plantilla, llena, con fecha de ingreso; en iPhone se guarda en *Archivos*), y hay un buscador por nombre, guía o teléfono. |
 | **Nube** | La lista de paquetes y la ruta del día se guardan en la cuenta: las mismas en el teléfono y en la PC. |
 | **3. Respuestas** | Con un toque (*📋 Pegar respuesta*) la app saca la hora y la ubicación de lo que el cliente respondió por WhatsApp y lo marca *Confirmado*. Lo que llena en el formulario entra solo. |
+| **Cierres** | Reportes PDF por día de recibido, con horas, km y promedios; incluye los cierres guardados en la base al vaciar la lista. |
 | **4. Ruta** (antes *Entrega*) | Carga el Excel *Ruta AAAA-MM-DD* y divide la pantalla: arriba el mapa con las paradas numeradas en orden, abajo la lista; cada parada abre Waze o Google Maps y la prueba de entrega (botón Evidencia) o la marca como entregada (botón Entregado, que la pone en gris). Muestra tu punto actual y, apenas te ubica, reordena sola las paradas que faltan desde donde estás, con el tiempo aproximado hasta cada cliente y el tiempo y los km de toda la ruta; tiene lupa para buscar un cliente. Marcar una parada como entregada también actualiza el paquete en la lista, y un paquete se puede marcar como devuelto al almacén o volver a escanear su etiqueta para corregirlo. |
 | **5. Prueba de entrega** | Al marcar *Entregado* guarda ubicación GPS, fecha, hora, mínimo 3 fotos con sello y la **firma con el dedo** de quien recibe (si falta algo, la app dice qué; si el GPS falla, se puede confirmar sin él); se respalda en Supabase. En *Ruta*, el **recorrido del día** muestra las entregas numeradas en un mapa. |
 
@@ -35,7 +51,7 @@ Cuando alguien crea cuenta, al administrador le llega un **WhatsApp y un correo*
 
 ## Cierre del día
 
-**Vaciar lista** guarda en la base todos los paquetes y la ruta con la fecha del cierre (tabla `rf_cierres`) y deja la app lista para una ruta nueva.
+**🧹 Vaciar lista** (en *Paquetes*) guarda en la base todos los paquetes, la ruta y la jornada con la fecha del cierre (tabla `rf_cierres`) y deja la app limpia para una ruta nueva. Esos cierres siguen saliendo en los reportes de *Cierres*.
 
 ## Soporte
 
