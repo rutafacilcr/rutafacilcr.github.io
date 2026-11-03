@@ -460,6 +460,10 @@ No tenés que unir nada a mano: si corregís en *Paquetes* el nombre, el teléfo
 
 Cuando tocás **✓ Entregado** en *Ruta*, el número del paquete queda tachado y en gris, y la parada baja al final de la lista. En *Paquetes* el número también sale tachado, la tarjeta entera se ve apagada en gris (1.40.1) y el paquete pasa con los entregados. Sus botones siguen sirviendo por si hay que corregir algo. Si te equivocaste, **↩ Deshacer** lo devuelve.
 
+### Si algo no responde (1.67.5)
+
+Si arriba sale un **aviso rojo "Error en la app…"**, tomale captura y mandala a soporte; tocalo para cerrarlo. En computadora, para cargar la última versión apretá **Ctrl + Shift + R** (Windows) o **Cmd + Shift + R** (Mac).
+
 ### Vaciar lista (1.67.0)
 
 En *Paquetes*, el primer botón **🧹 Vaciar lista** (orden desde la 1.67.1: Vaciar lista, Agregar a mano, Importar, Escanear) cierra la ruta: pide confirmar, te dice cuántos paquetes se guardan y te avisa si todavía hay sin entregar ni devolver. Al aceptar guarda todo en la base y deja la app limpia.

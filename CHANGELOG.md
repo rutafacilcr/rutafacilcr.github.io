@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.67.5 · Pestañas a prueba de fallas:** el cambio entre *Paquetes, Cierres, Mensajes y Ruta* se activa de primero y funciona aunque otra parte de la app falle (en una laptop los botones de abajo no respondían). Si la app tiene un error, ahora sale un aviso rojo arriba con el mensaje y la versión para mandar la captura a soporte.
 - **1.67.4 · Sin aviso de fecha:** en *Ruta* ya no sale "no es la de hoy ni la de mañana"; una ruta se reparte en varios días.
 - **1.67.3 · Orden de la barra de abajo:** **Paquetes**, **Cierres**, **Mensajes** y **Ruta**.
 - **1.67.2 · Buscador arriba:** en *Paquetes* el buscador 🔍 va primero y el título **Lista del día** debajo, justo antes de las tarjetas.
