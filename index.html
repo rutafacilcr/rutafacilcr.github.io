@@ -374,7 +374,7 @@ details summary{cursor:pointer;font-weight:600}
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.69.7</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.69.8</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -461,7 +461,7 @@ details summary{cursor:pointer;font-weight:600}
 // La primera línea va como título; el botón de aceptar toma el verbo de la pregunta (Borrar, Quitar, Vaciar…) y sale en rojo si la acción borra o desactiva.
 function rfConfirm(msg){return new Promise(ok=>{const t=String(msg).split('\n'),tit=t.shift(),body=t.join('\n').trim();
   const verbo=(tit.match(/^¿\s*(?:Ya\s+)?([A-Za-zÁÉÍÓÚáéíóúñ]+)/)||[])[1]||'',mal=/^(borrar|quitar|vaciar|devolver|devolviste|finalizar|cambiarlo)$/i.test(verbo)||/no se puede deshacer|NO se va a guardar|sin GPS/i.test(msg);
-  const lab=/^devolviste$/i.test(verbo)?'Sí, devuelto':/^vaciar$/i.test(verbo)?'Vaciar y cerrar':verbo&&/^[a-záéíóú]+r$/i.test(verbo)?verbo.charAt(0).toUpperCase()+verbo.slice(1).toLowerCase():'Aceptar';
+  const lab=/^devolviste$/i.test(verbo)?'Sí, devuelto':/^regresar$/i.test(verbo)?'Regresar a Ruta':/^vaciar$/i.test(verbo)?'Vaciar y cerrar':verbo&&/^[a-záéíóú]+r$/i.test(verbo)?verbo.charAt(0).toUpperCase()+verbo.slice(1).toLowerCase():'Aceptar';
   const w=document.createElement('div');w.className='rfdlg';w.innerHTML=`<div class="rfdlg-box" role="alertdialog" aria-modal="true" aria-labelledby="rfdlgT"><div class="rfdlg-ico ${mal?'mal':''}" aria-hidden="true">${mal?'⚠️':'❔'}</div><h3 id="rfdlgT"></h3>${body?'<p></p>':''}<div class="rfdlg-btns"><button type="button" class="rfdlg-no">Cancelar</button><button type="button" class="rfdlg-si ${mal?'mal':''}"></button></div></div>`;
   w.querySelector('h3').textContent=tit;if(body){const pe=w.querySelector('p');const parts=body.split(/\n\s*\n/),ojo=parts.length>1&&/^Ojo/i.test(parts[parts.length-1])?parts.pop():'';pe.textContent=parts.join('\n\n');if(/•/.test(body))pe.style.textAlign='left';if(ojo){const o=document.createElement('div');o.className='rfdlg-ojo';{const t=ojo.replace(/^Ojo:\s*/i,'');o.textContent=t.charAt(0).toUpperCase()+t.slice(1)}pe.after(o)}}w.querySelector('.rfdlg-si').textContent=lab;
   const fin=v=>{document.removeEventListener('keydown',kd);w.classList.remove('on');setTimeout(()=>w.remove(),150);ok(v)},kd=e=>{if(e.key==='Escape')fin(false);if(e.key==='Enter')fin(true)};
@@ -770,8 +770,10 @@ document.addEventListener('click',async e=>{
   // Devuelto al almacén (por ejemplo sin dirección); tocar otra vez lo regresa al estado que tenía
   else if(a==='aruta'&&p){entAgregarPk(p);return}
   else if(a==='rescan'&&p){scanCorregir(p);return}
-  else if(a==='dev'&&p){if(!await rfConfirm(p.st==='devuelto'?`¿Quitar "devuelto" a ${p.nombre||'este paquete'}?`:`¿Marcar a ${p.nombre||'este paquete'} como devuelto al almacén?${p.st==='entregado'?'\nAhora está ENTREGADO.':''}`))return;
-    if(p.st==='devuelto'){p.st=p.stAntes||'pendiente';delete p.stAntes;delete p.devAt;toast(`${p.nombre}: vuelve a ${SLABEL[p.st]}`)}else{p.stAntes=p.st;p.st='devuelto';p.devAt=Date.now();toast(`${p.nombre}: devuelto al almacén`)}pkReflejar(p);if(typeof renderEnt==='function')setTimeout(renderEnt,0)}
+  else if(a==='dev'&&p){if(!await rfConfirm(p.st==='devuelto'?`¿Regresar a Ruta a ${p.nombre||'este paquete'}?\nSi regresa a Ruta, el paquete se agregará a la ruta de entrega y se activa en Paquetes.`:`¿Marcar a ${p.nombre||'este paquete'} como devuelto al almacén?${p.st==='entregado'?'\nAhora está ENTREGADO.':''}`))return;
+    if(p.st==='devuelto'){p.st=p.stAntes||'pendiente';if(p.st==='entregado')p.st='pendiente';delete p.stAntes;delete p.devAt;delete p.devolver;toast(`${p.nombre}: activo otra vez`);
+      // 1.69.8: queda en la ruta de entrega: si su parada sigue ahí se reactiva sola; si no, se agrega (si tiene ubicación)
+      try{const ps=entParadasDe(p);ps.forEach(x=>{delete x.devolver});if(S.ent&&S.ent.stops&&S.ent.stops.length&&!S.ent.cerrada&&!ps.length){if(parseCoord(p.ubic)){pkReflejar(p);save();entAgregarPk(p);render();return}else toast(`${p.nombre}: activo, pero no tiene ubicación para la ruta`)}}catch(e){}}else{p.stAntes=p.st;p.st='devuelto';p.devAt=Date.now();toast(`${p.nombre}: devuelto al almacén`)}pkReflejar(p);if(typeof renderEnt==='function')setTimeout(renderEnt,0)}
   // Etiqueta ⛔ Devolver (marcada desde Ruta): tocarla lo marca como devuelto, o quita la marca
   else if(a==='devno'&&p){if(!await rfConfirm(`¿Quitar "Devolver" a ${p.nombre||'este paquete'}?\nVuelve a estar activo en Paquetes, Mensajes y Ruta.`))return;
     delete p.devolver;(S.ent&&S.ent.stops||[]).filter(x=>x.devolver&&(entParadasDe(p).includes(x)||entPkg(x)===p)).forEach(x=>delete x.devolver);entMod();save();render();if(typeof renderEnt==='function')renderEnt();toast(`${p.nombre}: activo otra vez`);return}

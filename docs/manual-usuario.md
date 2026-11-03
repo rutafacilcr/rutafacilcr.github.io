@@ -519,6 +519,10 @@ En *Paquetes*, el primer botón **🧹 Vaciar lista** (orden desde la 1.67.1: Va
 
 Si dos o más clientes están en el mismo punto, sus pines salen un poco corridos, en abanico, para que se vean todos. El de adelante es el pendiente; los grises (entregados) quedan detrás.
 
+### Regresar a Ruta (1.69.8)
+
+En un paquete devuelto, **↪ Regresar a Ruta** pide confirmar: *Si regresa a Ruta, el paquete se agregará a la ruta de entrega y se activa en Paquetes*. Al aceptar queda pendiente y en la ruta (si no tiene ubicación, te avisa para que se la pongás).
+
 ### Paquete devuelto (1.66.2)
 
 Un paquete **devuelto** queda gris y sin botones en *Paquetes* y *Mensajes*, igual que en *Ruta*. Solo queda la etiqueta roja **⛔ Devuelto** y **↪ Quitar devuelto** para reactivarlo.
