@@ -28,7 +28,7 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
   - Un reporte PDF horizontal por cada grupo de *Entregas del …* (el día en que se recibieron los paquetes), también de listas ya vaciadas.
   - Trae fecha, mensajero, km y horas por tramos, promedio por entrega, y recibidos, entregados y devueltos.
   - Las filas van ordenadas por fecha y hora de entrega.
-  - También hay un PDF **Guías + fecha** por cada día de entrega, con nombre, teléfono, guía y dirección, agrupado por fecha de recibido.
+  - También hay un PDF **Guías** por cada fecha de recibido, con nombre, teléfono, guía y dirección, agrupado por fecha de recibido.
 - **Mensajes:**
   - Coordinar, Formulario y Voy en camino (con el ícono del vehículo).
   - Los clientes van en el mismo orden que en Ruta; los cerrados o en Hold quedan en gris al final.

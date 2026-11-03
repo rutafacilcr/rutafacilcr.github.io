@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.72.3 · Guías por fecha de recibido:** en *Cierres* sale un solo reporte por fecha de recibido (**Guías · Paquetes recibidos 31/10/2026**) con todos sus entregados; adentro, un título por día de entrega.
 - **1.72.2 · Guías por fecha de recibido:** el PDF de Guías agrupa los paquetes con el título **Paquetes recibidos DD/MM/AAAA**.
 - **1.72.1 · Guías con dirección:** en el PDF de Guías la columna Nota cambió por Dirección.
 - **1.72.0 · Ruta fija al iniciar:** después de **▶ Iniciar entregas** el orden de la ruta ya no cambia solo (GPS, agregar paquetes, Hold, ubicaciones nuevas). Los paquetes nuevos van al final y el que sale de Hold vuelve a su puesto. Solo 📍 Ordenar desde aquí o 🎯 Elegir en el mapa la reordenan, y piden confirmar. Al tocar ■ Finalizar vuelve a ordenarse sola.
