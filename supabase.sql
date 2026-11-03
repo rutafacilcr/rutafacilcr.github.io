@@ -20,13 +20,19 @@ create table if not exists public.rf_ajustes (
   dias_gracia   int     not null default 3       -- días que sigue funcionando después de vencer
 );
 insert into public.rf_ajustes (id) values (1) on conflict (id) do nothing;
--- 1.74.0 (20 mensajeros): fotos de entrega en la nube. 'una' = 1 foto reducida + firma por entrega
--- (las 3 completas quedan en el celular); 'todas' = las 3 fotos + firma. dias_fotos = días que se
--- guardan en la nube antes de que la app de cada mensajero las borre sola (0 = no se borran).
-alter table public.rf_ajustes add column if not exists fotos_nube text not null default 'una'
-  check (fotos_nube in ('una','todas'));
+-- 1.74.0 (20 a 150 mensajeros): fotos de entrega en la nube. 'ninguna' (de fábrica) = las fotos quedan
+-- solo en el celular y a la nube va la entrega sin fotos (hora, GPS, quién recibió); 'una' = 1 foto
+-- reducida + firma; 'todas' = las 3 fotos + firma. dias_fotos = días que se guardan en la nube antes de
+-- que la app de cada mensajero las borre sola (0 = no se borran).
+alter table public.rf_ajustes add column if not exists fotos_nube text not null default 'ninguna';
+alter table public.rf_ajustes drop constraint if exists rf_ajustes_fotos_nube_check;
+alter table public.rf_ajustes add constraint rf_ajustes_fotos_nube_check check (fotos_nube in ('ninguna','una','todas'));
 alter table public.rf_ajustes add column if not exists dias_fotos int not null default 21
   check (dias_fotos between 0 and 365);
+-- dias_cierres: días que se guardan los cierres en la base (0 = siempre). De fábrica 15 (decisión de Victor,
+-- 2026-11-03): con 150 mensajeros los cierres llenarían los 500 MB en ~6 semanas; con 15 días usan ~170 MB.
+alter table public.rf_ajustes add column if not exists dias_cierres int not null default 15
+  check (dias_cierres between 0 and 3650);
 
 create table if not exists public.rf_perfiles (
   id                    uuid primary key references auth.users(id) on delete cascade,
@@ -156,7 +162,7 @@ begin
     'activo', p.rol = 'admin' or (p.estado = 'activo' and p.vence_en + make_interval(days => a.dias_gracia) > now()),
     'en_gracia', p.rol <> 'admin' and p.estado = 'activo' and p.vence_en < now(),
     'sinpe', a.sinpe, 'precio', a.precio, 'exigir', a.exigir_cuenta,
-    'fotos_nube', a.fotos_nube, 'dias_fotos', a.dias_fotos);
+    'fotos_nube', a.fotos_nube, 'dias_fotos', a.dias_fotos, 'dias_cierres', a.dias_cierres);
 end $$;
 
 -- ---------- Funciones del panel de Victor (solo rol admin) ----------
@@ -433,7 +439,7 @@ returns setof respuestas language plpgsql security definer set search_path = pub
 begin
   perform public.rf_exigir_licencia();
   if auth.uid() is null then raise exception 'RF_CUENTA: sin sesión'; end if;
-  if coalesce(cardinality(p_tokens), 0) = 0 or cardinality(p_tokens) > 300 then return; end if;
+  if coalesce(cardinality(p_tokens), 0) = 0 or cardinality(p_tokens) > 1000 then return; end if;  -- antes 300: con listas grandes no llegaba nada
   update respuestas set owner_id = auth.uid() where token = any(p_tokens) and owner_id is null;
   return query select * from respuestas
     where token = any(p_tokens) and owner_id = auth.uid()
@@ -576,6 +582,10 @@ begin
     (select count(*) from jsonb_array_elements(pk) e where e->>'st' = 'devuelto'),
     (select count(*) from jsonb_array_elements(pk) e where (e->>'devolver')::boolean is true))
   returning * into c;
+  -- 1.74.0: borra los cierres propios más viejos que rf_ajustes.dias_cierres (si es 0, no borra nada)
+  delete from rf_cierres where owner_id = auth.uid()
+     and coalesce((select dias_cierres from rf_ajustes where id = 1), 0) > 0
+     and fecha_cierre < now() - make_interval(days => (select dias_cierres from rf_ajustes where id = 1));
   return json_build_object('ok', true, 'id', c.id, 'fecha_cierre', c.fecha_cierre);
 end $$;
 
@@ -678,7 +688,7 @@ declare a rf_ajustes;
 begin
   perform public.rf_admin_check();
   update rf_ajustes set
-    fotos_nube = case when p_modo in ('una','todas') then p_modo else fotos_nube end,
+    fotos_nube = case when p_modo in ('ninguna','una','todas') then p_modo else fotos_nube end,
     dias_fotos = case when p_dias is null then dias_fotos else least(greatest(p_dias,0),365) end
    where id = 1 returning * into a;
   return json_build_object('fotos_nube', a.fotos_nube, 'dias_fotos', a.dias_fotos);
@@ -697,6 +707,8 @@ begin
     'fotos', (select count(*) from storage.objects where bucket_id = 'evidencias'),
     'fotos_nube', (select fotos_nube from rf_ajustes where id = 1),
     'dias_fotos', (select dias_fotos from rf_ajustes where id = 1),
+    'dias_cierres', (select dias_cierres from rf_ajustes where id = 1),
+    'cierres_bytes', pg_total_relation_size('public.rf_cierres'),
     'cuentas', coalesce((select json_agg(x order by x.fotos_bytes desc) from (
       select p.nombre, p.telefono, p.estado, p.ultimo_acceso,
         (select coalesce(sum((o.metadata->>'size')::bigint),0) from storage.objects o
@@ -712,3 +724,98 @@ grant execute on function public.rf_admin_uso() to authenticated;
 -- Índices para que 20 cuentas no hagan lentas las búsquedas por dueño.
 create index if not exists respuestas_owner on public.respuestas (owner_id);
 create index if not exists entregas_owner_fecha on public.entregas (owner_id, entregado_en desc);
+
+-- =====================================================================
+-- Código de recuperación (1.74.0). Agregado 2026-11-03.
+-- Cada cuenta puede tener un código de 12 letras (se guarda solo cifrado). Con el número + el código,
+-- el mensajero pone un PIN nuevo y, si cambió de celular, la cuenta pasa al celular nuevo sin esperar
+-- al administrador (el anterior se cierra). El código se usa una vez: al usarlo sale uno nuevo.
+-- Contra adivinanzas: 5 intentos fallidos bloquean 30 minutos ese número.
+-- No llama rf_exigir_licencia(): es manejo de la cuenta (como rf_mi_cuenta), no datos del repartidor;
+-- tiene que funcionar aunque la cuenta esté vencida.
+-- =====================================================================
+alter table public.rf_perfiles add column if not exists rec_hash      text;
+alter table public.rf_perfiles add column if not exists rec_creado    timestamptz;
+alter table public.rf_perfiles add column if not exists rec_intentos  int not null default 0;
+alter table public.rf_perfiles add column if not exists rec_bloqueo   timestamptz;
+
+create or replace function public.rf_codigo_generar(p_id uuid)
+returns text language plpgsql volatile security definer set search_path = public, extensions as $$
+declare
+  abc text := 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';  -- sin 0/O, 1/I/L
+  b bytea := extensions.gen_random_bytes(12);
+  c text := '';
+begin
+  for i in 0..11 loop c := c || substr(abc, (get_byte(b, i) % length(abc)) + 1, 1); end loop;
+  update rf_perfiles set rec_hash = extensions.crypt(c, extensions.gen_salt('bf')), rec_creado = now(),
+         rec_intentos = 0, rec_bloqueo = null where id = p_id;
+  return substr(c,1,4) || '-' || substr(c,5,4) || '-' || substr(c,9,4);
+end $$;
+
+-- La app lo pide al crear la cuenta o desde el pie (Código de recuperación). Solo desde el teléfono aprobado.
+create or replace function public.rf_codigo_nuevo()
+returns json language plpgsql security definer set search_path = public as $$
+declare p rf_perfiles;
+begin
+  if auth.uid() is null then raise exception 'RF_CUENTA: sin sesión'; end if;
+  select * into p from rf_perfiles where id = auth.uid();
+  if not found then raise exception 'RF_CUENTA: sin cuenta'; end if;
+  if p.rol <> 'admin' and p.sesion_id is distinct from (auth.jwt()->>'session_id') then
+    raise exception 'RF_CUENTA: el código solo se saca desde el teléfono aprobado';
+  end if;
+  insert into rf_eventos (user_id, tipo, detalle) values (p.id, 'codigo_nuevo', '{}');
+  return json_build_object('codigo', public.rf_codigo_generar(p.id));
+end $$;
+
+-- Sin sesión (la persona no puede entrar). Devuelve el código nuevo; el PIN queda cambiado.
+create or replace function public.rf_recuperar(p_telefono text, p_codigo text, p_pin text, p_dispositivo text)
+returns json language plpgsql security definer set search_path = public, extensions as $$
+declare
+  p rf_perfiles;
+  t text := right(regexp_replace(coalesce(p_telefono,''),'\D','','g'), 8);
+  c text := upper(regexp_replace(coalesce(p_codigo,''),'[^A-Za-z0-9]','','g'));
+  d text := nullif(left(coalesce(p_dispositivo,''),64),'');
+begin
+  if coalesce(p_pin,'') !~ '^\d{6}$' then raise exception 'RF_CUENTA: el PIN debe tener 6 números'; end if;
+  select * into p from rf_perfiles where telefono = t;
+  if not found or p.rec_hash is null then
+    raise exception 'RF_CUENTA: número o código incorrecto';
+  end if;
+  if p.rec_bloqueo is not null and p.rec_bloqueo > now() then
+    raise exception 'RF_CUENTA: demasiados intentos; probá de nuevo en % minutos', ceil(extract(epoch from p.rec_bloqueo - now())/60);
+  end if;
+  if extensions.crypt(c, p.rec_hash) <> p.rec_hash then
+    update rf_perfiles set
+           rec_bloqueo  = case when rec_intentos + 1 >= 5 then now() + interval '30 minutes' else rec_bloqueo end,
+           rec_intentos = case when rec_intentos + 1 >= 5 then 0 else rec_intentos + 1 end
+     where id = p.id;
+    insert into rf_eventos (user_id, tipo, detalle) values (p.id, 'codigo_fallido', '{}');
+    return json_build_object('ok', false, 'error', 'Número o código incorrecto');
+  end if;
+  update auth.users set encrypted_password = extensions.crypt(p_pin, extensions.gen_salt('bf')), updated_at = now()
+   where id = p.id;
+  if d is not null and p.rol <> 'admin' and p.dispositivo is distinct from d then
+    update rf_perfiles set dispositivo_anterior = dispositivo, dispositivo = d,
+           dispositivo_pendiente = null, pendiente_desde = null, sesion_id = null where id = p.id;
+  end if;
+  insert into rf_eventos (user_id, tipo, detalle) values (p.id, 'recuperada', json_build_object('telefono_nuevo', d is not null and p.dispositivo is distinct from d)::jsonb);
+  return json_build_object('ok', true, 'codigo', public.rf_codigo_generar(p.id));
+end $$;
+
+revoke all on function public.rf_codigo_generar(uuid) from public, anon, authenticated;
+revoke all on function public.rf_codigo_nuevo() from public, anon;
+revoke all on function public.rf_recuperar(text,text,text,text) from public;
+grant execute on function public.rf_codigo_nuevo() to authenticated;
+grant execute on function public.rf_recuperar(text,text,text,text) to anon, authenticated;
+
+-- Panel: días que se guardan los cierres (0 = siempre). Cada cuenta borra los suyos vencidos al guardar un cierre nuevo.
+create or replace function public.rf_admin_cierres(p_dias int)
+returns json language plpgsql security definer set search_path = public as $$
+declare a rf_ajustes;
+begin
+  perform public.rf_admin_check();
+  update rf_ajustes set dias_cierres = least(greatest(coalesce(p_dias, dias_cierres),0),3650) where id = 1 returning * into a;
+  return json_build_object('dias_cierres', a.dias_cierres);
+end $$;
+revoke all on function public.rf_admin_cierres(int) from public, anon;
+grant execute on function public.rf_admin_cierres(int) to authenticated;

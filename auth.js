@@ -7,7 +7,8 @@ const C=window.RF_CONFIG||{};
 const ON=!!(C.supabaseUrl&&C.supabaseAnonKey);
 const BASE=ON?C.supabaseUrl.replace(/\/$/,''):'';
 const ADMIN=!!window.RF_AUTH_ADMIN;
-const KS='rutafacil-sesion',KD='rutafacil-dispositivo',KC='rutafacil-cuenta';
+const KS='rutafacil-sesion',KD='rutafacil-dispositivo',KC='rutafacil-cuenta',KA='rutafacil-pin-at';
+const ADMIN_HORAS=12;                     // 1.74.0: el Panel vuelve a pedir el PIN si pasaron 12 horas desde la última vez
 const DOMINIO='rutafacilcr.github.io';   // correo interno: <8 dígitos>@rutafacilcr.github.io (nunca se le manda nada)
 const OFFLINE_DIAS=3;                     // sin internet, la app abre con la última revisión buena hasta 3 días
 const REVISAR_MIN=15;
@@ -104,14 +105,15 @@ function vEntrar(err){
     <button class="rfbtn pri" id="rfOk">Entrar</button>
   </form>
   <p class="rfmuted">¿No tenés cuenta? <button class="rflink" id="rfCrear">Crear cuenta</button></p>
-  <p class="rfmuted">¿Olvidaste el PIN? Pedile uno nuevo al administrador.</p>${ayuda}`);
+  <p class="rfmuted">¿Olvidaste el PIN? <button class="rflink" id="rfOlvido">Usá tu código de recuperación</button> o pedile uno nuevo al administrador.</p>${ayuda}`);
   body.querySelector('#rfCrear').onclick=()=>vCrear();
+  body.querySelector('#rfOlvido').onclick=()=>vRecuperar();
   body.querySelector('#rfForm').onsubmit=async e=>{
     e.preventDefault();const t=tel8(body.querySelector('#rfTel').value),pin=body.querySelector('#rfPin').value.trim(),er=body.querySelector('#rfErr'),b=body.querySelector('#rfOk');
     if(t.length!==8){er.textContent='Escribí tu número de 8 dígitos';return}
     if(!/^\d{6}$/.test(pin)){er.textContent='El PIN tiene 6 números';return}
     b.disabled=true;b.textContent='Entrando…';er.textContent='';
-    try{guardar(await authReq('token?grant_type=password',{email:t+'@'+DOMINIO,password:pin}));await revisar(true)}
+    try{guardar(await authReq('token?grant_type=password',{email:t+'@'+DOMINIO,password:pin}));ls.set(KA,Date.now());await revisar(true)}
     catch(x){b.disabled=false;b.textContent='Entrar';er.textContent=/confirm/i.test(x.message+x.code)?'Tu cuenta existe, pero falta un ajuste en Supabase (desactivar "Confirm email"). Avisale al administrador.':x.status===400?'Número o PIN incorrecto. Si es tu primera vez, tocá Crear cuenta.':'No se pudo entrar: '+x.message}
   };
 }
@@ -139,7 +141,7 @@ function vCrear(){
     try{
       const j=await authReq('signup',{email:t+'@'+DOMINIO,password:pin,data:{nombre:nom,telefono:t}});
       if(!j.access_token){b.disabled=false;b.textContent='Crear cuenta';er.textContent='La cuenta se creó, pero falta un ajuste en Supabase (desactivar "Confirm email"). Avisale al administrador.';return}
-      guardar(j);await revisar(true);
+      guardar(j);ls.set(KA,Date.now());await mostrarCodigoNuevo(()=>revisar(true));
     }catch(x){b.disabled=false;b.textContent='Crear cuenta';
       er.textContent=/already|registered|exists/i.test(x.message+x.code)?'Ese número ya tiene cuenta. Entrá con tu PIN.':'No se pudo crear la cuenta: '+x.message}
   };
@@ -147,7 +149,7 @@ function vCrear(){
 function vEstado(c){
   let h;
   if(ADMIN&&c.rol!=='admin')h=`<h2>Solo para el administrador</h2><p>Esta página es para administrar las cuentas.</p><a class="rfbtn" href="./">Ir a la app</a>`;
-  else if(c.dispositivo==='pendiente')h=`<h2>Esta cuenta está en otro teléfono</h2><p>Cada cuenta funciona en un solo teléfono. Ya le avisamos al administrador: cuando apruebe el cambio, tocá <b>Revisar de nuevo</b>.</p>${contacto(c)}`;
+  else if(c.dispositivo==='pendiente')h=`<h2>Esta cuenta está en otro teléfono</h2><p>Cada cuenta funciona en un solo teléfono.</p><p><b>¿Cambiaste de celular?</b> Usá tu <b>código de recuperación</b> y entrás de una vez (el celular anterior se cierra).</p><button class="rfbtn pri" id="rfUsarCod">Usar código de recuperación</button><p class="rfmuted">Si no tenés el código, ya le avisamos al administrador: lo aprueba normalmente el mismo día. Escribile por WhatsApp para que sea más rápido. Cuando lo apruebe, esta pantalla se abre sola.</p>${contacto(c)}`;
   else if(c.dispositivo==='cerrado')h=`<h2>La cuenta se pasó a otro teléfono</h2><p>Este teléfono se cerró porque la cuenta se aprobó en otro. Si fue un error, escribile al administrador.</p>${contacto(c)}`;
   else if(c.estado==='suspendido')h=`<h2>Cuenta suspendida</h2><p>Escribile al administrador para saber más.</p>${contacto(c)}`;
   else if(c.estado==='pendiente')h=`<h2>Hola, ${esc((c.nombre||'').split(' ')[0])}</h2><p>Tu cuenta está creada y espera activación. Cuando la activemos, el botón de abajo se pone naranja y te avisamos por WhatsApp.</p>${pagar(c)}${contacto(c)}`;
@@ -160,7 +162,65 @@ function vEstado(c){
     ?`<button class="rfbtn rfespera" disabled>⏳ ${c.dispositivo==='pendiente'?'Esperando aprobación':'Esperando activación'}</button><p class="rfmuted" style="text-align:center">Se revisa sola cada minuto.</p>`
     :'<button class="rfbtn pri" id="rfRev">Revisar de nuevo</button>'}<button class="rflink" id="rfSalir">Salir de la cuenta</button>`);
   const rv=body.querySelector('#rfRev');if(rv)rv.onclick=()=>revisar(true);
+  const uc=body.querySelector('#rfUsarCod');if(uc)uc.onclick=()=>vRecuperar(c.telefono,true);
   body.querySelector('#rfSalir').onclick=()=>salir();
+}
+// ---------- Código de recuperación (1.74.0) ----------
+// Sirve para poner un PIN nuevo y para pasar la cuenta a otro celular sin esperar al administrador (rf_recuperar).
+function vCodigo(cod,seguir){
+  vista(`<div class="rfmsg rflisto"><h2>🔑 Tu código de recuperación</h2>
+  <p class="rfpago" style="font-size:24px;font-weight:700;letter-spacing:1px;text-align:center;margin:6px 0">${esc(cod)}</p>
+  <p><b>Tomale captura o anotalo.</b> Con tu número y este código podés poner un PIN nuevo o pasar la cuenta a otro celular sin esperar al administrador.</p>
+  <p class="rfmuted">No se lo des a nadie: con él se puede entrar a tu cuenta. Se usa una sola vez; al usarlo te damos uno nuevo.</p></div>
+  <button class="rfbtn" id="rfCopiar">Copiar código</button><button class="rfbtn pri" id="rfGuardado">Ya lo guardé</button>`);
+  body.querySelector('#rfCopiar').onclick=e=>{try{navigator.clipboard.writeText(cod);e.target.textContent='✓ Copiado'}catch(x){}};
+  body.querySelector('#rfGuardado').onclick=()=>seguir();
+}
+async function mostrarCodigoNuevo(seguir){
+  try{await rpc('rf_mi_cuenta',{p_dispositivo:dev});const r=await rpc('rf_codigo_nuevo');if(r&&r.codigo){vCodigo(r.codigo,seguir);return}}catch(e){}
+  seguir();   // base sin la función nueva: sigue como antes
+}
+function vRecuperar(tel,cambio){
+  vista(`<h2>${cambio?'Pasar la cuenta a este celular':'Recuperar el PIN'}</h2>
+  <form id="rfForm" class="rfbox" style="gap:14px" novalidate>
+    <label>Tu número de teléfono<input id="rfTel" inputmode="numeric" autocomplete="username" maxlength="12" value="${esc(tel||'')}" required></label>
+    <label>Código de recuperación<input id="rfCod" autocomplete="off" autocapitalize="characters" maxlength="16" placeholder="XXXX-XXXX-XXXX" required></label>
+    <label>${cambio?'Tu PIN (o uno nuevo)':'PIN nuevo de 6 números'}<input id="rfPin" type="password" inputmode="numeric" autocomplete="new-password" maxlength="6" required></label>
+    <label>Repetí el PIN<input id="rfPin2" type="password" inputmode="numeric" autocomplete="new-password" maxlength="6" required></label>
+    <p class="rfmuted">${cambio?'La cuenta queda en este celular y el anterior se cierra.':'Si estás en un celular nuevo, la cuenta pasa a este y el anterior se cierra.'}</p>
+    <p class="rferr" id="rfErr" role="alert"></p>
+    <button class="rfbtn pri" id="rfOk">${cambio?'Pasar la cuenta':'Cambiar PIN y entrar'}</button>
+  </form>
+  <p class="rfmuted">¿No tenés el código? Pedile al administrador un PIN nuevo por WhatsApp.</p>
+  <button class="rflink" id="rfVolver">Volver</button>${ayuda}`);
+  body.querySelector('#rfVolver').onclick=()=>cambio&&ses?revisar(true):vEntrar();
+  body.querySelector('#rfForm').onsubmit=async e=>{
+    e.preventDefault();const q=s=>body.querySelector(s);const t=tel8(q('#rfTel').value),cod=q('#rfCod').value.trim(),pin=q('#rfPin').value.trim(),er=q('#rfErr'),b=q('#rfOk');
+    if(t.length!==8){er.textContent='Escribí tu número de 8 dígitos';return}
+    if(cod.replace(/[^A-Za-z0-9]/g,'').length!==12){er.textContent='El código tiene 12 letras y números';return}
+    if(!/^\d{6}$/.test(pin)){er.textContent='El PIN tiene que ser de 6 números';return}
+    if(/^(\d)\1{5}$/.test(pin)||pin==='123456'||pin==='654321'){er.textContent='Ese PIN es muy fácil de adivinar';return}
+    if(pin!==q('#rfPin2').value.trim()){er.textContent='Los dos PIN no coinciden';return}
+    b.disabled=true;b.textContent='Revisando…';er.textContent='';
+    try{const r=await rpc('rf_recuperar',{p_telefono:t,p_codigo:cod,p_pin:pin,p_dispositivo:dev});
+      if(!r||!r.ok){b.disabled=false;b.textContent=cambio?'Pasar la cuenta':'Cambiar PIN y entrar';er.textContent=(r&&r.error)||'Número o código incorrecto';return}
+      guardar(await authReq('token?grant_type=password',{email:t+'@'+DOMINIO,password:pin}));ls.set(KA,Date.now());
+      vCodigo(r.codigo,()=>revisar(true));
+    }catch(x){b.disabled=false;b.textContent=cambio?'Pasar la cuenta':'Cambiar PIN y entrar';
+      er.textContent=x.status===404?'Esta opción todavía no está activa. Pedile un PIN nuevo al administrador.':(x.message||'No se pudo')}
+  };
+}
+// Panel: si pasaron ADMIN_HORAS desde el último PIN, se vuelve a pedir (la sesión del celular sigue igual).
+function vPinAdmin(c){
+  vista(`<h2>Poné tu PIN de nuevo</h2><p class="rfmuted">Por seguridad, el panel pide el PIN cada ${ADMIN_HORAS} horas.</p>
+  <form id="rfForm" class="rfbox" style="gap:14px" novalidate>
+    <label>PIN de 6 números<input id="rfPin" type="password" inputmode="numeric" autocomplete="current-password" maxlength="6" required></label>
+    <p class="rferr" id="rfErr" role="alert"></p><button class="rfbtn pri" id="rfOk">Entrar al panel</button></form>
+  <button class="rflink" id="rfSalir">Salir de la cuenta</button>`);
+  body.querySelector('#rfSalir').onclick=()=>salir();
+  body.querySelector('#rfForm').onsubmit=async e=>{e.preventDefault();const pin=body.querySelector('#rfPin').value.trim(),er=body.querySelector('#rfErr');
+    try{guardar(await authReq('token?grant_type=password',{email:tel8(c.telefono)+'@'+DOMINIO,password:pin}));ls.set(KA,Date.now());abrir(c)}
+    catch(x){er.textContent=x.status===400?'PIN incorrecto':'No se pudo: '+x.message}};
 }
 function vListo(c){
   vista(`<div class="rfmsg rflisto"><h2>✅ Cuenta habilitada</h2><p>¡Listo, ${esc((c.nombre||'').split(' ')[0])}! Tu cuenta ya está activa${c.vence_en?' hasta el '+fecha(c.vence_en):''}.</p></div><button class="rfbtn pri" id="rfEntrar">Entrar</button>`);
@@ -174,6 +234,7 @@ function vError(msg){
 // ---------- Estado de la cuenta ----------
 const sirve=c=>!!c&&c.activo&&c.dispositivo==='ok'&&(!ADMIN||c.rol==='admin');
 function abrir(c,aviso){
+  if(ADMIN&&c&&c.rol==='admin'&&Date.now()-(ls.get(KA)||0)>ADMIN_HORAS*36e5){abierta=false;vPinAdmin(c);return}
   cuenta=c;abierta=true;document.documentElement.classList.remove('rf-bloq');if(gate)gate.hidden=true;
   pie(c,aviso);soltar(c);document.dispatchEvent(new CustomEvent('rf-cuenta',{detail:c}));
 }
@@ -182,8 +243,10 @@ function pie(c,aviso){
   let s=f.querySelector('.rfcuenta');if(!s){s=document.createElement('span');s.className='rfcuenta';f.appendChild(s)}
   if(!c){s.innerHTML=aviso?`<br>${esc(aviso)}`:'';return}
   const venc=c.rol==='admin'?'':c.en_gracia?` · <b style="color:var(--bad)">venció el ${fecha(c.vence_en)}, pagá para no perder acceso</b>`:c.vence_en?` · al día hasta el ${fecha(c.vence_en)}`:'';
-  s.innerHTML=`<br>Cuenta de ${esc(c.nombre)}${venc} · ${c.rol==='admin'&&!ADMIN?'<a href="admin.html">Panel</a> · ':''}<a id="rfSalirPie">Salir</a>`;
+  s.innerHTML=`<br>Cuenta de ${esc(c.nombre)}${venc} · ${c.rol==='admin'&&!ADMIN?'<a href="admin.html">Panel</a> · ':''}<a id="rfCodPie">Código de recuperación</a> · <a id="rfSalirPie">Salir</a>`;
   s.querySelector('#rfSalirPie').onclick=()=>{if(confirm('¿Salir de la cuenta en este teléfono?'))salir()};
+  s.querySelector('#rfCodPie').onclick=async()=>{if(!confirm('¿Sacar un código de recuperación nuevo? El anterior deja de servir.'))return;
+    try{const r=await rpc('rf_codigo_nuevo');if(r&&r.codigo){abierta=false;vCodigo(r.codigo,()=>abrir(cuenta||c))}}catch(e){alert(e.status===404?'Falta actualizar la base (supabase.sql 1.74.0).':'No se pudo: '+e.message)}};
 }
 async function revisar(manual){
   if(!ON)return;

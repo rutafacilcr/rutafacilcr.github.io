@@ -277,11 +277,19 @@ Aislamiento por cuenta (nada compartido entre mensajeros):
 
 Todas las tablas tienen RLS encendido y **ninguna política** de lectura directa: todo pasa por funciones `security definer` que filtran por `auth.uid()` y llaman `rf_exigir_licencia()`. Para el futuro "admin ve a todos los mensajeros", basta con funciones `rf_admin_*` nuevas que llamen `rf_admin_check()` (como `rf_admin_uso`); no hay que cambiar las tablas.
 
-Funciones y ajustes nuevos: `rf_lista_leer(p_version)` (si la versión no cambió responde `{version, sin_cambios:true}` sin datos), `leer_respuestas(p_tokens, p_desde)` (solo lo cambiado después de `p_desde`), `rf_evidencias_viejas()`, `rf_dias_fotos()`, `rf_admin_fotos(p_modo, p_dias)`, `rf_admin_uso()`, columnas `rf_ajustes.fotos_nube` (`una`/`todas`, de fábrica `una`) y `rf_ajustes.dias_fotos` (21), e índices `respuestas_owner` y `entregas_owner_fecha`. `rf_mi_cuenta` devuelve también `fotos_nube` y `dias_fotos`.
+Funciones y ajustes nuevos: `rf_admin_cierres(p_dias)` y columna `rf_ajustes.dias_cierres` (15 de fábrica; `rf_cierre_guardar` borra los cierres propios vencidos), `fotos_nube` acepta `ninguna` (de fábrica), `leer_respuestas` acepta hasta 1000 tokens (antes 300), `rf_lista_leer(p_version)` (si la versión no cambió responde `{version, sin_cambios:true}` sin datos), `leer_respuestas(p_tokens, p_desde)` (solo lo cambiado después de `p_desde`), `rf_evidencias_viejas()`, `rf_dias_fotos()`, `rf_admin_fotos(p_modo, p_dias)`, `rf_admin_uso()`, columnas `rf_ajustes.fotos_nube` (`ninguna`/`una`/`todas`, de fábrica `ninguna`) y `rf_ajustes.dias_fotos` (21), e índices `respuestas_owner` y `entregas_owner_fecha`. `rf_mi_cuenta` devuelve también `fotos_nube` y `dias_fotos`.
 
 Recomendado al pasar a varios mensajeros: en el Panel encender **Exigir cuenta activa**.
 
-**Cuentas de los planes gratis con 20 mensajeros** (supuesto: 70 entregas por mensajero al día, el peor caso; con 35 todo dura el doble):
+**Código de recuperación:** columnas `rf_perfiles.rec_hash` (bcrypt), `rec_creado`, `rec_intentos`, `rec_bloqueo`; funciones `rf_codigo_nuevo()` (solo desde la sesión aprobada) y `rf_recuperar(p_telefono, p_codigo, p_pin, p_dispositivo)` (sin sesión: cambia el PIN, pasa la cuenta al aparato nuevo y devuelve un código nuevo; 5 fallos bloquean 30 min; un fallo devuelve `ok:false` para que el contador quede guardado). Eventos `codigo_nuevo`, `codigo_fallido`, `recuperada`. No llaman `rf_exigir_licencia()` porque son manejo de cuenta, no datos del repartidor.
+
+**Intentos de PIN:** el PIN lo revisa Supabase Auth, que en el plan gratis no permite bloquear por cuenta. Lo que protege: (1) **Authentication > Rate Limits** de Supabase limita los intentos por IP (recomendado: *sign-ups and sign-ins* en 10 por 5 minutos); (2) aunque alguien adivine el PIN, entra desde un aparato no aprobado y queda *esperando aprobación*: con **Exigir cuenta activa** encendido no ve ningún dato. Por eso, antes de sumar mensajeros, **encender Exigir cuenta activa** es obligatorio.
+
+**Sesiones:** el token de Supabase dura 1 hora y se renueva solo; cambiar de aparato (aprobado o con código) deja sin datos a la sesión vieja (`sesion_id`). El Panel (`admin.html`) vuelve a pedir el PIN si pasaron 12 horas (`ADMIN_HORAS` en `auth.js`, guardado en `localStorage['rutafacil-pin-at']`). Cerrar sesiones por inactividad en el servidor es de Supabase Pro.
+
+**Exportaciones** (Excel, PDF, contactos .vcf): se arman en el celular con los datos de la cuenta abierta; no pasan por ningún servidor ni pueden traer datos de otra cuenta. Quien tenga el celular desbloqueado las puede bajar: por eso la cuenta va atada a un solo aparato y *Salir* aparta los datos.
+
+**Cuentas de los planes gratis** (supuesto: 70 entregas por mensajero al día, el peor caso; con 35 todo dura el doble). Con **150 mensajeros** y fotos en el celular (de fábrica) todo cabe gratis: base ~170 MB con cierres de 15 días, transferencia muy por debajo de 5 GB, 150 usuarios de 50.000. Con fotos en la nube, 150 mensajeros necesitan Supabase Pro (25 USD/mes). Detalle con 20 mensajeros:
 
 | Servicio | Límite gratis | Uso estimado con 20 | ¿Alcanza? |
 |---|---|---|---|

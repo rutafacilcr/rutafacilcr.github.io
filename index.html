@@ -167,6 +167,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);outline-
 .pkg .actions{grid-column:2;display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 /* Solo Paquetes (Mensajes usa la misma tarjeta .pkg y queda como estaba) */
 #pkgList .pkg .actions{grid-column:1/-1;gap:5px;flex-wrap:nowrap}#pkgList .pkg .actions+.actions{margin-top:0}
+#pkgList>.pkg{content-visibility:auto;contain-intrinsic-size:auto 240px} /* 1.74.0: listas grandes; el celular no dibuja las tarjetas fuera de pantalla */
 #pkgList .pkg .actions .btn{flex:1 1 auto;justify-content:center;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:6px;font-size:12.5px}
 .mono{font-family:var(--f-mono);font-size:12.5px}
 .chip{font-size:12px;font-weight:600;letter-spacing:0;padding:2px 8px;border-radius:999px;border:0;cursor:pointer;font-family:var(--f-body)}
@@ -370,6 +371,7 @@ details summary{cursor:pointer;font-weight:600}
   <div class="panel">
     <h2>Reporte de entregas</h2>
     <p class="small muted">Un reporte por cada día en que se recibieron paquetes (<b>Entregas del 2 de noviembre</b>, por ejemplo), aunque se entreguen en los días siguientes; cada paquete lleva su fecha y hora real de entrega. También salen los de listas ya vaciadas. Tocá <b>📄 PDF</b> para bajar el de esa fecha: entregados y devueltos con número, guía / pedido, teléfono, nombre, estado, fecha recibido y fecha y hora de entrega.</p>
+    <p class="small" id="cierreAviso" hidden style="background:var(--warn-bg,#fbecdc);border-radius:8px;padding:8px 10px;margin:0"></p>
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
   <div class="panel">
@@ -628,7 +630,7 @@ function renderPk(){
   const nt=t=>String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(),bq=nt(($('#p-buscar')||{}).value||'').trim(),bd=bq.replace(/\D/g,'');
   const ok=p=>!bq||bq.split(/\s+/).every(w=>nt(p.nombre).includes(w))||nt(p.guia).includes(bq)||(/^\d{1,3}$/.test(bq)&&String(p.num)===bq)||(bd.length>=3&&String(p.tel||'').replace(/\D/g,'').includes(bd.slice(-8)));
   const vis=S.pk.map((p,i)=>[p,i]).filter(([p])=>ok(p));if(!vis.length){L.innerHTML='<div class="empty">Ningún paquete coincide con la búsqueda.</div>';return}
-  L.innerHTML=vis.sort((a,b)=>rk(a[0])-rk(b[0])||a[1]-b[1]).map(([p],i)=>{const c=parseCoord(p.ubic);return `<div class="pkg${p.st==='entregado'?' entregado':''}${pkOff(p)?' devol':''}${!c&&p.st!=='entregado'&&p.st!=='devuelto'&&!pkDevol(p)?' sinub':''}">
+  const cards=vis.sort((a,b)=>rk(a[0])-rk(b[0])||a[1]-b[1]).map(([p],i)=>{const c=parseCoord(p.ubic);return `<div class="pkg${p.st==='entregado'?' entregado':''}${pkOff(p)?' devol':''}${!c&&p.st!=='entregado'&&p.st!=='devuelto'&&!pkDevol(p)?' sinub':''}">
     <div class="num${p.st==='entregado'?' tachado':''}">${p.num||i+1}</div>
     <div class="name">${esc(p.nombre||'(sin nombre)')} ${pkChip(p)}</div>
     <div class="addr">${esc(p.dir||'Sin dirección')}${p.nota?` · <i>${esc(p.nota)}</i>`:''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
@@ -637,7 +639,12 @@ function renderPk(){
     <div class="actions"><button class="btn sm" data-act="edit" data-id="${p.id}">Editar</button><button class="btn sm" data-act="rescan" data-id="${p.id}" title="Volver a escanear la etiqueta de este paquete"><svg class="bcico" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="vertical-align:-0.15em"><rect x="2" y="4" width="2" height="16"/><rect x="5.5" y="4" width="1" height="16"/><rect x="8" y="4" width="2.5" height="16"/><rect x="12" y="4" width="1" height="16"/><rect x="14.5" y="4" width="2" height="16"/><rect x="18" y="4" width="1" height="16"/><rect x="20.5" y="4" width="1.5" height="16"/></svg> Escáner</button></div>
     <div class="actions"><button class="btn sm ghost danger" data-act="del" data-id="${p.id}">Eliminar</button><button class="btn sm" data-act="dev" data-id="${p.id}">${p.st==='devuelto'?'↪ Regresar a Ruta':'↩ Devuelto'}</button>${phoneWA(p.tel)?`<a class="btn sm wa" href="https://wa.me/${phoneWA(p.tel)}" target="_blank" rel="noopener">WhatsApp</a>`:''}</div>
     ${devBar(p,1)}
-  </div>`}).join('');
+  </div>`});
+  // 1.74.0: con listas grandes (cientos de paquetes) se pintan las primeras 60 de una vez y el resto en tandas,
+  // para que la pantalla aparezca enseguida en celulares lentos. Si se vuelve a pintar antes, la tanda vieja se cancela.
+  const tk=renderPk.tk=(renderPk.tk||0)+1;L.innerHTML=cards.slice(0,60).join('');
+  const tanda=i=>{if(renderPk.tk!==tk||i>=cards.length)return;L.insertAdjacentHTML('beforeend',cards.slice(i,i+100).join(''));setTimeout(()=>tanda(i+100),0)};
+  if(cards.length>60)setTimeout(()=>tanda(60),0);
 }
 // Mensajes que se pueden mandar a cada cliente desde la pestaña Mensajes.
 function msgOpts(){return [['coord','Coordinar'],...(FORM_ON?[['form','Formulario']]:[]),['camino','En camino'],['comp','Comprensión'],['ext','Horario extendido']].map(([k,t],i)=>[k,`${i+1}. ${t}`])} // 1.73.0: 4 y 5
@@ -769,12 +776,16 @@ function numerar(){S.nums=S.nums||{};let mx=Math.max(0,...Object.values(S.nums))
   const falta=S.pk.filter(p=>!p.num);if(falta.length){if(!mx)S.pk.forEach((p,i)=>p.num=i+1);else falta.forEach(p=>p.num=++mx);cambio=true}
   S.pk.forEach(p=>{if(S.nums[p.id]!==p.num){if(S.nums[p.id])p.num=S.nums[p.id];else S.nums[p.id]=p.num;cambio=true}});
   if(cambio)save()}
-function render(){numerar();$('#exampleBar').hidden=!S.ex;try{entSyncPk()}catch(e){}renderStats();renderPk();renderMsg();renderRoute();if(typeof renderTrack==='function')renderTrack();if(typeof renderEnt==='function'&&!$('#v-entrega').hidden)renderEnt()}
+// 1.74.0: Paquetes y Mensajes solo se pintan si están a la vista; si no, quedan pendientes y se pintan al abrir la pestaña.
+const PEND={pk:false,msg:false},aLaVista=t=>{const v=$('#v-'+t);return !!v&&!v.hidden};
+function render(){numerar();$('#exampleBar').hidden=!S.ex;try{entSyncPk()}catch(e){}renderStats();
+  if(aLaVista('paquetes')){PEND.pk=false;renderPk()}else PEND.pk=true;if(aLaVista('mensajes')){PEND.msg=false;renderMsg()}else PEND.msg=true;renderRoute();if(typeof renderTrack==='function')renderTrack();if(typeof renderEnt==='function'&&!$('#v-entrega').hidden)renderEnt()}
 
 // ---- eventos ----
 document.querySelectorAll('nav.tabs [role=tab]').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('nav.tabs [role=tab]').forEach(x=>x.setAttribute('aria-selected',x===b));
   ['paquetes','mensajes','ruta','entrega','cierres'].forEach(t=>$('#v-'+t).hidden=t!==b.dataset.tab);
+  if(b.dataset.tab==='paquetes'&&PEND.pk){PEND.pk=false;renderPk()}if(b.dataset.tab==='mensajes'&&PEND.msg){PEND.msg=false;renderMsg()}
   window.scrollTo({top:0});
 });
 document.addEventListener('click',async e=>{
@@ -925,10 +936,18 @@ const repDiaTxt=k=>k?k.split('-').reverse().join('/'):'Sin fecha';
 const repEntregasDe=k=>{if(!k)return 'Entregas sin fecha';const [y,m,d]=k.split('-').map(Number);return 'Entregas del '+new Date(y,m-1,d).toLocaleDateString('es-CR',{day:'numeric',month:'long'})};
 function repTodos(){const ids=new Set(S.pk.map(p=>p.id));return [...S.pk,...REPC.pk.filter(p=>!ids.has(p.id))]}
 function repGrupos(){const g={};repTodos().forEach(p=>{const k=repDia(p.ing);(g[k]=g[k]||[]).push(p)});return Object.keys(g).sort((a,b)=>!a?1:!b?-1:b.localeCompare(a)).map(k=>({k,pk:g[k]}))}
+// 1.74.0: un cierre no cambia nunca; se guarda en el celular (IndexedDB, separado por cuenta) y solo se baja la primera vez.
+// Así abrir Cierres no vuelve a bajar todos los cierres (cuida la transferencia del plan gratis).
+const CDB={db:null,open(){return this.db||(this.db=new Promise((res,rej)=>{const r=indexedDB.open('rutafacil-cierres',1);r.onupgradeneeded=()=>r.result.createObjectStore('c',{keyPath:'k'});r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}))}};
+async function cierreLeer(id){const k=(S.owner||'')+':'+id;
+  try{const d=await CDB.open();const v=await new Promise(res=>{const r=d.transaction('c').objectStore('c').get(k);r.onsuccess=()=>res(r.result);r.onerror=()=>res(null)});if(v)return v.d}catch(e){}
+  const d=await RF_AUTH.rpc('rf_cierre_leer',{p_id:id});
+  if(d)try{const db=await CDB.open();db.transaction('c','readwrite').objectStore('c').put({k,d,at:Date.now()})}catch(e){}
+  return d}
 async function repCierres(){
   if(REPC.carga)return REPC.carga;
   REPC.carga=(async()=>{try{const l=await RF_AUTH.rpc('rf_cierres_listar',{p_limite:60})||[];
-    for(const c of l){if(REPC.ids.has(c.id))continue;const d=await RF_AUTH.rpc('rf_cierre_leer',{p_id:c.id});REPC.ids.add(c.id);if(!d)continue;
+    for(const c of l){if(REPC.ids.has(c.id))continue;const d=await cierreLeer(c.id);REPC.ids.add(c.id);if(!d)continue;
       (d.paquetes||[]).forEach(p=>{if(p&&p.id&&!REPC.pk.some(x=>x.id===p.id))REPC.pk.push(p)});
       if(d.ruta&&d.ruta.jor)Object.keys(d.ruta.jor).forEach(k=>{if(!REPC.jor[k])REPC.jor[k]=d.ruta.jor[k]});
       ((d.ruta&&d.ruta.stops)||[]).forEach(x=>{const id=x.pkFijo||x.pkId;if(id)(REPC.st[id]=REPC.st[id]||[]).push(x)})}}
@@ -987,8 +1006,13 @@ function repPdf(k){
   const name=`entregas-del-${k||'sin-fecha'}.pdf`;
   if(IOS&&navigator.canShare){const file=new File([doc.output('blob')],name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Reporte guardado')).catch(()=>{});return}}
   doc.save(name);toast(`Reporte con ${fil.length} paquete(s)`)}
+// 1.74.0: los cierres se guardan en la nube los días del Panel (15 de fábrica). El PDF es el respaldo: se avisa arriba
+// y en cada fecha que está por borrarse (se cuenta desde el día de recibido, así el aviso sale antes de tiempo, nunca tarde).
+const diasCierres=()=>{const c=window.RF_AUTH&&RF_AUTH.cuenta;return c&&c.dias_cierres!=null?+c.dias_cierres:0};
+function repBorraEn(k){const d=diasCierres();if(!d||!k)return null;const [y,m,dd]=k.split('-').map(Number);return Math.ceil((new Date(y,m-1,dd).getTime()+d*864e5-Date.now())/864e5)}
 function repLista(){const G=repGrupos(),el=$('#repLista');if(!el)return;
-  el.innerHTML=G.length?G.map(g=>{const R=repResumen(g.pk),n=repFilas(g.pk).length;return `<div class="replin"><div><b>📦 ${repEntregasDe(g.k)}</b><div class="small muted">${R.rec} recibidos · ${R.ent} entregados · ${R.dev} devueltos${R.pMin!=null?` · prom. ${Math.round(R.pMin)} min${R.pKm!=null?' / '+R.pKm.toFixed(1)+' km':''} por entrega`:''}</div></div><button class="btn sm primary" type="button" data-rep="${g.k}"${n?'':' disabled'}>📄 PDF</button></div>`}).join(''):'<p class="small muted">Todavía no hay paquetes.</p>'}
+  const av=$('#cierreAviso'),dc=diasCierres();if(av){av.hidden=!dc;av.innerHTML=dc?`📌 Los cierres se guardan <b>${dc} días</b> y después se borran. <b>Bajá el PDF</b> de cada fecha e imprimilo o guardalo: ese es tu respaldo.`:''}
+  el.innerHTML=G.length?G.map(g=>{const R=repResumen(g.pk),n=repFilas(g.pk).length,be=repBorraEn(g.k);return `<div class="replin"><div><b>📦 ${repEntregasDe(g.k)}</b>${be!=null&&be<=3?`<div class="small" style="color:var(--bad);font-weight:600">⚠ ${be<=0?'Se borra hoy':'Se borra en '+be+' día'+(be===1?'':'s')}: bajá el PDF</div>`:''}<div class="small muted">${R.rec} recibidos · ${R.ent} entregados · ${R.dev} devueltos${R.pMin!=null?` · prom. ${Math.round(R.pMin)} min${R.pKm!=null?' / '+R.pKm.toFixed(1)+' km':''} por entrega`:''}</div></div><button class="btn sm primary" type="button" data-rep="${g.k}"${n?'':' disabled'}>📄 PDF</button></div>`}).join(''):'<p class="small muted">Todavía no hay paquetes.</p>'}
 $('#repLista').addEventListener('click',e=>{const b=e.target.closest('[data-rep]');if(b)repPdf(b.dataset.rep)});
 // Reporte "Guías + fecha" (1.71.0): entregados agrupados por día de ENTREGA (repT), con Nombre, Tel., Guía y Nota
 function guiGrupos(){const g={};repTodos().filter(p=>p.st==='entregado').forEach(p=>{const k=p.ing?repDia(p.ing):'sin';(g[k]=g[k]||[]).push(p)}); // 1.72.3: un reporte por fecha de RECIBIDO
@@ -1030,13 +1054,15 @@ async function syncResp(manual){
   const C=RF_CONFIG;$('#syncInfo').textContent='Revisando…';
   try{
     // 1.74.0: cada minuto pide solo lo que cambió desde la última respuesta vista (respDesde, de este aparato); al tocar Revisar, todo.
-    const desde=!manual&&!syncResp.vieja&&S.respDesde&&S.respDesdeN===S.pk.length?S.respDesde:null;
+    // Solo los paquetes que todavía esperan (no entregados ni devueltos), máximo 300 (la base vieja no responde con más; la nueva acepta 1000).
+    const toks=S.pk.filter(p=>p.tok&&p.st!=='entregado'&&p.st!=='devuelto').slice(-300).map(p=>p.tok);if(!toks.length)return;
+    const desde=!manual&&!syncResp.vieja&&S.respDesde&&S.respDesdeN===toks.length?S.respDesde:null;
     const RF_H=await RF_AUTH.headers(),pedir=b=>fetch(C.supabaseUrl.replace(/\/$/,'')+'/rest/v1/rpc/leer_respuestas',{method:'POST',headers:{'Content-Type':'application/json',...RF_H},body:JSON.stringify(b)});
-    let r=await pedir(desde?{p_tokens:S.pk.map(p=>p.tok),p_desde:desde}:{p_tokens:S.pk.map(p=>p.tok)});
-    if(!r.ok&&desde&&[300,400,404].includes(r.status)){syncResp.vieja=true;r=await pedir({p_tokens:S.pk.map(p=>p.tok)})} // base sin p_desde todavía
+    let r=await pedir(desde?{p_tokens:toks,p_desde:desde}:{p_tokens:toks});
+    if(!r.ok&&desde&&[300,400,404].includes(r.status)){syncResp.vieja=true;r=await pedir({p_tokens:toks})} // base sin p_desde todavía
     if(!r.ok)throw new Error(r.status+' '+(await r.text()).slice(0,80));
     const rows=await r.json();let nuevos=0;
-    rows.forEach(row=>{const st=row.updated_at||row.created_at;if(st&&(!S.respDesde||st>S.respDesde))S.respDesde=st});S.respDesdeN=S.pk.length;
+    rows.forEach(row=>{const st=row.updated_at||row.created_at;if(st&&(!S.respDesde||st>S.respDesde))S.respDesde=st});S.respDesdeN=toks.length;
     for(const row of rows){const p=S.pk.find(x=>x.tok===row.token);if(!p)continue;
       const stamp=row.updated_at||row.created_at;if(p.respAt===stamp)continue;
       p.respAt=stamp;p.resp=true;p.horario=row.horario||'';p.senas=row.senas||'';p.recibe=row.recibe||'';
@@ -1157,11 +1183,12 @@ async function uploadPOD(id,quiet){
   try{
     const day=new Date(rec.at).toISOString().slice(0,10),safe=(rec.guia||rec.pid||'paquete').replace(/[^\w-]/g,'_');const paths=[];
     // 1.74.0: con fotos_nube='una' (Panel) a la nube va solo la 1.ª foto reducida (~40 KB) + la firma; las 3 completas quedan en el celular.
-    const una=fotosNube()==='una',subir=una?rec.fotos.slice(0,1):rec.fotos;
+    // 'ninguna' (de fábrica): no se sube ninguna foto; se registra la entrega (hora, GPS, quién recibió) y las fotos quedan en el celular.
+    const modo=fotosNube(),una=modo==='una',nada=modo==='ninguna',subir=nada?[]:una?rec.fotos.slice(0,1):rec.fotos;
     for(let i=0;i<subir.length;i++){const path=`${day}/${safe}_${id}_${i+1}.jpg`,body=una?await achicar(subir[i],640,.6):subir[i];
       const r=await fetch(`${base}/storage/v1/object/evidencias/${path}`,{method:'POST',headers:{...H,'Content-Type':'image/jpeg','x-upsert':'false'},body});
       if(!r.ok){const t=await r.text();if(!/duplicate|already exists/i.test(t))throw new Error(r.status+' '+t.slice(0,80))}paths.push(path)}
-    if(rec.firma){const path=`${day}/${safe}_${id}_firma.jpg`;
+    if(rec.firma&&!nada){const path=`${day}/${safe}_${id}_firma.jpg`;
       const r=await fetch(`${base}/storage/v1/object/evidencias/${path}`,{method:'POST',headers:{...H,'Content-Type':'image/jpeg','x-upsert':'false'},body:rec.firma});
       if(!r.ok){const t=await r.text();if(!/duplicate|already exists/i.test(t))throw new Error(r.status+' '+t.slice(0,80))}paths.push(path)}
     const args={p_evidencia_id:id,p_guia:rec.guia||'',p_cliente:rec.cliente||'',p_repartidor:S.yo||'',p_lat:rec.lat,p_lng:rec.lng,p_precision:rec.acc,p_entregado_en:new Date(rec.at).toISOString(),p_fotos:paths},recibe=(rec.recibe||'')+(rec.sinFirma?' (no firmó)':'');
@@ -1169,7 +1196,7 @@ async function uploadPOD(id,quiet){
     let r=await rpc(recibe?{...args,p_recibe:recibe}:args);
     if(!r.ok&&recibe&&[300,400,404].includes(r.status))r=await rpc(args); // base sin p_recibe todavía
     if(!r.ok)throw new Error(r.status+' '+(await r.text()).slice(0,80));
-    rec.up=true;rec.una=una;await IDB.put(rec);if(p){p.pod.up=true;save();render()}if(!quiet)toast('☁️ Evidencia respaldada');return true;
+    rec.up=true;rec.una=una;rec.sinNube=nada;await IDB.put(rec);if(p){p.pod.up=true;save();render()}if(!quiet)toast('☁️ Evidencia respaldada');return true;
   }catch(err){if(!quiet)toast('Evidencia guardada en el celular. Se sube cuando haya internet ('+err.message+')');return false}
 }
 async function uploadPending(){for(const p of S.pk)if(p.pod&&!p.pod.up)await uploadPOD(p.pod.id,true);cleanLocal();limpiarNube()}
@@ -1186,9 +1213,9 @@ async function limpiarNube(){if(!FORM_ON||!window.RF_AUTH||!RF_AUTH.cuenta)retur
     if(l.length){const r=await fetch(RF_CONFIG.supabaseUrl.replace(/\/$/,'')+'/storage/v1/object/evidencias',{method:'DELETE',headers:{...(await RF_AUTH.headers()),'Content-Type':'application/json'},body:JSON.stringify({prefixes:l})});if(!r.ok)return}
     if(l.length<500){S.nubeLimpia=hoy;saveLocal()}}catch(e){}}
 // Libera espacio del celular: borra las fotos que ya están respaldadas en Supabase hace más de LOCAL_DIAS días.
-const LOCAL_DIAS=7;
+const LOCAL_DIAS=7,LOCAL_DIAS_SIN_NUBE=30; // 1.74.0: si las fotos no se suben a la nube, quedan 30 días en el celular
 async function cleanLocal(){try{const d=await IDB.open();const lim=Date.now()-LOCAL_DIAS*864e5;
-  await new Promise(res=>{const t=d.transaction('ev','readwrite');const st=t.objectStore('ev');st.openCursor().onsuccess=e=>{const c=e.target.result;if(!c)return;const v=c.value;if(v.up&&v.at<lim&&(v.fotos.length||v.firma)){v.fotos=[];v.firma=null;c.update(v)}c.continue()};t.oncomplete=res;t.onerror=res})}catch(e){}}
+  await new Promise(res=>{const t=d.transaction('ev','readwrite');const st=t.objectStore('ev');st.openCursor().onsuccess=e=>{const c=e.target.result;if(!c)return;const v=c.value;if(v.up&&v.at<(v.sinNube?Date.now()-LOCAL_DIAS_SIN_NUBE*864e5:lim)&&(v.fotos.length||v.firma)){v.fotos=[];v.firma=null;c.update(v)}c.continue()};t.oncomplete=res;t.onerror=res})}catch(e){}}
 async function openEvidence(p){
   const rec=await IDB.get(p.pod.id).catch(()=>null);
   const fotos=rec?[...rec.fotos,...(rec.firma?[rec.firma]:[])].map(b=>URL.createObjectURL(b)):[];
@@ -1197,7 +1224,7 @@ async function openEvidence(p){
     <div class="podline"><b>📍</b><span>${p.pod.lat!=null?`${p.pod.lat}, ${p.pod.lng} (±${Math.round(p.pod.acc)} m) · <a href="${gmaps([p.pod.lat,p.pod.lng])}" target="_blank" rel="noopener">Ver en mapa</a>`:'Sin GPS (no se pudo obtener)'}</span></div>
     ${p.pod.recibe||rec&&rec.sinFirma?`<div class="podline"><b>✍️</b><span>Recibió: ${esc(p.pod.recibe||'sin nombre')}${rec&&rec.sinFirma?' · no quiso firmar':''}</span></div>`:''}
     <div class="podline"><b>☁️</b><span>${p.pod.up?'Respaldada en Supabase':'Todavía no se subió (se intenta sola cuando hay internet)'}</span></div>
-    ${fotos.length?`<div class="list">${fotos.map((u,i)=>`<img src="${u}" alt="Foto ${i+1} de la entrega" style="width:100%;border-radius:8px">`).join('')}</div>`:`<p class="small muted">${p.pod.up?'Las fotos ya no están en este celular (se borran a los '+LOCAL_DIAS+' días para ahorrar espacio). '+(rec&&rec.una?'En la nube quedó 1 foto reducida':'Están respaldadas en Supabase')+' (se guardan los días que diga el Panel).':'Las fotos no están en este celular.'}</p>`}`;
+    ${fotos.length?`<div class="list">${fotos.map((u,i)=>`<img src="${u}" alt="Foto ${i+1} de la entrega" style="width:100%;border-radius:8px">`).join('')}</div>`:`<p class="small muted">${p.pod.up?'Las fotos ya no están en este celular (se borran a los '+LOCAL_DIAS+' días para ahorrar espacio). '+(rec&&rec.sinNube?'Las fotos no se suben a la nube (así está en el Panel); se guardaron '+LOCAL_DIAS_SIN_NUBE+' días en este celular':rec&&rec.una?'En la nube quedó 1 foto reducida':'Están respaldadas en Supabase')+' (se guardan los días que diga el Panel).':'Las fotos no están en este celular.'}</p>`}`;
   $('#evSheet').hidden=false;document.body.style.overflow='hidden';
 }
 $('#evClose').onclick=()=>{$('#evSheet').hidden=true;document.body.style.overflow='';$('#evBody').querySelectorAll('img').forEach(i=>URL.revokeObjectURL(i.src))};
