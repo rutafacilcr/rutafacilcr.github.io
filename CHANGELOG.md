@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.70.4 · Tel.:** la etiqueta del teléfono en *Paquetes* queda más corta: **Tel. 62700667**.
 - **1.70.3 · Teléfono con etiqueta:** en la tarjeta de *Paquetes* el teléfono sale como **Teléfono: 62700667** (junto a **Guía: …**).
 - **1.70.2 · Guía con etiqueta:** en la tarjeta de *Paquetes* el número de guía sale como **Guía: 29293393**.
 - **1.70.1 · Sin zoom al tocar campos:** en iPhone, al tocar un campo con letra de menos de 16 px (Tu nombre, Día de entrega, Prefijo, Buscar y los textos de *Mensajes*, y varios del panel) la pantalla se agrandaba sola y quedaba corrida, con los botones de abajo cortados. Ahora todos los campos usan 16 px.

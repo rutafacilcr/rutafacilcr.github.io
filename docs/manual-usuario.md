@@ -666,4 +666,4 @@ Tocá el botón otra vez para apagarlo o encenderlo. Si dice **"revisar clave"**
 
 ### Guía en la tarjeta (1.70.2)
 
-En *Paquetes*, debajo del nombre, la tarjeta muestra el teléfono y la guía con su etiqueta: **Teléfono: 62700667** (1.70.3) y **Guía: 29293393**.
+En *Paquetes*, debajo del nombre, la tarjeta muestra el teléfono y la guía con su etiqueta: **Tel. 62700667** (1.70.3; desde la 1.70.4 dice "Tel.") y **Guía: 29293393**.

@@ -128,6 +128,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 ## 3c-quindecies. Tarjeta desactivada por Devolver (1.66.0)
 
+- 1.70.4: la etiqueta es `Tel. …`.
 - 1.70.3: `.meta` muestra `Teléfono: …` (o "sin teléfono").
 - 1.70.2: en `renderPk`, `.meta` muestra la guía como `Guía: …`.
 - 1.70.0: tráfico en vivo. `#ttBtn` en `#entTools`; `S.ttKey`/`S.ttOn` (en `NUBE_KEYS`). `TT={at,pos,k,min,del,busy,err}`; `ttPedir(force)` llama `api.tomtom.com/routing/1/calculateRoute/{pos}:{próxima}/json?traffic=true&travelMode=car` para `entProxima()` (primera pendiente con `c`, sin Hold) como máximo cada 2 min, o si cambia la parada o te moviste 300 m (mínimo 20 s entre consultas). Lo llaman `entEta()` y el `setInterval` de 60 s. En `entEta`, si `TT` es de esa parada, de hace menos de 6 min y desde menos de 500 m, `m = TT.min + 1` y muestra "🚦 … (+n tráfico)". 401/403 → `TT.err` y el botón dice "revisar clave". `ttPintar()` desde `renderEnt` (no al cargar, por la zona muerta de `const TT`).
