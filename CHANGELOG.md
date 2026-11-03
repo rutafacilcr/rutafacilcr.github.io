@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.66.0 · Devolver desactiva la tarjeta:** un paquete marcado **⛔ Devolver** se ve gris y sin botones en *Paquetes*, *Mensajes* y *Ruta*; abajo queda la etiqueta **⛔ Devolver** en rojo y el botón activo **↩ Quitar devolver**. Al quitarlo (pide confirmar) el paquete vuelve a estar activo en las tres pantallas.
 - **1.65.0 · Botones de sistema:** en *Paquetes*, **Escanear**, **Importar** y **Agregar a mano** son tres botones estilo iPhone (relleno gris, esquinas redondeadas, ícono arriba). *Agregar a mano* también se abre en su propia pantalla con **← Regresar**; *Editar* usa esa misma pantalla y al guardar vuelve a la lista.
 - **1.64.0 · Paquetes más limpio:** *Escanear etiquetas* e *Importar lista* pasan a dos botones pequeños debajo de los contadores. Al tocar uno se abre solo ese panel, con **← Regresar** arriba. Después de *Agregar a la lista* regresa solo.
 - **1.63.2 · Teléfono seguro en Ruta:** el WhatsApp de cada parada usa el teléfono del paquete (el que se editó en *Paquetes*). La sincronización copia el teléfono siempre que cambie, también si quedó vacío o mal escrito (antes, en otro aparato, la parada podía seguir con el número viejo y mandar el mensaje a la persona equivocada). El número anterior se guarda para seguir reconociendo la parada.

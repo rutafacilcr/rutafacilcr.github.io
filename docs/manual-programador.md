@@ -113,6 +113,11 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - *Guardar* abre la cámara **dentro del mismo toque** (iPhone no deja abrirla después de un `await`) y agrega con `mkPkg()`. Las fotos de etiqueta no se guardan.
 - Prueba local: las CDN están bloqueadas en el sandbox; se instalan los paquetes con npm y Playwright sirve los archivos interceptando las URL de jsDelivr. Las etiquetas de prueba se generan con JsBarcode.
 
+## 3c-quindecies. Tarjeta desactivada por Devolver (1.66.0)
+
+- `pkDevol(p)` (devolver y no entregado ni devuelto) agrega `.devol` a `.pkg` en `renderPk` y `renderMsg`; `devBar(p)` agrega `.devkeep` con `span.devtag.on` y `data-act="devno"`. CSS: los hijos que no son `.devkeep` van al 45 %, gris y sin `pointer-events`.
+- `devno`: `confirm`, borra `p.devolver` y `devolver` de sus paradas, `entMod`, render de todo. En *Ruta*, `.estop.devol` deja activo solo `.acts3` (etiqueta roja + `data-edevno`, ahora con `confirm`).
+
 ## 3c-quattuordecies. Botones de sistema (1.65.0)
 
 - `.subbtns` es una cuadrícula de 3 `.sysbtn` (fondo `rgba(120,120,128,.12)`, radio 14 px, ícono de 22 px arriba, fuente del sistema). `#formPanel` es `details.panel.subpn[open]` con el `summary` oculto, `.subback` y `h2#formTitle`. `subAbrir('formPanel')` lo abre y llena `#f-lote`; *Editar* cambia a la pestaña y llama `subAbrir`; guardar, Cancelar y Regresar (con `resetForm` si se editaba) llaman `subAbrir(null)`.

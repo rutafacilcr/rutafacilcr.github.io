@@ -460,6 +460,10 @@ No tenés que unir nada a mano: si corregís en *Paquetes* el nombre, el teléfo
 
 Cuando tocás **✓ Entregado** en *Ruta*, el número del paquete queda tachado y en gris, y la parada baja al final de la lista. En *Paquetes* el número también sale tachado, la tarjeta entera se ve apagada en gris (1.40.1) y el paquete pasa con los entregados. Sus botones siguen sirviendo por si hay que corregir algo. Si te equivocaste, **↩ Deshacer** lo devuelve.
 
+### Paquete para devolver (1.66.0)
+
+Cuando marcás **⛔ Devolver** en *Ruta*, ese paquete queda gris y sin botones en *Paquetes*, *Mensajes* y *Ruta*. Solo queda la etiqueta roja **⛔ Devolver** y el botón **↩ Quitar devolver**. Si hay que reactivarlo, tocá **↩ Quitar devolver** en cualquiera de las tres pantallas y confirmá: vuelve a estar activo en todas.
+
 ### Escanear, Importar y Agregar a mano (1.65.0)
 
 Debajo de los contadores hay tres botones: **📷 Escanear**, **📥 Importar** y **✍️ Agregar a mano**. Cada uno abre su pantalla con **← Regresar**. **Editar** en un paquete abre la pantalla de *Agregar a mano* con sus datos; al guardar volvés a la lista.
