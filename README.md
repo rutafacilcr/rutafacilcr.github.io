@@ -14,7 +14,7 @@ En *Ruta*, el botón WhatsApp de cada parada abre el chat con el aviso "Estamos 
 
 En *Ruta*, **📋 Lista** da la ruta en orden con el número de cada paquete para copiar o compartir. En *Paquetes* hay un buscador por nombre, teléfono, guía o número. En *Ruta*, junto a 📋 Lista, se elige el vehículo (🏍 moto, 🚙 carro o 🚐 buseta). En *Cierres* hay un reporte PDF por cada fecha de recibido (también de listas ya vaciadas): horizontal, de entregados y devueltos, ordenado por fecha y hora de entrega, con un encabezado de fecha, mensajero, recibidos, entregados, devueltos, km y horas. La lista de *Paquetes* va ordenada: activos, Hold, devueltos y al final los entregados en gris. Un paquete marcado **⛔ Devolver** en *Ruta* muestra esa etiqueta en *Paquetes*; al tocarla se confirma como devuelto (o se quita la marca).
 
-La app se maneja con cuatro pestañas en la barra de abajo (**Paquetes**, **Mensajes**, **Ruta** y **Cierres**) y el botón **Soporte** arriba, en el encabezado.
+La app se maneja con cuatro pestañas en la barra de abajo (**Paquetes**, **Cierres**, **Mensajes** y **Ruta**) y el botón **Soporte** arriba, en el encabezado.
 
 | Paso | Qué resuelve |
 |---|---|

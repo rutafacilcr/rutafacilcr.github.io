@@ -46,7 +46,7 @@ Reglas de la cuenta:
 
 ## 2. Rutina diaria
 
-La app tiene cuatro pestañas en la **barra de abajo**: **Paquetes** (📦, con un globito que dice cuántos hay), **Mensajes** (💬), **Ruta** y **Cierres** (por ahora vacía). El botón **Soporte** (🎧) que abre la ayuda está **arriba**, en el encabezado, a la par del día de entrega. La pestaña en la que estás se marca en naranja.
+La app tiene cuatro pestañas en la **barra de abajo** (orden desde la 1.67.3: Paquetes, Cierres, Mensajes, Ruta): **Paquetes** (📦, con un globito que dice cuántos hay), **Mensajes** (💬), **Ruta** y **Cierres** (por ahora vacía). El botón **Soporte** (🎧) que abre la ayuda está **arriba**, en el encabezado, a la par del día de entrega. La pestaña en la que estás se marca en naranja.
 
 ### Día antes: cargar paquetes (pestaña **Paquetes**)
 
