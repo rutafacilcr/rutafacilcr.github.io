@@ -728,6 +728,10 @@ En la tarjeta de *Paquetes*, la línea del teléfono dice por ejemplo: **Tel. 62
 En **Cierres**, debajo de *Reporte de entregas*, está **Guías por fecha de recibido**. Hay una línea por cada fecha en que recibiste paquetes (por ejemplo **🧾 Guías · Paquetes recibidos 31/10/2026 · 25 entregado(s)**). Tocá **📄 PDF** para bajar un PDF horizontal con **Nombre, Tel., Guía, Dirección y Hora entrega** (1.73.3) de los paquetes de esa fecha que ya entregaste. Adentro van agrupados por día de entrega (**Entregados 02/11/2026**, **Entregados 03/11/2026**), en el orden en que se entregaron. Arriba dice el mensajero, la fecha de recibido y cuántos paquetes son. La fecha de recibido es la de **Pertenece a** en cada paquete (se cambia con ✏️ Editar).
 
 
+### Voy en camino: WhatsApp y después Waze (1.78.0)
+
+En **Ruta**, tocá **WhatsApp** en la parada a la que vas: se abre el mensaje "Estamos en camino…" con el tiempo estimado. Mandalo y volvé a RutaFácil: sale un aviso **¿Ya le avisaste?** con el botón naranja **🚗 Abrir Waze** para esa misma parada, sin tener que buscarla en la lista. Si no vas a salir todavía, tocá **Ahora no**. El aviso solo sale si volvés dentro de 15 minutos. El celular no deja abrir WhatsApp y Waze de un solo toque, por eso queda ese último toque.
+
 ### Pestañas más rápidas (1.77.0)
 
 Al tocar **Paquetes**, **Cierres**, **Mensajes** o **Ruta**, el botón se pone naranja y la pantalla cambia de una vez. Si tenés muchos paquetes, la lista puede terminar de aparecer un instante después; podés empezar a usarla normal. No cambia nada de lo que ves ni de cómo funciona.
