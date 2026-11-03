@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.70.10 · Botones de Ruta en una línea y moto:** en *Ruta*, **🎯 Elegir en el mapa**, **📋 Lista** y **🚦 Tráfico** quedan juntos en una sola línea, del mismo alto (antes Tráfico bajaba solo a otra línea). En *Paquetes*, *En la ruta* usa el ícono de moto 🏍️.
 - **1.70.9 · Regresar a la derecha:** **← Regresar**, **↪ Regresar a Ruta** y **↩ Quitar devolver** van a la derecha, fáciles de tocar con el pulgar.
 - **1.70.8 · En la ruta junto a la ubicación:** en la tarjeta de *Paquetes*, **🗺️ En la ruta** (o *No está en la ruta*) va en la misma línea, a la par de **● Ubicación lista**. Los botones *Agregar* o *Poner en la ruta* siguen abajo. En *Ruta*, **↩ Quitar devolver** ya no sale desteñido.
 - **1.70.7 · Regresar en naranja (corrección):** **← Regresar** se veía en blanco sobre blanco (el estilo de botón fantasma tapaba el naranja); ahora es naranja con letra blanca. También **↩ Quitar devolver** en *Ruta*. En la tarjeta gris de un devuelto se quita el botón gris repetido: queda solo el naranja de abajo.

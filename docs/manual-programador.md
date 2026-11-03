@@ -128,6 +128,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 ## 3c-quindecies. Tarjeta desactivada por Devolver (1.66.0)
 
+- 1.70.10: `#entPick`, `#entLista` y `#ttBtn` van en `.entbtns` (fila completa, flex `1 1 auto`, 12,5 px, sin salto). "En la ruta" con 🏍️.
 - 1.70.9: `.btn.subback` con `margin-left:auto` y `align-self:flex-end` (a la derecha); `.devkeep .btn.devno` con `margin-left:auto`; `.estop.devol .acts3` con `space-between` (etiqueta a la izquierda, botón a la derecha).
 - 1.70.8: el aviso "🗺️ En la ruta" / "No está en la ruta" pasa de `.pkruta` a `.meta` (después de `.pin`); `.pkruta` deja solo los botones `aruta` y Pegar respuesta. `.estop.ok.devol{opacity:1}` para que `.estop.ok` no destiña `.acts3`.
 - 1.70.7: el naranja va con `!important` y selectores `.btn.ghost.subback`, `.btn.sm.subback` y `.estop .btn[data-edevno]` (antes `.btn.ghost` lo dejaba transparente con letra blanca). `.pkg.devol .actions [data-act="dev"]` se oculta. En *Ruta*, `.estop.devol` apaga los hijos con `:has(.acts3)` para que `.acts3` (Quitar devolver) no herede la opacidad.
