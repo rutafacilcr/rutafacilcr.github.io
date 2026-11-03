@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.70.3 · Teléfono con etiqueta:** en la tarjeta de *Paquetes* el teléfono sale como **Teléfono: 62700667** (junto a **Guía: …**).
 - **1.70.2 · Guía con etiqueta:** en la tarjeta de *Paquetes* el número de guía sale como **Guía: 29293393**.
 - **1.70.1 · Sin zoom al tocar campos:** en iPhone, al tocar un campo con letra de menos de 16 px (Tu nombre, Día de entrega, Prefijo, Buscar y los textos de *Mensajes*, y varios del panel) la pantalla se agrandaba sola y quedaba corrida, con los botones de abajo cortados. Ahora todos los campos usan 16 px.
 - **1.70.0 · Tráfico en vivo (TomTom, gratis):** en *Ruta*, **🚦 Tráfico** pide una vez la clave gratis de TomTom y desde ahí el tiempo a la **próxima parada** usa el tráfico de ese momento (por ejemplo "🚦 ~10 min (+5 tráfico)"), y se actualiza cada 2 minutos o al moverte 300 m. Las demás paradas siguen con el estimado sin tráfico. El WhatsApp de "en camino" usa ese tiempo.
