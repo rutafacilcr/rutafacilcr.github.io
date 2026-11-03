@@ -380,7 +380,7 @@ details summary{cursor:pointer;font-weight:600}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.75.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.75.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -1385,8 +1385,11 @@ $('#supDiag').onclick=async()=>{let t=`RutaFácil ${$('#appVer').textContent} ·
 // Vehículo (1.55.0): se elige uno de los 3 y se guarda en S.veh (carro por defecto desde la 1.69.2). Todavía no cambia tiempos, km ni ruta; su uso viene después.
 function vehPintar(){const v=['moto','carro','buseta'].includes(S.veh)?S.veh:'carro';document.querySelectorAll('#vehSel [data-veh]').forEach(b=>{b.classList.toggle('on',b.dataset.veh===v);b.setAttribute('aria-pressed',b.dataset.veh===v)})}
 $('#vehSel').onclick=e=>{const b=e.target.closest('[data-veh]');if(!b)return;S.veh=b.dataset.veh;save();vehPintar();toast(`Vehículo: ${b.title}`)};vehPintar();
-$('#ttBtn').onclick=()=>{
-  if(!S.ttKey||TT.err){const k=(prompt('Tráfico en vivo (gratis)\n\n1. Entrá a developer.tomtom.com y creá una cuenta (no pide tarjeta).\n2. En tu cuenta, abrí "Keys" y copiá la clave (API Key).\n3. Pegala aquí:',S.ttKey||'')||'').trim();
+// 1.75.2: datos que se piden con el aviso de RutaFácil (auth.js → RF_DIALOGO); sin auth.js, el prompt del navegador.
+const pedir=async o=>{if(window.RF_DIALOGO){const v=await RF_DIALOGO({si:'Aceptar',...o,campos:[{label:o.label||'',valor:o.valor??'',placeholder:o.placeholder||''}]});return v?v[0]:null}
+  return prompt(o.titulo+(o.label?'\n'+o.label:''),o.valor??'')};
+$('#ttBtn').onclick=async()=>{
+  if(!S.ttKey||TT.err){const k=((await pedir({ico:'🚦',titulo:'Tráfico en vivo (gratis)',texto:'1. Entrá a <b>developer.tomtom.com</b> y creá una cuenta (no pide tarjeta).<br>2. En tu cuenta, abrí <b>Keys</b> y copiá la clave (API Key).<br>3. Pegala aquí abajo.',label:'Clave de TomTom',valor:S.ttKey||'',si:'Guardar clave'}))||'').trim();
     if(!k)return;S.ttKey=k;S.ttOn=true;TT.err='';TT.k='';save();ttPintar();toast('Tráfico en vivo activado');ttPedir(true);return}
   S.ttOn=S.ttOn===false;save();TT.k='';ttPintar();entEta(true);toast(S.ttOn?'Tráfico en vivo activado':'Tráfico en vivo apagado');if(S.ttOn)ttPedir(true)};
 $('#entLista').onclick=()=>{const E=S.ent;if(!E||!E.stops)return;const erk=s=>entDone(s)?2:s.c?(s.hold?0.5:0):1;let k=0;
@@ -1769,15 +1772,15 @@ $('#entPick').onclick=()=>{if(!EMAP){toast('Primero cargá la ruta');return}EMAP
 function entPonerC(i,c){entMod();const s=S.ent.stops[i];s.c=c;delete s.ub;try{const p=entPkg(s);if(p&&entFuerte(s,p)&&!parseCoord(p.ubic)){p.ubic=cTxt(c);s.pkId=p.id}}catch(e){} // la ubicación también queda en Paquetess.n=Math.max(0,...S.ent.stops.filter(x=>x.c&&x!==s).map(x=>x.n||0))+1;
   const sinC=S.ent.stops.filter(x=>!x.c);S.ent.stops=[...S.ent.stops.filter(x=>x.c),...sinC];
   toast(`Ubicación agregada a ${s.nombre}`);if(EPOS)entOrdenar(EPOS.c,'donde estás');else{save();renderEnt()}}
-function entUbicar(i){const s=S.ent.stops[i];const t=prompt(`Ubicación de ${s.nombre}\nPegá el link de Google Maps o Waze, o las coordenadas.\nDejalo vacío para tocar el punto en el mapa.`,'');if(t===null)return;
+async function entUbicar(i){const s=S.ent.stops[i];const t=await pedir({ico:'📍',titulo:`Ubicación de ${s.nombre||'la parada'}`,texto:'Pegá el link de Google Maps o Waze, o las coordenadas. <b>Dejalo vacío</b> para tocar el punto en el mapa.',label:'Link o coordenadas',placeholder:'https://maps.app.goo.gl/… o 9.93,-84.08',si:'Poner ubicación'});if(t===null)return;
   if(t.trim()){const c=parseCoord(t.trim());if(!c){toast('No reconocí esa ubicación. Probá con el link completo o las coordenadas');return}entPonerC(i,c);return}
   if(!EMAP){toast('Primero tiene que verse el mapa');return}EMAP.pickStop=i;$('#entMap').style.cursor='crosshair';$('#entMap').scrollIntoView({behavior:'smooth',block:'start'});toast(`Tocá el mapa donde vive ${s.nombre}`)}
 $('#entFile').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)entCargar(f).catch(()=>toast('No se pudo leer ese archivo'))};
 $('#entList').addEventListener('click',async e=>{if(e.target.closest('[data-edone],[data-eundo],[data-edevol],[data-edevno],[data-ehold],[data-equitar],[data-elink],[data-eok]'))entMod();
   const b=e.target.closest('[data-eok]');if(b){const s=S.ent.stops[+b.dataset.eok],p=entPkg(s);if(p&&p.st!=='entregado'){openPOD(p);return}s.done=true;save();renderEnt();return}
-  const bl=e.target.closest('[data-elink]');if(bl){const s=S.ent.stops[+bl.dataset.elink];const q=prompt(`¿Cuál paquete es ${s.nombre}?${entPkg(s)?`\n(Ahora está unida a: ${entPkg(s).nombre} · ${entPkg(s).tel||'sin tel'})`:''}\nEscribí el número del paquete (ej. 62), parte del nombre, la guía o el teléfono:`,(s.nombre||'').split(' ')[0]);if(!q)return;
+  const bl=e.target.closest('[data-elink]');if(bl){const s=S.ent.stops[+bl.dataset.elink];const q=await pedir({ico:'🔗',titulo:`¿Cuál paquete es ${s.nombre||'esta parada'}?`,texto:`${entPkg(s)?`Ahora está unida a <b>${esc(entPkg(s).nombre)}</b> · ${esc(entPkg(s).tel||'sin tel')}.<br>`:''}Escribí el número del paquete (ej. 62), parte del nombre, la guía o el teléfono.`,label:'Paquete',valor:(s.nombre||'').split(' ')[0],si:'Unir'});if(!q)return;
     const qq=nomN(q),dg=q.replace(/\D/g,''),c=/^\s*#?\d{1,3}\s*$/.test(q)?S.pk.filter(p=>String(p.num)===dg):S.pk.filter(p=>nomN(p.nombre).includes(qq)||(dg.length>=4&&String(p.tel||'').replace(/\D/g,'').includes(dg))||(p.guia&&guiaN(p.guia).includes(guiaN(q))));
-    if(!c.length){toast('No encontré ese paquete en la lista');return}let p=c[0];if(c.length>1){const k=prompt('Hay varios, escribí el número:\n'+c.slice(0,9).map((x,j)=>`${j+1}. ${x.nombre} · ${x.tel||''}`).join('\n'),'1');p=c[(+k||1)-1];if(!p)return}
+    if(!c.length){toast('No encontré ese paquete en la lista');return}let p=c[0];if(c.length>1){const k=await pedir({ico:'🔗',titulo:'Hay varios paquetes así',texto:c.slice(0,9).map((x,j)=>`<b>${j+1}.</b> ${esc(x.nombre)} · ${esc(x.tel||'')}`).join('<br>'),label:'Escribí el número de la lista',valor:'1',si:'Unir'});if(k===null)return;p=c[(+k||1)-1];if(!p)return}
     s.pkId=p.id;s.pkFijo=p.id;save();render();renderEnt();toast(`Unida a ${p.nombre}: toma su teléfono y ubicación`);return}
   const bub=e.target.closest('[data-eub]');if(bub){entUbicar(+bub.dataset.eub);return}
   // Quitar una parada repetida o que no va: sale de la ruta (el paquete queda en Paquetes) y no se vuelve a agregar sola

@@ -167,7 +167,7 @@ input:not([type=checkbox]):not([type=radio]),textarea,select{font-size:16px!impo
   <div class="panel" id="eventos"></div>
 </section>
 
-<footer class="appver">RutaFácil CR · panel · versión <span id="appVer">1.75.1</span></footer>
+<footer class="appver">RutaFácil CR · panel · versión <span id="appVer">1.75.2</span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="toast" id="toast" hidden></div>
@@ -248,6 +248,8 @@ function ofrecerAviso(c,nuevo){
   $('#toast').hidden=true;$('#avisar').hidden=false;
 }
 $('#avisar-x').onclick=$('#avisar-wa').onclick=()=>setTimeout(()=>$('#avisar').hidden=true,300);
+// 1.75.2: preguntas y datos con el aviso de RutaFácil (auth.js), nunca con confirm/prompt del navegador.
+const D=o=>window.RF_DIALOGO(o),E=s=>esc(s);
 async function hacer(fn,args,ok){try{await RF_AUTH.rpc(fn,args);toast(ok);await cargar();return true}catch(e){toast('No se pudo: '+e.message);return false}}
 
 $('#lista').addEventListener('click',async e=>{
@@ -255,25 +257,27 @@ $('#lista').addEventListener('click',async e=>{
   const id=b.closest('[data-id]').dataset.id,c=CU.find(x=>x.id===id),a=b.dataset.a,nom=c.nombre||c.telefono;
   if(a==='aprobar')return hacer('rf_admin_telefono',{p_id:id,p_accion:'aprobar'},'Teléfono aprobado');
   if(a==='rechazar')return hacer('rf_admin_telefono',{p_id:id,p_accion:'rechazar'},'Cambio rechazado');
-  if(a==='liberar'){if(confirm(`¿Liberar el teléfono de ${nom}? El próximo celular donde entre quedará aprobado.`))hacer('rf_admin_telefono',{p_id:id,p_accion:'liberar'},'Teléfono liberado');return}
+  if(a==='liberar'){if(await D({ico:'📱',titulo:'¿Liberar el teléfono?',texto:`La cuenta de <b>${E(nom)}</b> queda libre: el próximo celular donde entre quedará aprobado.`,si:'Liberar'}))hacer('rf_admin_telefono',{p_id:id,p_accion:'liberar'},'Teléfono liberado');return}
   if(a==='prueba'){if(await hacer('rf_admin_renovar',{p_id:id,p_dias:14,p_monto:0,p_referencia:'Prueba gratis'},'14 días de prueba activados'))ofrecerAviso(c,true);return}
-  if(a==='suspender'){if(confirm(`¿Suspender la cuenta de ${nom}? Deja de funcionar de inmediato.`))hacer('rf_admin_estado',{p_id:id,p_estado:'suspendido'},'Cuenta suspendida');return}
+  if(a==='suspender'){if(await D({ico:'⛔',mal:true,titulo:'¿Suspender la cuenta?',texto:`La cuenta de <b>${E(nom)}</b> deja de funcionar de inmediato. Con <b>Reactivar</b> vuelve.`,si:'Suspender'}))hacer('rf_admin_estado',{p_id:id,p_estado:'suspendido'},'Cuenta suspendida');return}
   if(a==='reactivar'){if(await hacer('rf_admin_estado',{p_id:id,p_estado:'activo'},'Cuenta reactivada'))ofrecerAviso(c,true);return}
   if(a==='pago'){
-    const monto=prompt(`Monto recibido de ${nom} (₡):`,AJ.precio);if(monto===null)return;
-    const d=prompt('¿Cuántos días cubre?','30');if(d===null)return;
-    const ref=prompt('Referencia del SINPE (opcional):','')??'';
+    const v=await D({ico:'💵',titulo:'Registrar pago',texto:`Pago de <b>${E(nom)}</b>. Si ya estaba al día, los días se suman al vencimiento.`,si:'Registrar pago',
+      campos:[{label:'Monto recibido (₡)',valor:AJ.precio,tipo:'tel'},{label:'Días que cubre',valor:'30',tipo:'tel'},{label:'Referencia del SINPE (opcional)',valor:''}]});
+    if(!v)return;const [monto,d,ref]=v;
     const nuevo=c.estado!=='activo'||dias(c.vence_en)<0;
     if(await hacer('rf_admin_renovar',{p_id:id,p_dias:parseInt(d,10)||30,p_monto:parseInt(String(monto).replace(/\D/g,''),10)||0,p_referencia:ref},'Pago registrado'))ofrecerAviso(c,nuevo);
     return;
   }
   if(a==='pin'){
     const pin=Array.from(crypto.getRandomValues(new Uint8Array(6)),x=>x%10).join('');
-    if(!confirm(`El PIN nuevo de ${nom} será ${pin}. ¿Seguir? Después se lo mandás por WhatsApp.`))return;
-    try{await RF_AUTH.rpc('rf_admin_pin',{p_id:id,p_pin:pin});prompt('PIN cambiado. Copiá y mandale este mensaje:',`Tu PIN nuevo de RutaFácil es ${pin}`)}catch(x){toast('No se pudo: '+x.message)}
+    if(!await D({ico:'🔒',titulo:'¿Poner un PIN nuevo?',texto:`El PIN nuevo de <b>${E(nom)}</b> será <b style="font-family:var(--f-mono,monospace);font-size:16px">${pin}</b>. El anterior deja de servir. Después se lo mandás por WhatsApp.`,si:'Cambiar PIN'}))return;
+    try{await RF_AUTH.rpc('rf_admin_pin',{p_id:id,p_pin:pin});
+      D({ico:'✅',titulo:'PIN cambiado',texto:'Copiá el mensaje y mandáselo por WhatsApp.',si:'Listo',no:'',campos:[{label:'Mensaje',valor:`Tu PIN nuevo de RutaFácil es ${pin}`,copiar:true,largo:true}]})}
+    catch(x){toast('No se pudo: '+x.message)}
     return;
   }
-  if(a==='nombre'){const n=prompt('Nombre (así lo ven sus clientes):',c.nombre||'');if(n&&n.trim())hacer('rf_admin_nombre',{p_id:id,p_nombre:n.trim()},'Nombre cambiado');return}
+  if(a==='nombre'){const v=await D({ico:'✏️',titulo:'Cambiar nombre',si:'Guardar',campos:[{label:'Nombre (así lo ven sus clientes)',valor:c.nombre||''}]});const n=v&&v[0];if(n&&n.trim())hacer('rf_admin_nombre',{p_id:id,p_nombre:n.trim()},'Nombre cambiado');return}
 });
 $('#filtros').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;FIL=b.dataset.f;document.querySelectorAll('#filtros button').forEach(x=>x.setAttribute('aria-pressed',x===b));pintar()});
 $('#buscar').addEventListener('input',pintar);
@@ -308,7 +312,7 @@ $('#f-calc').onclick=async()=>{
 };
 $('#f-borrar').onclick=async()=>{
   const n=Math.max(7,parseInt($('#f-dias').value,10)||30),lim=new Date(Date.now()-n*864e5).toISOString().slice(0,10);
-  if(!confirm(`¿Borrar de Supabase todas las fotos de entregas anteriores al ${lim}? No se pueden recuperar.`))return;
+  if(!await D({ico:'🗑️',mal:true,titulo:'¿Borrar fotos viejas?',texto:`Se borran de Supabase todas las fotos de entregas anteriores al <b>${lim}</b>. No se pueden recuperar.`,si:'Borrar fotos'}))return;
   const b=$('#f-borrar');b.disabled=true;
   try{const ds=(await carpetas()).filter(d=>d<lim);let tot=0;
     for(const d of ds){const fs=(await listar(d)).filter(f=>f.id).map(f=>`${d}/${f.name}`);for(let i=0;i<fs.length;i+=500){await storage('object/evidencias',{prefixes:fs.slice(i,i+500)},'DELETE');tot+=Math.min(500,fs.length-i)}}
@@ -329,7 +333,7 @@ async function verUso(){
 }
 $('#u-ver').onclick=verUso;
 $('#u-cierres-ok').onclick=async()=>{const d=parseInt($('#u-cierres').value,10);if(isNaN(d))return;
-  if(d>0&&!confirm(`Los cierres de más de ${d} días se van a borrar de la base (los reportes de esas fechas dejan de salir, salvo en los celulares que ya los tenían). ¿Seguir?`))return;
+  if(d>0&&!await D({ico:'🗂️',titulo:`¿Guardar cierres ${d} días?`,texto:`Los cierres de más de <b>${d} días</b> se van a borrar de la base: los reportes de esas fechas dejan de salir, salvo en los celulares que ya los tenían. Recordales bajar el PDF.`,si:'Guardar'}))return;
   try{const r=await RF_AUTH.rpc('rf_admin_cierres',{p_dias:d});$('#u-cierres').value=r.dias_cierres;toast(r.dias_cierres?`Cierres: se guardan ${r.dias_cierres} días`:'Cierres: se guardan siempre')}catch(e){toast('No se pudo: '+e.message)}};
 $('#f-guardar').onclick=async()=>{const d=parseInt($('#f-nube').value,10);
   try{const r=await RF_AUTH.rpc('rf_admin_fotos',{p_modo:$('#f-modo').value,p_dias:isNaN(d)?null:d});$('#f-modo').value=r.fotos_nube;$('#f-nube').value=r.dias_fotos;toast('Fotos guardadas. Cada celular lo toma en 15 minutos o al abrir la app.')}

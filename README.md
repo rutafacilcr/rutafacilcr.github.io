@@ -61,6 +61,7 @@ La app está preparada para unas **150 cuentas a la vez** en el plan gratis de S
 - **Cierres por 15 días** (se cambia en el Panel).
 - **Código de recuperación** (enlace 🔑 al final de la app, con su propio aviso explicativo): cada mensajero puede poner un PIN nuevo o pasar su cuenta a otro celular sin esperar al administrador. Cinco intentos fallidos bloquean ese número 30 minutos. El Panel pide el PIN cada 12 horas.
 - Listas grandes (cientos de paquetes) abren rápido también en celulares sencillos.
+- **Avisos propios (1.75.2):** ni la app ni el Panel usan los cuadros grises del navegador; toda pregunta o dato que se pide sale en un aviso de RutaFácil con botones a la derecha (el principal naranja).
 - El Panel muestra **cuánto se usa** del plan gratis (base y fotos) y cuánto ocupa cada cuenta.
 
 ## Cierre del día

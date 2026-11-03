@@ -55,7 +55,7 @@ async function rpc(fn,args){
 }
 
 // ---------- Pantalla de entrada ----------
-const CSS=`html.rf-bloq body>*:not(#rfGate){display:none!important}
+const CSS=`html.rf-bloq body>*:not(#rfGate):not(.rfadlg){display:none!important}
 #rfGate{position:fixed;inset:0;z-index:9999;background:var(--bg,#f5f5f4);color:var(--ink,#1c1917);overflow:auto;font-family:var(--f-body,system-ui,sans-serif);display:flex;justify-content:center;padding:max(32px,env(safe-area-inset-top)) 16px 32px}
 #rfGate[hidden]{display:none}
 #rfGate .rfbox{width:100%;max-width:400px;display:flex;flex-direction:column;gap:14px}
@@ -93,12 +93,21 @@ const CSS=`html.rf-bloq body>*:not(#rfGate){display:none!important}
 .rfadlg-btns{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;flex-wrap:wrap}
 .rfadlg-btns button{font:inherit;font-size:15px;font-weight:700;padding:10px 16px;border-radius:10px;border:1px solid var(--line,#e2dfdc);background:var(--surface,#fff);color:var(--ink,#1c1917);cursor:pointer}
 .rfadlg-btns .rfadlg-si{background:var(--accent,#f26b1d);border-color:transparent;color:#fff}
-.rfadlg-btns button:focus-visible{outline:2px solid var(--accent,#f26b1d);outline-offset:2px}`;
+.rfadlg-btns button:focus-visible{outline:2px solid var(--accent,#f26b1d);outline-offset:2px}
+.rfadlg-campos{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+.rfadlg-campos label{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:14px;color:var(--ink,#1c1917)}
+.rfadlg-campos input,.rfadlg-campos textarea{font:inherit;font-size:16px;font-weight:400;padding:10px 12px;border:1px solid var(--line,#e2dfdc);border-radius:10px;background:var(--surface,#fff);color:inherit;width:100%;box-sizing:border-box}
+.rfadlg-campos textarea{min-height:76px;resize:vertical}
+.rfadlg-campos input:focus,.rfadlg-campos textarea:focus{outline:2px solid var(--accent,#f26b1d);outline-offset:1px}
+.rfadlg-campos small{font-weight:400;color:var(--muted,#6b6560);font-size:12.5px;line-height:1.4}
+.rfadlg-copia{display:flex;gap:8px;align-items:stretch}.rfadlg-copia input,.rfadlg-copia textarea{flex:1;min-width:0}.rfadlg-copia textarea{min-height:56px}
+.rfadlg-copia button{font:inherit;font-size:14px;font-weight:700;padding:0 12px;border-radius:10px;border:1px solid var(--line,#e2dfdc);background:var(--surface,#fff);color:inherit;cursor:pointer}`;
 
 let gate,body;
+function ponerCSS(){if(document.getElementById('rfCss'))return;const st=document.createElement('style');st.id='rfCss';st.textContent=CSS;document.head.appendChild(st)}
 function montar(){
   if(gate)return;
-  const st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);
+  ponerCSS();
   gate=document.createElement('div');gate.id='rfGate';gate.setAttribute('role','dialog');gate.setAttribute('aria-modal','true');gate.setAttribute('aria-labelledby','rfTitulo');
   gate.innerHTML=`<div class="rfbox"><div class="rflogo"><img src="icon-192.png" alt=""><h1 id="rfTitulo">Ruta<span>Fácil</span> CR</h1></div><div id="rfBody" class="rfbox" style="gap:14px"></div></div>`;
   document.body.appendChild(gate);body=gate.querySelector('#rfBody');
@@ -238,16 +247,28 @@ function vPinAdmin(c){
     try{guardar(await authReq('token?grant_type=password',{email:tel8(c.telefono)+'@'+DOMINIO,password:pin}));ls.set(KA,Date.now());abrir(c)}
     catch(x){er.textContent=x.status===400?'PIN incorrecto':'No se pudo: '+x.message}};
 }
-// 1.75.1: diálogo propio (en vez del confirm/alert del navegador), con el estilo de la app:
-// ícono, título, explicación y botones a la derecha (el principal naranja con letra blanca). si='' = solo un botón.
-function dialogo({ico='❔',titulo,texto='',si='Aceptar',no='Cancelar',mal=false}){return new Promise(fin=>{
-  const w=document.createElement('div');w.className='rfadlg';
-  w.innerHTML=`<div class="rfadlg-box" role="alertdialog" aria-modal="true" aria-labelledby="rfadlgT"><div class="rfadlg-top"><div class="rfadlg-ico${mal?' mal':''}" aria-hidden="true">${ico}</div><h3 id="rfadlgT">${esc(titulo)}</h3></div>${texto?`<p>${texto}</p>`:''}<div class="rfadlg-btns">${no?`<button type="button" class="rfadlg-no">${esc(no)}</button>`:''}<button type="button" class="rfadlg-si">${esc(si)}</button></div></div>`;
-  const cerrar=v=>{document.removeEventListener('keydown',tec);w.classList.remove('on');setTimeout(()=>w.remove(),180);fin(v)};
+// 1.75.1/1.75.2: diálogo propio (en vez de confirm/alert/prompt del navegador), con el estilo de la app:
+// ícono, título, explicación y botones a la derecha (el principal naranja con letra blanca).
+// no:'' = un solo botón. campos:[{label,valor,tipo,placeholder,ayuda,copiar,largo}] = pide datos y devuelve
+// la lista de valores (o null si cancela); sin campos devuelve true/false. texto acepta HTML (quien llama escapa).
+// Se usa en la app y en el Panel como window.RF_DIALOGO.
+function dialogo({ico='❔',titulo,texto='',si='Aceptar',no='Cancelar',mal=false,campos=null}){return new Promise(fin=>{
+  ponerCSS();const w=document.createElement('div');w.className='rfadlg';
+  const cs=(campos||[]).map((c,i)=>{const id='rfadlgC'+i,val=esc(c.valor??'');
+    const inp=c.largo?`<textarea id="${id}" placeholder="${esc(c.placeholder||'')}"${c.copiar?' readonly':''}>${val}</textarea>`
+      :`<input id="${id}" value="${val}" placeholder="${esc(c.placeholder||'')}" ${c.tipo==='number'?'type="number" inputmode="numeric"':c.tipo==='tel'?'inputmode="numeric"':'type="text"'} autocomplete="off"${c.copiar?' readonly':''}>`;
+    return `<label for="${id}">${esc(c.label||'')}${c.copiar?`<span class="rfadlg-copia">${inp}<button type="button" data-copiar="${id}">Copiar</button></span>`:inp}${c.ayuda?`<small>${c.ayuda}</small>`:''}</label>`}).join('');
+  w.innerHTML=`<div class="rfadlg-box" role="alertdialog" aria-modal="true" aria-labelledby="rfadlgT"><div class="rfadlg-top"><div class="rfadlg-ico${mal?' mal':''}" aria-hidden="true">${ico}</div><h3 id="rfadlgT">${esc(titulo)}</h3></div>${texto?`<p>${texto}</p>`:''}${cs?`<form class="rfadlg-campos" novalidate>${cs}<button type="submit" hidden></button></form>`:''}<div class="rfadlg-btns">${no?`<button type="button" class="rfadlg-no">${esc(no)}</button>`:''}<button type="button" class="rfadlg-si">${esc(si)}</button></div></div>`;
+  const vals=()=>(campos||[]).map((c,i)=>w.querySelector('#rfadlgC'+i).value);
+  const cerrar=v=>{document.removeEventListener('keydown',tec);w.classList.remove('on');setTimeout(()=>w.remove(),180);fin(campos?(v?vals():null):v)};
   const tec=e=>{if(e.key==='Escape')cerrar(false)};document.addEventListener('keydown',tec);
-  w.onclick=e=>{if(e.target===w)cerrar(false)};w.querySelector('.rfadlg-si').onclick=()=>cerrar(true);const n=w.querySelector('.rfadlg-no');if(n)n.onclick=()=>cerrar(false);
+  w.onclick=e=>{if(e.target===w)cerrar(false);const b=e.target.closest('[data-copiar]');if(b){const el=w.querySelector('#'+b.dataset.copiar);try{navigator.clipboard.writeText(el.value);b.textContent='✓ Copiado'}catch(x){el.select()}}};
+  w.querySelector('.rfadlg-si').onclick=()=>cerrar(true);const n=w.querySelector('.rfadlg-no');if(n)n.onclick=()=>cerrar(false);
+  const f=w.querySelector('form');if(f)f.onsubmit=e=>{e.preventDefault();cerrar(true)};
   document.body.appendChild(w);requestAnimationFrame(()=>w.classList.add('on'));
+  const pri=w.querySelector('.rfadlg-campos input:not([readonly]),.rfadlg-campos textarea:not([readonly])');if(pri)setTimeout(()=>{pri.focus();if(pri.select)pri.select()},60);
 })}
+window.RF_DIALOGO=dialogo;
 function vListo(c){
   vista(`<div class="rfmsg rflisto"><h2>✅ Cuenta habilitada</h2><p>¡Listo, ${esc((c.nombre||'').split(' ')[0])}! Tu cuenta ya está activa${c.vence_en?' hasta el '+fecha(c.vence_en):''}.</p></div><button class="rfbtn pri" id="rfEntrar">Entrar</button>`);
   body.querySelector('#rfEntrar').onclick=()=>{esperando=false;abrir(c)};
