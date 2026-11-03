@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.73.0 · Mensajes 4 y 5:** en *Mensajes* hay **4. Comprensión** y **5. Horario extendido** con los textos de Victor (editables). En *Paquetes* el número de los entregados ya no va tachado y **1. Coordinar** queda a la derecha del nombre.
 - **1.72.3 · Guías por fecha de recibido:** en *Cierres* sale un solo reporte por fecha de recibido (**Guías · Paquetes recibidos 31/10/2026**) con todos sus entregados; adentro, un título por día de entrega.
 - **1.72.2 · Guías por fecha de recibido:** el PDF de Guías agrupa los paquetes con el título **Paquetes recibidos DD/MM/AAAA**.
 - **1.72.1 · Guías con dirección:** en el PDF de Guías la columna Nota cambió por Dirección.

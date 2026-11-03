@@ -6,7 +6,7 @@ Guía para el repartidor. No hace falta saber de computadoras.
 
 ---
 
-## La app hoy (versión 1.69)
+## La app hoy (versión 1.73)
 
 Resumen de cómo está la app ahora. Más abajo se explica cada parte con la versión en que llegó.
 
@@ -16,13 +16,14 @@ Resumen de cómo está la app ahora. Más abajo se explica cada parte con la ver
 - Arriba, cinco contadores: **Recibidos**, **Entregados**, **Hold**, **Devueltos** y **Sin 📍** (sin ubicación).
 - Cuatro botones grandes: **🧹 Vaciar lista** (en rojo), **Agregar a mano**, **Importar** y **Escanear**.
 - Después, el buscador 🔍 y enseguida las tarjetas (desde la 1.69.1 ya no está el título *Lista del día*).
-- El orden de las tarjetas es: activos, Hold, devueltos y al final los entregados (en gris y con el número tachado).
-- Cada tarjeta tiene **1. Coordinar**, **Pegar respuesta**, **Editar**, **Escáner**, **Eliminar** (1.69.9; antes *Borrar*), **Devuelto** y **WhatsApp**.
+- El orden de las tarjetas es: activos, Hold, devueltos y al final los entregados (en gris; desde la 1.73.0 el número ya no sale tachado).
+- Cada tarjeta tiene **1. Coordinar** (arriba a la derecha desde la 1.73.0), **Pegar respuesta**, **Editar**, **Escáner**, **Eliminar** (1.69.9; antes *Borrar*), **Devuelto** y **WhatsApp**.
 - Los paquetes **⛔ Devolver** y **⛔ Devuelto** se ven grises y sin botones. Solo queda activo el botón para quitar la marca: en un devuelto dice **↪ Regresar a Ruta** (1.69.4).
 
 **Ruta**
 - **Primera línea:** 📂 Cargar ruta, el nombre de la ruta, 📍 Ordenar desde aquí y, a la derecha, 📍 Estás aquí (tu GPS).
-- **Segunda línea:** ▶ Iniciar entregas / ■ Finalizar. Guardan la hora y el punto de salida y de cierre para el reporte.
+- **Segunda línea:** ▶ Iniciar entregas / ■ Finalizar. Guardan la hora y el punto de salida y de cierre para el reporte. Desde que tocás ▶ Iniciar, **el orden de la ruta queda fijo** (1.72.0): los nuevos van al final y solo 📍 / 🎯 la reordenan, preguntando antes.
+- **🚦 Tráfico (1.70.0):** con la clave gratis de TomTom, el tiempo a la próxima parada toma en cuenta el tráfico.
 - **Tercera línea:** a la izquierda, el resumen (⏱ tiempo, km, inicio y fin) y los vehículos 🏍️ 🚙 🚐 (🚙 carro marcado de entrada). A la derecha, 🎯 Elegir en el mapa y 📋 Lista.
 - **El mapa:** la línea va por las calles reales. Los pines pendientes quedan encima, Hold en amarillo y los que están en el mismo lugar se abren en abanico.
 - **Cada parada:** Waze, Maps, WhatsApp "Estamos en camino 🏍️…" (con el ícono del vehículo elegido), Quitar, Evidencia, Co-out, Hold, ⛔ Devolver y ✓ Entregado.
@@ -31,11 +32,12 @@ Resumen de cómo está la app ahora. Más abajo se explica cada parte con la ver
 **Cierres**
 - Hay un reporte por cada grupo de *Entregas del …*, según el día en que se recibieron los paquetes. También salen las listas ya vaciadas.
 - Cada grupo tiene su botón **📄 PDF** horizontal.
+- **Guías por fecha de recibido** (1.71.0 a 1.72.3): un PDF por fecha de recibido (*Guías · Paquetes recibidos 31/10/2026*) con Nombre, Tel., Guía y Dirección, separado por día de entrega.
 - El **encabezado** trae: fecha, mensajero, recibidos el, km, horas, días de entrega, promedio por entrega, y recibidos, entregados y devueltos.
 - Las **filas** van por fecha y hora de entrega, con estas columnas: número, guía / pedido, teléfono, nombre, estado, fecha recibido, fecha y hora de entrega, y tiempo y km desde la entrega anterior.
 
 **Mensajes**
-- Están **1. Coordinar**, **2. Formulario** y **3. Voy en camino**. Este último lleva el ícono del vehículo después de "camino".
+- Están **1. Coordinar**, **2. Formulario**, **3. Voy en camino** (lleva el ícono del vehículo después de "camino"), **4. Comprensión** y **5. Horario extendido** (1.73.0).
 - Los clientes salen en el **mismo orden que en Ruta** (1.69.3). Los entregados, en Hold o devueltos se ven grises y bajan al final, y los que no están en la ruta van después de los pendientes.
 
 **Confirmaciones:** desde la 1.69.0, al borrar, devolver, vaciar o guardar cambios sale una hoja abajo con dos botones grandes: **Cancelar** y la acción (en rojo si borra o desactiva).
@@ -146,7 +148,12 @@ Desde la versión 1.18.0 la lista se guarda en tu cuenta. Si entrás con tu núm
 6. Lo que llene **entra solo** a la app (revisa cada minuto, o tocá **Revisar respuestas ahora**) y queda **Confirmado** con 🕓 horario y 🏠 señas.
 7. **Cuando el cliente responde por el chat (lo más común):** en WhatsApp mantené presionado su mensaje (la hora, la ubicación o los dos seleccionados) > **Copiar**. En la app tocá **📋 Pegar respuesta** en ese cliente. La app saca sola la **hora** y la **ubicación** y lo deja **Confirmado**. Si el iPhone pregunta "Permitir pegar", tocá **Permitir**. Si la ubicación no se puede copiar del chat, abrila, tocá **Compartir** > **Copiar** y volvé a tocar **📋 Pegar respuesta**.
 
-**Elegir qué mensaje mandar:** cada cliente tiene arriba los botones **1. Coordinar**, **2. Formulario** y **3. En camino** (sin Supabase solo salen *1. Coordinar* y *2. En camino*). El que está en oscuro es el que se va a mandar: la vista previa, **Abrir WhatsApp** y **Copiar** usan ese mensaje. La app propone sola el siguiente (después del primero, el formulario), pero podés tocar cualquiera.
+**Elegir qué mensaje mandar:** cada cliente tiene arriba los botones **1. Coordinar**, **2. Formulario**, **3. En camino**, **4. Comprensión** y **5. Horario extendido** (1.73.0; sin Supabase no sale *Formulario* y los demás se corren un número).
+
+- **4. Comprensión:** para el cliente que pregunta por su paquete mientras vas manejando: *"Hola 😊 Ana - Entiendo su preocupación, su paquete es importante para nosotros…"*.
+- **5. Horario extendido:** para ofrecer entregar hoy de 5:00 p. m. a 9:00 p. m.: *"¡Hola! 😊 Ana - Debido al alto volumen de paquetes de TEMU recibidos…"*.
+- Los dos usan el primer nombre del cliente y se pueden cambiar en **✏️ Editar textos de los mensajes**.
+ El que está en oscuro es el que se va a mandar: la vista previa, **Abrir WhatsApp** y **Copiar** usan ese mensaje. La app propone sola el siguiente (después del primero, el formulario), pero podés tocar cualquiera.
 
 **Aviso de la cédula:** los mensajes *1. Coordinar* y *3. Voy en camino* terminan con *Recuerde que para la entrega debe presentar la cédula.* Se puede quitar o cambiar en **✏️ Editar textos de los mensajes**.
 
@@ -496,6 +503,8 @@ No tenés que unir nada a mano: si corregís en *Paquetes* el nombre, el teléfo
 
 
 ### Entregados tachados (1.40.0)
+
+> Desde la **1.73.0** el número de los entregados en *Paquetes* y *Mensajes* ya no va tachado: solo en gris. En *Ruta* la parada hecha sigue tachada.
 
 Cuando tocás **✓ Entregado** en *Ruta*, el número del paquete queda tachado y en gris, y la parada baja al final de la lista. En *Paquetes* el número también sale tachado, la tarjeta entera se ve apagada en gris (1.40.1) y el paquete pasa con los entregados. Sus botones siguen sirviendo por si hay que corregir algo. Si te equivocaste, **↩ Deshacer** lo devuelve.
 

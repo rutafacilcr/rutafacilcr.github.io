@@ -14,7 +14,7 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
   - Cinco contadores: Recibidos, Entregados, Hold, Devueltos y Sin 📍.
   - Cuatro botones grandes: 🧹 Vaciar lista, Agregar a mano, Importar y Escanear.
   - Un buscador por nombre, teléfono, guía o número.
-  - Las tarjetas van en orden: activos, Hold, devueltos y al final los entregados en gris con el número tachado.
+  - Las tarjetas van en orden: activos, Hold, devueltos y al final los entregados en gris.
   - Los paquetes ⛔ Devolver y ⛔ Devuelto quedan desactivados, con un solo botón para quitar la marca.
 - **Ruta:**
   - Mapa con la línea por calles reales (OSRM, gratis).
@@ -30,7 +30,7 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
   - Las filas van ordenadas por fecha y hora de entrega.
   - También hay un PDF **Guías** por cada fecha de recibido, con nombre, teléfono, guía y dirección, agrupado por fecha de recibido.
 - **Mensajes:**
-  - Coordinar, Formulario y Voy en camino (con el ícono del vehículo).
+  - Coordinar, Formulario, Voy en camino (con el ícono del vehículo), Comprensión y Horario extendido (5 a 9 p. m.).
   - Los clientes van en el mismo orden que en Ruta; los cerrados o en Hold quedan en gris al final.
 
 | Paso | Qué resuelve |
