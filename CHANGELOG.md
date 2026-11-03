@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.69.7 · Sin paradas repetidas:** **➕ Agregar a la ruta** (y agregar a la ruta al editar) ya no crea una segunda parada si el paquete ya está en la ruta; la pantalla se actualiza al instante para que un segundo toque no lo duplique mientras se reordena. Las paradas repetidas que ya existían se quitan solas, quedándose con la entregada o la que tiene ubicación.
 - **1.69.6 · Pegar respuesta junto a Ruta:** en la tarjeta de *Paquetes*, **📋 Pegar respuesta** va en la misma línea que *En la ruta* / *Agregar a la ruta*, a la derecha; debajo quedan Editar y Escáner. Corrige que al abrir la app un paquete que ya está en la ruta mostrara **➕ Agregar a la ruta** (la lista se pintaba antes de poder unirla con la ruta).
 - **1.69.5 · Confirmación al centro:** el aviso de confirmar sale centrado en la pantalla, más angosto, con animación suave; el botón de la acción va arriba (rojo si borra o desactiva) y **Cancelar** debajo. El "Ojo" (por ejemplo, paquetes sin entregar) sale resaltado en amarillo.
 - **1.69.4 · Regresar a Ruta:** en *Paquetes*, el botón de un paquete devuelto dice **↪ Regresar a Ruta** (antes "Quitar devuelto"); hace lo mismo. En *Mensajes* no cambia.

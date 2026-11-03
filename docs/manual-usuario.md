@@ -631,3 +631,8 @@ En la primera línea de *Ruta* están **📂 Cargar ruta**, el nombre de la ruta
 - **1.67.3:** la barra de abajo va en el orden Paquetes, Cierres, Mensajes y Ruta.
 - **1.67.4:** en *Ruta* ya no sale el aviso "no es la de hoy ni la de mañana", porque una ruta se puede repartir en varios días.
 - **1.67.8:** los vehículos 🏍️ 🚙 🚐 van a la derecha del resumen de tiempo y km, y **Elegir en el mapa** y **Lista** quedan debajo.
+
+
+### Sin paradas repetidas (1.69.7)
+
+Un paquete tiene **una sola parada** en *Ruta*. Si tocás **➕ Agregar a la ruta** y ya estaba, la app avisa "ya está en la ruta" y no agrega otra. Si quedaron repetidas de antes, al abrir la app se quitan solas (se queda la que ya se entregó o la que tiene ubicación) y sale un aviso con cuántas se quitaron.

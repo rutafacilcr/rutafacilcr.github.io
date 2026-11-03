@@ -374,7 +374,7 @@ details summary{cursor:pointer;font-weight:600}
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.69.6</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.69.7</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -1467,12 +1467,26 @@ function entAgregarPk(p){const c=parseCoord(p.ubic);if(!S.ent||S.ent.cerrada||!c
   const mx=Math.max(0,...S.ent.stops.filter(x=>x.c).map(x=>x.n||0));
   // Si ya tiene parada pero sin pin (el "?" amarillo), a esa parada se le pone la ubicación del paquete y queda unida para siempre
   const ya=entParadasDe(p).find(x=>!x.c&&!x.done);
+  // 1.69.7: nunca dos paradas del mismo paquete. Si ya tiene una con ubicación (o unida a él), no se agrega otra.
+  const tiene=S.ent.stops.find(x=>x.c&&(x.pkFijo===p.id||entParadasDe(p).includes(x)||entPkg(x)===p));
+  if(tiene&&!ya){toast(`${p.nombre||'Paquete'} ya está en la ruta`);tiene.pkFijo=tiene.pkFijo||p.id;tiene.pkId=p.id;save();render();return}
   if(ya){Object.assign(ya,{c,n:mx+1,pkId:p.id,pkFijo:p.id,tel:p.tel||ya.tel,nombre:p.nombre||ya.nombre});delete ya.ub;delete ya.waze;
     S.ent.stops=[...S.ent.stops.filter(x=>x.c),...S.ent.stops.filter(x=>!x.c)];toast(`${p.nombre||'Paquete'} ya está en la ruta con su ubicación`);
     if(EPOS)entOrdenar(EPOS.c,'donde estás');else{save();render()}return}
   S.ent.stops.unshift({n:mx+1,nombre:p.nombre||'',tel:p.tel||'',dir:p.dir||'',guia:p.guia||'',nota:p.nota||'',c,waze:'',done:false,pkId:p.id,pkFijo:p.id});
   S.ent.stops=[...S.ent.stops.filter(x=>x.c),...S.ent.stops.filter(x=>!x.c)];toast(`${p.nombre||'Paquete'} agregado a la ruta`);
-  if(EPOS)entOrdenar(EPOS.c,'donde estás');else{save();render()}}
+  save();render();if(EPOS)entOrdenar(EPOS.c,'donde estás')}
+// 1.69.7: limpia paradas repetidas del mismo paquete (mismo pkFijo, o unidas al mismo paquete con el mismo nombre).
+// Se queda la entregada o devuelta si hay, si no la que tiene ubicación, si no la primera; a esa se le pasan entrega, GPS y Hold.
+function entSinDup(){const E=S.ent;if(!E||!E.stops)return 0;const G=new Map();
+  E.stops.forEach(s=>{const p=entPkg(s);if(!p)return;const k=p.id;if(!G.has(k))G.set(k,[]);G.get(k).push(s)});
+  const fuera=new Set();
+  G.forEach((L,id)=>{if(L.length<2)return;const p=S.pk.find(x=>x.id===id);
+    const dup=L.filter(s=>s.pkFijo===id||(p&&nomN(s.nombre||'')===nomN(p.nombre||'')));if(dup.length<2)return;
+    const keep=dup.find(s=>s.done||s.devolver)||dup.find(s=>s.c)||dup[0];
+    dup.forEach(s=>{if(s===keep)return;if(s.done&&!keep.done){keep.done=true;keep.at=s.at;keep.gps=s.gps;keep.prevSt=s.prevSt}if(!keep.c&&s.c){keep.c=s.c;keep.n=s.n}fuera.add(s)});
+    keep.pkFijo=id;keep.pkId=id});
+  if(!fuera.size)return 0;E.stops=E.stops.filter(s=>!fuera.has(s));let k=0;E.stops.forEach(s=>{if(s.c)s.n=++k});entMod();return fuera.size}
 // Segunda pasada: paradas que no encontraron paquete se unen al paquete libre (sin parada) que más palabras del nombre comparte
 // o el mismo número escrito (nota); y los paquetes libres con ubicación que siguen sin parada se agregan solos a la ruta.
 // 1.47.2: ya no se unen paradas por palabras sueltas ni se agregan paquetes solos (metía paquetes de otros días y cambiaba paradas).
@@ -1482,7 +1496,7 @@ function entUnirLibres(){const E=S.ent;if(!E||!E.stops)return 0;if(E.limpia147)r
 // Unión segura entre parada y paquete: unida a mano, misma guía, mismo nombre o mismo teléfono (también uno anterior)
 function entFuerte(s,p){if(!s||!p)return false;if(s.pkFijo===p.id)return true;if(s.guia&&p.guia&&guiaN(s.guia)===guiaN(p.guia))return true;
   if(s.nombre&&p.nombre&&nomN(s.nombre)===nomN(p.nombre))return true;const t=phoneWA(s.tel);return !!t&&(phoneWA(p.tel)===t||(p.telsAnt||[]).some(x=>phoneWA(x)===t))}
-function entSyncPk(){const E=S.ent;if(!E||!E.stops)return false;const ul=entUnirLibres();let n=0,t=ul,nuevas=E.nuevas||0;delete E.nuevas;let maxN=Math.max(0,...E.stops.filter(x=>x.c).map(x=>x.n||0));E.stops.forEach(s=>{const p0=entPkg(s),p=entFuerte(s,p0)?p0:null; // solo se copian datos si la unión es segura
+function entSyncPk(){const E=S.ent;if(!E||!E.stops)return false;const ul=entUnirLibres(),dd=entSinDup();if(dd)toast(`Se quitaron ${dd} parada(s) repetida(s) de la ruta`);let n=0,t=ul+dd,nuevas=E.nuevas||0;delete E.nuevas;let maxN=Math.max(0,...E.stops.filter(x=>x.c).map(x=>x.n||0));E.stops.forEach(s=>{const p0=entPkg(s),p=entFuerte(s,p0)?p0:null; // solo se copian datos si la unión es segura
   // El teléfono manda el de Paquetes: si se corrigió allá (también antes de la 1.34), la parada lo toma
   if(p&&String(p.tel||'').replace(/\D/g,'')!==String(s.tel||'').replace(/\D/g,'')){s.tel=p.tel||'';s.pkId=p.id;t++} // 1.63.2: el teléfono siempre manda el de Paquetes
   if(p&&p.nombre&&p.nombre.trim()&&p.nombre.trim()!==s.nombre){s.nombre=p.nombre.trim();s.pkId=p.id;t++} // el nombre también manda el de Paquetes

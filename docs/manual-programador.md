@@ -128,6 +128,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 ## 3c-quindecies. Tarjeta desactivada por Devolver (1.66.0)
 
+- 1.69.7: `entAgregarPk` sale con "ya está en la ruta" si hay una parada con `c` y `pkFijo===p.id`, en `entParadasDe(p)` o con `entPkg(x)===p` (salvo la parada sin pin que se completa). Guarda y renderiza antes de `entOrdenar` (async), así el botón desaparece enseguida. `entSinDup()` (al inicio de `entSyncPk`) agrupa por `entPkg(s).id` y quita las repetidas con el mismo `pkFijo` o el mismo `nomN(nombre)`; se queda `done/devolver`, luego con `c`, luego la primera; pasa `done/at/gps/prevSt` y renumera `n`.
 - 1.69.4: `devBar(p,enPk)`: con `enPk` (lo pasa `renderPk`) el botón del devuelto dice "↪ Regresar a Ruta"; en `renderMsg` sigue "↪ Quitar devuelto". El botón `data-act="dev"` de la tarjeta también dice "Regresar a Ruta".
 - 1.69.3: `renderMsg` ordena por `rk` y luego por `rpos[p.id]`: la posición de su parada en la lista de *Ruta* (mismo `erk` que `renderEnt`); sin parada, `1e6+índice`.
 - 1.69.2: vehículo por defecto `carro` en `vehPintar` y `vehIcono` cuando `S.veh` no está; `renderEnt` llama `vehPintar()` para reflejar el valor que llega de la nube.
