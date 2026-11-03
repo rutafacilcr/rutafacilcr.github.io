@@ -13,7 +13,6 @@
 <meta name="theme-color" content="#1f2125">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="config.js"></script>
 <script src="auth.js"></script>
 <style>
@@ -851,8 +850,20 @@ $('#pkgForm').onsubmit=async e=>{e.preventDefault();
   resetForm();subAbrir(null);
 };
 $('#importBtn').onclick=()=>{if(!$('#pasteBox').value.trim()){toast('Pegá primero las filas');return}addPkgs(parseText($('#pasteBox').value));$('#pasteBox').value='';subAbrir(null)};
+let XLSX_LOAD=null;
+function cargarXlsx(){
+  if(window.XLSX)return Promise.resolve(window.XLSX);
+  if(!XLSX_LOAD)XLSX_LOAD=new Promise((resolve,reject)=>{
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    s.onload=()=>window.XLSX?resolve(window.XLSX):(XLSX_LOAD=null,reject(new Error('No se pudo iniciar Excel')));
+    s.onerror=()=>{XLSX_LOAD=null;reject(new Error('No se pudo cargar Excel'))};
+    document.head.appendChild(s);
+  });
+  return XLSX_LOAD;
+}
 $('#fileIn').onchange=async e=>{const f=e.target.files[0];if(!f)return;
-  try{if(/\.(xlsx|xls|csv)$/i.test(f.name)){if(!window.XLSX){toast('No se pudo cargar el lector de Excel. Copiá y pegá las filas.');return}const wb=XLSX.read(await f.arrayBuffer());const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:false});addPkgs(rowsToPkgs(rows))}
+  try{if(/\.(xlsx|xls|csv)$/i.test(f.name)){const XL=await cargarXlsx();const wb=XL.read(await f.arrayBuffer());const rows=XL.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:false});addPkgs(rowsToPkgs(rows))}
   else addPkgs(parseText(await f.text()))}catch(err){toast('No pude leer ese archivo')}
   e.target.value=''};
 $('#clearExample').onclick=()=>{S.pk=[];S.ex=false;S.nums={};S.route=null;save();render()};
@@ -903,7 +914,7 @@ async function saveContacts(){
 $('#vcfBtn').onclick=saveContacts;$('#vcfCancel').onclick=()=>{$('#vcfSheet').hidden=true};
 // Excel del día: mismas columnas que plantilla-paquetes.xlsx (se puede volver a importar) + "contacto" (TM-Nombre-pedido).
 function saveExcel(){
-  if(!window.XLSX){toast('No se pudo cargar Excel. Revisá el internet y probá de nuevo.');return}
+  if(!window.XLSX){toast('Preparando Excel…');cargarXlsx().then(()=>toast('Excel listo. Tocá de nuevo “Excel” para descargarlo.')).catch(()=>toast('No se pudo cargar Excel. Revisá el internet y probá de nuevo.'));return}
   const pk=S.pk.filter(p=>p.nombre||p.tel);if(!pk.length){toast('No hay clientes en la lista');return}
   const fIng=t=>t?new Date(t).toLocaleDateString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric'}):'';
   const rows=[['nombre','telefono','direccion','ubicacion','guia','nota','fecha ingreso','contacto'],
@@ -1511,9 +1522,9 @@ document.addEventListener('rf-cuenta',e=>{if(!cuentaLocal(e.detail))usarCuenta(e
 // S.ent = {nombre, at, stops:[{n, nombre, tel, dir, guia, nota, c:[lat,lng]|null, waze, done}]}
 let EMAP=null,ESEL=-1;
 async function entCargar(file){
-  if(!window.XLSX){toast('No se pudo cargar el lector de Excel');return}
-  const wb=XLSX.read(await file.arrayBuffer());const ws=wb.Sheets['Ruta ordenada']||wb.Sheets[wb.SheetNames[0]];
-  const ref=XLSX.utils.decode_range(ws['!ref']||'A1');const cell=(r,c)=>ws[XLSX.utils.encode_cell({r,c})];
+  const XL=await cargarXlsx();
+  const wb=XL.read(await file.arrayBuffer());const ws=wb.Sheets['Ruta ordenada']||wb.Sheets[wb.SheetNames[0]];
+  const ref=XL.utils.decode_range(ws['!ref']||'A1');const cell=(r,c)=>ws[XL.utils.encode_cell({r,c})];
   const val=(r,c)=>{const x=cell(r,c);return x?String(x.w??x.v??'').trim():''},link=(r,c)=>{const x=cell(r,c);return x&&x.l&&x.l.Target||''};
   const H=[];for(let c=ref.s.c;c<=ref.e.c;c++)H.push(val(ref.s.r,c).toLowerCase());
   const col=re=>H.findIndex(h=>re.test(h));
