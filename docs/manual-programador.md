@@ -50,7 +50,7 @@ Paquete = {
 }
 ```
 
-`save()` y `load()` envuelven `localStorage` en try/catch. Al cargar, los paquetes viejos sin `tok` reciben uno.
+Desde la 1.74.0 `S.owner` = número de la cuenta dueña de estos datos (ver 3c-0a). `save()` y `load()` envuelven `localStorage` en try/catch. Al cargar, los paquetes viejos sin `tok` reciben uno.
 
 ### Funciones clave
 
@@ -121,6 +121,21 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - *Guardar* abre la cámara **dentro del mismo toque** (iPhone no deja abrirla después de un `await`) y agrega con `mkPkg()`. Las fotos de etiqueta no se guardan.
 - Prueba local: las CDN están bloqueadas en el sandbox; se instalan los paquetes con npm y Playwright sirve los archivos interceptando las URL de jsDelivr. Las etiquetas de prueba se generan con JsBarcode.
 
+## 3c-0a. 20 mensajeros (1.74.0)
+
+- **Datos locales por cuenta:** `cuentaLocal(c)` (junto a `toast`) se llama en `RF_AUTH.listo` y en el evento `rf-cuenta`. `S.owner` guarda el número (8 dígitos) de la cuenta dueña de `localStorage['rutafacil-cr-v1']`. Si entra otra cuenta: si `S.dirty`, la lista vieja se aparta en `rutafacil-cr-v1@<número>`; si no, se borra (ya está en la nube). Se carga la de la nueva (o `{owner}` vacío) y se recarga la página. Las fotos en IndexedDB no se tocan: sus ids son aleatorios y solo se suben desde los paquetes de la lista abierta. `fixIng1031()` sigue igual (corre en `nubeAplicar`).
+- **Nube liviana:** `nubeLeer(force)` manda `p_version` a `rf_lista_leer`; con `sin_cambios` no hace nada. Con `force` (☁️) o sin versión baja todo. Si la base no tiene la función nueva (404/PGRST202) marca `NUBE.vieja` y usa la llamada sin parámetros.
+- **Respuestas por partes:** `syncResp` guarda `S.respDesde` (la mayor `updated_at` vista) y `S.respDesdeN` (cantidad de paquetes en ese momento); cada minuto pide `p_desde` y, si cambió la cantidad de paquetes o se tocó *Revisar*, pide todo. `syncResp.vieja` = base sin `p_desde`.
+- **Fotos:** `fotosNube()` lee `RF_AUTH.cuenta.fotos_nube` (`'todas'` si la base es vieja). En modo `una`, `uploadPOD` sube solo `rec.fotos[0]` pasada por `achicar(blob,640,.6)` más la firma, y marca `rec.una`. `limpiarNube()` (desde `uploadPending`, una vez al día con `S.nubeLimpia`) pide `rf_evidencias_viejas` y borra con `DELETE /storage/v1/object/evidencias {prefixes}`; la política de la base impide borrar fotos ajenas o no vencidas.
+- **Listas grandes:** `render()` pinta Paquetes y Mensajes solo si su pestaña está a la vista (`PEND.pk/msg` + `aLaVista`); el clic de la pestaña pinta lo pendiente. `renderPk()` pinta 60 tarjetas y agrega el resto en tandas de 100 (`renderPk.tk` cancela tandas viejas); `#pkgList>.pkg` lleva `content-visibility:auto`. Medido con 817 paquetes y CPU 6× más lenta: `render()` de ~5 s a ~0,6 s.
+- **Respuestas:** `syncResp` manda solo tokens de paquetes no entregados ni devueltos (máx. 300; la base acepta 1000).
+- **Aviso de cierres:** `diasCierres()` lee `RF_AUTH.cuenta.dias_cierres` (lo manda `rf_mi_cuenta`); `repLista()` llena `#cierreAviso` y marca las fechas con `repBorraEn(k)` ≤ 3 (cuenta desde la fecha de recibido, así avisa antes, nunca tarde).
+- **Cierres en el celular:** `cierreLeer(id)` usa IndexedDB `rutafacil-cierres` (clave `<owner>:<id>`), y solo llama `rf_cierre_leer` si no está.
+- **Fotos `ninguna`:** `uploadPOD` registra la entrega sin subir fotos y marca `rec.sinNube`; `cleanLocal` las guarda `LOCAL_DIAS_SIN_NUBE` (30) días.
+- **`auth.js`:** `vRecuperar(tel, cambio)` → `rf_recuperar` → login con el PIN nuevo → `vCodigo`. `mostrarCodigoNuevo` después de *Crear cuenta*. Pie: *Código de recuperación* (`rf_codigo_nuevo`). `vEstado` (otro teléfono) ofrece el código. `abrir()` en el Panel llama `vPinAdmin` si `KA` tiene más de `ADMIN_HORAS`.
+- **Panel (`admin.html`):** sección *Uso del plan gratis* (`verUso` → `rf_admin_uso`, barras `.ubar`, tabla `.utab` con scroll horizontal propio) y en *Fotos de entrega* los campos `#f-modo` / `#f-nube` que guardan con `rf_admin_fotos`. Botones naranja a la derecha.
+- **Pruebas hechas:** `supabase.sql` corrido dos veces en Postgres 16 con stubs de Supabase; dos cuentas: B no lee respuestas, lista, cierres ni fotos de A, no pisa entregas de A y solo borra sus fotos vencidas. En el navegador (Playwright, 375 px, Supabase simulado): al pasar de la cuenta A a la B, la lista de A desaparece y B abre vacía.
+
 ## 3c-0. Mapa rápido de lo agregado de la 1.53 a la 1.68
 
 | Tema | Dónde | Funciones / datos |
@@ -136,6 +151,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 ## 3c-quindecies. Tarjeta desactivada por Devolver (1.66.0)
 
+- 1.73.3: `guiPdf` suma la columna *Hora entrega* = `fmtT2(repT(p))` (la misma hora real del reporte de entregas).
 - 1.73.2: `#v-cierres` ya no tiene el primer `.panel` ("Cierres … Próximamente"); empieza con *Reporte de entregas* (`#repLista`).
 - 1.73.1: `.epin.ok` y `.estop.ok .n` sin `line-through` (siguen en gris; `.estop.ok` con opacidad).
 - 1.73.0: `msgOpts()` numera solo (`i+1`) y suma `comp` (Comprensión) y `ext` (Horario extendido); textos en `DEF_COMP` / `DEF_EXT`, guardados en `S.comp` / `S.ext` (en `NUBE_KEYS`, `bind`, `nubeAplicar`, textareas `#m-comp` y `#m-ext`). Al abrir `data-act="sent"` con esas claves marca `p.compSent` / `p.extSent`. CSS: `.pkg .num.tachado` sin `line-through` y `.pkg .name>.coordbtn{margin-left:auto}`.

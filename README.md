@@ -28,7 +28,7 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
   - Un reporte PDF horizontal por cada grupo de *Entregas del …* (el día en que se recibieron los paquetes), también de listas ya vaciadas.
   - Trae fecha, mensajero, km y horas por tramos, promedio por entrega, y recibidos, entregados y devueltos.
   - Las filas van ordenadas por fecha y hora de entrega.
-  - También hay un PDF **Guías** por cada fecha de recibido, con nombre, teléfono, guía y dirección, agrupado por fecha de recibido.
+  - También hay un PDF **Guías** por cada fecha de recibido, con nombre, teléfono, guía, dirección y hora de entrega, agrupado por fecha de recibido.
 - **Mensajes:**
   - Coordinar, Formulario, Voy en camino (con el ícono del vehículo), Comprensión y Horario extendido (5 a 9 p. m.).
   - Los clientes van en el mismo orden que en Ruta; los cerrados o en Hold quedan en gris al final.
@@ -50,6 +50,18 @@ Funciona desde el celular, se puede instalar como ícono en la pantalla de inici
 Desde la versión 1.7.0 cada repartidor entra con **su número de teléfono y un PIN de 6 números**. La cuenta queda atada a un solo celular: si alguien la abre en otro, el administrador tiene que aprobar el cambio. El administrador activa, renueva (pagos por SINPE Móvil) o suspende cuentas desde el **panel** (`admin.html`). Así la app no se puede pasar entre compañeros ni usar sin una cuenta al día.
 
 Cuando alguien crea cuenta, al administrador le llega un **WhatsApp y un correo** (servicios gratis). Al activarla, el panel deja listo el mensaje de WhatsApp para avisarle al repartidor, y en la app del repartidor el botón gris *Esperando activación* se pone naranja (*Cuenta habilitada · Entrar*) en menos de un minuto.
+
+## Varios mensajeros (1.74.0)
+
+La app está preparada para unas **150 cuentas a la vez** en el plan gratis de Supabase (con las fotos de entrega guardadas en el celular):
+
+- **Nada se mezcla entre cuentas.** Paquetes, rutas, cierres, respuestas de clientes y fotos quedan amarrados a la cuenta que los creó; la base no le entrega a una cuenta datos de otra. Si en un mismo celular entra otra cuenta, la app aparta los datos de la anterior y abre los de la nueva.
+- **Gasta poco del plan gratis.** La revisión de cada minuto solo baja lo que cambió.
+- **Fotos de entrega a la medida del plan gratis:** de fábrica quedan en el celular; el administrador puede subir *1 foto chica + firma* o las 3 fotos, y elegir cuántos días se guardan en la nube.
+- **Cierres por 15 días** (se cambia en el Panel).
+- **Código de recuperación:** cada mensajero puede poner un PIN nuevo o pasar su cuenta a otro celular sin esperar al administrador. Cinco intentos fallidos bloquean ese número 30 minutos. El Panel pide el PIN cada 12 horas.
+- Listas grandes (cientos de paquetes) abren rápido también en celulares sencillos.
+- El Panel muestra **cuánto se usa** del plan gratis (base y fotos) y cuánto ocupa cada cuenta.
 
 ## Cierre del día
 

@@ -6,9 +6,13 @@ Guía para el repartidor. No hace falta saber de computadoras.
 
 ---
 
-## La app hoy (versión 1.73)
+## La app hoy (versión 1.74)
 
 Resumen de cómo está la app ahora. Más abajo se explica cada parte con la versión en que llegó.
+
+**Cuentas (1.74):** cada mensajero ve solo lo suyo. Si en un celular entra otra cuenta, la app aparta la lista de la anterior.
+
+**Cierres (1.74):** se guardan 15 días. **Bajá el PDF de cada fecha y guardalo o imprimilo: es tu respaldo.** En *Cierres* sale en rojo *⚠ Se borra en N días* cuando faltan 3 días o menos.
 
 **Barra de abajo:** **Paquetes**, **Cierres**, **Mensajes** y **Ruta**. **Soporte** está arriba, en el encabezado. En la computadora, si no ves los cambios, apretá **Ctrl + Shift + R**.
 
@@ -33,7 +37,7 @@ Resumen de cómo está la app ahora. Más abajo se explica cada parte con la ver
 - Empieza directo en *Reporte de entregas* (1.73.2: se quitó el aviso "Próximamente").
 - Hay un reporte por cada grupo de *Entregas del …*, según el día en que se recibieron los paquetes. También salen las listas ya vaciadas.
 - Cada grupo tiene su botón **📄 PDF** horizontal.
-- **Guías por fecha de recibido** (1.71.0 a 1.72.3): un PDF por fecha de recibido (*Guías · Paquetes recibidos 31/10/2026*) con Nombre, Tel., Guía y Dirección, separado por día de entrega.
+- **Guías por fecha de recibido** (1.71.0 a 1.72.3): un PDF por fecha de recibido (*Guías · Paquetes recibidos 31/10/2026*) con Nombre, Tel., Guía, Dirección y Hora entrega, separado por día de entrega.
 - El **encabezado** trae: fecha, mensajero, recibidos el, km, horas, días de entrega, promedio por entrega, y recibidos, entregados y devueltos.
 - Las **filas** van por fecha y hora de entrega, con estas columnas: número, guía / pedido, teléfono, nombre, estado, fecha recibido, fecha y hora de entrega, y tiempo y km desde la entrega anterior.
 
@@ -86,9 +90,12 @@ Reglas de la cuenta:
 - **Tu nombre** en los mensajes sale de la cuenta, pero lo podés cambiar en *Mensajes* (por ejemplo, solo el primer nombre). Si borrás el campo, vuelve el nombre de la cuenta.
 - **Sin internet** la app sigue abriendo hasta 3 días con la última revisión.
 - **Mensualidad:** al final de la app dice *al día hasta el …*. Si vence, tenés unos días de gracia (lo dice en rojo) y después la app se bloquea hasta que pagués.
-- **¿Olvidaste el PIN?** Pedile uno nuevo al administrador por WhatsApp.
+- **Código de recuperación (1.74):** al crear la cuenta la app te muestra un código de 12 letras (ej. *ABCD-EFGH-JKMN*). **Tomale captura.** Si ya tenías cuenta, sacalo al final de la app en **Código de recuperación** (el anterior deja de servir). No se lo des a nadie.
+- **¿Olvidaste el PIN?** En la pantalla de entrar tocá **Usá tu código de recuperación**: número, código y un PIN nuevo. Entrás de una vez y te damos un código nuevo (cada código sirve una vez). Si escribís mal el código 5 veces, ese número queda bloqueado 30 minutos. Sin código, pedile un PIN nuevo al administrador por WhatsApp.
+- **¿Cambiaste de celular?** En el celular nuevo entrá con tu número y PIN. Si sale *Esta cuenta está en otro teléfono*, tocá **Usar código de recuperación** y la cuenta pasa al nuevo (el viejo se cierra). Sin código, el administrador lo aprueba (normalmente el mismo día) y la pantalla se abre sola.
 - **¿Necesitás ayuda?** En la pantalla de entrar está el enlace *Escribinos por WhatsApp* (soporte: 6270 0666).
 - **Salir:** al final de la app, **Salir**. Tu lista de paquetes se queda en el celular.
+- **Un celular para dos cuentas (1.74):** si en este celular entra otra cuenta, la app guarda aparte tu lista y abre la de la otra persona, vacía o con lo suyo. Nunca ves los paquetes de otro mensajero ni él los tuyos. Cuando volvés a entrar con tu número, aparece tu lista como la dejaste (también está en la nube).
 
 ---
 
@@ -305,6 +312,11 @@ El panel está en https://rutafacilcr.github.io/admin.html (o **Panel**, al fina
 | PIN olvidado | **PIN nuevo** genera uno al azar; copiá el mensaje y mandáselo por WhatsApp. |
 | Ver quién atender | Filtro **Por atender** (cuentas sin activar y cambios de teléfono) y **Vencen en 5 días**. |
 | Liberar espacio de fotos | **Fotos de entrega** > **Calcular espacio usado** y **Borrar** las de más de 30 días. |
+| Ver cuánto queda del plan gratis (1.74) | **Uso del plan gratis**: una barra para la base (500 MB) y otra para las fotos (1 GB), y una tabla con lo que ocupa cada cuenta. Si una barra se pone roja (80 %), bajá los días de fotos. |
+| Decidir qué fotos van a la nube (1.74) | **Fotos de entrega** > **Fotos en la nube**: *Ninguna* (de fábrica: quedan 30 días en el celular), *1 foto chica + firma* (alcanza gratis para unos 20 mensajeros) o *Las 3 fotos + firma*; y **Días en la nube** (21; 0 = no se borran). **Guardar fotos.** Cada app lo toma en 15 minutos y borra sola sus fotos vencidas una vez al día. |
+| Cuánto tiempo se guardan los cierres (1.74) | **Uso del plan gratis** > **Guardar cierres … días** (15 de fábrica; 0 = siempre). Cada mensajero borra los suyos vencidos al tocar Vaciar lista. **El respaldo son los PDF:** en *Cierres* la app avisa cuántos días se guardan y marca en rojo las fechas que se borran en 3 días o menos. |
+| PIN en el Panel (1.74) | El Panel pide tu PIN de nuevo si pasaron 12 horas. La app del celular no. |
+| Código de recuperación (1.74) | En **Movimientos recientes** salen *Sacó código*, *Código incorrecto* y *Usó su código*. Si ves muchos *incorrecto* de alguien, avisale: alguien está probando su número. |
 
 **Avisos:** cuando alguien crea cuenta (o pide usar otro teléfono) te llega un WhatsApp y un correo con su nombre y número. Se configuran una vez en **Ajustes > Avisos cuando alguien crea cuenta** (pasos en el manual técnico) y con **Mandarme una prueba** revisás que lleguen.
 
@@ -707,4 +719,4 @@ En la tarjeta de *Paquetes*, la línea del teléfono dice por ejemplo: **Tel. 62
 
 ### Reporte de guías por fecha de recibido (1.71.0, 1.72.3)
 
-En **Cierres**, debajo de *Reporte de entregas*, está **Guías por fecha de recibido**. Hay una línea por cada fecha en que recibiste paquetes (por ejemplo **🧾 Guías · Paquetes recibidos 31/10/2026 · 25 entregado(s)**). Tocá **📄 PDF** para bajar un PDF horizontal con **Nombre, Tel., Guía y Dirección** de los paquetes de esa fecha que ya entregaste. Adentro van agrupados por día de entrega (**Entregados 02/11/2026**, **Entregados 03/11/2026**), en el orden en que se entregaron. Arriba dice el mensajero, la fecha de recibido y cuántos paquetes son. La fecha de recibido es la de **Pertenece a** en cada paquete (se cambia con ✏️ Editar).
+En **Cierres**, debajo de *Reporte de entregas*, está **Guías por fecha de recibido**. Hay una línea por cada fecha en que recibiste paquetes (por ejemplo **🧾 Guías · Paquetes recibidos 31/10/2026 · 25 entregado(s)**). Tocá **📄 PDF** para bajar un PDF horizontal con **Nombre, Tel., Guía, Dirección y Hora entrega** (1.73.3) de los paquetes de esa fecha que ya entregaste. Adentro van agrupados por día de entrega (**Entregados 02/11/2026**, **Entregados 03/11/2026**), en el orden en que se entregaron. Arriba dice el mensajero, la fecha de recibido y cuántos paquetes son. La fecha de recibido es la de **Pertenece a** en cada paquete (se cambia con ✏️ Editar).
