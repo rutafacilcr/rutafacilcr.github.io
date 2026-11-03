@@ -462,7 +462,7 @@ Cuando tocás **✓ Entregado** en *Ruta*, el número del paquete queda tachado 
 
 ### Vaciar lista (1.67.0)
 
-En *Paquetes*, el cuarto botón **🧹 Vaciar lista** cierra la ruta: pide confirmar, te dice cuántos paquetes se guardan y te avisa si todavía hay sin entregar ni devolver. Al aceptar guarda todo en la base y deja la app limpia.
+En *Paquetes*, el primer botón **🧹 Vaciar lista** (orden desde la 1.67.1: Vaciar lista, Agregar a mano, Importar, Escanear) cierra la ruta: pide confirmar, te dice cuántos paquetes se guardan y te avisa si todavía hay sin entregar ni devolver. Al aceptar guarda todo en la base y deja la app limpia.
 
 ### Paradas en el mismo lugar (1.66.4)
 

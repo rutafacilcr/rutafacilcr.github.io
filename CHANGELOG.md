@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.67.1 · Orden de botones:** en *Paquetes* quedan **Vaciar lista**, **Agregar a mano**, **Importar** y **Escanear**.
 - **1.67.0 · Vaciar lista como botón:** en *Paquetes* hay un cuarto botón de sistema, **🧹 Vaciar lista** (en rojo), junto a Agregar a mano, Importar y Escanear. Pide confirmar, dice cuántos paquetes se guardan y avisa si quedan sin entregar ni devolver; después hace el mismo cierre de siempre. Se quitó el botón pequeño de la línea *Lista del día*.
 - **1.66.4 · Pines juntos en abanico:** si varias paradas están en el mismo lugar (a menos de ~15 m), cada pin se corre un poco hacia la derecha para que se vea su borde. Las pendientes quedan primero y las entregadas o devueltas al final.
 - **1.66.3 · Pines pendientes encima:** en el mapa de *Ruta*, cuando dos paradas están en el mismo lugar, el pin de la pendiente queda encima del gris de la entregada (antes la entregada podía tapar a la pendiente y parecía desactivada). Orden: seleccionada, pendientes, Hold, cerradas.
