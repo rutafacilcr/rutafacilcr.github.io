@@ -112,7 +112,7 @@ input:not([type=checkbox]):not([type=radio]),textarea,select{font-size:16px!impo
     <label class="toggle"><input type="checkbox" id="a-exigir"> Exigir cuenta activa</label>
     <p class="small muted">Apagado: la app pide entrar, pero el servidor todavía responde a la versión vieja sin cuenta. Encendelo cuando todos tengan la versión nueva: desde ahí, sin cuenta al día y en su teléfono aprobado no se leen respuestas de clientes ni se suben evidencias.</p>
     <div class="grid">
-      <label>Número SINPE Móvil<input id="a-sinpe" inputmode="numeric" placeholder="6270 0666"></label>
+      <label>Números SINPE Móvil (1 o 2)<input id="a-sinpe" inputmode="numeric" placeholder="6270 0666, 8820 2220"></label>
       <label>Precio por mes (₡)<input id="a-precio" type="number" min="0" step="500"></label>
       <label>Días de gracia<input id="a-gracia" type="number" min="0" max="30"></label>
     </div>
@@ -172,7 +172,7 @@ input:not([type=checkbox]):not([type=radio]),textarea,select{font-size:16px!impo
   <div class="panel" id="eventos"></div>
 </section>
 
-<footer class="appver">RutaFácil CR · panel · versión <span id="appVer">1.76.0</span></footer>
+<footer class="appver">RutaFácil CR · panel · versión <span id="appVer">1.76.1</span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="toast" id="toast" hidden></div>
@@ -238,7 +238,7 @@ async function cargar(){
   try{
     const [cu,ev,aj]=await Promise.all([RF_AUTH.rpc('rf_admin_cuentas'),RF_AUTH.rpc('rf_admin_eventos'),RF_AUTH.rpc('rf_admin_ajustes',{p_exigir:null,p_sinpe:null,p_precio:null,p_gracia:null})]);
     CU=cu||[];AJ=aj||AJ;
-    $('#a-exigir').checked=!!AJ.exigir_cuenta;$('#a-sinpe').value=AJ.sinpe||'';$('#a-precio').value=AJ.precio;$('#a-gracia').value=AJ.dias_gracia;
+    $('#a-exigir').checked=!!AJ.exigir_cuenta;$('#a-sinpe').value=(AJ.sinpe||'').split(',').filter(Boolean).map(tel).join(', ');$('#a-precio').value=AJ.precio;$('#a-gracia').value=AJ.dias_gracia;
     $('#eventos').innerHTML=(ev||[]).length?ev.map(e=>`<div class="ev"><span>${esc(EVENTO[e.tipo]||e.tipo)} · <b>${esc(e.nombre||'')}</b>${e.detalle&&e.detalle.monto!=null?' · '+colones(e.detalle.monto):''}${e.detalle&&e.detalle.estado?' · '+esc(e.detalle.estado):''}</span><span class="muted small">${fechaHora(e.creado_en)}</span></div>`).join(''):'<p class="muted small">Sin movimientos.</p>';
     pintar();
   }catch(e){toast('No se pudo cargar: '+e.message)}
@@ -288,7 +288,7 @@ $('#filtros').addEventListener('click',e=>{const b=e.target.closest('button');if
 $('#buscar').addEventListener('input',pintar);
 $('#recargar').onclick=cargar;
 $('#a-guardar').onclick=async()=>{
-  try{AJ=await RF_AUTH.rpc('rf_admin_ajustes',{p_exigir:$('#a-exigir').checked,p_sinpe:$('#a-sinpe').value.replace(/\D/g,''),p_precio:parseInt($('#a-precio').value,10)||0,p_gracia:parseInt($('#a-gracia').value,10)||0});toast('Ajustes guardados');pintar()}
+  try{AJ=await RF_AUTH.rpc('rf_admin_ajustes',{p_exigir:$('#a-exigir').checked,p_sinpe:($('#a-sinpe').value.replace(/[^\d]+/g,'').match(/\d{8}/g)||[]).slice(0,2).join(','),p_precio:parseInt($('#a-precio').value,10)||0,p_gracia:parseInt($('#a-gracia').value,10)||0});toast('Ajustes guardados');pintar()}
   catch(e){toast('No se pudo: '+e.message)}
 };
 

@@ -89,7 +89,7 @@ Cada repartidor entra con su número de teléfono + un PIN de 6 números. Por de
 3. Publicar la versión 1.7.0 (merge a `main`).
 4. Abrir la app, **Crear cuenta** con el número del administrador.
 5. **SQL Editor**: `update public.rf_perfiles set rol = 'admin', estado = 'activo' where telefono = '62700666';` (el número de 8 dígitos con que se creó la cuenta).
-6. Abrir `https://rutafacilcr.github.io/admin.html` > **Ajustes**: número SINPE, precio, días de gracia > **Guardar ajustes**.
+6. Abrir `https://rutafacilcr.github.io/admin.html` > **Ajustes**: número SINPE (uno o dos, separados por coma; 1.76.1), precio, días de gracia > **Guardar ajustes**.
 7. Cuando todos los celulares tengan la 1.7.0 y su cuenta: encender **Exigir cuenta activa**.
 
 8. Avisos de cuentas nuevas (versión 1.10.0, gratis). Las llaves se guardan desde el Panel en la tabla `rf_avisos` (nunca en el repositorio ni de vuelta al navegador). Usa la extensión **pg_net** de Supabase, que `supabase.sql` activa sola.

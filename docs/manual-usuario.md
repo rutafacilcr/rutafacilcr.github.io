@@ -83,7 +83,7 @@ El formulario que llena el cliente también tiene el enlace a *Privacidad* al fi
 La app pide entrar con **tu número de teléfono** y un **PIN de 6 números**.
 
 1. **Crear cuenta** (solo la primera vez): tocá *¿No tenés cuenta? Crear cuenta*, escribí tu nombre (así te ven los clientes en los mensajes), tu número de WhatsApp y elegí un PIN (los campos salen en blanco). No uses PIN fáciles como 111111 o 123456.
-2. **Activación:** la cuenta queda *esperando activación*. Pagá la mensualidad por **SINPE Móvil** al número que muestra la pantalla, con el detalle **RF + tu número** (ej. *RF 88887777*), y avisale al administrador por WhatsApp. Cuando la active, tocá **Revisar de nuevo**.
+2. **Activación:** la cuenta queda *esperando activación*. Pagá la mensualidad por **SINPE Móvil** al número que muestra la pantalla (si salen dos, a cualquiera de los dos), con el detalle **RF + tu número** (ej. *RF 88887777*), y avisale al administrador por WhatsApp. Cuando la active, tocá **Revisar de nuevo**.
 3. **Los días siguientes** la app abre sola. Si te pide entrar, poné tu número y PIN.
 
 Reglas de la cuenta:
@@ -328,7 +328,7 @@ El panel está en https://rutafacilcr.github.io/admin.html (o **Panel**, al fina
 
 **Avisarle al repartidor:** al tocar **Registrar pago**, **Dar 14 días de prueba** o **Reactivar**, abajo sale **Avisarle por WhatsApp** con el mensaje ya escrito (*tu cuenta ya está activa hasta el…*). Tocalo y en WhatsApp solo tocás Enviar. Aunque no le escribás, si la persona tiene la app abierta en la pantalla de espera, se le abre sola en menos de un minuto.
 
-En **Ajustes** van el número SINPE que ven los repartidores, el precio, los días de gracia y el interruptor **Exigir cuenta activa** (ver manual técnico).
+En **Ajustes** van los números SINPE que ven los repartidores (uno o dos, separados por coma: *6270 0666, 8820 2220*; desde la 1.76.1), el precio, los días de gracia y el interruptor **Exigir cuenta activa** (ver manual técnico).
 
 
 
