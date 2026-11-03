@@ -30,6 +30,7 @@ Resumen de cómo está la app ahora. Más abajo se explica cada parte con la ver
 - **✓ Entregado** guarda la fecha y la hora reales del toque.
 
 **Cierres**
+- Empieza directo en *Reporte de entregas* (1.73.2: se quitó el aviso "Próximamente").
 - Hay un reporte por cada grupo de *Entregas del …*, según el día en que se recibieron los paquetes. También salen las listas ya vaciadas.
 - Cada grupo tiene su botón **📄 PDF** horizontal.
 - **Guías por fecha de recibido** (1.71.0 a 1.72.3): un PDF por fecha de recibido (*Guías · Paquetes recibidos 31/10/2026*) con Nombre, Tel., Guía y Dirección, separado por día de entrega.

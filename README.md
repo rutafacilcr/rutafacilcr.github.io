@@ -24,7 +24,7 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
   - 📋 Lista en orden. Las paradas entregadas quedan en gris (sin tachar) en el mapa y la lista.
   - 🚦 Tráfico en vivo para la próxima parada (TomTom, plan gratis con clave propia).
   - En cada parada: Hold, ⛔ Devolver y ✓ Entregado. ✓ Entregado guarda la fecha y la hora reales.
-- **Cierres:**
+- **Cierres** (solo reportes que ya funcionan; sin avisos de "Próximamente"):
   - Un reporte PDF horizontal por cada grupo de *Entregas del …* (el día en que se recibieron los paquetes), también de listas ya vaciadas.
   - Trae fecha, mensajero, km y horas por tramos, promedio por entrega, y recibidos, entregados y devueltos.
   - Las filas van ordenadas por fecha y hora de entrega.
