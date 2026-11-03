@@ -317,6 +317,10 @@ Recomendado al pasar a varios mensajeros: en el Panel encender **Exigir cuenta a
 
 Si más adelante hace falta guardar las 3 fotos por meses, la única opción es pagar (Supabase Pro, 25 USD al mes, 100 GB).
 
+### Contraste (1.76.2)
+
+Solo CSS en `index.html` (bloque `/* 1.76.2 · Contraste */` al final del `<style>`); no toca Supabase, `auth.js` ni la lógica. Se revisó con axe-core (el mismo motor de la auditoría de accesibilidad de Lighthouse), regla `color-contrast`, en tema claro y oscuro a 390 px. Quedan avisos conocidos que son decisión de marca: texto blanco sobre el naranja `#f26b1d` de los botones principales (3,0:1), el verde de WhatsApp y el verde de «● Ubicación lista» en claro (4,3:1).
+
 ### Límites del plan gratis
 
 500 MB de base de datos y pausa automática del proyecto tras ~1 semana sin uso. Si se pausa, el formulario deja de guardar: entrar al panel y tocar **Restore**. Cada respuesta ocupa menos de 1 KB.
