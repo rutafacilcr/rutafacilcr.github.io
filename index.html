@@ -357,7 +357,7 @@ details summary{cursor:pointer;font-weight:600}
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.67.3</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.67.4</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -1480,7 +1480,7 @@ async function renderEnt(){entSyncPk();jorRender();
   const dia=d=>'Ruta '+new Date(Date.now()+d*864e5).toLocaleDateString('en-CA'),hoy=dia(0),man=dia(1);const E=S.ent,LI=$('#entList');
   if(!E||!E.stops||!E.stops.length){$('#entMap').hidden=true;$('#entTools').hidden=true;$('#entBus').hidden=true;$('#entInfo').textContent=`Cargá el archivo de la ruta ("${hoy}.xlsx" o "${man}.xlsx")`;LI.innerHTML='<div class="empty">Tocá <b>📂 Cargar ruta</b> y elegí el Excel de la ruta del día. Arriba sale el mapa con las paradas en orden y abajo la lista: tocá una parada para verla en el mapa e ir con Waze o Google Maps.</div>';return}
   $('#entTools').hidden=false;$('#entBus').hidden=false;const ok=E.stops.filter(x=>entDone(x)&&!entDev(x)).length,conC=E.stops.filter(s=>s.c);
-  $('#entInfo').innerHTML=`<b>${esc(E.nombre)}</b> · ${ok} de ${E.stops.length} entregadas${![hoy,man].includes(E.nombre)?' · <span style="color:var(--bad)">no es la de hoy ni la de mañana</span>':''}`;
+  $('#entInfo').innerHTML=`<b>${esc(E.nombre)}</b> · ${ok} de ${E.stops.length} entregadas`;
   // Pendientes arriba (en orden de ruta; las sin ubicación después) y las entregadas totalmente de últimas
   const erk=s=>entDone(s)?2:s.c?(s.hold?0.5:0):1;
   LI.innerHTML=E.stops.map((s,i)=>[s,i]).sort((a,b)=>erk(a[0])-erk(b[0])||a[1]-b[1]).map(([s,i])=>{const d=entDone(s),p=entPkg(s),ubx=s.ub!==undefined?s.ub:(p&&p.ubic&&!parseCoord(p.ubic)?String(p.ubic):undefined),nav=s.c?`https://www.google.com/maps/dir/?api=1&destination=${s.c[0]},${s.c[1]}&travelmode=driving`:'',wz=s.waze||(s.c?`https://waze.com/ul?ll=${s.c[0]},${s.c[1]}&navigate=yes`:''),wa=phoneWA(p&&entFuerte(s,p)?p.tel:s.tel);
