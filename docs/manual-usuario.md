@@ -572,4 +572,4 @@ En **Ruta**, a la par de **📋 Lista**, hay tres botones: **🏍 moto**, **🚙
 
 ### Arriba de Ruta (1.67.6)
 
-En la primera línea de *Ruta* están **📂 Cargar ruta**, el nombre de la ruta, **📍 Ordenar desde aquí** y, a la derecha, **📍 Estás aquí (±m)** (tu GPS). Debajo va **▶ Iniciar entregas** y después **🎯 Elegir en el mapa** (para ordenar desde otro punto, útil en la computadora o si el GPS falla), **📋 Lista** y el vehículo.
+En la primera línea de *Ruta* están **📂 Cargar ruta**, el nombre de la ruta, **📍 Ordenar desde aquí** y, a la derecha, **📍 Estás aquí (±m)** (tu GPS). Debajo va **▶ Iniciar entregas**. En la tercera línea, a la izquierda, el resumen de la ruta (⏱ tiempo, km, inicio y fin; 1.67.7) y a la derecha **🎯 Elegir en el mapa** (para ordenar desde otro punto, útil en la computadora o si el GPS falla), **📋 Lista** y el vehículo.
