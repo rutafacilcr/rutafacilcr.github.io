@@ -662,3 +662,8 @@ El tiempo a la **próxima parada** puede tomar en cuenta el tráfico de ese mome
 **Cómo se ve:** la próxima parada muestra **🚦 ~10 min (+5 tráfico)**: 10 minutos con el tráfico de ahora, 5 de ellos por el tráfico. Se actualiza cada 2 minutos o cuando avanzás 300 m. Las demás paradas siguen con 🚗 (estimado sin tráfico). El WhatsApp de "en camino" de esa parada manda ese tiempo.
 
 Tocá el botón otra vez para apagarlo o encenderlo. Si dice **"revisar clave"**, tocá y pegá la clave de nuevo. El plan gratis permite 2.500 consultas al día y la app usa unas 300 en un día largo.
+
+
+### Guía en la tarjeta (1.70.2)
+
+En *Paquetes*, debajo del nombre, la tarjeta muestra el teléfono y la guía con su etiqueta: **Guía: 29293393**.
