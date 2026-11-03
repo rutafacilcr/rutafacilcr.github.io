@@ -70,7 +70,7 @@ header.top{border-bottom:3px solid var(--accent)}
 .rfdlg-btns button:focus{outline:none}.rfdlg-btns button:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(120,120,128,.25)}
 .devtag.on{background:#c0392b;color:#fff}.btn.devno{border-color:#c0392b;color:#c0392b;font-weight:700;background:var(--surface)}
 .pkg.devol{background:#eceef0}.pkg.devol>*:not(.devkeep){opacity:.45;filter:grayscale(1);pointer-events:none}
-.devkeep{grid-column:1/-1;display:flex;gap:8px;align-items:center;justify-content:space-between;border-top:1px dashed var(--line);padding-top:8px}
+/* 1.70.6: botones de regresar en naranja (Regresar a Ruta, Quitar devolver y ← Regresar) para que se note que se tocan */.devkeep .btn.devno,.btn.subback{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700;opacity:1;filter:none}.devkeep{grid-column:1/-1;display:flex;gap:8px;align-items:center;justify-content:space-between;border-top:1px dashed var(--line);padding-top:8px}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .pkg.devol,:root:not([data-theme="light"]) .estop.devol{background:#26282c}}:root[data-theme="dark"] .pkg.devol,:root[data-theme="dark"] .estop.devol{background:#26282c}
 /* 1.64.0: Escanear e Importar como botones pequeños; al tocarlos se abre solo ese panel con ← Regresar */
 .subbtns{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:10px 0}.sysbtn.sysdanger{color:#c0392b}
@@ -375,7 +375,7 @@ details summary{cursor:pointer;font-weight:600}
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.70.5</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.70.6</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">

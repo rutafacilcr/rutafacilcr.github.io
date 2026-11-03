@@ -128,6 +128,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 ## 3c-quindecies. Tarjeta desactivada por Devolver (1.66.0)
 
+- 1.70.6: `.devkeep .btn.devno` y `.btn.subback` con `--accent` (naranja) y letra `--accent-ink` en negrita.
 - 1.70.5: ícono de código de barras en SVG en línea (`svg.bcico`, `currentColor`, 28 px en `.sysbtn` y 16 px en la tarjeta) en lugar del emoji 📷 (no existe emoji de código de barras).
 - 1.70.4: la etiqueta es `Tel. …`.
 - 1.70.3: `.meta` muestra `Teléfono: …` (o "sin teléfono").

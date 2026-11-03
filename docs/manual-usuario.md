@@ -672,3 +672,8 @@ En *Paquetes*, debajo del nombre, la tarjeta muestra el teléfono y la guía con
 ### Ícono de Escanear (1.70.5)
 
 **Escanear** y **Escáner** se reconocen por el ícono de **código de barras** (antes era una cámara).
+
+
+### Botones de regresar en naranja (1.70.6)
+
+**↪ Regresar a Ruta**, **↩ Quitar devolver** y **← Regresar** van en naranja: aunque la tarjeta esté gris, ese botón sí se puede tocar.
