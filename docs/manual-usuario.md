@@ -464,6 +464,10 @@ Cuando tocás **✓ Entregado** en *Ruta*, el número del paquete queda tachado 
 
 Si arriba sale un **aviso rojo "Error en la app…"**, tomale captura y mandala a soporte; tocalo para cerrarlo. En computadora, para cargar la última versión apretá **Ctrl + Shift + R** (Windows) o **Cmd + Shift + R** (Mac).
 
+### Ruta por calles (1.68.0)
+
+La línea azul del mapa en *Ruta* va por las calles, desde donde estás y por las paradas pendientes en orden. Tarda unos segundos en aparecer; mientras tanto (o sin internet) se ve en línea recta.
+
 ### Vaciar lista (1.67.0)
 
 En *Paquetes*, el primer botón **🧹 Vaciar lista** (orden desde la 1.67.1: Vaciar lista, Agregar a mano, Importar, Escanear) cierra la ruta: pide confirmar, te dice cuántos paquetes se guardan y te avisa si todavía hay sin entregar ni devolver. Al aceptar guarda todo en la base y deja la app limpia.

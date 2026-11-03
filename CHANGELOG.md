@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.68.0 · Ruta por calles en el mapa:** la línea azul de *Ruta* sigue las calles reales (trazo de OSRM, el mismo servicio gratis que ya calcula tiempos y km). Mientras llega, o si no hay internet o el servicio falla, se dibuja en línea recta como antes.
 - **1.67.8 · Vehículo junto al resumen:** en *Ruta*, los botones 🏍 🚙 🚐 pasan a la derecha del resumen de tiempo y km, más pequeños; **Elegir en el mapa** y **Lista** quedan debajo, a la derecha.
 - **1.67.7 · Tiempo de la ruta a la izquierda:** el resumen (⏱ tiempo, km, inicio y fin) queda a la izquierda, en la misma línea que 🎯 Elegir en el mapa, 📋 Lista y el vehículo, que van a la derecha.
 - **1.67.6 · Ruta acomodada:** **📍 Ordenar desde aquí** y **Estás aquí** suben a la primera línea, junto a **Cargar ruta**; abajo de *Iniciar entregas* quedan 🎯 Elegir en el mapa, 📋 Lista y el vehículo.

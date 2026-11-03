@@ -115,6 +115,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 ## 3c-quindecies. Tarjeta desactivada por Devolver (1.66.0)
 
+- 1.68.0: `osrmCadena` pide `overview=full&geometries=geojson` y guarda `RTOT.geo` ([lat,lng]); `entLinea()` pone en `EMAP.linea` el trazo si `RTOT.k` coincide con las paradas pendientes (si no, recta). Se llama al dibujar el mapa y cuando llega la respuesta.
 - 1.67.8: `#vehSel` va dentro de `#entTools` antes de `#entPick`, con `margin-left:auto` y botones de 32 px; queda a la derecha de `#entTot`.
 - 1.67.5: al inicio del `<script>` principal, `window.RF_TAB(t)` y un listener de `click` en captura sobre `nav.tabs [role=tab]` cambian la pestaña sin depender del resto; un listener de `error` muestra una vez un aviso rojo con mensaje, línea y versión.
 - 1.67.0: `#vaciarTile` (`.sysbtn.sysdanger`, 4.ª columna de `.subbtns`) hace `confirm` con el total y los pendientes y llama `cerrarDia($("#clearAll"))`; `#clearAll` queda oculto (lo usa `cerrarDia` para el texto del botón).
