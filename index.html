@@ -379,7 +379,7 @@ details summary{cursor:pointer;font-weight:600}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.72.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.72.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -990,7 +990,7 @@ function guiPdf(k){const G=guiGrupos().find(x=>x.k===k);if(!G){toast('No hay ent
   const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'letter'}),tit=`Guías ${repDiaTxt(k)}`;
   doc.setFontSize(15);doc.text(`RutaFácil CR · ${tit}`,14,15);doc.setFontSize(10);
   doc.text(`Mensajero: ${S.yo||'—'}   ·   Fecha de entrega: ${repDiaTxt(k)}   ·   Paquetes entregados: ${G.pk.length}`,14,22);
-  doc.autoTable({startY:27,head:[['Nombre','Tel.','Guía','Nota']],body:G.pk.map(p=>[tidyName(p.nombre||''),tl(p.tel),p.guia||'',p.nota||'']),
+  doc.autoTable({startY:27,head:[['Nombre','Tel.','Guía','Dirección']],body:G.pk.map(p=>[tidyName(p.nombre||''),tl(p.tel),p.guia||'',p.dir||'']),
     styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},columnStyles:{0:{cellWidth:65},1:{cellWidth:30},2:{cellWidth:55}}});
   const name=`guias-${k}.pdf`;
   if(IOS&&navigator.canShare){const file=new File([doc.output('blob')],name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Reporte guardado')).catch(()=>{});return}}

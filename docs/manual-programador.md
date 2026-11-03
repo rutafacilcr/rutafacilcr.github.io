@@ -128,7 +128,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 ## 3c-quindecies. Tarjeta desactivada por Devolver (1.66.0)
 
-- 1.71.0: reporte de guías. `guiGrupos()` agrupa `repTodos()` entregados por `repDia(repT(p))` (más nuevo primero, filas por hora de entrega); `guiLista()` pinta `#guiLista` (`.replin` con `data-gui`); `guiPdf(k)` arma el PDF horizontal (jsPDF + autotable) con Nombre, Tel., Guía y Nota, archivo `guias-AAAA-MM-DD.pdf`. Se llama al abrir *Cierres* y otra vez cuando llegan los cierres guardados.
+- 1.71.0: reporte de guías. `guiGrupos()` agrupa `repTodos()` entregados por `repDia(repT(p))` (más nuevo primero, filas por hora de entrega); `guiLista()` pinta `#guiLista` (`.replin` con `data-gui`); `guiPdf(k)` arma el PDF horizontal (jsPDF + autotable) con Nombre, Tel., Guía y Dirección (`p.dir`; era Nota hasta 1.72.1), archivo `guias-AAAA-MM-DD.pdf`. Se llama al abrir *Cierres* y otra vez cuando llegan los cierres guardados.
 - 1.70.10: `#entPick`, `#entLista` y `#ttBtn` van en `.entbtns` (fila completa, flex `1 1 auto`, 12,5 px, sin salto). "En la ruta" con 🏍️.
 - 1.70.9: `.btn.subback` con `margin-left:auto` y `align-self:flex-end` (a la derecha); `.devkeep .btn.devno` con `margin-left:auto`; `.estop.devol .acts3` con `space-between` (etiqueta a la izquierda, botón a la derecha).
 - 1.70.8: el aviso "🗺️ En la ruta" / "No está en la ruta" pasa de `.pkruta` a `.meta` (después de `.pin`); `.pkruta` deja solo los botones `aruta` y Pegar respuesta. `.estop.ok.devol{opacity:1}` para que `.estop.ok` no destiña `.acts3`.
