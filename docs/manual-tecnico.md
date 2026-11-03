@@ -135,7 +135,7 @@ update rf_ajustes set exigir_cuenta = false where id = 1;
 ### Prueba de entrega (Storage)
 
 - `supabase.sql` crea la tabla `entregas`, la función `registrar_entrega` y el bucket **privado** `evidencias` (solo JPEG, máx. 2 MB por foto). Desde la firma de entrega hay columna `recibe` y `registrar_entrega` acepta `p_recibe`: **volver a correr `supabase.sql`** (si no, la app reintenta sin el nombre y la firma igual se guarda como foto).
-- La app solo puede **subir** fotos (política `rutafacil subir evidencias`; con *Exigir cuenta activa*, solo desde una cuenta al día). El administrador puede listarlas y borrarlas (políticas `rutafacil admin ve/borra evidencias`); verlas o descargarlas se hace desde el panel de Supabase: **Storage > evidencias**. Las fotos se guardan como `AAAA-MM-DD/<guia>_<id>_<n>.jpg`.
+- La app solo puede **subir** fotos (política `rutafacil subir evidencias`; desde la 1.74.0 siempre con sesión, y con *Exigir cuenta activa* solo desde una cuenta al día). Cada cuenta ve y borra solo sus propias fotos vencidas (1.74.0, ver *20 mensajeros*). El administrador puede listarlas y borrarlas (políticas `rutafacil admin ve/borra evidencias`); verlas o descargarlas se hace desde el panel de Supabase: **Storage > evidencias**. Las fotos se guardan como `AAAA-MM-DD/<guia>_<id>_<n>.jpg`.
 - **Espacio:** cada foto pesa ~100–150 KB (1024 px, JPEG 65 %), unos 0,3–0,45 MB por entrega con 3 fotos.
   - Supabase gratis: **1 GB de Storage** → unas **2.200–3.300 entregas**. Con 30 entregas por día, unos 2,5 a 3,5 meses. La tabla `entregas` ocupa menos de 1 KB por entrega: los 500 MB de base de datos no son problema.
   - Celular: las fotos respaldadas se borran del celular a los **7 días** (`LOCAL_DIAS`). Queda el registro (fecha, GPS, cantidad de fotos) y las fotos siguen en Supabase.
@@ -259,6 +259,43 @@ Solo cambia `index.html`; no hay que tocar Supabase ni `config.js`. Si `config.j
 ### Firma (1.13.0)
 
 La firma se sube al bucket `evidencias` como `AAAA-MM-DD/<guia>_<id>_firma.jpg` (unos 5–20 KB) y va al final de `fotos` en la tabla `entregas`. El nombre de quien recibe se guarda en `entregas.recibe` (con "(no firmó)" si no quiso firmar). **Hay que volver a correr `supabase.sql`** para que exista `p_recibe`; mientras tanto la app reintenta sin ese dato y la evidencia igual se respalda.
+
+### 20 mensajeros (1.74.0)
+
+**Después de publicar, volver a correr `supabase.sql` completo** (se puede correr de nuevo sin perder datos). Mientras no se corra, la app nueva sigue funcionando con las funciones viejas (reintenta sin los parámetros nuevos), pero sin el aislamiento nuevo ni la limpieza de fotos.
+
+Aislamiento por cuenta (nada compartido entre mensajeros):
+
+| Dato | Dónde | Cómo se separa |
+|---|---|---|
+| Lista, ruta, plantillas, clave de TomTom | `rf_listas` | una fila por `owner_id`; solo `rf_lista_leer/guardar` con `auth.uid()` |
+| Cierres | `rf_cierres` | `owner_id`; `rf_cierre_*` filtran por `auth.uid()` |
+| Respuestas del formulario | `respuestas` | **nuevo:** `leer_respuestas` amarra cada respuesta a la primera cuenta que la lee (`owner_id`) y después solo esa cuenta la ve; exige sesión aunque *Exigir cuenta activa* esté apagado |
+| Entregas | `entregas` | `owner_id = auth.uid()`; **nuevo:** `registrar_entrega` exige sesión y no deja que otra cuenta cambie una entrega ajena |
+| Fotos | Storage `evidencias` | **nuevo:** solo cuentas con sesión suben (antes también `anon`); cada cuenta ve y borra **solo** sus fotos (`owner_id`) y solo las vencidas; el administrador ve y borra todas |
+| Datos en el celular | `localStorage` | **nuevo:** la lista lleva `owner` (número de la cuenta). Si entra otra cuenta, se aparta en `rutafacil-cr-v1@<número>` (solo si tenía cambios sin subir) y se abre la de la nueva |
+
+Todas las tablas tienen RLS encendido y **ninguna política** de lectura directa: todo pasa por funciones `security definer` que filtran por `auth.uid()` y llaman `rf_exigir_licencia()`. Para el futuro "admin ve a todos los mensajeros", basta con funciones `rf_admin_*` nuevas que llamen `rf_admin_check()` (como `rf_admin_uso`); no hay que cambiar las tablas.
+
+Funciones y ajustes nuevos: `rf_lista_leer(p_version)` (si la versión no cambió responde `{version, sin_cambios:true}` sin datos), `leer_respuestas(p_tokens, p_desde)` (solo lo cambiado después de `p_desde`), `rf_evidencias_viejas()`, `rf_dias_fotos()`, `rf_admin_fotos(p_modo, p_dias)`, `rf_admin_uso()`, columnas `rf_ajustes.fotos_nube` (`una`/`todas`, de fábrica `una`) y `rf_ajustes.dias_fotos` (21), e índices `respuestas_owner` y `entregas_owner_fecha`. `rf_mi_cuenta` devuelve también `fotos_nube` y `dias_fotos`.
+
+Recomendado al pasar a varios mensajeros: en el Panel encender **Exigir cuenta activa**.
+
+**Cuentas de los planes gratis con 20 mensajeros** (supuesto: 70 entregas por mensajero al día, el peor caso; con 35 todo dura el doble):
+
+| Servicio | Límite gratis | Uso estimado con 20 | ¿Alcanza? |
+|---|---|---|---|
+| Supabase base | 500 MB | listas ~2–4 MB; cierres ~50–100 KB por día y mensajero → ~30–60 MB al mes | Sí, unos 8–15 meses; después borrar cierres viejos |
+| Supabase fotos, 3 fotos (~0,4 MB por entrega) | 1 GB | ~560 MB al día | **No**: se llena en menos de 2 días |
+| Supabase fotos, *1 foto chica* (~50 KB por entrega) | 1 GB | ~70 MB al día | Sí con 14 días en la nube (21 si son ~45 entregas diarias) |
+| Supabase transferencia | 5 GB al mes | antes: la lista entera cada minuto (~100 KB × 600 revisiones × 20 ≈ 36 GB/mes); ahora unos bytes si no cambió | Sí |
+| Supabase usuarios (Auth) | 50.000 activos al mes | 20 | Sí |
+| Supabase pausa | se pausa tras 7 días sin uso | se usa a diario | Sí |
+| TomTom tráfico | 2.500 consultas al día **por clave** | ~300 por mensajero al día | Sí, **si cada mensajero pega su propia clave** (gratis, sin tarjeta). Una sola clave para todos se pasa a la hora del almuerzo |
+| OSRM (rutas sin tráfico) | servidor de demostración, sin cuota fija | 1 consulta cada ~2 min por mensajero | Sí, pero sin garantía; si falla, la app usa la estimación en línea recta |
+| Resend (correo a Victor) | 3.000 al mes, 100 al día | 1 por cuenta nueva o cambio de teléfono | Sí |
+
+Si más adelante hace falta guardar las 3 fotos por meses, la única opción es pagar (Supabase Pro, 25 USD al mes, 100 GB).
 
 ### Límites del plan gratis
 

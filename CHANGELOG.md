@@ -23,6 +23,9 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.1 | — | *Crear cuenta* con los campos en blanco |
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
+## 2026-11-03
+- **1.74.0 · Listo para 20 mensajeros:** los datos de cada cuenta nunca se mezclan (ni en la base ni en un celular compartido), la app gasta mucho menos del plan gratis al revisar la nube y las respuestas, las fotos pueden subirse como "1 foto chica" y se borran solas de la nube a los días que diga el Panel, y el Panel muestra el uso del plan gratis por cuenta. **Hay que volver a correr `supabase.sql`.**
+
 ## 2026-11-02
 - **1.73.3 · Guías con hora:** el PDF de Guías suma la columna **Hora entrega**.
 - **1.73.2 · Cierres sin "Próximamente":** se quitó el panel vacío de arriba; la pestaña empieza directo en *Reporte de entregas*.

@@ -378,7 +378,7 @@ details summary{cursor:pointer;font-weight:600}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.73.3</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.74.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -525,6 +525,16 @@ const tidyName=s=>String(s||'').replace(/(\p{Ll})(\p{Lu}+)/gu,(m,a,b)=>a+b.toLow
 const fixOldName=p=>{if(p&&/[áéíóúüñ]\p{Lu}|^[\s\-–·.]/u.test(p.nombre||''))p.nombre=tidyName(p.nombre)};
 function load(){try{const r=localStorage.getItem(KEY);if(r){S={...S,...JSON.parse(r)};(S.pk||[]).forEach(p=>{fixOldName(p);if(!p.ing)p.ing=Date.now()}); // ing = fecha en que se agregó (los viejos quedan con la fecha de esta actualización)
 return true}}catch(e){}return false}
+// 1.74.0 · Cada cuenta tiene sus propios datos en este aparato: si entra otra cuenta (otro número),
+// lo de la anterior se aparta (solo si tiene cambios sin subir; si no, ya está en la nube y se borra de aquí)
+// y se abre lo de la nueva. Así nunca se mezclan paquetes, rutas, plantillas ni la clave de tráfico.
+const cuentaTel=c=>String(c&&(c.telefono||c.tel)||'').replace(/\D/g,'').slice(-8);
+function cuentaLocal(c){const t=cuentaTel(c);if(!t)return false;
+  if(!S.owner){S.owner=t;saveLocal();return false}
+  if(S.owner===t)return false;
+  try{const viejo=KEY+'@'+S.owner;if(S.dirty)localStorage.setItem(viejo,JSON.stringify(S));else localStorage.removeItem(viejo);
+    const r=localStorage.getItem(KEY+'@'+t);localStorage.setItem(KEY,r||JSON.stringify({owner:t}));if(r)localStorage.removeItem(KEY+'@'+t)}catch(e){}
+  document.documentElement.classList.add('rf-bloq');location.reload();return true}
 function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2200)}
 
 function geohash(h){const B='0123456789bcdefghjkmnpqrstuvwxyz';let la=[-90,90],lo=[-180,180],ev=true;
@@ -1019,9 +1029,14 @@ async function syncResp(manual){
   if(!FORM_ON||!S.pk.length)return;
   const C=RF_CONFIG;$('#syncInfo').textContent='Revisando…';
   try{
-    const r=await fetch(C.supabaseUrl.replace(/\/$/,'')+'/rest/v1/rpc/leer_respuestas',{method:'POST',headers:{'Content-Type':'application/json',...(await RF_AUTH.headers())},body:JSON.stringify({p_tokens:S.pk.map(p=>p.tok)})});
+    // 1.74.0: cada minuto pide solo lo que cambió desde la última respuesta vista (respDesde, de este aparato); al tocar Revisar, todo.
+    const desde=!manual&&!syncResp.vieja&&S.respDesde&&S.respDesdeN===S.pk.length?S.respDesde:null;
+    const RF_H=await RF_AUTH.headers(),pedir=b=>fetch(C.supabaseUrl.replace(/\/$/,'')+'/rest/v1/rpc/leer_respuestas',{method:'POST',headers:{'Content-Type':'application/json',...RF_H},body:JSON.stringify(b)});
+    let r=await pedir(desde?{p_tokens:S.pk.map(p=>p.tok),p_desde:desde}:{p_tokens:S.pk.map(p=>p.tok)});
+    if(!r.ok&&desde&&[300,400,404].includes(r.status)){syncResp.vieja=true;r=await pedir({p_tokens:S.pk.map(p=>p.tok)})} // base sin p_desde todavía
     if(!r.ok)throw new Error(r.status+' '+(await r.text()).slice(0,80));
     const rows=await r.json();let nuevos=0;
+    rows.forEach(row=>{const st=row.updated_at||row.created_at;if(st&&(!S.respDesde||st>S.respDesde))S.respDesde=st});S.respDesdeN=S.pk.length;
     for(const row of rows){const p=S.pk.find(x=>x.tok===row.token);if(!p)continue;
       const stamp=row.updated_at||row.created_at;if(p.respAt===stamp)continue;
       p.respAt=stamp;p.resp=true;p.horario=row.horario||'';p.senas=row.senas||'';p.recibe=row.recibe||'';
@@ -1141,8 +1156,10 @@ async function uploadPOD(id,quiet){
   const C=RF_CONFIG,base=C.supabaseUrl.replace(/\/$/,''),H=await RF_AUTH.headers();
   try{
     const day=new Date(rec.at).toISOString().slice(0,10),safe=(rec.guia||rec.pid||'paquete').replace(/[^\w-]/g,'_');const paths=[];
-    for(let i=0;i<rec.fotos.length;i++){const path=`${day}/${safe}_${id}_${i+1}.jpg`;
-      const r=await fetch(`${base}/storage/v1/object/evidencias/${path}`,{method:'POST',headers:{...H,'Content-Type':'image/jpeg','x-upsert':'false'},body:rec.fotos[i]});
+    // 1.74.0: con fotos_nube='una' (Panel) a la nube va solo la 1.ª foto reducida (~40 KB) + la firma; las 3 completas quedan en el celular.
+    const una=fotosNube()==='una',subir=una?rec.fotos.slice(0,1):rec.fotos;
+    for(let i=0;i<subir.length;i++){const path=`${day}/${safe}_${id}_${i+1}.jpg`,body=una?await achicar(subir[i],640,.6):subir[i];
+      const r=await fetch(`${base}/storage/v1/object/evidencias/${path}`,{method:'POST',headers:{...H,'Content-Type':'image/jpeg','x-upsert':'false'},body});
       if(!r.ok){const t=await r.text();if(!/duplicate|already exists/i.test(t))throw new Error(r.status+' '+t.slice(0,80))}paths.push(path)}
     if(rec.firma){const path=`${day}/${safe}_${id}_firma.jpg`;
       const r=await fetch(`${base}/storage/v1/object/evidencias/${path}`,{method:'POST',headers:{...H,'Content-Type':'image/jpeg','x-upsert':'false'},body:rec.firma});
@@ -1152,10 +1169,22 @@ async function uploadPOD(id,quiet){
     let r=await rpc(recibe?{...args,p_recibe:recibe}:args);
     if(!r.ok&&recibe&&[300,400,404].includes(r.status))r=await rpc(args); // base sin p_recibe todavía
     if(!r.ok)throw new Error(r.status+' '+(await r.text()).slice(0,80));
-    rec.up=true;await IDB.put(rec);if(p){p.pod.up=true;save();render()}if(!quiet)toast('☁️ Evidencia respaldada');return true;
+    rec.up=true;rec.una=una;await IDB.put(rec);if(p){p.pod.up=true;save();render()}if(!quiet)toast('☁️ Evidencia respaldada');return true;
   }catch(err){if(!quiet)toast('Evidencia guardada en el celular. Se sube cuando haya internet ('+err.message+')');return false}
 }
-async function uploadPending(){for(const p of S.pk)if(p.pod&&!p.pod.up)await uploadPOD(p.pod.id,true);cleanLocal()}
+async function uploadPending(){for(const p of S.pk)if(p.pod&&!p.pod.up)await uploadPOD(p.pod.id,true);cleanLocal();limpiarNube()}
+const fotosNube=()=>{const c=window.RF_AUTH&&RF_AUTH.cuenta;return c&&c.fotos_nube||'todas'}; // base vieja sin el ajuste: como antes
+// Reduce una foto ya sellada (el sello queda, más chico).
+function achicar(blob,max,q){return new Promise(res=>{const img=new Image(),u=URL.createObjectURL(blob);
+  img.onload=()=>{const k=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>res(b&&b.size<blob.size?b:blob),'image/jpeg',q)};
+  img.onerror=()=>{URL.revokeObjectURL(u);res(blob)};img.src=u})}
+// 1.74.0: una vez al día cada app borra de la nube SUS fotos con más días que los del Panel (dias_fotos).
+// La base solo deja borrar fotos propias y ya vencidas (política en supabase.sql), así que no puede borrar de más.
+async function limpiarNube(){if(!FORM_ON||!window.RF_AUTH||!RF_AUTH.cuenta)return;const hoy=new Date().toDateString();if(S.nubeLimpia===hoy)return;
+  try{const l=await RF_AUTH.rpc('rf_evidencias_viejas',{})||[];
+    if(l.length){const r=await fetch(RF_CONFIG.supabaseUrl.replace(/\/$/,'')+'/storage/v1/object/evidencias',{method:'DELETE',headers:{...(await RF_AUTH.headers()),'Content-Type':'application/json'},body:JSON.stringify({prefixes:l})});if(!r.ok)return}
+    if(l.length<500){S.nubeLimpia=hoy;saveLocal()}}catch(e){}}
 // Libera espacio del celular: borra las fotos que ya están respaldadas en Supabase hace más de LOCAL_DIAS días.
 const LOCAL_DIAS=7;
 async function cleanLocal(){try{const d=await IDB.open();const lim=Date.now()-LOCAL_DIAS*864e5;
@@ -1168,7 +1197,7 @@ async function openEvidence(p){
     <div class="podline"><b>📍</b><span>${p.pod.lat!=null?`${p.pod.lat}, ${p.pod.lng} (±${Math.round(p.pod.acc)} m) · <a href="${gmaps([p.pod.lat,p.pod.lng])}" target="_blank" rel="noopener">Ver en mapa</a>`:'Sin GPS (no se pudo obtener)'}</span></div>
     ${p.pod.recibe||rec&&rec.sinFirma?`<div class="podline"><b>✍️</b><span>Recibió: ${esc(p.pod.recibe||'sin nombre')}${rec&&rec.sinFirma?' · no quiso firmar':''}</span></div>`:''}
     <div class="podline"><b>☁️</b><span>${p.pod.up?'Respaldada en Supabase':'Todavía no se subió (se intenta sola cuando hay internet)'}</span></div>
-    ${fotos.length?`<div class="list">${fotos.map((u,i)=>`<img src="${u}" alt="Foto ${i+1} de la entrega" style="width:100%;border-radius:8px">`).join('')}</div>`:`<p class="small muted">${p.pod.up?'Las fotos ya no están en este celular (se borran a los '+LOCAL_DIAS+' días para ahorrar espacio). Están respaldadas en Supabase > Storage > evidencias.':'Las fotos no están en este celular.'}</p>`}`;
+    ${fotos.length?`<div class="list">${fotos.map((u,i)=>`<img src="${u}" alt="Foto ${i+1} de la entrega" style="width:100%;border-radius:8px">`).join('')}</div>`:`<p class="small muted">${p.pod.up?'Las fotos ya no están en este celular (se borran a los '+LOCAL_DIAS+' días para ahorrar espacio). '+(rec&&rec.una?'En la nube quedó 1 foto reducida':'Están respaldadas en Supabase')+' (se guardan los días que diga el Panel).':'Las fotos no están en este celular.'}</p>`}`;
   $('#evSheet').hidden=false;document.body.style.overflow='hidden';
 }
 $('#evClose').onclick=()=>{$('#evSheet').hidden=true;document.body.style.overflow='';$('#evBody').querySelectorAll('img').forEach(i=>URL.revokeObjectURL(i.src))};
@@ -1447,7 +1476,7 @@ render();
 // El nombre de la cuenta es el de fábrica; si el repartidor escribe otro, se respeta (S.yoPropio). Vacío = vuelve al de la cuenta.
 const usarCuenta=c=>{if(!c||!c.nombre||S.yoPropio)return;S.yo=c.nombre;$('#m-yo').value=S.yo;saveLocal();renderMsg()};
 $('#m-yo').addEventListener('input',e=>{S.yoPropio=!!e.target.value.trim();save()});
-document.addEventListener('rf-cuenta',e=>usarCuenta(e.detail));
+document.addEventListener('rf-cuenta',e=>{if(!cuentaLocal(e.detail))usarCuenta(e.detail)});
 // ===== Entrega: carga el Excel "Ruta AAAA-MM-DD" (hoja "Ruta ordenada") y muestra mapa + paradas =====
 // S.ent = {nombre, at, stops:[{n, nombre, tel, dir, guia, nota, c:[lat,lng]|null, waze, done}]}
 let EMAP=null,ESEL=-1;
@@ -1786,12 +1815,17 @@ function fixIng1031(){try{const c=window.RF_AUTH&&RF_AUTH.cuenta,t=String(c&&(c.
 function nubeAplicar(ver){S.syncVer=ver;S.baseIds=S.pk.map(p=>p.id);nubeHuella();S.pk.forEach(p=>{if(!p.tok)p.tok=tok();fixOldName(p)});fixIng1031();saveLocal();
   ['#m-coord','#m-form','#m-camino','#m-comp','#m-ext','#m-pref','#m-fecha','#r-start','#r-hora','#r-vel','#r-min'].forEach(id=>{const el=$(id),k={'#m-coord':'coord','#m-form':'form','#m-camino':'camino','#m-comp':'comp','#m-ext':'ext','#m-pref':'pref','#m-fecha':'fecha','#r-start':'start','#r-hora':'hora','#r-vel':'vel','#r-min':'min'}[id];if(el&&document.activeElement!==el)el.value=S[k]??''});
   $('#r-return').checked=!!S.ret;render()}
+// 1.74.0: manda la versión que ya tiene; si no cambió, la nube responde sin datos (cuida la transferencia del plan gratis).
+// Con force (☁️) baja todo. Si la base todavía no tiene la función nueva, usa la vieja.
+async function nubeLeer(force){if(force||S.syncVer==null||NUBE.vieja)return RF_AUTH.rpc('rf_lista_leer',{});
+  try{return await RF_AUTH.rpc('rf_lista_leer',{p_version:S.syncVer})}catch(e){if(e.status===404||/PGRST202|could not find/i.test(e.message||'')){NUBE.vieja=true;return RF_AUTH.rpc('rf_lista_leer',{})}throw e}}
 // force=true (al tocar ☁️ o al cargar una ruta): sube lo de este aparato aunque no haya cambios marcados.
 async function nubeSync(force){
   if(!NUBE.on)return;if(NUBE.busy){NUBE.otra=NUBE.otra||force||1;return}NUBE.busy=true;
   try{
-    const r=await RF_AUTH.rpc('rf_lista_leer',{});const srv=r&&r.datos;
-    if(srv&&r.version!==S.syncVer){const first=S.syncVer==null,hadLocal=!S.ex&&S.pk.length>0,dirty=!!S.dirty;nubeMezclar(srv);nubeAplicar(r.version);S.dirty=dirty||(first&&hadLocal)||NUBE.falta}
+    const r=await nubeLeer(force);const srv=r&&r.datos;
+    if(r&&r.sin_cambios){} // 1.74.0: la nube no cambió desde la última vez (no se bajó la lista)
+    else if(srv&&r.version!==S.syncVer){const first=S.syncVer==null,hadLocal=!S.ex&&S.pk.length>0,dirty=!!S.dirty;nubeMezclar(srv);nubeAplicar(r.version);S.dirty=dirty||(first&&hadLocal)||NUBE.falta}
     else if(!srv&&S.syncVer==null)S.dirty=!S.ex&&S.pk.length>0;  // nube vacía: la primera vez se sube lo de este aparato
     else if(srv&&NUBE_KEYS.some(k=>srv[k]===undefined&&S[k]!=null))S.dirty=true; // misma versión pero a la nube le falta algo que este aparato tiene (la ruta)
     if(force)S.dirty=true;
@@ -1806,7 +1840,7 @@ async function nubeSync(force){
 }
 $('#nubeInfo').onclick=()=>{if(NUBE.on){nubeMsg('☁️ sincronizando…');nubeSync(true).then(()=>toast(`Nube v${S.syncVer||0} · ${S.pk.length} paquetes${S.ent?' · ruta '+S.ent.nombre:' · sin ruta'}`))}};
 function nubeSoon(){if(!NUBE.on)return;clearTimeout(NUBE.t);NUBE.t=setTimeout(nubeSync,2500)}
-RF_AUTH.listo.then(c=>{usarCuenta(c);
+RF_AUTH.listo.then(c=>{if(cuentaLocal(c))return;usarCuenta(c);
 if(FORM_ON&&c){NUBE.on=true;nubeSync();setInterval(()=>{if(!document.hidden)nubeSync()},60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)nubeSync()})}
 if(FORM_ON){ // formulario como segundo mensaje: el primero nunca lleva link
 $('#syncPanel').hidden=false;$('#syncBtn').onclick=()=>{syncResp(true);uploadPending()};syncResp();uploadPending();setInterval(()=>{if(!document.hidden){syncResp();uploadPending()}},60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncResp()})}

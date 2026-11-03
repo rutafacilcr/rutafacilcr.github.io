@@ -42,7 +42,7 @@ Paquete = {
 }
 ```
 
-`save()` y `load()` envuelven `localStorage` en try/catch. Al cargar, los paquetes viejos sin `tok` reciben uno.
+Desde la 1.74.0 `S.owner` = número de la cuenta dueña de estos datos (ver 3c-0a). `save()` y `load()` envuelven `localStorage` en try/catch. Al cargar, los paquetes viejos sin `tok` reciben uno.
 
 ### Funciones clave
 
@@ -112,6 +112,15 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - `parseLabel(texto, códigos)`: guía = código tipo `HZCR56461310263` (o regex en el texto); teléfono = 8 dígitos que empiecen en 2/4/5/6/7/8, prefiriendo líneas con *tel/cel*, y descartando dígitos de la guía; nombre = texto después de *TO/Destinatario/Nombre/Para* (o primera línea de 2–5 palabras); dirección = líneas con palabras de señas o provincias (`L_ADDR`), sin las del remitente (`L_SENDER`: Temu, China, aduana…).
 - *Guardar* abre la cámara **dentro del mismo toque** (iPhone no deja abrirla después de un `await`) y agrega con `mkPkg()`. Las fotos de etiqueta no se guardan.
 - Prueba local: las CDN están bloqueadas en el sandbox; se instalan los paquetes con npm y Playwright sirve los archivos interceptando las URL de jsDelivr. Las etiquetas de prueba se generan con JsBarcode.
+
+## 3c-0a. 20 mensajeros (1.74.0)
+
+- **Datos locales por cuenta:** `cuentaLocal(c)` (junto a `toast`) se llama en `RF_AUTH.listo` y en el evento `rf-cuenta`. `S.owner` guarda el número (8 dígitos) de la cuenta dueña de `localStorage['rutafacil-cr-v1']`. Si entra otra cuenta: si `S.dirty`, la lista vieja se aparta en `rutafacil-cr-v1@<número>`; si no, se borra (ya está en la nube). Se carga la de la nueva (o `{owner}` vacío) y se recarga la página. Las fotos en IndexedDB no se tocan: sus ids son aleatorios y solo se suben desde los paquetes de la lista abierta. `fixIng1031()` sigue igual (corre en `nubeAplicar`).
+- **Nube liviana:** `nubeLeer(force)` manda `p_version` a `rf_lista_leer`; con `sin_cambios` no hace nada. Con `force` (☁️) o sin versión baja todo. Si la base no tiene la función nueva (404/PGRST202) marca `NUBE.vieja` y usa la llamada sin parámetros.
+- **Respuestas por partes:** `syncResp` guarda `S.respDesde` (la mayor `updated_at` vista) y `S.respDesdeN` (cantidad de paquetes en ese momento); cada minuto pide `p_desde` y, si cambió la cantidad de paquetes o se tocó *Revisar*, pide todo. `syncResp.vieja` = base sin `p_desde`.
+- **Fotos:** `fotosNube()` lee `RF_AUTH.cuenta.fotos_nube` (`'todas'` si la base es vieja). En modo `una`, `uploadPOD` sube solo `rec.fotos[0]` pasada por `achicar(blob,640,.6)` más la firma, y marca `rec.una`. `limpiarNube()` (desde `uploadPending`, una vez al día con `S.nubeLimpia`) pide `rf_evidencias_viejas` y borra con `DELETE /storage/v1/object/evidencias {prefixes}`; la política de la base impide borrar fotos ajenas o no vencidas.
+- **Panel (`admin.html`):** sección *Uso del plan gratis* (`verUso` → `rf_admin_uso`, barras `.ubar`, tabla `.utab` con scroll horizontal propio) y en *Fotos de entrega* los campos `#f-modo` / `#f-nube` que guardan con `rf_admin_fotos`. Botones naranja a la derecha.
+- **Pruebas hechas:** `supabase.sql` corrido dos veces en Postgres 16 con stubs de Supabase; dos cuentas: B no lee respuestas, lista, cierres ni fotos de A, no pisa entregas de A y solo borra sus fotos vencidas. En el navegador (Playwright, 375 px, Supabase simulado): al pasar de la cuenta A a la B, la lista de A desaparece y B abre vacía.
 
 ## 3c-0. Mapa rápido de lo agregado de la 1.53 a la 1.68
 

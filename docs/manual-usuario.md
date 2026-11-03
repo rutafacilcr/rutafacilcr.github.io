@@ -6,9 +6,11 @@ Guía para el repartidor. No hace falta saber de computadoras.
 
 ---
 
-## La app hoy (versión 1.73)
+## La app hoy (versión 1.74)
 
 Resumen de cómo está la app ahora. Más abajo se explica cada parte con la versión en que llegó.
+
+**Cuentas (1.74):** cada mensajero ve solo lo suyo. Si en un celular entra otra cuenta, la app aparta la lista de la anterior.
 
 **Barra de abajo:** **Paquetes**, **Cierres**, **Mensajes** y **Ruta**. **Soporte** está arriba, en el encabezado. En la computadora, si no ves los cambios, apretá **Ctrl + Shift + R**.
 
@@ -80,6 +82,7 @@ Reglas de la cuenta:
 - **¿Olvidaste el PIN?** Pedile uno nuevo al administrador por WhatsApp.
 - **¿Necesitás ayuda?** En la pantalla de entrar está el enlace *Escribinos por WhatsApp* (soporte: 6270 0666).
 - **Salir:** al final de la app, **Salir**. Tu lista de paquetes se queda en el celular.
+- **Un celular para dos cuentas (1.74):** si en este celular entra otra cuenta, la app guarda aparte tu lista y abre la de la otra persona, vacía o con lo suyo. Nunca ves los paquetes de otro mensajero ni él los tuyos. Cuando volvés a entrar con tu número, aparece tu lista como la dejaste (también está en la nube).
 
 ---
 
@@ -296,6 +299,8 @@ El panel está en https://rutafacilcr.github.io/admin.html (o **Panel**, al fina
 | PIN olvidado | **PIN nuevo** genera uno al azar; copiá el mensaje y mandáselo por WhatsApp. |
 | Ver quién atender | Filtro **Por atender** (cuentas sin activar y cambios de teléfono) y **Vencen en 5 días**. |
 | Liberar espacio de fotos | **Fotos de entrega** > **Calcular espacio usado** y **Borrar** las de más de 30 días. |
+| Ver cuánto queda del plan gratis (1.74) | **Uso del plan gratis**: una barra para la base (500 MB) y otra para las fotos (1 GB), y una tabla con lo que ocupa cada cuenta. Si una barra se pone roja (80 %), bajá los días de fotos. |
+| Decidir qué fotos van a la nube (1.74) | **Fotos de entrega** > **Fotos en la nube**: *1 foto chica + firma* (recomendado con muchos mensajeros) o *Las 3 fotos + firma*; y **Días en la nube** (21 de fábrica; 0 = no se borran). **Guardar fotos.** Cada app lo toma en 15 minutos y borra sola sus fotos vencidas una vez al día. |
 
 **Avisos:** cuando alguien crea cuenta (o pide usar otro teléfono) te llega un WhatsApp y un correo con su nombre y número. Se configuran una vez en **Ajustes > Avisos cuando alguien crea cuenta** (pasos en el manual técnico) y con **Mandarme una prueba** revisás que lleguen.
 

@@ -20,6 +20,13 @@ create table if not exists public.rf_ajustes (
   dias_gracia   int     not null default 3       -- días que sigue funcionando después de vencer
 );
 insert into public.rf_ajustes (id) values (1) on conflict (id) do nothing;
+-- 1.74.0 (20 mensajeros): fotos de entrega en la nube. 'una' = 1 foto reducida + firma por entrega
+-- (las 3 completas quedan en el celular); 'todas' = las 3 fotos + firma. dias_fotos = días que se
+-- guardan en la nube antes de que la app de cada mensajero las borre sola (0 = no se borran).
+alter table public.rf_ajustes add column if not exists fotos_nube text not null default 'una'
+  check (fotos_nube in ('una','todas'));
+alter table public.rf_ajustes add column if not exists dias_fotos int not null default 21
+  check (dias_fotos between 0 and 365);
 
 create table if not exists public.rf_perfiles (
   id                    uuid primary key references auth.users(id) on delete cascade,
@@ -148,7 +155,8 @@ begin
     'vence_en', p.vence_en, 'dispositivo', est,
     'activo', p.rol = 'admin' or (p.estado = 'activo' and p.vence_en + make_interval(days => a.dias_gracia) > now()),
     'en_gracia', p.rol <> 'admin' and p.estado = 'activo' and p.vence_en < now(),
-    'sinpe', a.sinpe, 'precio', a.precio, 'exigir', a.exigir_cuenta);
+    'sinpe', a.sinpe, 'precio', a.precio, 'exigir', a.exigir_cuenta,
+    'fotos_nube', a.fotos_nube, 'dias_fotos', a.dias_fotos);
 end $$;
 
 -- ---------- Funciones del panel de Victor (solo rol admin) ----------
@@ -416,18 +424,26 @@ returns void language sql security definer set search_path = public as $$
 $$;
 
 -- La app del repartidor lee solo las respuestas de los tokens que ella misma generó.
--- Con exigir_cuenta activo, solo responde a una cuenta al día desde su teléfono aprobado.
-create or replace function public.leer_respuestas(p_tokens text[])
+-- 1.74.0 (20 mensajeros): cada respuesta queda amarrada a la cuenta que la lee primero (owner_id) y
+-- después solo esa cuenta la ve, aunque otra cuenta conociera el token. Siempre exige sesión.
+-- p_desde: solo devuelve lo que cambió después de esa hora (la app lo manda para no bajar todo cada minuto).
+drop function if exists public.leer_respuestas(text[]);
+create or replace function public.leer_respuestas(p_tokens text[], p_desde timestamptz default null)
 returns setof respuestas language plpgsql security definer set search_path = public as $$
 begin
   perform public.rf_exigir_licencia();
-  return query select * from respuestas where token = any(p_tokens) and cardinality(p_tokens) <= 300;
+  if auth.uid() is null then raise exception 'RF_CUENTA: sin sesión'; end if;
+  if coalesce(cardinality(p_tokens), 0) = 0 or cardinality(p_tokens) > 300 then return; end if;
+  update respuestas set owner_id = auth.uid() where token = any(p_tokens) and owner_id is null;
+  return query select * from respuestas
+    where token = any(p_tokens) and owner_id = auth.uid()
+      and (p_desde is null or updated_at > p_desde);
 end $$;
 
 revoke all on function public.enviar_respuesta(text,text,text,text,text,double precision,double precision) from public;
-revoke all on function public.leer_respuestas(text[]) from public;
+revoke all on function public.leer_respuestas(text[], timestamptz) from public, anon;
 grant execute on function public.enviar_respuesta(text,text,text,text,text,double precision,double precision) to anon, authenticated;
-grant execute on function public.leer_respuestas(text[]) to anon, authenticated;
+grant execute on function public.leer_respuestas(text[], timestamptz) to authenticated;
 
 -- =====================================================================
 -- Prueba de entrega (fotos + GPS + fecha/hora). Agregado 2026-10-29.
@@ -461,13 +477,16 @@ create or replace function public.registrar_entrega(
 returns void language plpgsql security definer set search_path = public as $$
 begin
   perform public.rf_exigir_licencia();
+  if auth.uid() is null then raise exception 'RF_CUENTA: sin sesión'; end if;  -- 1.74.0: siempre con cuenta
   insert into entregas (evidencia_id, guia, cliente, repartidor, lat, lng, precision_m, entregado_en, fotos, owner_id, recibe)
   values (p_evidencia_id, left(p_guia,60), left(p_cliente,80), left(p_repartidor,80),
           p_lat, p_lng, p_precision, p_entregado_en, p_fotos[1:10], auth.uid(), left(p_recibe,80))
-  on conflict (evidencia_id) do update set fotos = excluded.fotos, recibe = coalesce(excluded.recibe, entregas.recibe);
+  on conflict (evidencia_id) do update set fotos = excluded.fotos, recibe = coalesce(excluded.recibe, entregas.recibe)
+    where entregas.owner_id = auth.uid();  -- 1.74.0: nadie corrige la entrega de otra cuenta
 end $$;
 revoke all on function public.registrar_entrega(text,text,text,text,double precision,double precision,double precision,timestamptz,text[],text) from public;
-grant execute on function public.registrar_entrega(text,text,text,text,double precision,double precision,double precision,timestamptz,text[],text) to anon, authenticated;
+revoke all on function public.registrar_entrega(text,text,text,text,double precision,double precision,double precision,timestamptz,text[],text) from anon;
+grant execute on function public.registrar_entrega(text,text,text,text,double precision,double precision,double precision,timestamptz,text[],text) to authenticated;
 
 -- =====================================================================
 -- Lista sincronizada (1.18.0). Agregado 2026-10-31.
@@ -483,7 +502,10 @@ create table if not exists public.rf_listas (
 );
 alter table public.rf_listas enable row level security;
 
-create or replace function public.rf_lista_leer()
+-- 1.74.0: p_version = la versión que ya tiene el aparato. Si no cambió, devuelve solo la versión (sin datos):
+-- así la revisión de cada minuto pesa unos bytes y no la lista entera (cuida la transferencia del plan gratis).
+drop function if exists public.rf_lista_leer();
+create or replace function public.rf_lista_leer(p_version bigint default null)
 returns json language plpgsql security definer set search_path = public as $$
 declare l rf_listas;
 begin
@@ -491,6 +513,9 @@ begin
   if auth.uid() is null then raise exception 'RF_CUENTA: sin sesión'; end if;
   select * into l from rf_listas where owner_id = auth.uid();
   if not found then return json_build_object('version', 0, 'datos', null); end if;
+  if p_version is not null and p_version = l.version then
+    return json_build_object('version', l.version, 'sin_cambios', true);
+  end if;
   return json_build_object('version', l.version, 'datos', l.datos, 'actualizado', l.actualizado);
 end $$;
 
@@ -512,9 +537,9 @@ begin
   returning * into l;
   return json_build_object('ok', true, 'version', l.version);
 end $$;
-revoke all on function public.rf_lista_leer() from public, anon;
+revoke all on function public.rf_lista_leer(bigint) from public, anon;
 revoke all on function public.rf_lista_guardar(jsonb, bigint) from public, anon;
-grant execute on function public.rf_lista_leer() to authenticated;
+grant execute on function public.rf_lista_leer(bigint) to authenticated;
 grant execute on function public.rf_lista_guardar(jsonb, bigint) to authenticated;
 
 -- =====================================================================
@@ -590,8 +615,8 @@ on conflict (id) do nothing;
 
 drop policy if exists "rutafacil subir evidencias" on storage.objects;
 create policy "rutafacil subir evidencias" on storage.objects
-  for insert to anon, authenticated
-  with check (bucket_id = 'evidencias' and public.rf_licencia_ok());
+  for insert to authenticated
+  with check (bucket_id = 'evidencias' and auth.uid() is not null and public.rf_licencia_ok());  -- 1.74.0: solo con cuenta
 
 -- El administrador puede ver y borrar fotos viejas desde admin.html (para no pasarse del plan gratis).
 drop policy if exists "rutafacil admin ve evidencias" on storage.objects;
@@ -602,3 +627,88 @@ drop policy if exists "rutafacil admin borra evidencias" on storage.objects;
 create policy "rutafacil admin borra evidencias" on storage.objects
   for delete to authenticated
   using (bucket_id = 'evidencias' and public.rf_es_admin());
+
+-- =====================================================================
+-- 20 mensajeros (1.74.0). Agregado 2026-11-03.
+-- Plan gratis de Supabase: 500 MB de base, 1 GB de fotos, 5 GB de transferencia al mes.
+-- =====================================================================
+
+-- Cada mensajero puede borrar SOLO sus propias fotos y SOLO si ya pasaron los días de
+-- rf_ajustes.dias_fotos (la app lo hace sola una vez al día). Nadie ve fotos de otra cuenta.
+create or replace function public.rf_dias_fotos()
+returns int language sql stable security definer set search_path = public as $$
+  select coalesce((select dias_fotos from rf_ajustes where id = 1), 0);
+$$;
+revoke all on function public.rf_dias_fotos() from public, anon;
+grant execute on function public.rf_dias_fotos() to authenticated;
+
+-- Supabase Storage pide permiso de ver (select) para poder borrar: cada quien ve solo lo suyo.
+drop policy if exists "rutafacil mensajero ve sus evidencias" on storage.objects;
+create policy "rutafacil mensajero ve sus evidencias" on storage.objects
+  for select to authenticated
+  using (bucket_id = 'evidencias' and owner_id = auth.uid()::text);
+drop policy if exists "rutafacil mensajero borra sus evidencias viejas" on storage.objects;
+create policy "rutafacil mensajero borra sus evidencias viejas" on storage.objects
+  for delete to authenticated
+  using (bucket_id = 'evidencias' and owner_id = auth.uid()::text
+         and public.rf_dias_fotos() > 0
+         and created_at < now() - make_interval(days => public.rf_dias_fotos()));
+
+-- Nombres de las fotos propias que ya se pueden borrar (máximo 500 por vez).
+create or replace function public.rf_evidencias_viejas()
+returns json language plpgsql stable security definer set search_path = public, storage as $$
+declare d int := coalesce((select dias_fotos from rf_ajustes where id = 1), 0);
+begin
+  perform public.rf_exigir_licencia();
+  if auth.uid() is null then raise exception 'RF_CUENTA: sin sesión'; end if;
+  if d <= 0 then return '[]'::json; end if;
+  return coalesce((select json_agg(name) from (
+    select o.name from storage.objects o
+     where o.bucket_id = 'evidencias' and o.owner_id = auth.uid()::text
+       and o.created_at < now() - make_interval(days => d)
+     order by o.created_at limit 500) x), '[]'::json);
+end $$;
+revoke all on function public.rf_evidencias_viejas() from public, anon;
+grant execute on function public.rf_evidencias_viejas() to authenticated;
+
+-- Panel: cómo se cambia el modo de las fotos y los días en la nube.
+create or replace function public.rf_admin_fotos(p_modo text, p_dias int)
+returns json language plpgsql security definer set search_path = public as $$
+declare a rf_ajustes;
+begin
+  perform public.rf_admin_check();
+  update rf_ajustes set
+    fotos_nube = case when p_modo in ('una','todas') then p_modo else fotos_nube end,
+    dias_fotos = case when p_dias is null then dias_fotos else least(greatest(p_dias,0),365) end
+   where id = 1 returning * into a;
+  return json_build_object('fotos_nube', a.fotos_nube, 'dias_fotos', a.dias_fotos);
+end $$;
+revoke all on function public.rf_admin_fotos(text,int) from public, anon;
+grant execute on function public.rf_admin_fotos(text,int) to authenticated;
+
+-- Panel: cuánto se está usando del plan gratis, en total y por cuenta.
+create or replace function public.rf_admin_uso()
+returns json language plpgsql stable security definer set search_path = public, storage as $$
+begin
+  perform public.rf_admin_check();
+  return json_build_object(
+    'base_bytes', pg_database_size(current_database()),
+    'fotos_bytes', (select coalesce(sum((metadata->>'size')::bigint),0) from storage.objects where bucket_id = 'evidencias'),
+    'fotos', (select count(*) from storage.objects where bucket_id = 'evidencias'),
+    'fotos_nube', (select fotos_nube from rf_ajustes where id = 1),
+    'dias_fotos', (select dias_fotos from rf_ajustes where id = 1),
+    'cuentas', coalesce((select json_agg(x order by x.fotos_bytes desc) from (
+      select p.nombre, p.telefono, p.estado, p.ultimo_acceso,
+        (select coalesce(sum((o.metadata->>'size')::bigint),0) from storage.objects o
+          where o.bucket_id = 'evidencias' and o.owner_id = p.id::text) as fotos_bytes,
+        (select coalesce(octet_length(l.datos::text),0) from rf_listas l where l.owner_id = p.id) as lista_bytes,
+        (select count(*) from rf_cierres c where c.owner_id = p.id) as cierres,
+        (select count(*) from entregas e where e.owner_id = p.id and e.entregado_en > now() - interval '30 days') as entregas_30d
+      from rf_perfiles p) x), '[]'::json));
+end $$;
+revoke all on function public.rf_admin_uso() from public, anon;
+grant execute on function public.rf_admin_uso() to authenticated;
+
+-- Índices para que 20 cuentas no hagan lentas las búsquedas por dueño.
+create index if not exists respuestas_owner on public.respuestas (owner_id);
+create index if not exists entregas_owner_fecha on public.entregas (owner_id, entregado_en desc);
