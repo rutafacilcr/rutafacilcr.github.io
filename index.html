@@ -378,7 +378,7 @@ details summary{cursor:pointer;font-weight:600}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.73.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.73.3</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -995,8 +995,8 @@ function guiPdf(k){const G=guiGrupos().find(x=>x.k===k);if(!G){toast('No hay ent
   const EG={};G.pk.forEach(p=>{const r=repDia(repT(p))||'';(EG[r]=EG[r]||[]).push(p)}); // un título por fecha de entrega
   let y=29;Object.keys(EG).sort().forEach(r=>{const L=EG[r];if(y>185){doc.addPage();y=15}
     doc.setFontSize(12);doc.setFont(undefined,'bold');doc.text(`Entregados ${r?repDiaTxt(r):''} (${L.length})`,14,y);doc.setFont(undefined,'normal');
-    doc.autoTable({startY:y+3,head:[['Nombre','Tel.','Guía','Dirección']],body:L.map(p=>[tidyName(p.nombre||''),tl(p.tel),p.guia||'',p.dir||'']),
-      styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},columnStyles:{0:{cellWidth:65},1:{cellWidth:30},2:{cellWidth:55}}});
+    doc.autoTable({startY:y+3,head:[['Nombre','Tel.','Guía','Dirección','Hora entrega']],body:L.map(p=>[tidyName(p.nombre||''),tl(p.tel),p.guia||'',p.dir||'',repT(p)?fmtT2(repT(p)):'']),
+      styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},columnStyles:{0:{cellWidth:60},1:{cellWidth:28},2:{cellWidth:50},4:{cellWidth:28,halign:'center'}}});
     y=doc.lastAutoTable.finalY+10});
   const name=`guias-${k}.pdf`;
   if(IOS&&navigator.canShare){const file=new File([doc.output('blob')],name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Reporte guardado')).catch(()=>{});return}}

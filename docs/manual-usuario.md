@@ -33,7 +33,7 @@ Resumen de cómo está la app ahora. Más abajo se explica cada parte con la ver
 - Empieza directo en *Reporte de entregas* (1.73.2: se quitó el aviso "Próximamente").
 - Hay un reporte por cada grupo de *Entregas del …*, según el día en que se recibieron los paquetes. También salen las listas ya vaciadas.
 - Cada grupo tiene su botón **📄 PDF** horizontal.
-- **Guías por fecha de recibido** (1.71.0 a 1.72.3): un PDF por fecha de recibido (*Guías · Paquetes recibidos 31/10/2026*) con Nombre, Tel., Guía y Dirección, separado por día de entrega.
+- **Guías por fecha de recibido** (1.71.0 a 1.72.3): un PDF por fecha de recibido (*Guías · Paquetes recibidos 31/10/2026*) con Nombre, Tel., Guía, Dirección y Hora entrega, separado por día de entrega.
 - El **encabezado** trae: fecha, mensajero, recibidos el, km, horas, días de entrega, promedio por entrega, y recibidos, entregados y devueltos.
 - Las **filas** van por fecha y hora de entrega, con estas columnas: número, guía / pedido, teléfono, nombre, estado, fecha recibido, fecha y hora de entrega, y tiempo y km desde la entrega anterior.
 
@@ -698,4 +698,4 @@ En la tarjeta de *Paquetes*, la línea del teléfono dice por ejemplo: **Tel. 62
 
 ### Reporte de guías por fecha de recibido (1.71.0, 1.72.3)
 
-En **Cierres**, debajo de *Reporte de entregas*, está **Guías por fecha de recibido**. Hay una línea por cada fecha en que recibiste paquetes (por ejemplo **🧾 Guías · Paquetes recibidos 31/10/2026 · 25 entregado(s)**). Tocá **📄 PDF** para bajar un PDF horizontal con **Nombre, Tel., Guía y Dirección** de los paquetes de esa fecha que ya entregaste. Adentro van agrupados por día de entrega (**Entregados 02/11/2026**, **Entregados 03/11/2026**), en el orden en que se entregaron. Arriba dice el mensajero, la fecha de recibido y cuántos paquetes son. La fecha de recibido es la de **Pertenece a** en cada paquete (se cambia con ✏️ Editar).
+En **Cierres**, debajo de *Reporte de entregas*, está **Guías por fecha de recibido**. Hay una línea por cada fecha en que recibiste paquetes (por ejemplo **🧾 Guías · Paquetes recibidos 31/10/2026 · 25 entregado(s)**). Tocá **📄 PDF** para bajar un PDF horizontal con **Nombre, Tel., Guía, Dirección y Hora entrega** (1.73.3) de los paquetes de esa fecha que ya entregaste. Adentro van agrupados por día de entrega (**Entregados 02/11/2026**, **Entregados 03/11/2026**), en el orden en que se entregaron. Arriba dice el mensajero, la fecha de recibido y cuántos paquetes son. La fecha de recibido es la de **Pertenece a** en cada paquete (se cambia con ✏️ Editar).
