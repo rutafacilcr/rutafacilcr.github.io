@@ -32,6 +32,8 @@ async function authReq(path,body,tk){
   if(!r.ok){const e=new Error(j.msg||j.error_description||j.message||('error '+r.status));e.code=j.error_code||j.code||j.error||'';e.status=r.status;throw e}
   return j;
 }
+// 1.76.0: número alterno del administrador → número principal de su cuenta (rf_numero_entrar). Si falla, el mismo.
+async function numeroEntrar(t){try{const r=await rpc('rf_numero_entrar',{p_telefono:t});return /^\d{8}$/.test(r||'')?r:t}catch(e){return t}}
 function guardar(j){ses={access_token:j.access_token,refresh_token:j.refresh_token,expires_at:j.expires_at||Math.floor(Date.now()/1000)+(j.expires_in||3600)};ls.set(KS,ses)}
 let renovando=null;
 async function token(){
@@ -55,7 +57,7 @@ async function rpc(fn,args){
 }
 
 // ---------- Pantalla de entrada ----------
-const CSS=`html.rf-bloq body>*:not(#rfGate){display:none!important}
+const CSS=`html.rf-bloq body>*:not(#rfGate):not(.rfadlg){display:none!important}
 #rfGate{position:fixed;inset:0;z-index:9999;background:var(--bg,#f5f5f4);color:var(--ink,#1c1917);overflow:auto;font-family:var(--f-body,system-ui,sans-serif);display:flex;justify-content:center;padding:max(32px,env(safe-area-inset-top)) 16px 32px}
 #rfGate[hidden]{display:none}
 #rfGate .rfbox{width:100%;max-width:400px;display:flex;flex-direction:column;gap:14px}
@@ -79,12 +81,35 @@ const CSS=`html.rf-bloq body>*:not(#rfGate){display:none!important}
 #rfGate .rfmuted{color:var(--muted,#6b6560);font-size:14px}
 #rfGate .rfpago{font-family:var(--f-mono,monospace);font-size:15px}
 #rfGate .rflisto{border-color:var(--ok,#2f8a4e);background:var(--ok-bg,#e3f3e8)}
-.rfcuenta a{color:inherit;text-decoration:underline;cursor:pointer}`;
+.rfcuenta a{color:inherit;text-decoration:underline;cursor:pointer}
+.rfcuenta a.rfcod{white-space:nowrap}
+.rfadlg{position:fixed;inset:0;z-index:10000;background:rgba(20,22,26,.5);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:grid;place-items:center;padding:20px;opacity:0;transition:opacity .18s;font-family:var(--f-body,system-ui,sans-serif)}
+.rfadlg.on{opacity:1}
+.rfadlg-box{width:min(360px,100%);max-height:calc(100dvh - 40px);overflow:auto;background:var(--surface,#fff);color:var(--ink,#1c1917);border-radius:20px;padding:22px 20px 16px;box-shadow:0 20px 60px rgba(0,0,0,.28),0 2px 8px rgba(0,0,0,.08);transform:scale(.94);transition:transform .2s cubic-bezier(.2,.9,.3,1.2)}
+.rfadlg.on .rfadlg-box{transform:scale(1)}
+.rfadlg-top{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+.rfadlg-ico{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:21px;background:rgba(242,107,29,.12)}
+.rfadlg-ico.mal{background:rgba(192,57,43,.12)}
+.rfadlg h3{margin:0;font-size:17px;line-height:1.3}
+.rfadlg p{margin:0 0 6px;font-size:14px;line-height:1.5;color:var(--muted,#6b6560)}
+.rfadlg-btns{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;flex-wrap:wrap}
+.rfadlg-btns button{font:inherit;font-size:15px;font-weight:700;padding:10px 16px;border-radius:10px;border:1px solid var(--line,#e2dfdc);background:var(--surface,#fff);color:var(--ink,#1c1917);cursor:pointer}
+.rfadlg-btns .rfadlg-si{background:var(--accent,#f26b1d);border-color:transparent;color:#fff}
+.rfadlg-btns button:focus-visible{outline:2px solid var(--accent,#f26b1d);outline-offset:2px}
+.rfadlg-campos{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+.rfadlg-campos label{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:14px;color:var(--ink,#1c1917)}
+.rfadlg-campos input,.rfadlg-campos textarea{font:inherit;font-size:16px;font-weight:400;padding:10px 12px;border:1px solid var(--line,#e2dfdc);border-radius:10px;background:var(--surface,#fff);color:inherit;width:100%;box-sizing:border-box}
+.rfadlg-campos textarea{min-height:76px;resize:vertical}
+.rfadlg-campos input:focus,.rfadlg-campos textarea:focus{outline:2px solid var(--accent,#f26b1d);outline-offset:1px}
+.rfadlg-campos small{font-weight:400;color:var(--muted,#6b6560);font-size:12.5px;line-height:1.4}
+.rfadlg-copia{display:flex;gap:8px;align-items:stretch}.rfadlg-copia input,.rfadlg-copia textarea{flex:1;min-width:0}.rfadlg-copia textarea{min-height:56px}
+.rfadlg-copia button{font:inherit;font-size:14px;font-weight:700;padding:0 12px;border-radius:10px;border:1px solid var(--line,#e2dfdc);background:var(--surface,#fff);color:inherit;cursor:pointer}`;
 
 let gate,body;
+function ponerCSS(){if(document.getElementById('rfCss'))return;const st=document.createElement('style');st.id='rfCss';st.textContent=CSS;document.head.appendChild(st)}
 function montar(){
   if(gate)return;
-  const st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);
+  ponerCSS();
   gate=document.createElement('div');gate.id='rfGate';gate.setAttribute('role','dialog');gate.setAttribute('aria-modal','true');gate.setAttribute('aria-labelledby','rfTitulo');
   gate.innerHTML=`<div class="rfbox"><div class="rflogo"><img src="icon-192.png" alt=""><h1 id="rfTitulo">Ruta<span>Fácil</span> CR</h1></div><div id="rfBody" class="rfbox" style="gap:14px"></div></div>`;
   document.body.appendChild(gate);body=gate.querySelector('#rfBody');
@@ -115,7 +140,7 @@ function vEntrar(err){
     if(t.length!==8){er.textContent='Escribí tu número de 8 dígitos';return}
     if(!/^\d{6}$/.test(pin)){er.textContent='El PIN tiene 6 números';return}
     b.disabled=true;b.textContent='Entrando…';er.textContent='';
-    try{guardar(await authReq('token?grant_type=password',{email:t+'@'+DOMINIO,password:pin}));ls.set(KA,Date.now());await revisar(true)}
+    try{const tc=await numeroEntrar(t);guardar(await authReq('token?grant_type=password',{email:tc+'@'+DOMINIO,password:pin}));ls.set(KA,Date.now());await revisar(true)}
     catch(x){b.disabled=false;b.textContent='Entrar';er.textContent=/confirm/i.test(x.message+x.code)?'Tu cuenta existe, pero falta un ajuste en Supabase (desactivar "Confirm email"). Avisale al administrador.':x.status===400?'Número o PIN incorrecto. Si es tu primera vez, tocá Crear cuenta.':'No se pudo entrar: '+x.message}
   };
 }
@@ -141,6 +166,7 @@ function vCrear(){
     if(pin!==q('#rfPin2').value.trim()){er.textContent='Los dos PIN no coinciden';return}
     b.disabled=true;b.textContent='Creando…';er.textContent='';
     try{
+      if(await numeroEntrar(t)!==t){b.disabled=false;b.textContent='Crear cuenta';er.textContent='Ese número ya tiene cuenta. Entrá con tu PIN.';return}
       const j=await authReq('signup',{email:t+'@'+DOMINIO,password:pin,data:{nombre:nom,telefono:t}});
       if(!j.access_token){b.disabled=false;b.textContent='Crear cuenta';er.textContent='La cuenta se creó, pero falta un ajuste en Supabase (desactivar "Confirm email"). Avisale al administrador.';return}
       guardar(j);ls.set(KA,Date.now());await mostrarCodigoNuevo(()=>revisar(true));
@@ -206,7 +232,7 @@ function vRecuperar(tel,cambio){
     b.disabled=true;b.textContent='Revisando…';er.textContent='';
     try{const r=await rpc('rf_recuperar',{p_telefono:t,p_codigo:cod,p_pin:pin,p_dispositivo:dev});
       if(!r||!r.ok){b.disabled=false;b.textContent=cambio?'Pasar la cuenta':'Cambiar PIN y entrar';er.textContent=(r&&r.error)||'Número o código incorrecto';return}
-      guardar(await authReq('token?grant_type=password',{email:t+'@'+DOMINIO,password:pin}));ls.set(KA,Date.now());
+      guardar(await authReq('token?grant_type=password',{email:(await numeroEntrar(t))+'@'+DOMINIO,password:pin}));ls.set(KA,Date.now());
       vCodigo(r.codigo,()=>revisar(true));
     }catch(x){b.disabled=false;b.textContent=cambio?'Pasar la cuenta':'Cambiar PIN y entrar';
       er.textContent=x.status===404?'Esta opción todavía no está activa. Pedile un PIN nuevo al administrador.':(x.message||'No se pudo')}
@@ -224,6 +250,28 @@ function vPinAdmin(c){
     try{guardar(await authReq('token?grant_type=password',{email:tel8(c.telefono)+'@'+DOMINIO,password:pin}));ls.set(KA,Date.now());abrir(c)}
     catch(x){er.textContent=x.status===400?'PIN incorrecto':'No se pudo: '+x.message}};
 }
+// 1.75.1/1.75.2: diálogo propio (en vez de confirm/alert/prompt del navegador), con el estilo de la app:
+// ícono, título, explicación y botones a la derecha (el principal naranja con letra blanca).
+// no:'' = un solo botón. campos:[{label,valor,tipo,placeholder,ayuda,copiar,largo}] = pide datos y devuelve
+// la lista de valores (o null si cancela); sin campos devuelve true/false. texto acepta HTML (quien llama escapa).
+// Se usa en la app y en el Panel como window.RF_DIALOGO.
+function dialogo({ico='❔',titulo,texto='',si='Aceptar',no='Cancelar',mal=false,campos=null}){return new Promise(fin=>{
+  ponerCSS();const w=document.createElement('div');w.className='rfadlg';
+  const cs=(campos||[]).map((c,i)=>{const id='rfadlgC'+i,val=esc(c.valor??'');
+    const inp=c.largo?`<textarea id="${id}" placeholder="${esc(c.placeholder||'')}"${c.copiar?' readonly':''}>${val}</textarea>`
+      :`<input id="${id}" value="${val}" placeholder="${esc(c.placeholder||'')}" ${c.tipo==='number'?'type="number" inputmode="numeric"':c.tipo==='tel'?'inputmode="numeric"':'type="text"'} autocomplete="off"${c.copiar?' readonly':''}>`;
+    return `<label for="${id}">${esc(c.label||'')}${c.copiar?`<span class="rfadlg-copia">${inp}<button type="button" data-copiar="${id}">Copiar</button></span>`:inp}${c.ayuda?`<small>${c.ayuda}</small>`:''}</label>`}).join('');
+  w.innerHTML=`<div class="rfadlg-box" role="alertdialog" aria-modal="true" aria-labelledby="rfadlgT"><div class="rfadlg-top"><div class="rfadlg-ico${mal?' mal':''}" aria-hidden="true">${ico}</div><h3 id="rfadlgT">${esc(titulo)}</h3></div>${texto?`<p>${texto}</p>`:''}${cs?`<form class="rfadlg-campos" novalidate>${cs}<button type="submit" hidden></button></form>`:''}<div class="rfadlg-btns">${no?`<button type="button" class="rfadlg-no">${esc(no)}</button>`:''}<button type="button" class="rfadlg-si">${esc(si)}</button></div></div>`;
+  const vals=()=>(campos||[]).map((c,i)=>w.querySelector('#rfadlgC'+i).value);
+  const cerrar=v=>{document.removeEventListener('keydown',tec);w.classList.remove('on');setTimeout(()=>w.remove(),180);fin(campos?(v?vals():null):v)};
+  const tec=e=>{if(e.key==='Escape')cerrar(false)};document.addEventListener('keydown',tec);
+  w.onclick=e=>{if(e.target===w)cerrar(false);const b=e.target.closest('[data-copiar]');if(b){const el=w.querySelector('#'+b.dataset.copiar);try{navigator.clipboard.writeText(el.value);b.textContent='✓ Copiado'}catch(x){el.select()}}};
+  w.querySelector('.rfadlg-si').onclick=()=>cerrar(true);const n=w.querySelector('.rfadlg-no');if(n)n.onclick=()=>cerrar(false);
+  const f=w.querySelector('form');if(f)f.onsubmit=e=>{e.preventDefault();cerrar(true)};
+  document.body.appendChild(w);requestAnimationFrame(()=>w.classList.add('on'));
+  const pri=w.querySelector('.rfadlg-campos input:not([readonly]),.rfadlg-campos textarea:not([readonly])');if(pri)setTimeout(()=>{pri.focus();if(pri.select)pri.select()},60);
+})}
+window.RF_DIALOGO=dialogo;
 function vListo(c){
   vista(`<div class="rfmsg rflisto"><h2>✅ Cuenta habilitada</h2><p>¡Listo, ${esc((c.nombre||'').split(' ')[0])}! Tu cuenta ya está activa${c.vence_en?' hasta el '+fecha(c.vence_en):''}.</p></div><button class="rfbtn pri" id="rfEntrar">Entrar</button>`);
   body.querySelector('#rfEntrar').onclick=()=>{esperando=false;abrir(c)};
@@ -245,10 +293,12 @@ function pie(c,aviso){
   let s=f.querySelector('.rfcuenta');if(!s){s=document.createElement('span');s.className='rfcuenta';f.appendChild(s)}
   if(!c){s.innerHTML=aviso?`<br>${esc(aviso)}`:'';return}
   const venc=c.rol==='admin'?'':c.en_gracia?` · <b style="color:var(--bad)">venció el ${fecha(c.vence_en)}, pagá para no perder acceso</b>`:c.vence_en?` · al día hasta el ${fecha(c.vence_en)}`:'';
-  s.innerHTML=`<br>Cuenta de ${esc(c.nombre)}${venc} · ${c.rol==='admin'&&!ADMIN?'<a href="admin.html">Panel</a> · ':''}<a id="rfCodPie">Código de recuperación</a> · <a id="rfSalirPie">Salir</a>`;
-  s.querySelector('#rfSalirPie').onclick=()=>{if(confirm('¿Salir de la cuenta en este teléfono?'))salir()};
-  s.querySelector('#rfCodPie').onclick=async()=>{if(!confirm('¿Sacar un código de recuperación nuevo? El anterior deja de servir.'))return;
-    try{const r=await rpc('rf_codigo_nuevo');if(r&&r.codigo){abierta=false;vCodigo(r.codigo,()=>abrir(cuenta||c))}}catch(e){alert(e.status===404?'Falta actualizar la base (supabase.sql 1.74.0).':'No se pudo: '+e.message)}};
+  s.innerHTML=`<br>Cuenta de ${esc(c.nombre)}${venc} · ${c.rol==='admin'&&!ADMIN?'<a href="admin.html">Panel</a> · ':''}<a id="rfCodPie" class="rfcod">🔑 Código de recuperación</a> · <a id="rfSalirPie">Salir</a>`;
+  s.querySelector('#rfSalirPie').onclick=async()=>{if(await dialogo({ico:'🚪',titulo:'¿Salir de la cuenta?',texto:'Para volver a entrar en este teléfono vas a necesitar tu número y tu PIN. Tus paquetes quedan guardados en la nube.',si:'Salir'}))salir()};
+  s.querySelector('#rfCodPie').onclick=async()=>{
+    if(!await dialogo({ico:'🔑',titulo:'Código de recuperación',texto:'Te damos un código de 12 letras para <b>poner un PIN nuevo</b> o <b>pasar la cuenta a otro celular</b> sin esperar al administrador.<br><br>Si ya tenías uno, el anterior deja de servir.',si:'Sacar código'}))return;
+    try{const r=await rpc('rf_codigo_nuevo');if(r&&r.codigo){abierta=false;vCodigo(r.codigo,()=>abrir(cuenta||c))}}
+    catch(e){dialogo({ico:'⚠️',mal:true,titulo:'No se pudo sacar el código',texto:esc(e.status===404?'Falta actualizar la base de datos (supabase.sql 1.74.0). Avisale al administrador.':e.message||'Revisá que tengás internet.'),si:'Entendido',no:''})}};
 }
 async function revisar(manual){
   if(!ON)return;

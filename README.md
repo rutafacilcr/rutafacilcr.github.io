@@ -59,8 +59,10 @@ La app está preparada para unas **150 cuentas a la vez** en el plan gratis de S
 - **Gasta poco del plan gratis.** La revisión de cada minuto solo baja lo que cambió.
 - **Fotos de entrega a la medida del plan gratis:** de fábrica quedan en el celular; el administrador puede subir *1 foto chica + firma* o las 3 fotos, y elegir cuántos días se guardan en la nube.
 - **Cierres por 15 días** (se cambia en el Panel).
-- **Código de recuperación:** cada mensajero puede poner un PIN nuevo o pasar su cuenta a otro celular sin esperar al administrador. Cinco intentos fallidos bloquean ese número 30 minutos. El Panel pide el PIN cada 12 horas.
+- **Código de recuperación** (enlace 🔑 al final de la app, con su propio aviso explicativo): cada mensajero puede poner un PIN nuevo o pasar su cuenta a otro celular sin esperar al administrador. Cinco intentos fallidos bloquean ese número 30 minutos. El Panel pide el PIN cada 12 horas.
 - Listas grandes (cientos de paquetes) abren rápido también en celulares sencillos.
+- **Avisos propios (1.75.2):** ni la app ni el Panel usan los cuadros grises del navegador; toda pregunta o dato que se pide sale en un aviso de RutaFácil con botones a la derecha (el principal naranja).
+- **Número alterno del administrador (1.76.0):** el administrador puede entrar a su misma cuenta con un segundo número de teléfono (y el mismo PIN), configurado en el Panel.
 - El Panel muestra **cuánto se usa** del plan gratis (base y fotos) y cuánto ocupa cada cuenta.
 
 ## Cierre del día
