@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-02
+- **1.70.5 · Ícono de código de barras:** los botones **Escanear** (arriba en *Paquetes*) y **Escáner** (en cada tarjeta) usan un ícono de código de barras en vez de la cámara.
 - **1.70.4 · Tel.:** la etiqueta del teléfono en *Paquetes* queda más corta: **Tel. 62700667**.
 - **1.70.3 · Teléfono con etiqueta:** en la tarjeta de *Paquetes* el teléfono sale como **Teléfono: 62700667** (junto a **Guía: …**).
 - **1.70.2 · Guía con etiqueta:** en la tarjeta de *Paquetes* el número de guía sale como **Guía: 29293393**.
