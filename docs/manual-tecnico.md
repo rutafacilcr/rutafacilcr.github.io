@@ -41,6 +41,7 @@ Servicios externos sin cuenta: wa.me (WhatsApp), Google Maps, Waze
 - `conoce.html` y `privacidad.html` son HTML estáticos **sin** `config.js` ni `auth.js`: no consultan Supabase y se ven sin cuenta. Solo cargan la fuente de Google Fonts; los videos (`videos/*.mp4`, 2–3 MB) van con `preload="none"` y solo se bajan al darles Play.
 - Las capturas de `img/` (`demo-*.jpg`, `video-*.jpg`) se sacaron con Playwright de la app en modo ejemplo (sin Supabase, la app carga la lista `EXAMPLE` de nombres inventados). **Nunca** poner capturas con datos de clientes reales.
 - La política promete borrar una cuenta dada de baja en máximo 30 días. Para hacerlo: borrar el usuario en Supabase **Authentication > Users** (por `on delete cascade` se borran `rf_perfiles`, `rf_pagos`, `rf_eventos`, `rf_listas` y `rf_cierres`) y borrar sus fotos en **Storage > evidencias** y sus filas de `entregas` (columna `owner_id`).
+- La política describe lo que trae la 1.74.0 (PR #10): código de recuperación cifrado (bcrypt), 5 intentos y bloqueo de 30 min, cierres guardados 15 días, fotos 30 días en el celular y en la nube solo si el administrador lo activa. Mergear el #10 antes o junto con este.
 - Si cambia algún servicio externo (Supabase, OSRM, OpenStreetMap, TomTom, Resend), el número de soporte o el proceso de recuperación, actualizar `privacidad.html` y su fecha.
 
 ### Mudanza a la organización (30-oct-2026)

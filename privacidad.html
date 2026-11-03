@@ -78,7 +78,7 @@ footer a{color:inherit}
   <p><b>Del mensajero (quien usa la app):</b></p>
   <ul>
     <li>Nombre y número de teléfono.</li>
-    <li>El PIN, guardado cifrado: nadie lo puede leer, ni el administrador.</li>
+    <li>El PIN y el código de recuperación, guardados cifrados: nadie los puede leer, ni el administrador.</li>
     <li>Un código al azar que identifica su celular (no es el IMEI ni el número) y la fecha de su último acceso.</li>
     <li>Los pagos registrados (monto, fecha y detalle del SINPE) y el estado de la cuenta.</li>
   </ul>
@@ -101,6 +101,7 @@ footer a{color:inherit}
   <h2 id="donde">Dónde se guardan y quién los ve</h2>
   <ul>
     <li>Los datos se guardan en <b>Supabase</b>, un servicio de base de datos en la nube (servidores en Estados Unidos), y también en el celular o la PC del mensajero.</li>
+    <li>Las fotos de entrega quedan en el celular del mensajero; solo se suben a la nube si el administrador activa ese respaldo.</li>
     <li>Cada mensajero ve <b>solo sus propios paquetes</b>. Las reglas de acceso están en el servidor, no solo en la pantalla.</li>
     <li>El administrador ve la lista de cuentas (nombre, teléfono y estado) y puede revisar las fotos de entrega para atender un reclamo. El acceso técnico a la base se usa solo para soporte.</li>
     <li>Para el mapa y la ruta, la app manda <b>solo coordinadas</b> (sin nombres ni teléfonos) a OpenStreetMap y OSRM, y a TomTom si el mensajero activa el tráfico en vivo.</li>
@@ -110,8 +111,8 @@ footer a{color:inherit}
 
   <h2 id="tiempo">Cuánto tiempo se guardan</h2>
   <ul>
-    <li>Las fotos de entrega se borran del celular a los 7 días; en la nube quedan como respaldo hasta que el administrador las borra para liberar espacio.</li>
-    <li>La lista de paquetes se guarda mientras el mensajero la use; al tocar <b>Vaciar lista</b> se borran los paquetes, y queda el reporte del día.</li>
+    <li>Las fotos de entrega se borran del celular a los 30 días. Si el respaldo en la nube está activado, quedan ahí hasta que el administrador las borra para liberar espacio.</li>
+    <li>La lista de paquetes se guarda mientras el mensajero la use. Al tocar <b>Vaciar lista</b> se borran los paquetes y el reporte de ese día (cierre) se guarda 15 días.</li>
     <li>Los datos de la cuenta se guardan mientras la cuenta exista.</li>
   </ul>
 
@@ -127,6 +128,7 @@ footer a{color:inherit}
   <ul>
     <li>La app y el formulario de entrega van siempre por conexión cifrada (HTTPS).</li>
     <li>Para entrar se necesita el número y un PIN de 6 números, y la cuenta funciona en un solo celular a la vez.</li>
+    <li>Después de 5 intentos fallidos con el código de recuperación, la recuperación se bloquea 30 minutos.</li>
     <li>Recomendación: no comparta su PIN y ponga bloqueo de pantalla en su celular, porque ahí están los datos de sus clientes.</li>
   </ul>
 
