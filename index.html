@@ -452,7 +452,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.81.4</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.81.5</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -1255,8 +1255,10 @@ async function pickAbrir(p,t){
   const ruta=zona.replace(/Ruta Nacional (Primaria|Secundaria|Terciaria)\s*/i,'Ruta '),ciudad=zona.split(',').map(x=>x.trim()).filter(Boolean).pop()||'';
   let R=[];for(const q of [...new Set([lg.nombre&&zona&&`${lg.nombre}, ${zona}`,lg.nombre].filter(Boolean))]){R=await pickTodos(q);if(R.length)break}
   if(!PICK||PICK.p!==p)return;
-  if(R.length){const cerca=R[0].km<=PICK_KM;pickLista(R,cerca?0:null);if(!cerca)PMAP.setView(R[0].c,13);
-    $('#pickInfo').textContent=cerca?`Marqué el más cercano (${R[0].nom}). Si no es, escogé otro de la lista o tocá el punto.`:`Ninguno está cerca de tu zona. Escogé el correcto de la lista (mirá la provincia) o tocá el punto.`;return}
+  // 1.81.5: solo se marca solo si el nombre coincide (todas las palabras del negocio) y queda a 30 km o menos; si no, la lista sin pin
+  if(R.length){const nt=x=>String(x||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(),pal=nt(lg.nombre).split(/[^a-z0-9ñ]+/).filter(w=>w.length>=3&&!['del','los','las','bar','restaurante','soda'].includes(w));
+    const ok=R.findIndex(x=>x.km<=PICK_KM&&pal.length&&pal.every(w=>nt(x.nom).includes(w)));pickLista(R,ok>=0?ok:null);if(ok<0)PMAP.setView(PICK.ref,12);
+    $('#pickInfo').textContent=ok>=0?`Marqué "${R[ok].nom}" (${R[ok].dir||''}). Revisá que esté bien; si no, escogé otro o tocá el punto.`:`No encontré "${lg.nombre}" seguro. Revisá la lista (nombre, provincia y km) o tocá el punto en el mapa.`;return}
   let c=null;for(const q of [...new Set([zona,ruta!==zona&&ruta,ciudad].filter(Boolean))]){c=await pickBuscar(q);if(c)break}
   if(!PICK||PICK.p!==p)return;
   if(c){PMAP.setView(c,15);$('#pickInfo').textContent=`No encontré "${lg.nombre}"; el mapa quedó cerca de ${zona||ciudad}. Tocá el punto exacto.`}

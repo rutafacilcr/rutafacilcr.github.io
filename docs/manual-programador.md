@@ -185,6 +185,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 ## 3c-quindecies. Tarjeta desactivada por Devolver (1.66.0)
 
+- 1.81.5: el autoseleccionado exige que todas las palabras del nombre pegado (3+ letras, sin "bar", "restaurante", "soda", etc.) estén en `x.nom` (sin tildes) y `km<=PICK_KM`; si no, `pickLista(R,null)` y el mapa vuelve a `PICK.ref`.
 - 1.81.4: sin límite de distancia. `pickTodos(q)` junta `pickTomTom` (hasta 6, sesgo `lat/lon` sin `radius`) y `pickOsm` (Nominatim, 6, sin `viewbox`), quita repetidos a menos de 150 m, calcula `km` desde `PICK.ref` y ordena por cercanía. `pickLista(R,auto)` pinta `#pickRes` (`.pickopt`, `aria-pressed`) y `pickElegir(i)` pone el pin. Se marca solo el primero si `km<=PICK_KM`.
 - 1.81.3: `pickRef(p)` = mediana de las coordenadas de los demás paquetes (3 o más), si no `EPOS`, `S.start` o San José; se guarda en `PICK.ref`. TomTom recibe `lat`, `lon` y `radius` (`PICK_KM`=30 km) y Nominatim `viewbox` con `bounded=1`. Si un resultado queda a más de `PICK_KM` (`pickKm`, `hav` sin el ×1,35) no pone pin y avisa.
 - 1.81.2: `pickTomTom(q)` usa TomTom Search (`/search/2/search/{q}.json`, `countrySet=CR`, `S.ttKey`) y solo cuenta como hallazgo exacto si `type==="POI"`; se prueba antes que Nominatim. `#pickBusca` (`#pickQ`, se llena con nombre y zona pegados) busca a mano: TomTom y si no Nominatim, pone el pin.
