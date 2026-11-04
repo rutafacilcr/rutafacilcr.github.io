@@ -167,7 +167,7 @@ Desde la versión 1.18.0 la lista se guarda en tu cuenta. Si entrás con tu núm
 6. Lo que llene **entra solo** a la app (revisa cada minuto, o tocá **Revisar respuestas ahora**) y queda **Confirmado** con 🕓 horario y 🏠 señas.
 7. **Cuando el cliente responde por el chat (lo más común):** en WhatsApp mantené presionado su mensaje (la hora, la ubicación o los dos seleccionados) > **Copiar**. En la app tocá **📋 Pegar respuesta** en ese cliente. La app saca sola la **hora** y la **ubicación** y lo deja **Confirmado**. Si el iPhone pregunta "Permitir pegar", tocá **Permitir**. Si la ubicación no se puede copiar del chat, abrila, tocá **Compartir** > **Copiar** y volvé a tocar **📋 Pegar respuesta**.
 
-   **Si el cliente manda un negocio o lugar (1.82.0, lo nuevo):** sale la ventana **📍 Falta la ubicación** (1.82.1: ya no trae el botón para pedírsela otra vez al cliente, porque si ya la mandó le molesta):
+   **Si el cliente manda un negocio o lugar (1.82.0, lo nuevo):** sale la ventana **📍 Falta la ubicación** (1.84.1: ya no trae el botón para pedírsela otra vez al cliente, porque si ya la mandó le molesta):
    - **Sacarla vos con Waze:** en WhatsApp tocá la tarjeta del lugar y elegí **Waze**; en Waze tocá **Compartir** > **Copiar**; volvé a la app y tocá **📋 Pegar respuesta**. El link de Waze trae el punto exacto.
    - Si ninguna sirve, **🎯 Marcar a mano en el mapa** abre el mapa con el buscador (lo de abajo).
 

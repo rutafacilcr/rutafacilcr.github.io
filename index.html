@@ -462,7 +462,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.84.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.84.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -1264,7 +1264,7 @@ async function pickAbrir(p,t,mano){
   $('#pickOk').disabled=!actual;$('#pickInfo').textContent='Buscando en el mapa…';$('#pickSheet').hidden=false;document.body.style.overflow='hidden';
   // 1.82.0: con un negocio pegado, lo principal es pedirle la ubicación al cliente o sacarla con Waze; el mapa queda en "Marcar a mano"
   $('#pickTitle').textContent=guia?'📍 Falta la ubicación':'🎯 Marcar en el mapa';$('#pickNeg').hidden=!guia;$('#pickManual').hidden=guia;$('#pickOk').hidden=guia;
-  PICK.t=t; // 1.82.1: sin botón para pedirla otra vez (molesta al cliente que ya la mandó)
+  PICK.t=t; // 1.84.1: sin botón para pedirla otra vez (molesta al cliente que ya la mandó)
   if(guia){$('#pickAviso').innerHTML=`El cliente mandó un <b>lugar o negocio</b> (${esc(lg.nombre)}). Al copiarlo, WhatsApp no trae las coordenadas, pero Waze sí.`;return}
   try{if(!document.querySelector('link[data-leaflet]')){const l=document.createElement('link');l.rel='stylesheet';l.href=CSS_MAP;l.dataset.leaflet=1;document.head.appendChild(l)}
     await loadScript(LIB_MAP)}catch(e){$('#pickInfo').textContent='No se pudo cargar el mapa. Revisá el internet.';return}
