@@ -366,6 +366,10 @@ delete from respuestas where updated_at < now() - interval '30 days';
 
 Desde la 1.82.0 las búsquedas (TomTom y Nominatim) solo se hacen si el mensajero toca **🎯 Marcar a mano en el mapa**; *Pedirle la ubicación* es solo un link `wa.me` (gratis). Desde la 1.81.4 cada búsqueda hace una consulta a TomTom (si hay clave) y una a Nominatim, sin límite de zona; TomTom solo prioriza los resultados cercanos con `lat/lon`. Desde la 1.81.2, si la cuenta tiene clave de TomTom (`ttKey`, la de 🚦 Tráfico) usa también TomTom Search API, del mismo plan gratis (2.500 consultas al día compartidas con el tráfico; al pasarse responde error y la app sigue con OpenStreetMap, no cobra). En la 1.81.1 puede hacer hasta 6 búsquedas seguidas en Nominatim por paquete cuando no encuentra el negocio (se paran apenas una encuentra algo). Usa Leaflet 1.9.4 (cdnjs, el mismo de *Ruta*), los mosaicos de OpenStreetMap y la búsqueda de Nominatim (`nominatim.openstreetmap.org`, gratis, sin llave; máximo 1 consulta por segundo, aquí son 1 o 2 por paquete). No guarda nada nuevo: la ubicación queda en `pk[].ubic` como siempre. No hay SQL que correr.
 
+### Accesibilidad completa (1.83.0)
+
+Igual que la 1.79.0: solo diseño, sin cambios en Supabase ni en datos. Agrega botones de 44 px en Mensajes, círculos de color en los estados y la ruedita de carga en los botones que esperan algo (Confirmar entrega, Usar esta respuesta, Guardar contactos, Bajar Excel).
+
 ### Diseño y accesibilidad (1.79.0)
 
 Solo cambia CSS (y la clase de la etiqueta ⛔ Devuelto). No toca Supabase, `config.js`, `auth.js` ni los datos guardados, así que no hace falta correr SQL ni limpiar caché: al publicar, los celulares ven el aviso de versión nueva como siempre. Para revisarlo: Lighthouse en Chrome (DevTools > Lighthouse > Accesibilidad) debe dar 100 en la app, el Panel, el formulario y «Conocé la app».

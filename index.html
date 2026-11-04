@@ -285,6 +285,16 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
 
 /* Tarjetas cerradas (entregado) en tema oscuro: fondo oscuro para que el nombre se lea (antes quedaba gris claro) */
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .pkg.entregado{background:#26282c}}:root[data-theme="dark"] .pkg.entregado{background:#26282c}
+/* ===== 1.83.0 · Completa la lista de accesibilidad: Mensajes a 44 px, estados con 🟡🔵🟢🔴⚪, carga y confirmación ===== */
+#v-mensajes :is(.btn,.coordbtn),#v-mensajes .msgsel button{min-height:var(--tap)}
+#v-mensajes .msgsel{gap:8px}#v-mensajes .msgsel button{padding:6px 12px;border-color:var(--ctl-line)}#v-mensajes .pkg .actions{gap:8px 6px}#v-mensajes .pkg .actions>.btn{padding-left:10px;padding-right:10px}
+.chip,button.devtag{min-height:var(--tap);padding:6px 12px}
+.st-pendiente::before{content:"🟡"}.st-confirmado::before{content:"🔵"}.st-noresponde::before{content:"🟠"}.st-entregado::before{content:"🟢"}.st-fallido::before{content:"🔴"}
+/* Cargando: el botón conserva su color (aunque esté desactivado mientras trabaja) y muestra la ruedita */
+.btn.primary[aria-busy="true"]:disabled{background:var(--accent-btn)!important;border:1px solid var(--accent-btn)!important}
+.btn[aria-busy="true"]{cursor:progress}
+/* Confirmación: el aviso de abajo se anuncia al lector de pantalla y se ve con borde de color */
+.toast{border-left:4px solid var(--accent-btn);font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.25)}
 </style>
 </head>
 <body>
@@ -452,7 +462,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.82.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.83.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -557,7 +567,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
   <h3>Videos: cómo se usa la app</h3>
   <div class="vids" id="supVids"><p class="small muted">Cargando…</p></div>
 </div></div>
-<div class="toast" id="toast" hidden></div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
 <script>
 // 1.69.0: cuadro de confirmación propio (en vez del confirm() del navegador). rfConfirm(texto) → Promise<boolean>.
@@ -640,6 +650,8 @@ function cuentaLocal(c){const t=cuentaTel(c);if(!t)return false;
   try{const viejo=KEY+'@'+S.owner;if(S.dirty)localStorage.setItem(viejo,JSON.stringify(S));else localStorage.removeItem(viejo);
     const r=localStorage.getItem(KEY+'@'+t);localStorage.setItem(KEY,r||JSON.stringify({owner:t}));if(r)localStorage.removeItem(KEY+'@'+t)}catch(e){}
   document.documentElement.classList.add('rf-bloq');location.reload();return true}
+// 1.83.0: mientras un botón trabaja muestra la ruedita (aria-busy) y no se puede tocar dos veces. Solo se ve: no cambia lo que hace el botón.
+async function conCarga(b,fn){if(!b)return fn();if(b.getAttribute('aria-busy')==='true')return;b.setAttribute('aria-busy','true');try{return await fn()}finally{b.removeAttribute('aria-busy')}}
 function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2200)}
 
 function geohash(h){const B='0123456789bcdefghjkmnpqrstuvwxyz';let la=[-90,90],lo=[-180,180],ev=true;
@@ -706,10 +718,10 @@ const waze=c=>`https://waze.com/ul?ll=${c[0]},${c[1]}&navigate=yes`;
 // ⛔ Devolver (1.66.0): la tarjeta queda desactivada (gris) y solo quedan la etiqueta en color y ↩ Quitar devolver
 const pkDevol=p=>!!p.devolver&&p.st!=='devuelto'&&p.st!=='entregado';
 const pkOff=p=>pkDevol(p)||p.st==='devuelto'; // 1.66.2: los devueltos también quedan desactivados
-function devBar(p,enPk){if(p.st==='devuelto')return `<div class="devkeep"><span class="devtag">⛔ Devuelto</span><button type="button" class="btn sm devno" data-act="dev" data-id="${p.id}">${enPk?'↪ Regresar a Ruta':'↪ Quitar devuelto'}</button></div>`;return pkDevol(p)?`<div class="devkeep"><span class="devtag on">⛔ Devolver</span><button type="button" class="btn sm devno" data-act="devno" data-id="${p.id}">↩ Quitar devolver</button></div>`:''}
+function devBar(p,enPk){if(p.st==='devuelto')return `<div class="devkeep"><span class="devtag">⚪ Devuelto</span><button type="button" class="btn sm devno" data-act="dev" data-id="${p.id}">${enPk?'↪ Regresar a Ruta':'↪ Quitar devuelto'}</button></div>`;return pkDevol(p)?`<div class="devkeep"><span class="devtag on">⛔ Devolver</span><button type="button" class="btn sm devno" data-act="devno" data-id="${p.id}">↩ Quitar devolver</button></div>`:''}
 function pkChip(p){if(p.st==='entregado'||p.st==='devuelto')return stChip(p);const l=waLink(p,coordText(p));
   return l?`<a class="coordbtn" href="${l}" target="_blank" rel="noopener" data-act="sent" data-k="coord" data-id="${p.id}" title="Abrir WhatsApp con el mensaje de coordinar">1. Coordinar${p.sent?' ✓':''}</a>`:`<span class="coordbtn off" title="Teléfono inválido: corregilo con Editar">1. Coordinar</span>`}
-function stChip(p){if(p.st==='devuelto')return `<button class="chip devtag" data-act="st" data-id="${p.id}" title="Devuelto al almacén. Tocá para cambiar el estado">⛔ Devuelto</button>`; // 1.56.0: devueltos con la misma etiqueta que ⛔ Devolver
+function stChip(p){if(p.st==='devuelto')return `<button class="chip devtag" data-act="st" data-id="${p.id}" title="Devuelto al almacén. Tocá para cambiar el estado">⚪ Devuelto</button>`; // 1.56.0: devueltos con la misma etiqueta que ⛔ Devolver
   return `<button class="chip st-${p.st}" data-act="st" data-id="${p.id}" title="Cambiar estado">${SLABEL[p.st]}</button>`}
 
 function renderStats(){
@@ -1015,7 +1027,7 @@ async function saveContacts(){
   a.download=name;document.body.appendChild(a);a.click();if(IOS)$('#vcfIos').hidden=false;
   setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},5000);toast(`${cards.length} contactos listos para guardar`);
 }
-$('#vcfBtn').onclick=saveContacts;$('#vcfCancel').onclick=()=>{$('#vcfSheet').hidden=true};
+$('#vcfBtn').onclick=e=>conCarga(e.currentTarget,saveContacts);$('#vcfCancel').onclick=()=>{$('#vcfSheet').hidden=true};
 // Excel del día: mismas columnas que plantilla-paquetes.xlsx (se puede volver a importar) + "contacto" (TM-Nombre-pedido).
 function saveExcel(){
   if(!window.XLSX){toast('Preparando Excel…');cargarXlsx().then(()=>toast('Excel listo. Tocá de nuevo “Excel” para descargarlo.')).catch(()=>toast('No se pudo cargar Excel. Revisá el internet y probá de nuevo.'));return}
@@ -1031,7 +1043,7 @@ function saveExcel(){
     if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Excel guardado')).catch(()=>{});$('#xlsIos').hidden=false;return}}
   XLSX.writeFile(wb,name);toast(`Excel con ${pk.length} clientes`);if(IOS)$('#xlsIos').hidden=false;
 }
-$('#xlsBtn').onclick=saveExcel;
+$('#xlsBtn').onclick=e=>conCarga(e.currentTarget,saveExcel);
 // Reporte PDF (1.54.0): jsPDF + autotable (gratis, cdnjs) se cargan al abrir Cierres para que el botón genere el PDF al instante (iPhone pide el toque directo para compartir).
 const REP_JS=['https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js','https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js'];
 let repCarga=null;
@@ -1219,7 +1231,7 @@ async function pasteReply(p){
   if(t&&(parseCoord(t)||findTime(t)||/https?:\/\//.test(t))){await applyReply(p,t);return}
   PASTE=p;$('#pasteWho').textContent=p.nombre||'';$('#pasteBoxR').value=t||'';$('#pasteSheet').hidden=false;$('#pasteBoxR').focus();
 }
-$('#pasteOk').onclick=async()=>{if(!PASTE)return;if(await applyReply(PASTE,$('#pasteBoxR').value)){PASTE=null;$('#pasteSheet').hidden=true}};
+$('#pasteOk').onclick=e=>conCarga(e.currentTarget,async()=>{if(!PASTE)return;if(await applyReply(PASTE,$('#pasteBoxR').value)){PASTE=null;$('#pasteSheet').hidden=true}});
 $('#pasteCancel').onclick=()=>{PASTE=null;$('#pasteSheet').hidden=true};
 $('#pasteMapa').onclick=()=>{if(!PASTE)return;const p=PASTE,t=$('#pasteBoxR').value;PASTE=null;$('#pasteSheet').hidden=true;pickAbrir(p,t)};
 // 1.81.0: 🎯 Marcar en el mapa (Leaflet + OpenStreetMap, gratis). Busca el nombre del lugar en Costa Rica y deja tocar el punto exacto.
@@ -1350,7 +1362,7 @@ $('#podOk').onclick=async()=>{
   if(!POD.geo){
     if($('#podGeoRetry').hidden){toast('Esperando la ubicación GPS…');ver('#podGeo');return}
     if(!await rfConfirm('No se pudo obtener la ubicación GPS. ¿Confirmar la entrega sin GPS?'))return}
-  const btn=$('#podOk');btn.disabled=true;
+  const btn=$('#podOk');btn.disabled=true;btn.setAttribute('aria-busy','true');
   try{
   const {p,fotos,at}=POD,geo=POD.geo||{lat:null,lng:null,acc:null};const id=tok()+tok();
   const recibe=$('#podRecibe').value.trim().slice(0,80),sinFirma=!POD.signed;
@@ -1360,7 +1372,7 @@ $('#podOk').onclick=async()=>{
   p.st='entregado';p.pod={id,n:fotos.length,at,lat:geo.lat,lng:geo.lng,acc:geo.acc,up:false,firma:!!firma,recibe};
   save();closePOD();render();toast(`${p.nombre}: entregado con evidencia`);
   uploadPOD(p.pod.id);
-  }catch(err){toast('No se pudo confirmar: '+(err&&err.message||err))}finally{btn.disabled=false}
+  }catch(err){toast('No se pudo confirmar: '+(err&&err.message||err))}finally{btn.disabled=false;btn.removeAttribute('aria-busy')}
 };
 async function uploadPOD(id,quiet){
   if(!FORM_ON)return false;
@@ -1821,7 +1833,7 @@ async function renderEnt(){entSyncPk();jorRender();vehPintar();ttPintar();
   const erk=s=>entDone(s)?2:s.c?(s.hold?0.5:0):1;
   LI.innerHTML=E.stops.map((s,i)=>[s,i]).sort((a,b)=>erk(a[0])-erk(b[0])||a[1]-b[1]).map(([s,i])=>{const d=entDone(s),p=entPkg(s),ubx=s.ub!==undefined?s.ub:(p&&p.ubic&&!parseCoord(p.ubic)?String(p.ubic):undefined),nav=s.c?`https://www.google.com/maps/dir/?api=1&destination=${s.c[0]},${s.c[1]}&travelmode=driving`:'',wz=s.waze||(s.c?`https://waze.com/ul?ll=${s.c[0]},${s.c[1]}&navigate=yes`:''),wa=phoneWA(p&&entFuerte(s,p)?p.tel:s.tel);
     return `<div class="estop${d?' ok':''}${s.devolver?' devol':''}${i===ESEL?' sel':''}" data-ei="${i}"><div class="n${s.c||d?'':' no'}">${s.c||d?eNum(s):'?'}</div>
-    <div><b>${esc(s.nombre)}</b>${s.c?'':` <button class="eub" type="button" data-eub="${i}" title="Lo que dice la columna ubicación del archivo. Tocá para agregar la ubicación">📍 ${esc(ubx===undefined?'Sin dato':/^aplicaci[oó]n$/i.test(ubx.trim())?'Co-out':(ubx||'Vacío'))}</button>`}${!p?` <button class="eub" type="button" data-elink="${i}" title="Esta parada no está unida a ningún paquete de la lista: tocá para unirla">🔗 Unir a paquete</button>`:!s.c?` <button class="eub" type="button" data-elink="${i}" title="Paquete unido a esta parada; tocá para cambiarlo">🔗 ${esc((p.nombre||'').split(' ')[0])} · ${esc(p.tel||'sin tel')}</button>`:''}${s.devolver?'':d&&entDev(s)?` <span class="devtag">⛔ Devuelto</span>`:d?` <span class="small" style="color:var(--ok);font-weight:700">✓ entregado${s.at?' '+hm(new Date(s.at).getHours()*60+new Date(s.at).getMinutes()):''}${s.gps?' 📍':''}</span>`:''}<div class="small muted dir">${s.c?'':'<b>Sin ubicación</b> · '}${esc(s.dir||'')}</div>${s.nota?`<div class="small">📝 ${esc(s.nota)}</div>`:''}</div>
+    <div><b>${esc(s.nombre)}</b>${s.c?'':` <button class="eub" type="button" data-eub="${i}" title="Lo que dice la columna ubicación del archivo. Tocá para agregar la ubicación">📍 ${esc(ubx===undefined?'Sin dato':/^aplicaci[oó]n$/i.test(ubx.trim())?'Co-out':(ubx||'Vacío'))}</button>`}${!p?` <button class="eub" type="button" data-elink="${i}" title="Esta parada no está unida a ningún paquete de la lista: tocá para unirla">🔗 Unir a paquete</button>`:!s.c?` <button class="eub" type="button" data-elink="${i}" title="Paquete unido a esta parada; tocá para cambiarlo">🔗 ${esc((p.nombre||'').split(' ')[0])} · ${esc(p.tel||'sin tel')}</button>`:''}${s.devolver?'':d&&entDev(s)?` <span class="devtag">⚪ Devuelto</span>`:d?` <span class="small" style="color:var(--ok);font-weight:700">✓ entregado${s.at?' '+hm(new Date(s.at).getHours()*60+new Date(s.at).getMinutes()):''}${s.gps?' 📍':''}</span>`:''}<div class="small muted dir">${s.c?'':'<b>Sin ubicación</b> · '}${esc(s.dir||'')}</div>${s.nota?`<div class="small">📝 ${esc(s.nota)}</div>`:''}</div>
     <div class="acts">${!d&&s.c?`<span class="eeta" data-eta="${i}"></span>`:''}${wz?`<a class="btn sm primary" href="${wz}" target="_blank" rel="noopener">🚗 Waze</a>`:''}${wa?`<a class="btn sm wa" href="${entWaUrl(wa,'')}" data-ewa="${i}" target="_blank" rel="noopener">WhatsApp</a>`:''}</div>
       <div class="acts2"><button class="btn sm ghost danger" type="button" data-equitar="${i}" title="Quitar esta parada de la ruta (el paquete sigue en Paquetes)">🗑️ Quitar</button>${nav?`<a class="btn sm" href="${nav}" target="_blank" rel="noopener">🗺️ Maps</a>`:''}${!d&&p?`<button class="btn sm" type="button" data-eok="${i}">📸 Evidencia</button>`:''}<a class="btn sm" href="shortcuts://run-shortcut?name=Co-out" title="Abre la app Co-out con el atajo de iPhone llamado Co-out">📲 Co-out</a></div>
       <div class="acts3">${s.devolver?`<span class="devtag on">⛔ Devolver</span><button class="btn sm devno" type="button" data-edevno="${i}" title="La parada vuelve a estar activa en la ruta">↩ Quitar devolver</button>`:d?(s.done?`<button class="btn sm ghost" type="button" data-eundo="${i}">↩ Deshacer</button>`:''):`${s.c?`<button class="btn sm ehold${s.hold?' on':''}" type="button" data-ehold="${i}" title="Pasar esta parada al final de la ruta">${s.hold?'▶ Quitar hold':'⏸ Hold'}</button>`:''}<button class="btn sm edevol" type="button" data-edevol="${i}" title="Este paquete se devuelve: queda en la ruta pero desactivado">⛔ Devolver</button><button class="btn sm edone" type="button" data-edone="${i}">✓ Entregado</button>`}</div></div>`}).join('');
