@@ -391,7 +391,8 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
   <input id="m-buscar" type="search" placeholder="🔍 Buscar por nombre, teléfono o guía" autocomplete="off" aria-label="Buscar cliente">
   <div class="msgfil" id="msgFil" role="group" aria-label="Filtrar clientes"></div>
   <div class="list" id="msgList"></div>
-  <div class="panel" id="syncPanel" hidden>
+  <!-- 1.91.0: tarjeta "Respuestas del formulario" oculta (Victor). Las respuestas se siguen revisando solas en segundo plano. -->
+  <div class="panel" id="syncPanel" hidden style="display:none!important">
     <div class="row" style="justify-content:space-between"><h3>Respuestas del formulario</h3><span class="small muted" id="syncInfo"></span></div>
     <p class="small">El primer mensaje va sin link. Cuando el cliente te conteste, elegí <b>2. Formulario</b> en ese cliente: le llega un segundo mensaje corto con el link. Lo que llene entra solo a la lista y queda <b>Confirmado</b>.</p>
     <button class="btn road" id="syncBtn">Revisar respuestas ahora</button>
