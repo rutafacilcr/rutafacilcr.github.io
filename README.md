@@ -8,7 +8,7 @@ Herramienta web para repartidores de paquetes en Costa Rica. Cargás la lista de
 
 ## Qué hace
 
-La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cierres**, **Mensajes** y **Ruta** (Paquetes y Ruta con una burbuja de lo que falta por entregar). El botón **Soporte** está arriba, en el encabezado.
+La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cierres**, **Mensajes** y **Ruta** (Paquetes y Ruta con una burbuja de lo que falta por entregar) y Ruta siempre muestra el mapa con tu ubicación, aunque no haya paradas. El botón **Soporte** está arriba, en el encabezado.
 
 - **Paquetes:**
   - Cinco contadores: Recibidos, Entregados, Hold, Devueltos y Sin 📍.

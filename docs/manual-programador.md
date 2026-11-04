@@ -186,6 +186,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 ## 3c-quindecies. Tarjeta desactivada por Devolver (1.66.0)
 
+- 1.86.1: el mapa de Ruta nunca se oculta. `entMapaCrear()` (sacado de `renderEnt`) crea `EMAP`; la rama de ruta vacía o cerrada muestra `#entGps`, llama `entVigilar()`, crea el mapa, pinta `entMe()` y centra una vez (`EMAP.fitted='vacio'`; `entMe` re-centra a la primera posición GPS con `EMAP.meC`). Con ruta, `fitBounds` solo si hay paradas con `c`. `entAgregarPk` crea `S.ent={nombre:'Ruta AAAA-MM-DD',stops:[]}` si no hay ruta, está vacía o `cerrada`. Al guardar Editar, si el paquete tenía coordenadas y ya no, a sus paradas sin terminar se les borra `c` y `ub`. El auto-orden de `gpsOk` exige al menos una parada con `c`.
 - 1.86.0: `#n-ruta` (span `.n` en la pestaña Ruta) lo llena `rutaGlobo()` desde `renderStats` y `renderEnt`: paradas de `S.ent.stops` con `!entDone(s)` (0 si la ruta está cerrada; vacío si no hay). `entDone` es `const` más abajo: en la primera pintada da error de TDZ, el `try` deja 0 y se corrige en la pintada final.
 - 1.85.2: en modo a mano `pickAbrir` ya no busca (return antes de `pickTodos`; el código de búsqueda queda sin usar), `#pickBusca` va `hidden` y `#pickAviso` dice que se guíe por la tarjeta. `pickTodos`, `pickTomTom`, `pickOsm` y `pickLista` se pueden borrar más adelante.
 - 1.84.1: se quitaron `#pickPedir`, `PIDE_UBIC` y `p.pideUbic`; `#pickNeg` solo trae la guía de Waze y `#pickAMano`.

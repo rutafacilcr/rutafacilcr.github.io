@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-04
+- **1.86.1 · Mapa siempre en Ruta y ubicación borrada:** la pestaña **Ruta** siempre muestra el mapa con tu punto, aunque la lista esté vacía o recién vaciada. *➕ Agregar a la ruta* arma la ruta del día si no hay una. Si en Paquetes borrás la ubicación de un paquete, su parada sale del mapa y cuenta en *Sin 📍*.
 - **1.86.0 · Globito en Ruta:** la pestaña **Ruta** muestra en una burbuja cuántas paradas faltan por entregar (las de Hold cuentan; entregadas y devueltas no), igual que la de **Paquetes**.
 - **1.85.2 · Sin lista de lugares:** *Marcar a mano en el mapa* ya no busca el nombre del negocio ni muestra lugares para escoger (salían negocios equivocados que el mensajero no puede juzgar). Solo el mapa para tocar el punto, guiándose por la tarjeta de WhatsApp. Lo principal sigue siendo la guía de Waze.
 - **1.85.1 · Barra de abajo en su lugar (iPhone):** en iPhone con iOS 26 la barra *Paquetes · Cierres · Mensajes · Ruta* se quedaba a media pantalla al desplazarse (sobre todo después de escribir) y tapaba lo de abajo, como los *entregado(s)* de *Guías por fecha de recibido*. Ahora la barra va fija debajo del contenido y solo se desplaza la página de arriba, así nunca tapa nada.

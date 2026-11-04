@@ -461,7 +461,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.86.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.86.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -969,7 +969,7 @@ $('#pkgForm').onsubmit=async e=>{e.preventDefault();
   const v=['nombre','tel','dir','ubic','guia','nota'].map(k=>$('#f-'+k).value);
   if(editId){const p=S.pk.find(x=>x.id===editId);const n=mkPkg(v);
     const cam=[['Nombre','nombre'],['Teléfono','tel'],['Dirección','dir'],['Ubicación','ubic'],['Guía','guia']].filter(([l,k])=>{const a=String(p[k]||'').trim(),b=String(n[k]||'').trim();if(k==='ubic'){const ca=parseCoord(a),cb=parseCoord(b);if(ca&&cb)return Math.abs(ca[0]-cb[0])>1e-6||Math.abs(ca[1]-cb[1])>1e-6}if(k==='tel')return a.replace(/\D/g,'')!==b.replace(/\D/g,'');return a!==b}).map(([l,k])=>`• ${l}: "${p[k]||'—'}" → "${n[k]||'—'}"`);
-    if(cam.length&&!await rfConfirm(`¿Guardar estos cambios de ${p.nombre||'este paquete'}?\n${cam.join('\n')}\n\nSe actualizan en Paquetes, Mensajes y Ruta.`))return;const ps=entParadasDe(p);if(p.tel&&phoneWA(p.tel)!==phoneWA(n.tel))p.telsAnt=[...new Set([...(p.telsAnt||[]),p.tel])];Object.assign(p,{nombre:n.nombre,tel:n.tel,dir:n.dir,ubic:n.ubic,guia:n.guia,nota:n.nota,ing:loteIng($('#f-lote').value,p.ing)});entCopiarPk(p,ps);S.route=null;save();render();toast('Cambios guardados')}
+    if(cam.length&&!await rfConfirm(`¿Guardar estos cambios de ${p.nombre||'este paquete'}?\n${cam.join('\n')}\n\nSe actualizan en Paquetes, Mensajes y Ruta.`))return;const ps=entParadasDe(p);if(p.tel&&phoneWA(p.tel)!==phoneWA(n.tel))p.telsAnt=[...new Set([...(p.telsAnt||[]),p.tel])];const teniaC=!!parseCoord(p.ubic);Object.assign(p,{nombre:n.nombre,tel:n.tel,dir:n.dir,ubic:n.ubic,guia:n.guia,nota:n.nota,ing:loteIng($('#f-lote').value,p.ing)});entCopiarPk(p,ps);if(teniaC&&!parseCoord(p.ubic))ps.forEach(x=>{if(!entDone(x)){delete x.c;x.ub=''}});/* 1.86.1: si se borra la ubicación, la parada sale del mapa (queda en Ruta como sin ubicación) */S.route=null;save();render();toast('Cambios guardados')}
   else{const k=$('#f-lote').value;if(S.ex){S.pk=[];S.ex=false;S.nums={}}const n=mkPkg(v);n.ing=loteIng(k);S.pk.push(n);S.route=null;save();render();toast(`Paquete agregado a ${repEntregasDe(repDia(n.ing))}`)}
   resetForm();subAbrir(null);
 };
@@ -1760,7 +1760,9 @@ function entCopiarPk(p,ps){if((ps||[]).length)entMod();(ps||[]).forEach(s=>{s.te
   if(!(ps||[]).length&&S.ent&&S.ent.stops&&parseCoord(p.ubic)&&p.st!=='entregado'&&p.st!=='devuelto'&&!(S.ent.quitadas||[]).includes(p.id))setTimeout(()=>entAgregarPk(p),0)}
 // Paradas marcadas Entregado (también las de antes de la 1.28 o de otro aparato) pasan su paquete a entregado en Paquetes
 // Paquete con ubicación que no está en la ruta: se agrega como parada nueva y se reordena desde donde estás
-function entAgregarPk(p){const c=parseCoord(p.ubic);if(!S.ent||S.ent.cerrada||!c){toast('Primero cargá la ruta en la pestaña Ruta');return}entMod();
+function entAgregarPk(p){const c=parseCoord(p.ubic);if(!c){toast('Este paquete no tiene ubicación');return}
+  if(!S.ent||!S.ent.stops||S.ent.cerrada){const t=Date.now();S.ent={nombre:'Ruta '+new Date().toLocaleDateString('en-CA'),at:t,mod:t,stops:[]}} // 1.86.1: sin ruta cargada (lista nueva) se arma una ruta del día
+  entMod();
   if(S.ent.quitadas)S.ent.quitadas=S.ent.quitadas.filter(x=>x!==p.id); // si se había quitado a mano, vuelve
   const mx=Math.max(0,...S.ent.stops.filter(x=>x.c).map(x=>x.n||0));
   // Si ya tiene parada pero sin pin (el "?" amarillo), a esa parada se le pone la ubicación del paquete y queda unida para siempre
@@ -1832,7 +1834,13 @@ $('#jorBar').addEventListener('click',async e=>{const b=e.target.closest('[data-
 async function renderEnt(){entSyncPk();rutaGlobo();jorRender();vehPintar();ttPintar();
   // La ruta se arma el día antes: vale la de hoy o la de mañana (fecha local del celular).
   const dia=d=>'Ruta '+new Date(Date.now()+d*864e5).toLocaleDateString('en-CA'),hoy=dia(0),man=dia(1);const E=S.ent,LI=$('#entList');
-  if(!E||!E.stops||!E.stops.length){$('#entMap').hidden=true;$('#entTools').hidden=true;$('#entAqui').hidden=true;$('#entGps').hidden=true;$('#entBus').hidden=true;$('#entInfo').textContent=`Cargá el archivo de la ruta ("${hoy}.xlsx" o "${man}.xlsx")`;LI.innerHTML='<div class="empty">Tocá <b>📂 Cargar ruta</b> y elegí el Excel de la ruta del día. Arriba sale el mapa con las paradas en orden y abajo la lista: tocá una parada para verla en el mapa e ir con Waze o Google Maps.</div>';return}
+  if(!E||!E.stops||!E.stops.length){$('#entTools').hidden=true;$('#entAqui').hidden=true;$('#entGps').hidden=false;$('#entBus').hidden=true;$('#entInfo').textContent=`Cargá el archivo de la ruta ("${hoy}.xlsx" o "${man}.xlsx") o agregá paquetes con ➕ Agregar a la ruta en Paquetes`;LI.innerHTML='<div class="empty">Tocá <b>📂 Cargar ruta</b> y elegí el Excel de la ruta del día, o en <b>Paquetes</b> tocá <b>➕ Agregar a la ruta</b> en cada paquete con ubicación. Arriba está el mapa con tu punto.</div>';
+    // 1.86.1: el mapa siempre está, aunque no haya ruta: muestra dónde estás
+    entVigilar();$('#entMap').hidden=false;if($('#v-entrega').hidden)return;
+    try{if(!document.querySelector('link[data-leaflet]')){const l=document.createElement('link');l.rel='stylesheet';l.href=CSS_MAP;l.dataset.leaflet=1;document.head.appendChild(l)}
+      await loadScript(LIB_MAP);await entMapaCrear();EMAP.layer.clearLayers();EMAP.mk={};EMAP.linea=null;entMe();
+      if(EMAP.fitted!=='vacio'){EMAP.setView(EPOS?EPOS.c:(parseCoord(S.start)||[9.9333,-84.0833]),EPOS?15:12);EMAP.fitted='vacio'}EMAP.invalidateSize()}catch(e){}
+    return}
   $('#entTools').hidden=false;$('#entAqui').hidden=false;$('#entGps').hidden=false;$('#entBus').hidden=false;const ok=E.stops.filter(x=>entDone(x)&&!entDev(x)).length,conC=E.stops.filter(s=>s.c);
   $('#entInfo').innerHTML=`<b>${esc(E.nombre)}</b> · ${ok} de ${E.stops.length} entregadas`;
   // Pendientes arriba (en orden de ruta; las sin ubicación después) y las entregadas totalmente de últimas
@@ -1843,11 +1851,11 @@ async function renderEnt(){entSyncPk();rutaGlobo();jorRender();vehPintar();ttPin
     <div class="acts">${!d&&s.c?`<span class="eeta" data-eta="${i}"></span>`:''}${wz?`<a class="btn sm primary" href="${wz}" target="_blank" rel="noopener">🚗 Waze</a>`:''}${wa?`<a class="btn sm wa" href="${entWaUrl(wa,'')}" data-ewa="${i}" target="_blank" rel="noopener">WhatsApp</a>`:''}</div>
       <div class="acts2"><button class="btn sm ghost danger" type="button" data-equitar="${i}" title="Quitar esta parada de la ruta (el paquete sigue en Paquetes)">🗑️ Quitar</button>${nav?`<a class="btn sm" href="${nav}" target="_blank" rel="noopener">🗺️ Maps</a>`:''}${!d&&p?`<button class="btn sm" type="button" data-eok="${i}">📸 Evidencia</button>`:''}<a class="btn sm" href="shortcuts://run-shortcut?name=Co-out" title="Abre la app Co-out con el atajo de iPhone llamado Co-out">📲 Co-out</a></div>
       <div class="acts3">${s.devolver?`<span class="devtag on">⛔ Devolver</span><button class="btn sm devno" type="button" data-edevno="${i}" title="La parada vuelve a estar activa en la ruta">↩ Quitar devolver</button>`:d?(s.done?`<button class="btn sm ghost" type="button" data-eundo="${i}">↩ Deshacer</button>`:''):`${s.c?`<button class="btn sm ehold${s.hold?' on':''}" type="button" data-ehold="${i}" title="Pasar esta parada al final de la ruta">${s.hold?'▶ Quitar hold':'⏸ Hold'}</button>`:''}<button class="btn sm edevol" type="button" data-edevol="${i}" title="Este paquete se devuelve: queda en la ruta pero desactivado">⛔ Devolver</button><button class="btn sm edone" type="button" data-edone="${i}">✓ Entregado</button>`}</div></div>`}).join('');
-  $('#entMap').hidden=!conC.length;if(!conC.length||$('#v-entrega').hidden)return;
+  $('#entMap').hidden=false;if($('#v-entrega').hidden)return; // 1.86.1: el mapa siempre se ve
   try{
     if(!document.querySelector('link[data-leaflet]')){const l=document.createElement('link');l.rel='stylesheet';l.href=CSS_MAP;l.dataset.leaflet=1;document.head.appendChild(l)}
     await loadScript(LIB_MAP);
-    if(!EMAP){EMAP=L.map('entMap');L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(EMAP);EMAP.layer=L.layerGroup().addTo(EMAP);EMAP.fitted=null;EMAP.on('click',e=>{if(EMAP.pickStop!=null){const i=EMAP.pickStop;EMAP.pickStop=null;$('#entMap').style.cursor='';entPonerC(i,[+e.latlng.lat.toFixed(6),+e.latlng.lng.toFixed(6)]);return}if(EMAP.pick){EMAP.pick=false;$('#entMap').style.cursor='';entOrdenar([+e.latlng.lat.toFixed(6),+e.latlng.lng.toFixed(6)],'el punto que elegiste',true)}})}
+    await entMapaCrear();
     EMAP.layer.clearLayers();EMAP.mk={};
     const ini=EPOS?EPOS.c:(E.inicio||null),pend=conC.filter(s=>!entDone(s));
     EMAP.linea=L.polyline([],{color:'#29b6f6',weight:4,opacity:.85}).addTo(EMAP.layer);entLinea();
@@ -1857,9 +1865,11 @@ async function renderEnt(){entSyncPk();rutaGlobo();jorRender();vehPintar();ttPin
     eOrd.forEach(([s,i])=>{const k=s.c[0].toFixed(4)+','+s.c[1].toFixed(4);const n=EPILA[k]=(EPILA[k]||0)+1;eDx[i]=(n-1)*12});
     E.stops.forEach((s,i)=>{if(!s.c)return;const m=L.marker(s.c,{icon:L.divIcon({className:'',html:`<div class="epin${entDone(s)?' ok':s.hold?' hold':''}${i===ESEL?' sel':''}"><b>${eNum(s)}</b></div>`,iconSize:[30,30],iconAnchor:[15-(eDx[i]||0),30]}),zIndexOffset:i===ESEL?3000:entDone(s)?-1000:s.hold?500:1000})
       .on('click',()=>entSel(i,true)).bindPopup(`<b>${eNum(s)}. ${esc(s.nombre)}</b>`).addTo(EMAP.layer);EMAP.mk[i]=m});
-    EMAP.invalidateSize();if(EMAP.fitted!==E.at){EMAP.fitBounds(conC.map(s=>s.c),{padding:[24,24]});EMAP.fitted=E.at}
+    EMAP.invalidateSize();if(EMAP.fitted!==E.at){if(conC.length)EMAP.fitBounds(conC.map(s=>s.c),{padding:[24,24]});else EMAP.setView(EPOS?EPOS.c:(parseCoord(S.start)||[9.9333,-84.0833]),EPOS?15:12);EMAP.fitted=E.at}
   }catch(e){$('#entMap').innerHTML='<p class="small muted" style="padding:12px">No se pudo cargar el mapa. Usá los botones de Waze o Maps.</p>'}
 }
+// 1.86.1: crea el mapa de Ruta una sola vez (también sin ruta cargada)
+async function entMapaCrear(){if(!EMAP){EMAP=L.map('entMap');L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(EMAP);EMAP.layer=L.layerGroup().addTo(EMAP);EMAP.fitted=null;EMAP.on('click',e=>{if(EMAP.pickStop!=null){const i=EMAP.pickStop;EMAP.pickStop=null;$('#entMap').style.cursor='';entPonerC(i,[+e.latlng.lat.toFixed(6),+e.latlng.lng.toFixed(6)]);return}if(EMAP.pick){EMAP.pick=false;$('#entMap').style.cursor='';entOrdenar([+e.latlng.lat.toFixed(6),+e.latlng.lng.toFixed(6)],'el punto que elegiste',true)}})}}
 // Tocar una parada: la marca y centra el mapa; tocar un pin: baja a esa parada en la lista.
 function entSel(i,desdeMapa){ESEL=i;const s=S.ent.stops[i];renderEnt().then(()=>{
   if(s.c&&EMAP){EMAP.setView(s.c,Math.max(EMAP.getZoom(),16));EMAP.mk[i]&&EMAP.mk[i].openPopup()}
@@ -1941,10 +1951,11 @@ function entTotal(sinPedir){const el=$('#entTot'),E=S.ent;if(!el)return;if(!E){e
 setInterval(()=>{if(S.ent&&!$('#v-entrega').hidden){entTotal(true);ttPedir()}},60000); // la hora de inicio es la actual: se refresca cada minuto
 function entMe(){entEta();entTotal();if(!EMAP||!window.L)return;const c=EPOS?EPOS.c:null;
   if(!c){if(EMAP.me){EMAP.removeLayer(EMAP.me);EMAP.me=null}return}
+  if(EMAP.fitted==='vacio'&&!EMAP.meC){EMAP.meC=1;EMAP.setView(c,15)} // 1.86.1: sin ruta, el mapa se centra en vos al tener GPS
   if(!EMAP.me)EMAP.me=L.marker(c,{icon:L.divIcon({className:'',html:'<div class="mepos"></div>',iconSize:[18,18],iconAnchor:[9,9]}),zIndexOffset:2000,interactive:false}).addTo(EMAP);else EMAP.me.setLatLng(c)}
 const gpsOk=g=>{EPOS={c:[+g.coords.latitude.toFixed(6),+g.coords.longitude.toFixed(6)],acc:g.coords.accuracy};$('#entGps').textContent=`📍 Estás aquí (±${Math.round(EPOS.acc)} m)`;entMe();
   // La primera vez que el GPS responde, si la ruta no se ordenó desde cerca de aquí, se ordena sola desde tu punto
-  if(!EAUTO&&S.ent&&EPOS.acc<500){EAUTO=true;if(!S.ent.inicio||hav(S.ent.inicio,EPOS.c)>0.8)entOrdenar(EPOS.c,'donde estás')}};
+  if(!EAUTO&&S.ent&&S.ent.stops&&S.ent.stops.some(x=>x.c)&&EPOS.acc<500){EAUTO=true;if(!S.ent.inicio||hav(S.ent.inicio,EPOS.c)>0.8)entOrdenar(EPOS.c,'donde estás')}};
 const gpsFail=e=>{$('#entGps').innerHTML=e&&e.code===1?'Ubicación bloqueada. En iPhone: <b>Ajustes</b> &gt; <b>Privacidad</b> &gt; <b>Localización</b> &gt; <b>Sitios web de Safari</b> &gt; <b>Al usar la app</b>. O usá <b>🎯 Elegir en el mapa</b>.':'No se pudo obtener la ubicación. Usá <b>🎯 Elegir en el mapa</b>.'};
 function entVigilar(){if(EWATCH!=null||!navigator.geolocation)return;try{EWATCH=navigator.geolocation.watchPosition(gpsOk,gpsFail,{enableHighAccuracy:true,maximumAge:15000,timeout:30000})}catch(e){}}
 // Reordena las paradas que faltan con optimize() (la misma de Ruta), desde start; respeta el horario del cliente si el paquete está en la lista.
