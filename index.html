@@ -451,7 +451,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.81.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.81.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -1214,21 +1214,28 @@ $('#pasteMapa').onclick=()=>{if(!PASTE)return;const p=PASTE,t=$('#pasteBoxR').va
 let PICK=null,PMAP=null;
 async function pickBuscar(q){if(!q)return null;try{const r=await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=cr&q='+encodeURIComponent(q));const j=await r.json();return j[0]?[+j[0].lat,+j[0].lon]:null}catch(e){return null}}
 async function pickAbrir(p,t){
-  const lg=lugarDe(t),actual=parseCoord(p.ubic);PICK={p,c:actual};
+  // 1.81.1: primero lo que pegaste (nombre del negocio + dirección); la ubicación guardada solo si no pegaste nada
+  const lg=lugarDe(t),pegado=!!(lg.nombre||lg.zona),actual=pegado?null:parseCoord(p.ubic);PICK={p,c:actual};
   $('#pickWho').textContent=p.nombre||'';
-  $('#pickAviso').innerHTML=lg.nombre&&!actual?`Lo que pegaste es un <b>lugar o negocio</b> (${esc(lg.nombre)}), no una ubicación con coordenadas. Marcá el punto en el mapa, o pedile al cliente: 📎 &gt; <b>Ubicación</b> &gt; <b>Enviar mi ubicación actual</b>.`:'Marcá el punto exacto de la entrega.';
+  $('#pickAviso').innerHTML=pegado?`Lo que pegaste es un <b>lugar o negocio</b> (${esc(lg.nombre)}), no una ubicación con coordenadas. Revisá el punto en el mapa, o pedile al cliente: 📎 &gt; <b>Ubicación</b> &gt; <b>Enviar mi ubicación actual</b>.`:'Marcá el punto exacto de la entrega.';
   $('#pickOk').disabled=!actual;$('#pickInfo').textContent='Buscando en el mapa…';$('#pickSheet').hidden=false;document.body.style.overflow='hidden';
   try{if(!document.querySelector('link[data-leaflet]')){const l=document.createElement('link');l.rel='stylesheet';l.href=CSS_MAP;l.dataset.leaflet=1;document.head.appendChild(l)}
     await loadScript(LIB_MAP)}catch(e){$('#pickInfo').textContent='No se pudo cargar el mapa. Revisá el internet.';return}
   if(!PMAP){PMAP=L.map('pickMap');L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(PMAP);
     PMAP.on('click',e=>{if(!PICK)return;pickPoner([+e.latlng.lat.toFixed(6),+e.latlng.lng.toFixed(6)]);$('#pickInfo').textContent='Listo. Si no es ahí, tocá otro punto.'})}
   if(PMAP.pin){PMAP.removeLayer(PMAP.pin);PMAP.pin=null}
-  PMAP.setView(actual||parseCoord(S.start)||[9.9333,-84.0833],actual?17:13);setTimeout(()=>PMAP.invalidateSize(),50);
+  PMAP.setView(actual||[9.9333,-84.0833],actual?17:13);setTimeout(()=>PMAP.invalidateSize(),50);
   if(actual){pickPoner(actual);$('#pickInfo').textContent='Esta es la ubicación guardada. Tocá otro punto para cambiarla.';return}
-  const zona=lg.zona.replace(/\b(CR-SJ|CR)\b/g,'').replace(/[ ,]+$/,'');
-  let c=await pickBuscar([lg.nombre,zona].filter(Boolean).join(', ')),aprox=false;if(!c&&zona){c=await pickBuscar(zona);aprox=!!c}
+  if(!pegado){$('#pickInfo').textContent='Tocá el mapa donde va el paquete.';return}
+  // Dirección limpia: sin código postal ni "CR-SJ, CR"; "Ruta Nacional Secundaria 211" también se prueba como "Ruta 211"
+  const zona=lg.zona.replace(/\b\d{5}\b/g,'').replace(/\bCR(-[A-Z]{1,2})?\b/g,'').replace(/(\s*,\s*)+/g,', ').replace(/^[ ,]+|[ ,]+$/g,'');
+  const ruta=zona.replace(/Ruta Nacional (Primaria|Secundaria|Terciaria)\s*/i,'Ruta '),ciudad=zona.split(',').map(x=>x.trim()).filter(Boolean).pop()||'';
+  const exactos=[lg.nombre&&zona&&`${lg.nombre}, ${zona}`,lg.nombre&&ciudad&&`${lg.nombre}, ${ciudad}`,lg.nombre].filter(Boolean),aprox=[zona,ruta!==zona&&ruta,ciudad].filter(Boolean);
+  let c=null,ex=false;for(const q of [...new Set(exactos)]){c=await pickBuscar(q);if(c){ex=true;break}}
+  if(!c)for(const q of [...new Set(aprox)]){c=await pickBuscar(q);if(c)break}
   if(!PICK||PICK.p!==p)return;
-  if(c){PMAP.setView(c,aprox?14:17);$('#pickInfo').textContent=aprox?`No encontré "${lg.nombre}"; el mapa quedó en ${zona}. Tocá el punto exacto.`:`Encontré "${lg.nombre}" (puede no ser exacto). Tocá el punto donde va el paquete.`}
+  if(c&&ex){c=[+c[0].toFixed(6),+c[1].toFixed(6)];PMAP.setView(c,17);pickPoner(c);$('#pickInfo').textContent=`Encontré "${lg.nombre}". Revisá que el pin esté bien; si no, tocá el punto correcto.`}
+  else if(c){PMAP.setView(c,15);$('#pickInfo').textContent=`No encontré "${lg.nombre}"; el mapa quedó cerca de ${zona||ciudad}. Tocá el punto exacto.`}
   else $('#pickInfo').textContent=lg.nombre?`No encontré "${lg.nombre}" en el mapa. Buscalo vos y tocá el punto.`:'Tocá el mapa donde va el paquete.'}
 function pickPoner(c){PICK.c=c;if(PMAP.pin)PMAP.pin.setLatLng(c);else PMAP.pin=L.marker(c).addTo(PMAP);$('#pickOk').disabled=false}
 function pickCerrar(){PICK=null;$('#pickSheet').hidden=true;document.body.style.overflow=''}
