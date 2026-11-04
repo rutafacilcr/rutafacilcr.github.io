@@ -452,7 +452,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.81.5</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.82.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -494,10 +494,19 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
   <h2 id="pickTitle">🎯 Marcar en el mapa</h2>
   <p class="small muted" id="pickWho"></p>
   <p class="small" id="pickAviso"></p>
+  <!-- 1.82.0: cuando pegan un negocio: pedirle la ubicación al cliente o sacarla con Waze; el buscador queda para "Marcar a mano" -->
+  <div id="pickNeg" hidden>
+    <div class="row" style="justify-content:flex-end"><a class="btn primary" id="pickPedir" target="_blank" rel="noopener">💬 Pedirle la ubicación</a></div>
+    <p class="small"><b>O sacala vos con Waze:</b></p>
+    <ol class="small" style="margin:0 0 6px 18px;padding:0"><li>En WhatsApp tocá la tarjeta del lugar y elegí <b>Waze</b>.</li><li>En Waze tocá <b>Compartir</b> &gt; <b>Copiar</b>.</li><li>Volvé aquí, cerrá esta ventana y tocá <b>📋 Pegar respuesta</b>.</li></ol>
+    <button class="btn sm" id="pickAMano" type="button">🎯 Marcar a mano en el mapa</button>
+  </div>
+  <div id="pickManual">
   <form id="pickBusca" class="row" style="gap:6px;flex-wrap:nowrap"><input id="pickQ" type="search" placeholder="Buscar lugar, barrio o dirección" aria-label="Buscar en el mapa" style="flex:1;min-width:0"><button class="btn sm" type="submit">🔍 Buscar</button></form>
   <div id="pickRes" class="pickres" hidden></div>
   <div id="pickMap" style="height:300px;border-radius:12px;margin:6px 0"></div>
   <p class="small muted" id="pickInfo">Tocá el mapa donde va el paquete. Podés acercar con dos dedos.</p>
+  </div>
   <div class="row"><button class="btn primary" id="pickOk" type="button" disabled>Usar este punto</button><button class="btn ghost" id="pickCancel" type="button">Cancelar</button></div>
 </div></div>
 <div class="sheet" id="evSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="evTitle">
@@ -1217,6 +1226,7 @@ $('#pasteMapa').onclick=()=>{if(!PASTE)return;const p=PASTE,t=$('#pasteBoxR').va
 let PICK=null,PMAP=null;
 // 1.81.3: buscar solo cerca de tu zona: el centro (mediana) de los demás paquetes con ubicación, si no tu GPS, si no el punto de inicio, si no San José.
 // Un resultado a más de PICK_KM en línea recta no se da por bueno (hay negocios con el mismo nombre en otras provincias).
+const PIDE_UBIC='Hola {nombre}, gracias. Para llegar sin perderme, ¿me puede enviar su ubicación por aquí? Toque 📎 > Ubicación > Enviar mi ubicación actual. ¡Muchas gracias!';
 const PICK_KM=30; // 1.81.4: ya no es un límite; solo decide si el resultado más cercano se marca solo
 function pickRef(p){const cs=S.pk.filter(q=>q!==p).map(q=>parseCoord(q.ubic)).filter(Boolean);
   if(cs.length>=3){const med=a=>{a=a.slice().sort((x,y)=>x-y);return a[Math.floor(a.length/2)]};return [med(cs.map(c=>c[0])),med(cs.map(c=>c[1]))]}
@@ -1236,12 +1246,16 @@ function pickLista(R,auto){const el=$('#pickRes');PICK.res=R;
   el.hidden=!R.length;if(auto!=null&&R[auto])pickElegir(auto)}
 function pickElegir(i){const x=PICK.res[i];if(!x)return;PMAP.setView(x.c,17);pickPoner(x.c);document.querySelectorAll('#pickRes .pickopt').forEach(b=>b.setAttribute('aria-pressed',b.dataset.i==i))}
 $('#pickRes').addEventListener('click',e=>{const b=e.target.closest('.pickopt');if(b&&PICK){pickElegir(+b.dataset.i);$('#pickInfo').textContent='Revisá el pin; si no es ahí, escogé otro o tocá el punto correcto.'}});
-async function pickAbrir(p,t){
+async function pickAbrir(p,t,mano){
   // 1.81.1: primero lo que pegaste (nombre del negocio + dirección); la ubicación guardada solo si no pegaste nada
-  const lg=lugarDe(t),pegado=!!(lg.nombre||lg.zona),actual=pegado?null:parseCoord(p.ubic);PICK={p,c:actual,ref:pickRef(p),res:[]};
+  const lg=lugarDe(t),pegado=!!(lg.nombre||lg.zona),guia=pegado&&!mano,actual=pegado?null:parseCoord(p.ubic);PICK={p,c:actual,ref:pickRef(p),res:[]};
   $('#pickWho').textContent=p.nombre||'';$('#pickQ').value=[lg.nombre,lg.zona].filter(Boolean).join(', ');$('#pickRes').innerHTML='';$('#pickRes').hidden=true;
   $('#pickAviso').innerHTML=pegado?`Lo que pegaste es un <b>lugar o negocio</b> (${esc(lg.nombre)}), no una ubicación con coordenadas. Escogé el correcto de la lista, o pedile al cliente: 📎 &gt; <b>Ubicación</b> &gt; <b>Enviar mi ubicación actual</b>.`:'Marcá el punto exacto de la entrega.';
   $('#pickOk').disabled=!actual;$('#pickInfo').textContent='Buscando en el mapa…';$('#pickSheet').hidden=false;document.body.style.overflow='hidden';
+  // 1.82.0: con un negocio pegado, lo principal es pedirle la ubicación al cliente o sacarla con Waze; el mapa queda en "Marcar a mano"
+  const wl=waLink(p,fill(PIDE_UBIC,p));$('#pickTitle').textContent=guia?'📍 Falta la ubicación':'🎯 Marcar en el mapa';$('#pickNeg').hidden=!guia;$('#pickManual').hidden=guia;$('#pickOk').hidden=guia;
+  $('#pickPedir').hidden=!wl;if(wl)$('#pickPedir').href=wl;PICK.t=t;
+  if(guia){$('#pickAviso').innerHTML=`El cliente mandó un <b>lugar o negocio</b> (${esc(lg.nombre)}), no su ubicación. Los mapas gratis casi nunca tienen negocios pequeños.`;return}
   try{if(!document.querySelector('link[data-leaflet]')){const l=document.createElement('link');l.rel='stylesheet';l.href=CSS_MAP;l.dataset.leaflet=1;document.head.appendChild(l)}
     await loadScript(LIB_MAP)}catch(e){$('#pickInfo').textContent='No se pudo cargar el mapa. Revisá el internet.';return}
   if(!PMAP){PMAP=L.map('pickMap');L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(PMAP);
@@ -1263,9 +1277,12 @@ async function pickAbrir(p,t){
   if(!PICK||PICK.p!==p)return;
   if(c){PMAP.setView(c,15);$('#pickInfo').textContent=`No encontré "${lg.nombre}"; el mapa quedó cerca de ${zona||ciudad}. Tocá el punto exacto.`}
   else $('#pickInfo').textContent=lg.nombre?`No encontré "${lg.nombre}". Escribí arriba el barrio o una calle cercana y tocá 🔍 Buscar, o tocá el punto en el mapa.`:'Tocá el mapa donde va el paquete.'}
+function pickAbrirMano(p,t){return pickAbrir(p,t,true)}
 function pickPoner(c){PICK.c=c;if(PMAP.pin)PMAP.pin.setLatLng(c);else PMAP.pin=L.marker(c).addTo(PMAP);$('#pickOk').disabled=false}
 function pickCerrar(){PICK=null;$('#pickSheet').hidden=true;document.body.style.overflow=''}
 $('#pickCancel').onclick=pickCerrar;
+$('#pickPedir').addEventListener('click',()=>{if(!PICK)return;const p=PICK.p;p.pideUbic=Date.now();save();pickCerrar();toast(`Le pediste la ubicación a ${p.nombre||'el cliente'}. Cuando la mande, copiala y tocá 📋 Pegar respuesta.`)});
+$('#pickAMano').onclick=()=>{if(!PICK)return;const p=PICK.p,t=PICK.t;PICK=null;pickAbrirMano(p,t)};
 // 1.81.2: buscar a mano dentro del mapa; 1.81.4: muestra la lista de resultados
 $('#pickBusca').onsubmit=async e=>{e.preventDefault();const q=$('#pickQ').value.trim();if(!q||!PMAP)return;$('#pickInfo').textContent='Buscando…';
   const R=await pickTodos(q);if(!PICK)return;
