@@ -121,6 +121,13 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - *Guardar* abre la cámara **dentro del mismo toque** (iPhone no deja abrirla después de un `await`) y agrega con `mkPkg()`. Las fotos de etiqueta no se guardan.
 - Prueba local: las CDN están bloqueadas en el sandbox; se instalan los paquetes con npm y Playwright sirve los archivos interceptando las URL de jsDelivr. Las etiquetas de prueba se generan con JsBarcode.
 
+## 3c-0c. Voy en camino: Waze al volver de WhatsApp (1.78.0)
+
+- Un navegador no puede abrir dos apps con un solo toque, y abrir Waze sin que la persona toque se bloquea (no es gesto del usuario). Por eso es en dos pasos.
+- El clic en `[data-ewa]` (botón WhatsApp de cada parada en Ruta) guarda en memoria `EWZ={wz,nombre,n,at}` con el link de Waze de esa parada (`s.waze` o `waze.com/ul?ll=…&navigate=yes`). No se guarda en `S`.
+- Un `visibilitychange` (al volver a la app) muestra el aviso `#wzSheet` si pasaron menos de 15 min y Ruta está a la vista; `EWZ` se borra al primer regreso. `#wzGo` es un `<a>` (toque real → abre Waze); `#wzNo` y tocar fuera cierran.
+- Diseño: aviso de abajo como los demás `.sheet`, botones a la derecha, el principal naranja (`.btn.primary`).
+
 ## 3c-0b. Pestañas al instante (1.77.0)
 
 - **Por qué era lento:** el clic de una pestaña corría todo en el mismo turno (y `requestAnimationFrame` corre *antes* de pintar), así que el botón no se iluminaba hasta terminar de pintar la lista. Y `entPkg(s)` (paquete de una parada) recorre todos los paquetes normalizando nombre, teléfono, guía y ubicación; `entParadasDe(p)` lo llama por cada parada, y `renderMsg`/`renderPk`/`renderStats` lo llamaban varias veces por paquete (incluso dentro del `sort`): O(n³) normalizaciones.

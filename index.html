@@ -391,7 +391,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.77.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.78.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -462,6 +462,11 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
   <p class="small muted">Tomale captura de pantalla (bajá y tomá varias si es largo) o tocá Compartir y mandalo por WhatsApp.</p>
   <pre id="diagTxt" style="white-space:pre-wrap;word-break:break-word;font-size:12px;line-height:1.35;max-height:60vh;overflow:auto;background:#f4f4f5;color:#1f2125;padding:10px;border-radius:8px;margin:8px 0"></pre>
   <div class="row"><button class="btn primary sm" id="diagShare" type="button">📤 Compartir</button><button class="btn sm" id="diagCopy" type="button">📋 Copiar</button><button class="btn ghost sm" id="diagClose" type="button">Cerrar</button></div>
+</div></div>
+<div class="sheet" id="wzSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="wzTitle">
+  <h2 id="wzTitle" style="margin:0">🚗 ¿Ya le avisaste?</h2>
+  <p class="small muted" id="wzTxt" style="margin:0"></p>
+  <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap"><button class="btn sm ghost" id="wzNo" type="button">Ahora no</button><a class="btn primary" id="wzGo" target="_blank" rel="noopener">🚗 Abrir Waze</a></div>
 </div></div>
 <div class="sheet" id="supSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="supTitle">
   <div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><h2 id="supTitle" style="display:flex;align-items:center;gap:8px;margin:0"><svg class="ico-sop" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2.5" y="13" width="4" height="6" rx="1.5"/><rect x="17.5" y="13" width="4" height="6" rx="1.5"/><path d="M19.5 19c0 1.7-1.8 2.5-4.5 2.5h-2"/></svg> Soporte</h2><button class="btn primary" id="supClose" type="button" style="padding:8px 12px;border-radius:8px;border-color:transparent;flex:none">Cerrar</button></div>
@@ -1713,6 +1718,12 @@ async function osrmPedir(){
     OSRM.r={};cs.forEach((c,i)=>{const d=j.distances[0][i+1],t=j.durations[0][i+1];if(d!=null&&t!=null)OSRM.r[ckey(c)]=[d/1000,t/60]});OSRM.pos=from;OSRM.at=Date.now();entEta(true)}
   catch(e){OSRM.at=Date.now()}finally{OSRM.busy=false}}
 // WhatsApp desde Ruta: mensaje de "en camino" con el tiempo estimado que muestra la parada (si no hay, sin el tiempo)
+// 1.78.0: "Voy en camino" en dos pasos: WhatsApp y, al volver a la app, un aviso con el botón de Waze de esa parada
+let EWZ=null;
+function wzCerrar(){$('#wzSheet').hidden=true;document.body.style.overflow=''}
+document.addEventListener('visibilitychange',()=>{if(document.hidden||!EWZ)return;const w=EWZ;EWZ=null;if(Date.now()-w.at>15*60000||$('#v-entrega').hidden)return;
+  $('#wzTxt').innerHTML=`Si ya le mandaste el WhatsApp a <b>${esc(w.nombre||'la parada')}</b>${w.n?` (#${esc(String(w.n))})`:''}, abrí Waze y salí para allá.`;$('#wzGo').href=w.wz;$('#wzSheet').hidden=false;document.body.style.overflow='hidden'});
+$('#wzNo').onclick=wzCerrar;$('#wzGo').addEventListener('click',()=>setTimeout(wzCerrar,50));$('#wzSheet').addEventListener('click',e=>{if(e.target.id==='wzSheet')wzCerrar()});
 function entWaUrl(wa,t){return `https://wa.me/${wa}?text=${encodeURIComponent(`Estamos en camino ${vehIcono()}, le estaremos entregando su paquete${t?`, en ${t}`:''}\n\n*IMPORTANTE*\n- Mostrar la cédula para verificar la etiqueta del paquete.\n\n* POLÍTICA DE ENTREGA*\n- Si previo se había coordinado la entrega y se llega al lugar  y nadie puede recibirlo, el paquete será devuelto a bodega para una reprogramacion.`)}`}
 // Tráfico en vivo (1.70.0): TomTom Routing con traffic=true, plan gratis (2.500 consultas al día, sin tarjeta).
 // Solo se consulta la PRÓXIMA parada, cada 2 min o si te moviste 300 m: unas 300 consultas en un día largo.
@@ -1814,7 +1825,9 @@ $('#entList').addEventListener('click',async e=>{if(e.target.closest('[data-edon
   const bub=e.target.closest('[data-eub]');if(bub){entUbicar(+bub.dataset.eub);return}
   // Quitar una parada repetida o que no va: sale de la ruta (el paquete queda en Paquetes) y no se vuelve a agregar sola
   const bw=e.target.closest('[data-ewa]');if(bw){const el=document.querySelector(`[data-eta="${bw.dataset.ewa}"]`),m=el&&+el.dataset.min,wa=bw.href.match(/wa\.me\/(\d+)/);
-    if(wa)bw.href=entWaUrl(wa[1],m&&el.textContent?fmtT(m):'');return} // sin preventDefault: abre WhatsApp con el href ya actualizado
+    if(wa)bw.href=entWaUrl(wa[1],m&&el.textContent?fmtT(m):'');
+    // 1.78.0: al volver de WhatsApp sale "🚗 Abrir Waze" para esta misma parada (el celular no deja abrir las dos apps de un solo toque)
+    const s=S.ent&&S.ent.stops[+bw.dataset.ewa],wz=s&&(s.waze||(s.c?`https://waze.com/ul?ll=${s.c[0]},${s.c[1]}&navigate=yes`:''));EWZ=wz?{wz,nombre:s.nombre||'',n:s.c?eNum(s):'',at:Date.now()}:null;return} // sin preventDefault: abre WhatsApp con el href ya actualizado
   // Hold: la parada pasa al final de las pendientes (y ahí se queda aunque se reordene); otro toque la devuelve a la ruta
   const bh=e.target.closest('[data-ehold]');if(bh){const E=S.ent,s=E.stops[+bh.dataset.ehold];if(!s)return;s.hold=!s.hold;
     if(s.hold){E.stops=E.stops.filter(x=>x!==s);const k=E.stops.reduce((a,x,j)=>x.c&&!entDone(x)?j:a,-1);E.stops.splice(k+1,0,s);toast(`${s.nombre||'Parada'} en hold: pasa al final de la ruta`)}

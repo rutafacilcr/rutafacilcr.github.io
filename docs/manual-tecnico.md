@@ -317,6 +317,10 @@ Recomendado al pasar a varios mensajeros: en el Panel encender **Exigir cuenta a
 
 Si más adelante hace falta guardar las 3 fotos por meses, la única opción es pagar (Supabase Pro, 25 USD al mes, 100 GB).
 
+### Voy en camino (1.78.0)
+
+Solo JavaScript y HTML en `index.html` (aviso `#wzSheet`); no toca Supabase, `auth.js` ni `supabase.sql`. No guarda nada nuevo ni en el celular ni en la nube. El mensaje de WhatsApp es el mismo de antes.
+
 ### Pestañas más rápidas (1.77.0)
 
 Solo JavaScript en `index.html`; no toca Supabase, `auth.js`, `supabase.sql` ni el diseño. No hace falta correr nada en la base. Al abrir Ruta la app sigue pidiendo la lista a la nube (`rf_lista_leer`) como antes, pero ya no vuelve a pintar la ruta si la nube no trajo cambios.
