@@ -104,7 +104,7 @@ Dentro de la app, el botón **Soporte** (ícono de audífonos) abre WhatsApp con
 
 ## Diseño
 
-Paleta *Grafito y naranja* con el logo **pin con paquete**. Desde la 1.79.0 cumple WCAG 2.2 AA (Lighthouse de accesibilidad 100): botones naranja más intensos para leerse al sol, botones de 44 px para usar con el dedo en la calle y estados de entrega con ícono, texto y color. Marca propia: la app no usa logos de Temu ni de otras empresas.
+Paleta *Grafito y naranja* con el logo **pin con paquete**. Desde la 1.79.0 cumple WCAG 2.2 AA (Lighthouse de accesibilidad 100): botones naranja más intensos para leerse al sol, botones de 44 px para usar con el dedo en la calle (en todas las pestañas desde la 1.84.0), estados de entrega con círculo de color, texto y fondo (🟡 Pendiente, 🔵 Confirmado, 🟢 Entregado, 🔴 No se entregó, ⚪ Devuelto) y ruedita de carga en los botones que esperan. Marca propia: la app no usa logos de Temu ni de otras empresas.
 
 ## Estado
 
