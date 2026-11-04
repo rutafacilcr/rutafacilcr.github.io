@@ -105,6 +105,7 @@ nav.tabs .n:empty{display:none}
 .tracklist{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px;font-size:14px}
 .enthead{display:flex;gap:10px;align-items:center;flex-wrap:wrap}#entGps{flex-basis:100%;max-width:100%}#entGps:empty{display:none}#entInfo{flex:1 1 160px}
 .enthead .jorbar{background:none;border:0;padding:0;margin:0 0 0 auto;flex-wrap:nowrap;justify-content:flex-end}.enthead .jorbar .jtxt{flex:0 1 auto;text-align:right;font-size:12.5px} /* 1.91.0 */
+.msgst{display:inline-flex;align-items:center;font-size:12.5px;font-weight:700;padding:3px 10px;border-radius:999px;border:1px solid transparent;vertical-align:middle;cursor:default}.ms-sin{background:var(--st-pend-bg);color:var(--st-pend);border-color:var(--st-pend)}.ms-esp{background:var(--st-nores-bg);color:var(--st-nores);border-color:var(--st-nores)}.ms-ok{background:var(--st-conf-bg);color:var(--st-conf);border-color:var(--st-conf)}.ms-fin{background:var(--line);color:var(--muted)}
 .msgfil{display:flex;gap:4px;flex-wrap:wrap;margin:8px 0}.msgfil button{font:inherit;font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:inherit;cursor:pointer}.msgfil button b{margin-left:2px}.msgfil button[aria-pressed=true]{background:var(--accent-btn);border-color:var(--accent-btn);color:#fff;font-weight:700}
 .jorbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px 8px;margin:6px 0}#entInfo:empty{display:none}
 .jorbar .jtxt{flex:1 1 120px;font-size:12.5px;line-height:1.25}.jorbar .jtxt b{white-space:nowrap}
@@ -471,7 +472,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.91.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.92.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -788,6 +789,10 @@ function vehIcono(){return {moto:'🏍️',carro:'🚙',buseta:'🚐'}[S.veh]||'
 function conVeh(t){return String(t).replace(/camino/i,m=>m+' '+vehIcono())}
 function msgText(p,k){k=k||msgSel(p);return k==='form'?fill(S.form,p):k==='camino'?conVeh(fill(S.camino,p,{eta:routeEta(p)})):k==='comp'?fill(S.comp||DEF_COMP,p):k==='ext'?fill(S.ext||DEF_EXT,p):coordText(p)}
 function routeEta(p){const R=S.route;if(!R||!R.ids.includes(p.id))return '15';const vel=+S.vel||25;let prev=R.start;for(const id of R.ids){const q=S.pk.find(x=>x.id===id);const c=q&&parseCoord(q.ubic);if(!c)continue;if(id===p.id)return String(Math.round(hav(prev,c)/vel*60)+2);prev=c}return '15'}
+// 1.92.0: en Mensajes la etiqueta cambia sola y no se toca: Sin enviar → Esperando respuesta (abriste WhatsApp) → Confirmado (pegaste la ubicación o confirmó)
+const msgEst=p=>p.st==='confirmado'||parseCoord(p.ubic)?'ok':p.sent?'esp':'sin';
+function msgChip(p){if(p.st==='entregado'||p.st==='devuelto'||p.devolver)return `<span class="msgst ms-fin">${p.devolver&&p.st!=='devuelto'&&p.st!=='entregado'?'⛔ Devolver':esc(SLABEL[p.st])}</span>`;
+  const e=msgEst(p);return `<span class="msgst ms-${e}">${e==='ok'?'🔵 Confirmado':e==='esp'?'📨 Esperando respuesta':'🟡 Sin enviar'}</span>`}
 let MSGF='todos'; // 1.88.0: filtro de Mensajes (solo en este aparato)
 function renderMsg(){
   const L=$('#msgList');
@@ -796,9 +801,9 @@ function renderMsg(){
   const q=($('#m-buscar').value||'').trim().toLowerCase(),qd=q.replace(/\D/g,'');
   // Buscar: por nombre o guía, o por los últimos dígitos del teléfono (sirve para ver de quién es un número que contesta)
   // 1.88.0: filtros por estado (Todos, Sin contestar, No responde, Confirmados). Solo cuentan los que siguen activos (no entregados, devueltos ni para devolver)
-  const act=p=>p.st!=='entregado'&&p.st!=='devuelto'&&!p.devolver,FIL={sin:p=>act(p)&&p.st==='pendiente',nr:p=>act(p)&&p.st==='noresponde',ok:p=>act(p)&&p.st==='confirmado'};
+  const act=p=>p.st!=='entregado'&&p.st!=='devuelto'&&!p.devolver,FIL={sin:p=>act(p)&&msgEst(p)==='sin',nr:p=>act(p)&&msgEst(p)==='esp',ok:p=>act(p)&&msgEst(p)==='ok'}; // 1.92.0: estado automático
   if(MSGF!=='todos'&&!FIL[MSGF])MSGF='todos';
-  $('#msgFil').innerHTML=[['todos','Todos',S.pk.length],['sin','🟡 Sin contestar',S.pk.filter(FIL.sin).length],['nr','📵 No responde',S.pk.filter(FIL.nr).length],['ok','🔵 Confirmados',S.pk.filter(FIL.ok).length]].map(([k,t,n])=>`<button type="button" data-msgf="${k}" aria-pressed="${k===MSGF}">${t} <b>${n}</b></button>`).join('');
+  $('#msgFil').innerHTML=[['todos','Todos',S.pk.length],['sin','🟡 Sin enviar',S.pk.filter(FIL.sin).length],['nr','📨 Esperando respuesta',S.pk.filter(FIL.nr).length],['ok','🔵 Confirmados',S.pk.filter(FIL.ok).length]].map(([k,t,n])=>`<button type="button" data-msgf="${k}" aria-pressed="${k===MSGF}">${t} <b>${n}</b></button>`).join('');
   const hit=p=>(MSGF==='todos'||FIL[MSGF](p))&&hit0(p),hit0=p=>!q||(p.nombre||'').toLowerCase().includes(q)||(p.guia||'').toLowerCase().includes(q)||(qd.length>=3&&String(p.tel||'').replace(/\D/g,'').includes(qd.slice(-8)));
   // 1.52.1: como en Paquetes, los entregados se ven en gris (número tachado) y bajan; al final los devueltos
   // 1.52.4: los que están en Hold en la Ruta también van en gris, después de los pendientes y antes de los entregados
@@ -809,7 +814,7 @@ function renderMsg(){
   const rp=(p,i)=>rpos[p.id]!==undefined?rpos[p.id]:1e6+i;
   L.innerHTML=S.pk.map((p,i)=>[p,i]).sort((a,b)=>rk(a[0])-rk(b[0])||rp(a[0],a[1])-rp(b[0],b[1])).map(([p,i])=>{const sel=msgSel(p),txt=msgText(p,sel);const l=waLink(p,txt);return `<div class="pkg${p.st==='entregado'||enHold(p)?' entregado':''}${pkOff(p)?' devol':''}"${hit(p)?'':' style="display:none"'}>
     <div class="num${p.st==='entregado'?' tachado':''}">${p.num||i+1}</div>
-    <div class="name">${esc(p.nombre)} ${stChip(p)}${enHold(p)?' <span class="small" style="font-weight:700">⏸ hold</span>':''} ${p.sent?'<span class="small muted">✓ mensaje abierto</span>':''}${p.formSent?'<span class="small muted">· formulario enviado</span>':''}</div>
+    <div class="name">${esc(p.nombre)} ${msgChip(p)}${enHold(p)?' <span class="small" style="font-weight:700">⏸ hold</span>':''} ${p.sent?'<span class="small muted">✓ mensaje abierto</span>':''}${p.formSent?'<span class="small muted">· formulario enviado</span>':''}</div>
     <div class="addr"><span class="mono">${esc(p.tel||'sin teléfono')}</span>${p.resp?' <span class="small" style="color:var(--ok);font-weight:600">✓ llenó el formulario</span>':''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
     <div class="msgsel" role="radiogroup" aria-label="Qué mensaje mandar">${msgOpts().map(([k,t])=>`<button type="button" role="radio" aria-checked="${k===sel}" data-act="msgsel" data-k="${k}" data-id="${p.id}">${t}</button>`).join('')}</div>
     <details class="small"><summary>Ver mensaje</summary><div class="preview">${esc(txt)}</div></details>
