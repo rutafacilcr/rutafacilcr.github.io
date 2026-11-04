@@ -451,7 +451,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.81.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.81.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -493,6 +493,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
   <h2 id="pickTitle">🎯 Marcar en el mapa</h2>
   <p class="small muted" id="pickWho"></p>
   <p class="small" id="pickAviso"></p>
+  <form id="pickBusca" class="row" style="gap:6px;flex-wrap:nowrap"><input id="pickQ" type="search" placeholder="Buscar lugar, barrio o dirección" aria-label="Buscar en el mapa" style="flex:1;min-width:0"><button class="btn sm" type="submit">🔍 Buscar</button></form>
   <div id="pickMap" style="height:300px;border-radius:12px;margin:6px 0"></div>
   <p class="small muted" id="pickInfo">Tocá el mapa donde va el paquete. Podés acercar con dos dedos.</p>
   <div class="row"><button class="btn primary" id="pickOk" type="button" disabled>Usar este punto</button><button class="btn ghost" id="pickCancel" type="button">Cancelar</button></div>
@@ -1212,11 +1213,14 @@ $('#pasteCancel').onclick=()=>{PASTE=null;$('#pasteSheet').hidden=true};
 $('#pasteMapa').onclick=()=>{if(!PASTE)return;const p=PASTE,t=$('#pasteBoxR').value;PASTE=null;$('#pasteSheet').hidden=true;pickAbrir(p,t)};
 // 1.81.0: 🎯 Marcar en el mapa (Leaflet + OpenStreetMap, gratis). Busca el nombre del lugar en Costa Rica y deja tocar el punto exacto.
 let PICK=null,PMAP=null;
+// 1.81.2: si hay clave de TomTom (la misma de 🚦 Tráfico, plan gratis) busca primero ahí: conoce muchos más negocios que OpenStreetMap
+async function pickTomTom(q){if(!S.ttKey||!q)return null;try{const r=await fetch(`https://api.tomtom.com/search/2/search/${encodeURIComponent(q)}.json?key=${encodeURIComponent(S.ttKey)}&countrySet=CR&limit=1&language=es-419`);if(!r.ok)return null;const j=await r.json(),x=j.results&&j.results[0];
+  return x&&x.position&&(x.type==='POI'||x.type==='Point Address'||x.type==='Address Range'||x.type==='Street')?{c:[+x.position.lat,+x.position.lon],poi:x.type==='POI',txt:(x.poi&&x.poi.name?x.poi.name+', ':'')+((x.address&&x.address.freeformAddress)||'')}:null}catch(e){return null}}
 async function pickBuscar(q){if(!q)return null;try{const r=await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=cr&q='+encodeURIComponent(q));const j=await r.json();return j[0]?[+j[0].lat,+j[0].lon]:null}catch(e){return null}}
 async function pickAbrir(p,t){
   // 1.81.1: primero lo que pegaste (nombre del negocio + dirección); la ubicación guardada solo si no pegaste nada
   const lg=lugarDe(t),pegado=!!(lg.nombre||lg.zona),actual=pegado?null:parseCoord(p.ubic);PICK={p,c:actual};
-  $('#pickWho').textContent=p.nombre||'';
+  $('#pickWho').textContent=p.nombre||'';$('#pickQ').value=[lg.nombre,lg.zona].filter(Boolean).join(', ');
   $('#pickAviso').innerHTML=pegado?`Lo que pegaste es un <b>lugar o negocio</b> (${esc(lg.nombre)}), no una ubicación con coordenadas. Revisá el punto en el mapa, o pedile al cliente: 📎 &gt; <b>Ubicación</b> &gt; <b>Enviar mi ubicación actual</b>.`:'Marcá el punto exacto de la entrega.';
   $('#pickOk').disabled=!actual;$('#pickInfo').textContent='Buscando en el mapa…';$('#pickSheet').hidden=false;document.body.style.overflow='hidden';
   try{if(!document.querySelector('link[data-leaflet]')){const l=document.createElement('link');l.rel='stylesheet';l.href=CSS_MAP;l.dataset.leaflet=1;document.head.appendChild(l)}
@@ -1231,15 +1235,21 @@ async function pickAbrir(p,t){
   const zona=lg.zona.replace(/\b\d{5}\b/g,'').replace(/\bCR(-[A-Z]{1,2})?\b/g,'').replace(/(\s*,\s*)+/g,', ').replace(/^[ ,]+|[ ,]+$/g,'');
   const ruta=zona.replace(/Ruta Nacional (Primaria|Secundaria|Terciaria)\s*/i,'Ruta '),ciudad=zona.split(',').map(x=>x.trim()).filter(Boolean).pop()||'';
   const exactos=[lg.nombre&&zona&&`${lg.nombre}, ${zona}`,lg.nombre&&ciudad&&`${lg.nombre}, ${ciudad}`,lg.nombre].filter(Boolean),aprox=[zona,ruta!==zona&&ruta,ciudad].filter(Boolean);
-  let c=null,ex=false;for(const q of [...new Set(exactos)]){c=await pickBuscar(q);if(c){ex=true;break}}
+  let c=null,ex=false;const tt=lg.nombre?await pickTomTom([lg.nombre,zona||ciudad].filter(Boolean).join(', ')):null;if(tt&&tt.poi){c=tt.c;ex=true}
+  if(!c)for(const q of [...new Set(exactos)]){c=await pickBuscar(q);if(c){ex=true;break}}
   if(!c)for(const q of [...new Set(aprox)]){c=await pickBuscar(q);if(c)break}
   if(!PICK||PICK.p!==p)return;
-  if(c&&ex){c=[+c[0].toFixed(6),+c[1].toFixed(6)];PMAP.setView(c,17);pickPoner(c);$('#pickInfo').textContent=`Encontré "${lg.nombre}". Revisá que el pin esté bien; si no, tocá el punto correcto.`}
+  if(c&&ex){c=[+c[0].toFixed(6),+c[1].toFixed(6)];PMAP.setView(c,17);pickPoner(c);$('#pickInfo').textContent=`Encontré "${tt&&tt.poi&&tt.txt?tt.txt:lg.nombre}". Revisá que el pin esté bien; si no, tocá el punto correcto.`}
   else if(c){PMAP.setView(c,15);$('#pickInfo').textContent=`No encontré "${lg.nombre}"; el mapa quedó cerca de ${zona||ciudad}. Tocá el punto exacto.`}
-  else $('#pickInfo').textContent=lg.nombre?`No encontré "${lg.nombre}" en el mapa. Buscalo vos y tocá el punto.`:'Tocá el mapa donde va el paquete.'}
+  else $('#pickInfo').textContent=lg.nombre?`No encontré "${lg.nombre}". Escribí arriba el barrio o una calle cercana y tocá 🔍 Buscar, o tocá el punto en el mapa.`:'Tocá el mapa donde va el paquete.'}
 function pickPoner(c){PICK.c=c;if(PMAP.pin)PMAP.pin.setLatLng(c);else PMAP.pin=L.marker(c).addTo(PMAP);$('#pickOk').disabled=false}
 function pickCerrar(){PICK=null;$('#pickSheet').hidden=true;document.body.style.overflow=''}
 $('#pickCancel').onclick=pickCerrar;
+// 1.81.2: buscar a mano dentro del mapa (TomTom si hay clave, si no OpenStreetMap)
+$('#pickBusca').onsubmit=async e=>{e.preventDefault();const q=$('#pickQ').value.trim();if(!q||!PMAP)return;$('#pickInfo').textContent='Buscando…';
+  const tt=await pickTomTom(q);const c=tt?tt.c:await pickBuscar(q);if(!PICK)return;
+  if(c){const cc=[+c[0].toFixed(6),+c[1].toFixed(6)];PMAP.setView(cc,17);pickPoner(cc);$('#pickInfo').textContent=`${tt&&tt.txt?'Encontré: '+tt.txt+'. ':''}Revisá el pin; si no es ahí, tocá el punto correcto.`}
+  else $('#pickInfo').textContent=`No encontré "${q}". Probá con el barrio o una calle cercana, o tocá el punto en el mapa.`};
 $('#pickOk').onclick=()=>{if(!PICK||!PICK.c)return;const p=PICK.p;p.ubic=cTxt(PICK.c);if(p.st==='pendiente'||p.st==='noresponde')p.st='confirmado';S.route=null;pickCerrar();save();render();toast(`${p.nombre}: 📍 ubicación lista${p.horario?' · 🕓 '+p.horario:''}`)};
 
 // ---- Prueba de entrega: GPS + fecha/hora + mínimo 3 fotos con sello ----

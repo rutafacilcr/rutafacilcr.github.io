@@ -185,6 +185,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 ## 3c-quindecies. Tarjeta desactivada por Devolver (1.66.0)
 
+- 1.81.2: `pickTomTom(q)` usa TomTom Search (`/search/2/search/{q}.json`, `countrySet=CR`, `S.ttKey`) y solo cuenta como hallazgo exacto si `type==="POI"`; se prueba antes que Nominatim. `#pickBusca` (`#pickQ`, se llena con nombre y zona pegados) busca a mano: TomTom y si no Nominatim, pone el pin.
 - 1.81.1: `pickAbrir` prioriza lo pegado: si `lugarDe(t)` trae nombre o zona ignora `p.ubic`; limpia la zona (sin código postal ni `CR-SJ, CR`), prueba en Nominatim "nombre, zona", "nombre, ciudad", "nombre" (si encuentra, pone el pin y habilita *Usar este punto*) y luego la zona, "Ruta N, ciudad" y la ciudad (solo centra). La ubicación guardada sale solo con el botón 🎯 y nada pegado.
 - 1.81.0: `lugarDe(t)` saca nombre y zona del texto pegado (sin links ni horas). `applyReply` llama `pickAbrir(p,t)` si no hay coordenadas y hay un link o un nombre de lugar (guarda la hora si venía). `#pickSheet` + `#pickMap` (Leaflet, `PMAP`, `PICK={p,c}`); `pickBuscar` usa Nominatim (`countrycodes=cr`) con "nombre, zona" y si no, solo la zona; `pickOk` guarda `p.ubic=cTxt(c)`, pasa a *Confirmado* y borra `S.route`. Botón `#pasteMapa` en `#pasteSheet`.
 - 1.73.3: `guiPdf` suma la columna *Hora entrega* = `fmtT2(repT(p))` (la misma hora real del reporte de entregas).
