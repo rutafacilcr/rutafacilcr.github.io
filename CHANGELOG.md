@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-04
+- **1.87.0 · Devolver saca el paquete de Ruta:** al marcar **⛔ Devolver** en una parada, sale de la ruta (mapa, lista y globito) y queda en **Paquetes** con la etiqueta ⛔ Devolver, para saber qué llevar al almacén. **↩ Quitar devolver** lo regresa a la ruta con su ubicación. Las paradas que ya estaban marcadas también salen. Decisión de Victor.
 - **1.86.2 · Ubicación puesta en Ruta llega a Paquetes:** cuando le ponés la ubicación a una parada con "?" desde **Ruta** (link, coordenadas o tocando el mapa), la tarjeta en **Paquetes** se actualiza de una vez a *Ubicación lista* y *En la ruta* (antes se guardaba pero la tarjeta seguía diciendo *Falta ubicación*).
 - **1.86.1 · Mapa siempre en Ruta y ubicación borrada:** la pestaña **Ruta** siempre muestra el mapa con tu punto, aunque la lista esté vacía o recién vaciada. *➕ Agregar a la ruta* arma la ruta del día si no hay una. Si en Paquetes borrás la ubicación de un paquete, su parada sale del mapa y cuenta en *Sin 📍*.
 - **1.86.0 · Globito en Ruta:** la pestaña **Ruta** muestra en una burbuja cuántas paradas faltan por entregar (las de Hold cuentan; entregadas y devueltas no), igual que la de **Paquetes**.

@@ -461,7 +461,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.86.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.87.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -760,7 +760,7 @@ function renderPk(){
     <div class="name">${esc(p.nombre||'(sin nombre)')} ${pkChip(p)}</div>
     <div class="addr">${esc(p.dir||'Sin dirección')}${p.nota?` · <i>${esc(p.nota)}</i>`:''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
     <div class="meta"><span class="mono">${p.tel?`Tel. ${esc(p.tel)}`:'sin teléfono'}</span>${p.guia?`<span class="mono">Guía: ${esc(p.guia)}</span>`:''}<span class="pin ${c?'yes':'no'}">${c?'● Ubicación lista':'○ Falta ubicación'}</span>${S.ent&&S.ent.stops?(enR[p.id]?(enR[p.id].c||!c||p.st==='entregado'||p.st==='devuelto'?`<span class="small muted">🏍️ En la ruta${enR[p.id].c?'':' (sin ubicación)'}</span>`:''):c&&p.st!=='entregado'&&p.st!=='devuelto'?'':'<span class="small muted">No está en la ruta</span>'):''}</div>${p.ubic&&!c?`<div class="small ubwarn" style="color:var(--bad)">⚠ No reconozco esta ubicación (${esc(String(p.ubic).slice(0,40))}). Pegá el link que trae coordenadas, por ejemplo el de "Compartir ubicación" de WhatsApp o un link de Waze.</div>`:''}${p.pod?`<div class="ev">📷 ${p.pod.n} fotos · ${fmtDT(p.pod.at)}${p.pod.lat!=null?' · 📍 ±'+Math.round(p.pod.acc)+' m':' · sin GPS'} · ${p.pod.up?'☁️ respaldada':'⏳ sin subir'} <button class="btn sm" data-act="ev" data-id="${p.id}" style="margin-left:4px">Ver evidencia</button></div>`:p.entAt?`<div class="ev">✓ Entregado ${fmtDT(p.entAt)}${p.entGps?` · <a href="https://www.google.com/maps?q=${p.entGps.lat},${p.entGps.lng}" target="_blank" rel="noopener">📍 dónde (±${p.entGps.acc} m)</a>`:' · sin GPS'}</div>`:''}
-    <div class="pkruta">${S.ent&&S.ent.stops?(enR[p.id]?(enR[p.id].c||!c||p.st==='entregado'||p.st==='devuelto'?'':`<button class="btn sm" data-act="aruta" data-id="${p.id}">📍 Poner en la ruta</button>`):c&&p.st!=='entregado'&&p.st!=='devuelto'?`<button class="btn sm" data-act="aruta" data-id="${p.id}">➕ Agregar a la ruta</button>`:''):''}<button class="btn sm primary" data-act="paste" data-id="${p.id}">📋 Pegar respuesta</button></div>
+    <div class="pkruta">${S.ent&&S.ent.stops?(enR[p.id]?(enR[p.id].c||!c||p.st==='entregado'||p.st==='devuelto'?'':`<button class="btn sm" data-act="aruta" data-id="${p.id}">📍 Poner en la ruta</button>`):c&&p.st!=='entregado'&&p.st!=='devuelto'&&!p.devolver?`<button class="btn sm" data-act="aruta" data-id="${p.id}">➕ Agregar a la ruta</button>`:''):''}<button class="btn sm primary" data-act="paste" data-id="${p.id}">📋 Pegar respuesta</button></div>
     <div class="actions"><button class="btn sm" data-act="edit" data-id="${p.id}">Editar</button><button class="btn sm" data-act="rescan" data-id="${p.id}" title="Volver a escanear la etiqueta de este paquete"><svg class="bcico" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="vertical-align:-0.15em"><rect x="2" y="4" width="2" height="16"/><rect x="5.5" y="4" width="1" height="16"/><rect x="8" y="4" width="2.5" height="16"/><rect x="12" y="4" width="1" height="16"/><rect x="14.5" y="4" width="2" height="16"/><rect x="18" y="4" width="1" height="16"/><rect x="20.5" y="4" width="1.5" height="16"/></svg> Escáner</button></div>
     <div class="actions"><button class="btn sm ghost danger" data-act="del" data-id="${p.id}">Eliminar</button><button class="btn sm" data-act="dev" data-id="${p.id}">${p.st==='devuelto'?'↪ Regresar a Ruta':'↩ Devuelto'}</button>${phoneWA(p.tel)?`<a class="btn sm wa" href="https://wa.me/${phoneWA(p.tel)}" target="_blank" rel="noopener">WhatsApp</a>`:''}</div>
     ${devBar(p,1)}
@@ -927,7 +927,10 @@ document.addEventListener('click',async e=>{
       try{const ps=entParadasDe(p);ps.forEach(x=>{delete x.devolver});if(S.ent&&S.ent.stops&&S.ent.stops.length&&!S.ent.cerrada&&!ps.length){if(parseCoord(p.ubic)){pkReflejar(p);save();entAgregarPk(p);render();return}else toast(`${p.nombre}: activo, pero no tiene ubicación para la ruta`)}}catch(e){}}else{p.stAntes=p.st;p.st='devuelto';p.devAt=Date.now();toast(`${p.nombre}: devuelto al almacén`)}pkReflejar(p);if(typeof renderEnt==='function')setTimeout(renderEnt,0)}
   // Etiqueta ⛔ Devolver (marcada desde Ruta): tocarla lo marca como devuelto, o quita la marca
   else if(a==='devno'&&p){if(!await rfConfirm(`¿Quitar "Devolver" a ${p.nombre||'este paquete'}?\nVuelve a estar activo en Paquetes, Mensajes y Ruta.`))return;
-    delete p.devolver;(S.ent&&S.ent.stops||[]).filter(x=>x.devolver&&(entParadasDe(p).includes(x)||entPkg(x)===p)).forEach(x=>delete x.devolver);entMod();save();render();if(typeof renderEnt==='function')renderEnt();toast(`${p.nombre}: activo otra vez`);return}
+    delete p.devolver;(S.ent&&S.ent.stops||[]).filter(x=>x.devolver&&(entParadasDe(p).includes(x)||entPkg(x)===p)).forEach(x=>delete x.devolver);entMod();save();
+    // 1.87.0: si ya no tiene parada (Devolver la sacó de la ruta), vuelve a la ruta si tiene ubicación
+    try{if(S.ent&&S.ent.stops&&!S.ent.cerrada&&!entParadasDe(p).length&&parseCoord(p.ubic)){toast(`${p.nombre}: activo otra vez`);entAgregarPk(p);return}}catch(e){}
+    render();if(typeof renderEnt==='function')renderEnt();toast(`${p.nombre}: activo otra vez`);return}
   else if(a==='devok'&&p){const st=(S.ent&&S.ent.stops||[]).filter(x=>x.devolver&&entPkg(x)===p);
     if(await rfConfirm(`¿Ya devolviste el paquete de ${p.nombre||'este cliente'} al almacén?\nAceptar = marcarlo como devuelto.`)){if(p.st!=='devuelto'){p.stAntes=p.st;p.st='devuelto';p.devAt=Date.now()}delete p.devolver;st.forEach(x=>delete x.devolver);toast(`${p.nombre}: devuelto al almacén`)}
     else if(await rfConfirm(`¿Quitar la marca "Devolver" a ${p.nombre||'este paquete'}?\nVuelve a estar activo en la ruta.`)){delete p.devolver;st.forEach(x=>delete x.devolver);toast(`${p.nombre}: ya no está para devolver`)}
@@ -1757,7 +1760,7 @@ setTimeout(()=>{try{entSyncPk()}catch(e){}},0); // al abrir la app (el render() 
 // Al editar un paquete: se buscan sus paradas en Entrega ANTES del cambio y después se les copia el teléfono (y nombre/guía si los tiene)
 function entParadasDe(p){try{return S.ent&&S.ent.stops?S.ent.stops.filter(s=>s.pkFijo===p.id||(entPkg(s)===p&&entFuerte(s,p))):[]}catch(e){return []}}
 function entCopiarPk(p,ps){if((ps||[]).length)entMod();(ps||[]).forEach(s=>{s.tel=p.tel||'';if(p.nombre)s.nombre=p.nombre;s.guia=p.guia||'';s.dir=p.dir||'';s.nota=p.nota||'';s.pkId=p.id;s.pkFijo=p.id});
-  if(!(ps||[]).length&&S.ent&&S.ent.stops&&parseCoord(p.ubic)&&p.st!=='entregado'&&p.st!=='devuelto'&&!(S.ent.quitadas||[]).includes(p.id))setTimeout(()=>entAgregarPk(p),0)}
+  if(!(ps||[]).length&&S.ent&&S.ent.stops&&parseCoord(p.ubic)&&p.st!=='entregado'&&p.st!=='devuelto'&&!p.devolver&&!(S.ent.quitadas||[]).includes(p.id))setTimeout(()=>entAgregarPk(p),0)}
 // Paradas marcadas Entregado (también las de antes de la 1.28 o de otro aparato) pasan su paquete a entregado en Paquetes
 // Paquete con ubicación que no está en la ruta: se agrega como parada nueva y se reordena desde donde estás
 function entAgregarPk(p){const c=parseCoord(p.ubic);if(!c){toast('Este paquete no tiene ubicación');return}
@@ -1796,7 +1799,9 @@ function entUnirLibres(){const E=S.ent;if(!E||!E.stops)return 0;if(E.limpia147)r
 // Unión segura entre parada y paquete: unida a mano, misma guía, mismo nombre o mismo teléfono (también uno anterior)
 function entFuerte(s,p){if(!s||!p)return false;if(s.pkFijo===p.id)return true;if(s.guia&&p.guia&&guiaN(s.guia)===guiaN(p.guia))return true;
   if(s.nombre&&p.nombre&&nomN(s.nombre)===nomN(p.nombre))return true;const t=phoneWA(s.tel);return !!t&&(phoneWA(p.tel)===t||(p.telsAnt||[]).some(x=>phoneWA(x)===t))}
-function entSyncPk(){const E=S.ent;if(!E||!E.stops)return false;const ul=entUnirLibres(),dd=entSinDup();if(dd)toast(`Se quitaron ${dd} parada(s) repetida(s) de la ruta`);let n=0,t=ul+dd,nuevas=E.nuevas||0;delete E.nuevas;let maxN=Math.max(0,...E.stops.filter(x=>x.c).map(x=>x.n||0));E.stops.forEach(s=>{const p0=entPkg(s),p=entFuerte(s,p0)?p0:null; // solo se copian datos si la unión es segura
+// 1.87.0: paradas marcadas Devolver antes de esta versión (unidas a su paquete y sin entregar) salen de la ruta
+function entSacarDevol(){const E=S.ent;if(!E||!E.stops||E.cerrada)return;const sal=[];E.stops.forEach(x=>{if(!x.devolver||x.done)return;const p=entPkg(x);if(p&&entFuerte(x,p)){p.devolver=true;sal.push(x);E.quitadas=E.quitadas||[];if(!E.quitadas.includes(p.id))E.quitadas.push(p.id)}});if(sal.length){E.stops=E.stops.filter(x=>!sal.includes(x));entMod()}}
+function entSyncPk(){const E=S.ent;if(!E||!E.stops)return false;entSacarDevol();const ul=entUnirLibres(),dd=entSinDup();if(dd)toast(`Se quitaron ${dd} parada(s) repetida(s) de la ruta`);let n=0,t=ul+dd,nuevas=E.nuevas||0;delete E.nuevas;let maxN=Math.max(0,...E.stops.filter(x=>x.c).map(x=>x.n||0));E.stops.forEach(s=>{const p0=entPkg(s),p=entFuerte(s,p0)?p0:null; // solo se copian datos si la unión es segura
   // El teléfono manda el de Paquetes: si se corrigió allá (también antes de la 1.34), la parada lo toma
   if(p&&String(p.tel||'').replace(/\D/g,'')!==String(s.tel||'').replace(/\D/g,'')){s.tel=p.tel||'';s.pkId=p.id;t++} // 1.63.2: el teléfono siempre manda el de Paquetes
   if(p&&p.nombre&&p.nombre.trim()&&p.nombre.trim()!==s.nombre){s.nombre=p.nombre.trim();s.pkId=p.id;t++} // el nombre también manda el de Paquetes
@@ -2017,9 +2022,11 @@ $('#entList').addEventListener('click',async e=>{if(e.target.closest('[data-edon
   const bq=e.target.closest('[data-equitar]');if(bq){const k=+bq.dataset.equitar,s=S.ent.stops[k];if(!s||!await rfConfirm(`¿Quitar a ${s.nombre||'esta parada'} de la ruta?\nEl paquete sigue en Paquetes.`))return;
     const p=entPkg(s);if(p){S.ent.quitadas=S.ent.quitadas||[];if(!S.ent.quitadas.includes(p.id))S.ent.quitadas.push(p.id)}
     S.ent.stops.splice(k,1);ESEL=-1;save();render();renderEnt();toast(`${s.nombre||'Parada'} quitada de la ruta`);return}
-  // Devolver: la parada queda en la ruta pero desactivada (gris, sin botones, fuera del orden y del tiempo) y el paquete lleva la etiqueta "Devolver"
-  const bv=e.target.closest('[data-edevol]');if(bv){const s=S.ent.stops[+bv.dataset.edevol],p=entPkg(s);if(!s||!await rfConfirm(`¿Devolver el paquete de ${s.nombre||'esta parada'}?\nQueda en la ruta pero desactivado.`))return;
-    s.devolver=true;s.hold=false;if(p){s.pkId=p.id;p.devolver=true}ESEL=-1;save();render();renderEnt();toast(`${s.nombre||'Parada'}: para devolver`);return}
+  // Devolver (1.87.0): la parada sale de la ruta y el paquete queda en Paquetes con la etiqueta "⛔ Devolver" (↩ Quitar devolver lo regresa a la ruta).
+  // Sin paquete unido, la parada queda en la ruta desactivada como antes.
+  const bv=e.target.closest('[data-edevol]');if(bv){const k=+bv.dataset.edevol,s=S.ent.stops[k],p=entPkg(s);if(!s||!await rfConfirm(`¿Devolver el paquete de ${s.nombre||'esta parada'}?\n${p?'Sale de la ruta y queda en Paquetes con ⛔ Devolver.':'Queda en la ruta pero desactivado.'}`))return;
+    if(p){p.devolver=true;S.ent.quitadas=S.ent.quitadas||[];if(!S.ent.quitadas.includes(p.id))S.ent.quitadas.push(p.id);S.ent.stops.splice(k,1)}else{s.devolver=true;s.hold=false}
+    ESEL=-1;save();render();renderEnt();toast(`${s.nombre||'Parada'}: ${p?'salió de la ruta, queda en Paquetes para devolver':'para devolver'}`);return}
   const bvn=e.target.closest('[data-edevno]');if(bvn){const s=S.ent.stops[+bvn.dataset.edevno],p=entPkg(s);if(!s)return;if(!await rfConfirm(`¿Quitar "Devolver" a ${s.nombre||'esta parada'}?\nVuelve a estar activo en Paquetes, Mensajes y Ruta.`))return;delete s.devolver;if(p)delete p.devolver;
     save();render();if(EPOS||jorEnCurso()){entOrdenar(EPOS?EPOS.c:null,'donde estás');return}renderEnt();toast(`${s.nombre||'Parada'} vuelve a la ruta`);return}
   const bd=e.target.closest('[data-edone]');if(bd){const s=S.ent.stops[+bd.dataset.edone],p=entPkg(s);s.done=true;

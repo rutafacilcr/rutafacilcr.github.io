@@ -24,6 +24,7 @@ Resumen de cómo está la app ahora. Más abajo se explica cada parte con la ver
 - Después, el buscador 🔍 y enseguida las tarjetas (desde la 1.69.1 ya no está el título *Lista del día*).
 - El orden de las tarjetas es: activos, Hold, devueltos y al final los entregados (en gris; desde la 1.73.0 el número ya no sale tachado).
 - Cada tarjeta tiene **1. Coordinar** (arriba a la derecha desde la 1.73.0), **Pegar respuesta**, **Editar**, **Escáner**, **Eliminar** (1.69.9; antes *Borrar*), **Devuelto** y **WhatsApp**.
+- **⛔ Devolver en Ruta (1.87.0):** el paquete sale de la ruta y queda en *Paquetes* con ⛔ Devolver, para que al final del día sepás qué llevar al almacén. **↩ Quitar devolver** lo vuelve a meter en la ruta (si tiene ubicación).
 - Los paquetes **⛔ Devolver** y **⛔ Devuelto** se ven grises y sin botones. Solo queda activo el botón para quitar la marca: en un devuelto dice **↪ Regresar a Ruta** (1.69.4).
 
 **Ruta**
@@ -579,6 +580,8 @@ En un paquete devuelto, **↪ Regresar a Ruta** pide confirmar: *Si regresa a Ru
 Un paquete **devuelto** queda gris y sin botones en *Paquetes* y *Mensajes*, igual que en *Ruta*. Solo queda la etiqueta roja **⛔ Devuelto** y **↪ Quitar devuelto** para reactivarlo.
 
 ### Paquete para devolver (1.66.0)
+
+> Desde la 1.87.0 la parada ya no queda en *Ruta*: sale de la ruta y el paquete sigue en *Paquetes* con ⛔ Devolver.
 
 Cuando marcás **⛔ Devolver** en *Ruta*, ese paquete queda gris y sin botones en *Paquetes*, *Mensajes* y *Ruta*. Solo queda la etiqueta roja **⛔ Devolver** y el botón **↩ Quitar devolver**. Si hay que reactivarlo, tocá **↩ Quitar devolver** en cualquiera de las tres pantallas y confirmá: vuelve a estar activo en todas.
 
