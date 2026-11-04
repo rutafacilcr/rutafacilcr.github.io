@@ -167,8 +167,7 @@ Desde la versión 1.18.0 la lista se guarda en tu cuenta. Si entrás con tu núm
 6. Lo que llene **entra solo** a la app (revisa cada minuto, o tocá **Revisar respuestas ahora**) y queda **Confirmado** con 🕓 horario y 🏠 señas.
 7. **Cuando el cliente responde por el chat (lo más común):** en WhatsApp mantené presionado su mensaje (la hora, la ubicación o los dos seleccionados) > **Copiar**. En la app tocá **📋 Pegar respuesta** en ese cliente. La app saca sola la **hora** y la **ubicación** y lo deja **Confirmado**. Si el iPhone pregunta "Permitir pegar", tocá **Permitir**. Si la ubicación no se puede copiar del chat, abrila, tocá **Compartir** > **Copiar** y volvé a tocar **📋 Pegar respuesta**.
 
-   **Si el cliente manda un negocio o lugar (1.82.0, lo nuevo):** sale la ventana **📍 Falta la ubicación** con dos caminos:
-   - **💬 Pedirle la ubicación:** abre WhatsApp con este mensaje ya escrito: *"Hola Ana, gracias. Para llegar sin perderme, ¿me puede enviar su ubicación por aquí? Toque 📎 > Ubicación > Enviar mi ubicación actual. ¡Muchas gracias!"*. Cuando el cliente la mande, copiala y tocá **📋 Pegar respuesta**.
+   **Si el cliente manda un negocio o lugar (1.82.0, lo nuevo):** sale la ventana **📍 Falta la ubicación** (1.82.1: ya no trae el botón para pedírsela otra vez al cliente, porque si ya la mandó le molesta):
    - **Sacarla vos con Waze:** en WhatsApp tocá la tarjeta del lugar y elegí **Waze**; en Waze tocá **Compartir** > **Copiar**; volvé a la app y tocá **📋 Pegar respuesta**. El link de Waze trae el punto exacto.
    - Si ninguna sirve, **🎯 Marcar a mano en el mapa** abre el mapa con el buscador (lo de abajo).
 
@@ -254,7 +253,7 @@ En la pestaña **Ruta**, abajo, aparece **Recorrido de hoy** en cuanto hacés la
 
 ## 3. Estados de un paquete
 
-Cada etiqueta lleva ícono, nombre y color (1.79.0; círculos de color desde la 1.83.0), así se distingue aunque no se vean bien los colores:
+Cada etiqueta lleva ícono, nombre y color (1.79.0; círculos de color desde la 1.84.0), así se distingue aunque no se vean bien los colores:
 
 | Etiqueta | Color | Significa |
 |---|---|---|
@@ -267,7 +266,7 @@ Cada etiqueta lleva ícono, nombre y color (1.79.0; círculos de color desde la 
 
 Tocá la etiqueta de color para pasar al siguiente estado.
 
-Desde la 1.79.0 los botones son más grandes (44 px, cómodos para el dedo; en Mensajes desde la 1.83.0, igual que las etiquetas de estado) y los naranja son más intensos para leerse bien al sol. Si un botón muestra una ruedita (por ejemplo **Confirmar entrega**, **Usar esta respuesta**, **Guardar contactos** o **Bajar Excel**), está trabajando: esperá a que termine; mientras tanto no se puede tocar dos veces. Si se ve gris con borde punteado, está desactivado. Cuando algo sale bien, abajo aparece un aviso oscuro con borde naranja que lo confirma.
+Desde la 1.79.0 los botones son más grandes (44 px, cómodos para el dedo; en Mensajes desde la 1.84.0, igual que las etiquetas de estado) y los naranja son más intensos para leerse bien al sol. Si un botón muestra una ruedita (por ejemplo **Confirmar entrega**, **Usar esta respuesta**, **Guardar contactos** o **Bajar Excel**), está trabajando: esperá a que termine; mientras tanto no se puede tocar dos veces. Si se ve gris con borde punteado, está desactivado. Cuando algo sale bien, abajo aparece un aviso oscuro con borde naranja que lo confirma.
 
 ---
 
