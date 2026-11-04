@@ -103,7 +103,8 @@ nav.tabs .n:empty{display:none}
 .sig.ok{border-style:solid;border-color:var(--ok)}
 .trackmap{height:320px;border-radius:10px;overflow:hidden;background:var(--bg);z-index:0}
 .tracklist{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px;font-size:14px}
-.enthead{display:flex;gap:10px;align-items:center;flex-wrap:wrap}#entGps{margin-left:auto;max-width:100%}#entGps:empty{display:none}
+.enthead{display:flex;gap:10px;align-items:center;flex-wrap:wrap}#entGps{flex-basis:100%;max-width:100%}#entGps:empty{display:none}#entInfo{flex:1 1 160px}
+.enthead .jorbar{background:none;border:0;padding:0;margin:0 0 0 auto;flex-wrap:nowrap;justify-content:flex-end}.enthead .jorbar .jtxt{flex:0 1 auto;text-align:right;font-size:12.5px} /* 1.91.0 */
 .msgfil{display:flex;gap:4px;flex-wrap:wrap;margin:8px 0}.msgfil button{font:inherit;font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:inherit;cursor:pointer}.msgfil button b{margin-left:2px}.msgfil button[aria-pressed=true]{background:var(--accent-btn);border-color:var(--accent-btn);color:#fff;font-weight:700}
 .jorbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px 8px;margin:6px 0}#entInfo:empty{display:none}
 .jorbar .jtxt{flex:1 1 120px;font-size:12.5px;line-height:1.25}.jorbar .jtxt b{white-space:nowrap}
@@ -381,17 +382,17 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
       <label>Tu nombre<input id="m-yo" placeholder="Victor" autocomplete="name"></label>
       <label>Día de entrega<input id="m-fecha"></label>
     </div>
-    <p class="small muted">En cada cliente elegí el mensaje (<b>1. Coordinar</b>, <b>2. En camino</b>, <b>3. Comprensión</b> o <b>4. Horario extendido</b>) y tocá <b>Abrir WhatsApp</b>. Solo tocás <b>Enviar</b>, volvés aquí y seguís con el siguiente.</p>
     <div class="vcfrow"><label>Prefijo<input id="m-pref" maxlength="8" placeholder="TM" autocomplete="off"></label><button class="btn sm primary" id="vcfBtn" type="button">📇 Guardar contactos del día</button><button class="btn sm" id="xlsBtn" type="button">📊 Bajar Excel del día</button></div>
     <p class="small muted">Guarda a todos los clientes en tus contactos como <b id="vcfEj">TM-Nombre-pedido</b> (el pedido es la guía), para que en WhatsApp salga el nombre cuando te contesten. <b>Bajar Excel del día</b> llena la plantilla de Excel con nombre, teléfono, dirección, ubicación, guía, nota y fecha de ingreso de cada cliente.</p>
     <p class="small" id="xlsIos" hidden style="background:var(--warn-bg);border-radius:8px;padding:10px 12px">Excel en iPhone: en el menú elegí <b>Guardar en Archivos</b> &gt; <b>En mi iPhone</b> &gt; carpeta <b>RutaFacilCR</b> (la primera vez tocá el ícono de carpeta nueva para crearla) &gt; <b>Guardar</b>. La próxima vez el iPhone ya propone esa carpeta. Para verlo, abrí la app <b>Archivos</b>.</p>
     <p class="small" id="vcfIos" hidden style="background:var(--warn-bg);border-radius:8px;padding:10px 12px">En iPhone: elegí <b>Guardar en Archivos</b>. Después abrí la app <b>Archivos</b>, tocá <b>contactos-….vcf</b> y luego <b>Agregar los N contactos</b> &gt; <b>Crear contactos nuevos</b>. (Si lo abrís directo desde Safari, el iPhone solo agrega el primero.)</p>
   </div>
-  <div class="row" style="justify-content:space-between"><h2>Clientes</h2><span class="small muted" id="sentCount"></span></div>
+  <div class="row" style="justify-content:flex-end"><span class="small muted" id="sentCount"></span></div><!-- 1.91.0: sin el título "Clientes" -->
   <input id="m-buscar" type="search" placeholder="🔍 Buscar por nombre, teléfono o guía" autocomplete="off" aria-label="Buscar cliente">
   <div class="msgfil" id="msgFil" role="group" aria-label="Filtrar clientes"></div>
   <div class="list" id="msgList"></div>
-  <div class="panel" id="syncPanel" hidden>
+  <!-- 1.91.0: tarjeta "Respuestas del formulario" oculta (Victor). Las respuestas se siguen revisando solas en segundo plano. -->
+  <div class="panel" id="syncPanel" hidden style="display:none!important">
     <div class="row" style="justify-content:space-between"><h3>Respuestas del formulario</h3><span class="small muted" id="syncInfo"></span></div>
     <p class="small">El primer mensaje va sin link. Cuando el cliente te conteste, elegí <b>2. Formulario</b> en ese cliente: le llega un segundo mensaje corto con el link. Lo que llene entra solo a la lista y queda <b>Confirmado</b>.</p>
     <button class="btn road" id="syncBtn">Revisar respuestas ahora</button>
@@ -414,9 +415,9 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <label class="btn sm primary" for="entFile">📂 Cargar ruta</label><input type="file" id="entFile" accept=".xlsx,.xls,.csv" hidden>
     <span class="small muted" id="entInfo"></span>
     <button class="btn sm road" id="entAqui" type="button" hidden>📍 Ordenar desde aquí</button>
+    <div class="jorbar" id="jorBar"></div><!-- 1.91.0: Iniciar / Finalizar en la misma línea, a la derecha -->
     <span class="small muted" id="entGps"></span>
   </div>
-  <div class="jorbar" id="jorBar"></div>
   <div class="enthead" id="entTools" hidden>
     <span class="enttot" id="entTot"></span>
     <span class="vehsel" id="vehSel" role="group" aria-label="Vehículo"><button type="button" data-veh="moto" title="Moto">🏍</button><button type="button" data-veh="carro" title="Carro">🚙</button><button type="button" data-veh="buseta" title="Buseta">🚐</button></span>
@@ -470,7 +471,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.89.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.91.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -732,8 +733,8 @@ const waze=c=>`https://waze.com/ul?ll=${c[0]},${c[1]}&navigate=yes`;
 const pkDevol=p=>!!p.devolver&&p.st!=='devuelto'&&p.st!=='entregado';
 const pkOff=p=>pkDevol(p)||p.st==='devuelto'; // 1.66.2: los devueltos también quedan desactivados
 function devBar(p,enPk){if(p.st==='devuelto')return `<div class="devkeep"><span class="devtag">⚪ Devuelto</span><button type="button" class="btn sm devno" data-act="dev" data-id="${p.id}">${enPk?'↪ Regresar a Ruta':'↪ Quitar devuelto'}</button></div>`;return pkDevol(p)?`<div class="devkeep"><span class="devtag on">⛔ Devolver</span><button type="button" class="btn sm devno" data-act="devno" data-id="${p.id}">↩ Quitar devolver</button></div>`:''}
-function pkChip(p){if(p.st==='entregado'||p.st==='devuelto')return stChip(p);const l=waLink(p,coordText(p));
-  return l?`<a class="coordbtn" href="${l}" target="_blank" rel="noopener" data-act="sent" data-k="coord" data-id="${p.id}" title="Abrir WhatsApp con el mensaje de coordinar">1. Coordinar${p.sent?' ✓':''}</a>`:`<span class="coordbtn off" title="Teléfono inválido: corregilo con Editar">1. Coordinar</span>`}
+function pkChip(p){if(p.st==='entregado'||p.st==='devuelto')return stChip(p);if(parseCoord(p.ubic))return ''; /* 1.91.0: Pedir ubicación solo sale si el paquete no tiene ubicación */const l=waLink(p,coordText(p));
+  return l?`<a class="coordbtn" href="${l}" target="_blank" rel="noopener" data-act="sent" data-k="coord" data-id="${p.id}" title="Abrir WhatsApp con el mensaje para pedir la ubicación (1. Coordinar)">Pedir ubicación${p.sent?' ✓':''}</a>`:`<span class="coordbtn off" title="Teléfono inválido: corregilo con Editar">Pedir ubicación</span>`} /* 1.91.0: antes decía "1. Coordinar" (Victor) */
 function stChip(p){if(p.st==='devuelto')return `<button class="chip devtag" data-act="st" data-id="${p.id}" title="Devuelto al almacén. Tocá para cambiar el estado">⚪ Devuelto</button>`; // 1.56.0: devueltos con la misma etiqueta que ⛔ Devolver
   return `<button class="chip st-${p.st}" data-act="st" data-id="${p.id}" title="Cambiar estado">${SLABEL[p.st]}</button>`}
 
@@ -812,7 +813,7 @@ function renderMsg(){
     <div class="addr"><span class="mono">${esc(p.tel||'sin teléfono')}</span>${p.resp?' <span class="small" style="color:var(--ok);font-weight:600">✓ llenó el formulario</span>':''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
     <div class="msgsel" role="radiogroup" aria-label="Qué mensaje mandar">${msgOpts().map(([k,t])=>`<button type="button" role="radio" aria-checked="${k===sel}" data-act="msgsel" data-k="${k}" data-id="${p.id}">${t}</button>`).join('')}</div>
     <details class="small"><summary>Ver mensaje</summary><div class="preview">${esc(txt)}</div></details>
-    <div class="actions msgacts"><button class="btn sm primary" data-act="paste" data-id="${p.id}">📋 Pegar respuesta</button>${l?`<a class="btn wa" href="${l}" target="_blank" rel="noopener" data-act="sent" data-k="${sel}" data-id="${p.id}">Abrir WhatsApp</a>`:'<span class="small" style="color:var(--bad)">Teléfono inválido, corregilo en Paquetes</span>'}</div>
+    <div class="actions msgacts">${l?`<a class="btn wa" href="${l}" target="_blank" rel="noopener" data-act="sent" data-k="${sel}" data-id="${p.id}">Abrir WhatsApp</a>`:'<span class="small" style="color:var(--bad)">Teléfono inválido, corregilo en Paquetes</span>'}</div>
   ${devBar(p)}</div>`}).join('')+(S.pk.some(hit)?'':'<div class="empty">Ningún cliente en este filtro.</div>');
 }
 
@@ -1837,8 +1838,8 @@ function jorGps(){return new Promise(ok=>{if(!navigator.geolocation)return ok(EP
 const jorHm=t=>new Date(t).toLocaleTimeString('es-CR',{hour:'numeric',minute:'2-digit'});
 const jorDur=m=>`${Math.floor(m/60)} h ${String(Math.round(m%60)).padStart(2,'0')} min`;
 function jorRender(){const el=$('#jorBar');if(!el)return;const J=(S.jor||{})[jorHoy()];
-  el.innerHTML=!J||!J.ini?`<span class="jtxt">Al salir: guarda hora y punto de salida.</span><button class="btn sm jini" type="button" data-jor="ini">▶ Iniciar entregas</button>`
-   :!J.fin?`<span class="jtxt">En ruta desde <b>${jorHm(J.ini.t)}</b>${J.ini.c?' 📍':' (sin GPS)'}</span><button class="btn sm jfin" type="button" data-jor="fin">■ Finalizar</button>`
+  el.innerHTML=!J||!J.ini?`<button class="btn sm jini" type="button" data-jor="ini" title="Guarda la hora y el punto de salida para el reporte">▶ Iniciar entregas</button>`
+   :!J.fin?`<span class="jtxt" title="En ruta desde ${jorHm(J.ini.t)}${J.ini.c?'':' (sin GPS)'}">⏱ <b>${jorHm(J.ini.t)}</b>${J.ini.c?'':' (sin GPS)'}</span><button class="btn sm jfin" type="button" data-jor="fin">■ Finalizar</button>`
    :`<span class="jtxt">Jornada <b>${jorHm(J.ini.t)}–${jorHm(J.fin.t)}</b> · ${jorDur((J.fin.t-J.ini.t)/60000)}</span><button class="btn sm" type="button" data-jor="seguir" title="Borra la hora de fin para seguir entregando">▶ Seguir entregando</button>`}
 $('#jorBar').addEventListener('click',async e=>{const b=e.target.closest('[data-jor]');if(!b)return;const k=jorHoy(),a=b.dataset.jor;S.jor=S.jor||{};
   if(a==='seguir'){if(S.jor[k])delete S.jor[k].fin;save();jorRender();toast('Seguís en ruta: tocá ■ Finalizar al terminar');return}
@@ -1970,7 +1971,7 @@ function entMe(){entEta();entTotal();if(!EMAP||!window.L)return;const c=EPOS?EPO
   if(!c){if(EMAP.me){EMAP.removeLayer(EMAP.me);EMAP.me=null}return}
   if(EMAP.fitted==='vacio'&&!EMAP.meC){EMAP.meC=1;EMAP.setView(c,15)} // 1.86.1: sin ruta, el mapa se centra en vos al tener GPS
   if(!EMAP.me)EMAP.me=L.marker(c,{icon:L.divIcon({className:'',html:'<div class="mepos"></div>',iconSize:[18,18],iconAnchor:[9,9]}),zIndexOffset:2000,interactive:false}).addTo(EMAP);else EMAP.me.setLatLng(c)}
-const gpsOk=g=>{EPOS={c:[+g.coords.latitude.toFixed(6),+g.coords.longitude.toFixed(6)],acc:g.coords.accuracy};$('#entGps').textContent=`📍 Estás aquí (±${Math.round(EPOS.acc)} m)`;entMe();
+const gpsOk=g=>{EPOS={c:[+g.coords.latitude.toFixed(6),+g.coords.longitude.toFixed(6)],acc:g.coords.accuracy};$('#entGps').textContent='';entMe(); /* 1.91.0: sin "Estás aquí" (Victor); el punto azul del mapa lo muestra */
   // La primera vez que el GPS responde, si la ruta no se ordenó desde cerca de aquí, se ordena sola desde tu punto
   if(!EAUTO&&S.ent&&S.ent.stops&&S.ent.stops.some(x=>x.c)&&EPOS.acc<500){EAUTO=true;if(!S.ent.inicio||hav(S.ent.inicio,EPOS.c)>0.8)entOrdenar(EPOS.c,'donde estás')}};
 const gpsFail=e=>{$('#entGps').innerHTML=e&&e.code===1?'Ubicación bloqueada. En iPhone: <b>Ajustes</b> &gt; <b>Privacidad</b> &gt; <b>Localización</b> &gt; <b>Sitios web de Safari</b> &gt; <b>Al usar la app</b>. O usá <b>🎯 Elegir en el mapa</b>.':'No se pudo obtener la ubicación. Usá <b>🎯 Elegir en el mapa</b>.'};
@@ -1995,7 +1996,7 @@ async function entOrdenar(start,desde,manual){
   if(!pend.length&&held.length){pend=held;held=[]} // solo quedan las de Hold: se ordenan entre ellas
   if(!pend.length){toast('No quedan paradas pendientes con ubicación');return}
   const pts=[start,...pend.map(s=>s.c)],W=[null,...pend.map(s=>{const p=entPkg(s);return p?parseWin(p.horario):null})],d=new Date();
-  $('#entGps').textContent='Calculando la ruta por calle…';const Mx=await osrmMatriz(pts);if(EPOS)$('#entGps').textContent=`📍 Estás aquí (±${Math.round(EPOS.acc)} m)`;
+  $('#entGps').textContent='Calculando la ruta por calle…';const Mx=await osrmMatriz(pts);if(EPOS)$('#entGps').textContent='';
   const ord=optimize(pts,W,d.getHours()*60+d.getMinutes(),+S.min||0,+S.vel||25,false,Mx);
   entMod();let k=0;E.stops=[...ord.map(i=>pend[i-1]),...held,...hechas,...sinC];E.stops.forEach(s=>{delete s.o;if(s.c)s.n=++k});E.inicio=start;ESEL=-1;
   if(EMAP)EMAP.fitted=null;save();renderEnt().then(()=>{if(EMAP)EMAP.fitBounds([start,...pend.map(s=>s.c)],{padding:[24,24]})});

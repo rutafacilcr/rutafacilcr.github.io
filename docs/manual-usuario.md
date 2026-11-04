@@ -25,10 +25,12 @@ Resumen de cómo está la app ahora. Más abajo se explica cada parte con la ver
 - El orden de las tarjetas es: activos, Hold, devueltos y al final los entregados (en gris; desde la 1.73.0 el número ya no sale tachado).
 - Cada tarjeta tiene **1. Coordinar** (arriba a la derecha desde la 1.73.0), **Pegar respuesta**, **Editar**, **Escáner**, **Eliminar** (1.69.9; antes *Borrar*), **Devuelto** y **WhatsApp**.
 - **⛔ Devolver en Ruta (1.87.0):** el paquete sale de la ruta y queda en *Paquetes* con ⛔ Devolver, para que al final del día sepás qué llevar al almacén. **↩ Quitar devolver** lo vuelve a meter en la ruta (si tiene ubicación).
+- **Pedir ubicación (1.91.0):** el botón negro a la par del nombre (antes *1. Coordinar*) abre WhatsApp con el mensaje para pedir la ubicación. Solo sale cuando el paquete **no tiene ubicación**; si la tiene se quita, y si se la borrás con *Editar*, vuelve.
 - Los paquetes **⛔ Devolver** y **⛔ Devuelto** se ven grises y sin botones. Solo queda activo el botón para quitar la marca: en un devuelto dice **↪ Regresar a Ruta** (1.69.4).
 
 **Ruta**
 - **Primera línea:** 📂 Cargar ruta, el nombre de la ruta, 📍 Ordenar desde aquí y, a la derecha, 📍 Estás aquí (tu GPS).
+- **Arriba (1.91.0):** ya no sale "Estás aquí"; tu punto azul está en el mapa. **▶ Iniciar entregas** va a la derecha de 📂 Cargar ruta (sin ruta) o de 📍 Ordenar desde aquí (con ruta). Ya iniciada, ahí sale la hora de inicio (⏱) y **■ Finalizar**.
 - **Ruta abierta sin paradas (1.87.2):** si todas las paradas salen (por ejemplo, a ⛔ Devolver), siguen el resumen, los vehículos, 🎯 Elegir en el mapa, 📋 Lista, 🚦 Tráfico y buscar.
 - **Sin paradas (1.87.1):** arriba solo quedan 📂 Cargar ruta y 📍 Estás aquí en una línea, y el mapa sube; la explicación está abajo del mapa.
 - **Segunda línea:** ▶ Iniciar entregas / ■ Finalizar. Guardan la hora y el punto de salida y de cierre para el reporte. Desde que tocás ▶ Iniciar, **el orden de la ruta queda fijo** (1.72.0): los nuevos van al final y solo 📍 / 🎯 la reordenan, preguntando antes.
@@ -49,7 +51,7 @@ Resumen de cómo está la app ahora. Más abajo se explica cada parte con la ver
 
 **Mensajes**
 - Están **1. Coordinar**, **2. Voy en camino** (lleva el ícono del vehículo después de "camino"), **3. Comprensión** y **4. Horario extendido**, en dos filas. Desde la 1.89.0 ya no está *Formulario*.
-- **Botones (1.89.0):** abajo a la derecha quedan **📋 Pegar respuesta** y **Abrir WhatsApp**. Se quitaron *Copiar texto*, *Confirmó* y *No responde*; el estado se cambia tocando la etiqueta del cliente (por ejemplo 🟡 Pendiente).
+- **Botones (1.89.0; 1.91.0):** abajo a la derecha queda **Abrir WhatsApp** (*Pegar respuesta* se usa desde *Paquetes*). Desde la 1.91.0 tampoco están el texto de ayuda, el título *Clientes* ni la tarjeta *Respuestas del formulario*. Se quitaron *Copiar texto*, *Confirmó* y *No responde*; el estado se cambia tocando la etiqueta del cliente (por ejemplo 🟡 Pendiente).
 - **Filtros (1.88.0):** debajo de buscar están **Todos**, **🟡 Sin contestar**, **📵 No responde** y **🔵 Confirmados**, con cuántos hay en cada uno. Tocá uno para ver solo esos clientes (por ejemplo, a quién volver a escribirle). La etiqueta cambia con **Confirmó**, **No responde** o al pegar la respuesta con ubicación. Los entregados, devueltos y para devolver solo salen en *Todos*.
 - Los clientes salen en el **mismo orden que en Ruta** (1.69.3). Los entregados, en Hold o devueltos se ven grises y bajan al final, y los que no están en la ruta van después de los pendientes.
 
