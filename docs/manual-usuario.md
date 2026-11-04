@@ -16,7 +16,7 @@ Resumen de cómo está la app ahora. Más abajo se explica cada parte con la ver
 
 **Cierres (1.74):** se guardan 15 días. **Bajá el PDF de cada fecha y guardalo o imprimilo: es tu respaldo.** En *Cierres* sale en rojo *⚠ Se borra en N días* cuando faltan 3 días o menos.
 
-**Barra de abajo:** **Paquetes**, **Cierres**, **Mensajes** y **Ruta**. **Soporte** está arriba, en el encabezado. En la computadora, si no ves los cambios, apretá **Ctrl + Shift + R**.
+**Barra de abajo:** **Paquetes**, **Cierres**, **Mensajes** y **Ruta**. Siempre queda pegada al fondo de la pantalla y lo que desplazás es lo de arriba, así no tapa nada (1.85.1; antes, en iPhone, a veces se quedaba a media pantalla). **Soporte** está arriba, en el encabezado. En la computadora, si no ves los cambios, apretá **Ctrl + Shift + R**.
 
 **Paquetes**
 - Arriba, cinco contadores: **Recibidos**, **Entregados**, **Hold**, **Devueltos** y **Sin 📍** (sin ubicación).

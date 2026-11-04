@@ -23,6 +23,9 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.1 | — | *Crear cuenta* con los campos en blanco |
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
+## 2026-11-04
+- **1.85.1 · Barra de abajo en su lugar (iPhone):** en iPhone con iOS 26 la barra *Paquetes · Cierres · Mensajes · Ruta* se quedaba a media pantalla al desplazarse (sobre todo después de escribir) y tapaba lo de abajo, como los *entregado(s)* de *Guías por fecha de recibido*. Ahora la barra va fija debajo del contenido y solo se desplaza la página de arriba, así nunca tapa nada.
+
 ## 2026-11-03
 - **1.84.1 · Sin volver a pedir la ubicación:** se quitó **💬 Pedirle la ubicación** de *Falta la ubicación* (si el cliente ya la mandó, pedírsela otra vez molesta). Queda la guía de Waze como camino principal y **🎯 Marcar a mano en el mapa**.
 - **1.84.0 · Accesibilidad completa:** termina la lista de la 1.79.0. Las etiquetas de estado usan círculos de color: 🟡 Pendiente, 🔵 Confirmado (en ruta), 🟠 No responde, 🟢 Entregado, 🔴 No se entregó y ⚪ Devuelto, y miden 44 px para tocarlas. Mensajes también tiene botones de 44 px con más espacio (sin cambiar qué hace ninguno). Confirmar entrega, Usar esta respuesta, Guardar contactos y Bajar Excel muestran una ruedita mientras trabajan y no se pueden tocar dos veces; el aviso de confirmación de abajo se ve con borde naranja y lo anuncia el lector de pantalla. Lighthouse de accesibilidad: 100.
