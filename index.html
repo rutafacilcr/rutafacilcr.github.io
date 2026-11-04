@@ -134,7 +134,8 @@ nav.tabs .n:empty{display:none}
 .vcfrow{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
 .vcfrow label{flex:0 0 72px;width:72px;min-width:0}
 .vcfrow .btn{min-height:46px}
-.msgsel{grid-column:2;display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.msgsel{grid-column:2;display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:4px} /* 1.89.0: 4 mensajes en 2×2 */
+#v-mensajes .msgacts{justify-content:flex-end}
 .msgsel button{font:600 12px var(--f-body);padding:5px 6px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;min-height:32px}
 .msgsel button[aria-checked="true"]{background:var(--road);color:var(--road-ink);border-color:var(--road)}
 .appver{text-align:center;font-size:12px;color:var(--muted);padding:28px 0 4px}
@@ -200,6 +201,12 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);outline-
 .stop .body{min-width:0;display:flex;flex-direction:column;gap:4px;padding-top:4px}
 .km{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
 .notice{border-left:4px solid var(--warn);background:var(--warn-bg);color:var(--ink);padding:10px 12px;border-radius:0 8px 8px 0;font-size:14px}
+.sheet.rfwin{align-items:center;padding:16px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);background:rgba(20,22,26,.5)} /* 1.89.0: ventana Ruta en orden / Diagnóstico con el estilo de los avisos de RutaFácil */
+.sheet.rfwin .box{max-width:420px;max-height:calc(100dvh - 32px);border-radius:20px;padding:20px 18px 16px;box-shadow:0 20px 60px rgba(0,0,0,.28),0 2px 8px rgba(0,0,0,.08);gap:0}
+.rfwin-top{display:flex;gap:12px;align-items:center;margin-bottom:12px}.rfwin-top h2{margin:0;font-size:18px;line-height:1.25}.rfwin-top p{margin:2px 0 0;font-size:13px;line-height:1.4;color:var(--muted)}
+.rfwin-ico{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:21px;background:rgba(242,107,29,.12)}
+.rfwin #diagTxt{white-space:pre-wrap;word-break:break-word;font-family:var(--f-body,system-ui,sans-serif);font-size:14px;line-height:1.5;min-height:60px;max-height:55vh;overflow:auto;background:var(--bg,#f6f5f3);color:var(--ink,#1f2125);border:1px solid var(--line);border-left:4px solid var(--accent,#f26b1d);padding:12px 14px;border-radius:12px;margin:0}
+.rfwin-btns{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:14px}
 .sheet{position:fixed;inset:0;z-index:30;background:rgba(10,20,18,.55);display:flex;align-items:flex-end;justify-content:center}
 .sheet .box{background:var(--surface);width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:16px 16px 0 0;padding:18px max(16px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:12px}
 .thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -374,7 +381,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
       <label>Tu nombre<input id="m-yo" placeholder="Victor" autocomplete="name"></label>
       <label>Día de entrega<input id="m-fecha"></label>
     </div>
-    <p class="small muted">En cada cliente elegí el mensaje (<b>1. Coordinar</b>, <b>2. Formulario</b>, <b>3. En camino</b>, <b>4. Comprensión</b> o <b>5. Horario extendido</b>) y tocá <b>Abrir WhatsApp</b>. Solo tocás <b>Enviar</b>, volvés aquí y seguís con el siguiente.</p>
+    <p class="small muted">En cada cliente elegí el mensaje (<b>1. Coordinar</b>, <b>2. En camino</b>, <b>3. Comprensión</b> o <b>4. Horario extendido</b>) y tocá <b>Abrir WhatsApp</b>. Solo tocás <b>Enviar</b>, volvés aquí y seguís con el siguiente.</p>
     <div class="vcfrow"><label>Prefijo<input id="m-pref" maxlength="8" placeholder="TM" autocomplete="off"></label><button class="btn sm primary" id="vcfBtn" type="button">📇 Guardar contactos del día</button><button class="btn sm" id="xlsBtn" type="button">📊 Bajar Excel del día</button></div>
     <p class="small muted">Guarda a todos los clientes en tus contactos como <b id="vcfEj">TM-Nombre-pedido</b> (el pedido es la guía), para que en WhatsApp salga el nombre cuando te contesten. <b>Bajar Excel del día</b> llena la plantilla de Excel con nombre, teléfono, dirección, ubicación, guía, nota y fecha de ingreso de cada cliente.</p>
     <p class="small" id="xlsIos" hidden style="background:var(--warn-bg);border-radius:8px;padding:10px 12px">Excel en iPhone: en el menú elegí <b>Guardar en Archivos</b> &gt; <b>En mi iPhone</b> &gt; carpeta <b>RutaFacilCR</b> (la primera vez tocá el ícono de carpeta nueva para crearla) &gt; <b>Guardar</b>. La próxima vez el iPhone ya propone esa carpeta. Para verlo, abrí la app <b>Archivos</b>.</p>
@@ -393,10 +400,10 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
   <details class="panel" id="tplPanel">
     <summary>✏️ Editar textos de los mensajes</summary>
     <label>1. Coordinar (día antes, sin links)<textarea id="m-coord"></textarea></label>
-    <label>2. Formulario (después de que el cliente conteste)<textarea id="m-form"></textarea></label>
-    <label>3. Voy en camino<textarea id="m-camino"></textarea></label>
-    <label>4. Comprensión<textarea id="m-comp"></textarea></label>
-    <label>5. Horario extendido<textarea id="m-ext"></textarea></label>
+    <label hidden>Formulario (ya no se usa en Mensajes)<textarea id="m-form"></textarea></label>
+    <label>2. Voy en camino<textarea id="m-camino"></textarea></label>
+    <label>3. Comprensión<textarea id="m-comp"></textarea></label>
+    <label>4. Horario extendido<textarea id="m-ext"></textarea></label>
     <p class="small muted">Variables: <span class="mono">{nombre} {guia} {direccion} {fecha} {yo} {eta} {formulario}</span></p>
   </details>
 </section>
@@ -463,7 +470,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.88.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.89.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -555,11 +562,10 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <button class="btn ghost" id="scanEnd">Terminar</button>
   </div>
 </div></div>
-<div class="sheet" id="diagSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="diagTitle">
-  <h2 id="diagTitle">🧪 Diagnóstico de la ruta</h2>
-  <p class="small muted">Tomale captura de pantalla (bajá y tomá varias si es largo) o tocá Compartir y mandalo por WhatsApp.</p>
-  <pre id="diagTxt" style="white-space:pre-wrap;word-break:break-word;font-size:12px;line-height:1.35;max-height:60vh;overflow:auto;background:#f4f4f5;color:#1f2125;padding:10px;border-radius:8px;margin:8px 0"></pre>
-  <div class="row"><button class="btn primary sm" id="diagShare" type="button">📤 Compartir</button><button class="btn sm" id="diagCopy" type="button">📋 Copiar</button><button class="btn ghost sm" id="diagClose" type="button">Cerrar</button></div>
+<div class="sheet rfwin" id="diagSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="diagTitle">
+  <div class="rfwin-top"><div class="rfwin-ico" id="diagIco" aria-hidden="true">🧪</div><div><h2 id="diagTitle">Diagnóstico de la ruta</h2><p id="diagSub">Tomale captura de pantalla o tocá <b>Compartir</b> para mandarlo por WhatsApp.</p></div></div>
+  <pre id="diagTxt"></pre>
+  <div class="rfwin-btns"><button class="btn ghost sm" id="diagClose" type="button">Cerrar</button><button class="btn sm" id="diagCopy" type="button">📋 Copiar</button><button class="btn primary sm" id="diagShare" type="button">📤 Compartir</button></div>
 </div></div>
 <div class="sheet" id="wzSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="wzTitle">
   <h2 id="wzTitle" style="margin:0">🚗 ¿Ya le avisaste?</h2>
@@ -774,8 +780,8 @@ function renderPk(){
   if(cards.length>60)setTimeout(()=>tanda(60),0);
 }
 // Mensajes que se pueden mandar a cada cliente desde la pestaña Mensajes.
-function msgOpts(){return [['coord','Coordinar'],...(FORM_ON?[['form','Formulario']]:[]),['camino','En camino'],['comp','Comprensión'],['ext','Horario extendido']].map(([k,t],i)=>[k,`${i+1}. ${t}`])} // 1.73.0: 4 y 5
-function msgSel(p){const ok=msgOpts().map(o=>o[0]);if(ok.includes(p.msgSel))return p.msgSel;return !p.sent?'coord':(FORM_ON&&!p.formSent?'form':'coord')}
+function msgOpts(){return [['coord','Coordinar'],['camino','En camino'] /* 1.89.0: sin Formulario (Victor) */,['comp','Comprensión'],['ext','Horario extendido']].map(([k,t],i)=>[k,`${i+1}. ${t}`])} // 1.73.0: 4 y 5
+function msgSel(p){const ok=msgOpts().map(o=>o[0]);if(ok.includes(p.msgSel))return p.msgSel;return 'coord'}
 // Ícono del vehículo elegido en Ruta (1.56.4): va después de la palabra "camino" en el mensaje de en camino (Mensajes y Ruta)
 function vehIcono(){return {moto:'🏍️',carro:'🚙',buseta:'🚐'}[S.veh]||'🚙'}
 function conVeh(t){return String(t).replace(/camino/i,m=>m+' '+vehIcono())}
@@ -806,11 +812,7 @@ function renderMsg(){
     <div class="addr"><span class="mono">${esc(p.tel||'sin teléfono')}</span>${p.resp?' <span class="small" style="color:var(--ok);font-weight:600">✓ llenó el formulario</span>':''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
     <div class="msgsel" role="radiogroup" aria-label="Qué mensaje mandar">${msgOpts().map(([k,t])=>`<button type="button" role="radio" aria-checked="${k===sel}" data-act="msgsel" data-k="${k}" data-id="${p.id}">${t}</button>`).join('')}</div>
     <details class="small"><summary>Ver mensaje</summary><div class="preview">${esc(txt)}</div></details>
-    <div class="actions">${l?`<a class="btn wa" href="${l}" target="_blank" rel="noopener" data-act="sent" data-k="${sel}" data-id="${p.id}">Abrir WhatsApp</a>`:'<span class="small" style="color:var(--bad)">Teléfono inválido, corregilo en Paquetes</span>'}
-      <button class="btn sm primary" data-act="paste" data-id="${p.id}">📋 Pegar respuesta</button>
-      <button class="btn sm" data-act="copy" data-id="${p.id}">Copiar texto</button>
-      <button class="btn sm" data-act="set" data-st="confirmado" data-id="${p.id}">Confirmó</button>
-      <button class="btn sm" data-act="set" data-st="noresponde" data-id="${p.id}">No responde</button></div>
+    <div class="actions msgacts"><button class="btn sm primary" data-act="paste" data-id="${p.id}">📋 Pegar respuesta</button>${l?`<a class="btn wa" href="${l}" target="_blank" rel="noopener" data-act="sent" data-k="${sel}" data-id="${p.id}">Abrir WhatsApp</a>`:'<span class="small" style="color:var(--bad)">Teléfono inválido, corregilo en Paquetes</span>'}</div>
   ${devBar(p)}</div>`}).join('')+(S.pk.some(hit)?'':'<div class="empty">Ningún cliente en este filtro.</div>');
 }
 
@@ -1595,7 +1597,7 @@ $('#supDiag').onclick=async()=>{let t=`RutaFácil ${$('#appVer').textContent} ·
     t+='\n-- Paquetes con ubicación unidos a parada sin pin, entregada o a varias --\n';S.pk.filter(p=>parseCoord(p.ubic)&&dueno[p.id]&&(dueno[p.id].length>1||dueno[p.id].some(x=>!x.c||x.done)||p.st==='entregado')).forEach(p=>{t+=`* ${f(p)}\n`;dueno[p.id].forEach(x=>{t+=`   <- parada ${x.nombre} | tel ${x.tel||'-'} | ${x.c?'pin':'SIN pin'}${x.done?' | entregada':''}${x.pkFijo?' | fijo':''}\n`})});
     t+='\n-- Paquetes con ubicación que no se lee --\n';S.pk.filter(p=>p.ubic&&!parseCoord(p.ubic)).forEach(p=>{t+=`* ${f(p)}\n`})}}catch(e){t+='ERROR '+e.message+'\n'+(e.stack||'').slice(0,300)}
   // En iPhone copiar/pegar a veces falla: se muestra en pantalla para captura, con Compartir (WhatsApp, Notas…) y Copiar
-  $('#diagTitle').textContent='🧪 Diagnóstico de la ruta';$('#diagTxt').textContent=t;$('#supSheet').hidden=true;$('#diagSheet').hidden=false;document.body.style.overflow='hidden'};
+  $('#diagIco').textContent='🧪';$('#diagTitle').textContent='Diagnóstico de la ruta';$('#diagTxt').textContent=t;$('#supSheet').hidden=true;$('#diagSheet').hidden=false;document.body.style.overflow='hidden'};
 // Lista de la ruta en el orden en que se va a entregar, con el número fijo de cada paquete (para copiar o mandar por WhatsApp)
 // Vehículo (1.55.0): se elige uno de los 3 y se guarda en S.veh (carro por defecto desde la 1.69.2). Todavía no cambia tiempos, km ni ruta; su uso viene después.
 function vehPintar(){const v=['moto','carro','buseta'].includes(S.veh)?S.veh:'carro';document.querySelectorAll('#vehSel [data-veh]').forEach(b=>{b.classList.toggle('on',b.dataset.veh===v);b.setAttribute('aria-pressed',b.dataset.veh===v)})}
@@ -1609,11 +1611,11 @@ $('#ttBtn').onclick=async()=>{
   S.ttOn=S.ttOn===false;save();TT.k='';ttPintar();entEta(true);toast(S.ttOn?'Tráfico en vivo activado':'Tráfico en vivo apagado');if(S.ttOn)ttPedir(true)};
 $('#entLista').onclick=()=>{const E=S.ent;if(!E||!E.stops)return;const erk=s=>entDone(s)?2:s.c?(s.hold?0.5:0):1;let k=0;
   const L=E.stops.map((s,i)=>[s,i]).sort((a,b)=>erk(a[0])-erk(b[0])||a[1]-b[1]).map(([s])=>{const p=entPkg(s);return `${++k}. #${eNum(s)} ${s.nombre||''}${p&&p.tel?' · '+p.tel:''}${s.devolver?' ⛔ devolver':entDev(s)?' ↩ devuelto':entDone(s)?' ✓ entregado':s.hold?' ⏸ hold':!s.c?' (sin ubicación)':''}`});
-  $('#diagTitle').textContent='📋 Ruta en orden';$('#diagTxt').textContent=`${E.nombre} · ${new Date().toLocaleString('es-CR')}\n\n`+L.join('\n');$('#diagSheet').hidden=false;document.body.style.overflow='hidden'};
+  $('#diagIco').textContent='📋';$('#diagTitle').textContent='Ruta en orden';$('#diagTxt').textContent=`${E.nombre} · ${new Date().toLocaleString('es-CR')}\n\n`+L.join('\n');$('#diagSheet').hidden=false;document.body.style.overflow='hidden'};
 $('#diagClose').onclick=()=>{$('#diagSheet').hidden=true;document.body.style.overflow=''};
 $('#diagShare').onclick=async()=>{const t=$('#diagTxt').textContent;if(navigator.share){try{await navigator.share({title:$('#diagTitle').textContent,text:t});return}catch(e){if(e.name==='AbortError')return}}
   location.href=`https://wa.me/${SOPORTE_WA}?text=${encodeURIComponent(t.slice(0,3500))}`};
-$('#diagCopy').onclick=async()=>{const t=$('#diagTxt').textContent;try{await navigator.clipboard.writeText(t);toast('Diagnóstico copiado')}catch(e){const r=document.createRange();r.selectNodeContents($('#diagTxt'));const g=getSelection();g.removeAllRanges();g.addRange(r);try{document.execCommand('copy');toast('Diagnóstico copiado')}catch(_){toast('Tomale captura de pantalla')}}};
+$('#diagCopy').onclick=async()=>{const t=$('#diagTxt').textContent;try{await navigator.clipboard.writeText(t);toast($('#diagTitle').textContent+': copiado')}catch(e){const r=document.createRange();r.selectNodeContents($('#diagTxt'));const g=getSelection();g.removeAllRanges();g.addRange(r);try{document.execCommand('copy');toast('Diagnóstico copiado')}catch(_){toast('Tomale captura de pantalla')}}};
 // ===== Soporte: WhatsApp y videos (lista en videos.json) =====
 const SOPORTE_WA='50662700666';
 async function openSupport(){
