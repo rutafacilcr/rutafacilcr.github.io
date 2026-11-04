@@ -461,7 +461,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.87.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.87.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -1839,7 +1839,8 @@ $('#jorBar').addEventListener('click',async e=>{const b=e.target.closest('[data-
 async function renderEnt(){entSyncPk();rutaGlobo();jorRender();vehPintar();ttPintar();
   // La ruta se arma el día antes: vale la de hoy o la de mañana (fecha local del celular).
   const dia=d=>'Ruta '+new Date(Date.now()+d*864e5).toLocaleDateString('en-CA'),hoy=dia(0),man=dia(1);const E=S.ent,LI=$('#entList');
-  if(!E||!E.stops||!E.stops.length){$('#entTools').hidden=true;$('#entAqui').hidden=true;$('#entGps').hidden=false;$('#entBus').hidden=true;$('#entInfo').textContent='';/* 1.87.1: sin texto arriba (la explicación está abajo del mapa); Cargar ruta y Estás aquí quedan en una línea */LI.innerHTML='<div class="empty">Tocá <b>📂 Cargar ruta</b> y elegí el Excel de la ruta del día, o en <b>Paquetes</b> tocá <b>➕ Agregar a la ruta</b> en cada paquete con ubicación. Arriba está el mapa con tu punto.</div>';
+  // 1.87.2: una ruta abierta que se quedó sin paradas (por ejemplo, todas a Devolver) sigue mostrando resumen, vehículos, Elegir en el mapa, Lista, Tráfico y buscar
+  if(!E||!E.stops||(!E.stops.length&&(E.cerrada||!E.nombre))){$('#entTools').hidden=true;$('#entAqui').hidden=true;$('#entGps').hidden=false;$('#entBus').hidden=true;$('#entInfo').textContent='';/* 1.87.1: sin texto arriba (la explicación está abajo del mapa); Cargar ruta y Estás aquí quedan en una línea */LI.innerHTML='<div class="empty">Tocá <b>📂 Cargar ruta</b> y elegí el Excel de la ruta del día, o en <b>Paquetes</b> tocá <b>➕ Agregar a la ruta</b> en cada paquete con ubicación. Arriba está el mapa con tu punto.</div>';
     // 1.86.1: el mapa siempre está, aunque no haya ruta: muestra dónde estás
     entVigilar();$('#entMap').hidden=false;if($('#v-entrega').hidden)return;
     try{if(!document.querySelector('link[data-leaflet]')){const l=document.createElement('link');l.rel='stylesheet';l.href=CSS_MAP;l.dataset.leaflet=1;document.head.appendChild(l)}
@@ -1856,6 +1857,7 @@ async function renderEnt(){entSyncPk();rutaGlobo();jorRender();vehPintar();ttPin
     <div class="acts">${!d&&s.c?`<span class="eeta" data-eta="${i}"></span>`:''}${wz?`<a class="btn sm primary" href="${wz}" target="_blank" rel="noopener">🚗 Waze</a>`:''}${wa?`<a class="btn sm wa" href="${entWaUrl(wa,'')}" data-ewa="${i}" target="_blank" rel="noopener">WhatsApp</a>`:''}</div>
       <div class="acts2"><button class="btn sm ghost danger" type="button" data-equitar="${i}" title="Quitar esta parada de la ruta (el paquete sigue en Paquetes)">🗑️ Quitar</button>${nav?`<a class="btn sm" href="${nav}" target="_blank" rel="noopener">🗺️ Maps</a>`:''}${!d&&p?`<button class="btn sm" type="button" data-eok="${i}">📸 Evidencia</button>`:''}<a class="btn sm" href="shortcuts://run-shortcut?name=Co-out" title="Abre la app Co-out con el atajo de iPhone llamado Co-out">📲 Co-out</a></div>
       <div class="acts3">${s.devolver?`<span class="devtag on">⛔ Devolver</span><button class="btn sm devno" type="button" data-edevno="${i}" title="La parada vuelve a estar activa en la ruta">↩ Quitar devolver</button>`:d?(s.done?`<button class="btn sm ghost" type="button" data-eundo="${i}">↩ Deshacer</button>`:''):`${s.c?`<button class="btn sm ehold${s.hold?' on':''}" type="button" data-ehold="${i}" title="Pasar esta parada al final de la ruta">${s.hold?'▶ Quitar hold':'⏸ Hold'}</button>`:''}<button class="btn sm edevol" type="button" data-edevol="${i}" title="Este paquete se devuelve: queda en la ruta pero desactivado">⛔ Devolver</button><button class="btn sm edone" type="button" data-edone="${i}">✓ Entregado</button>`}</div></div>`}).join('');
+  if(!E.stops.length)LI.innerHTML='<div class="empty">No quedan paradas en esta ruta. En <b>Paquetes</b> tocá <b>➕ Agregar a la ruta</b> para sumar más.</div>';
   $('#entMap').hidden=false;if($('#v-entrega').hidden)return; // 1.86.1: el mapa siempre se ve
   try{
     if(!document.querySelector('link[data-leaflet]')){const l=document.createElement('link');l.rel='stylesheet';l.href=CSS_MAP;l.dataset.leaflet=1;document.head.appendChild(l)}

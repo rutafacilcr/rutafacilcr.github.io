@@ -29,6 +29,7 @@ Resumen de cómo está la app ahora. Más abajo se explica cada parte con la ver
 
 **Ruta**
 - **Primera línea:** 📂 Cargar ruta, el nombre de la ruta, 📍 Ordenar desde aquí y, a la derecha, 📍 Estás aquí (tu GPS).
+- **Ruta abierta sin paradas (1.87.2):** si todas las paradas salen (por ejemplo, a ⛔ Devolver), siguen el resumen, los vehículos, 🎯 Elegir en el mapa, 📋 Lista, 🚦 Tráfico y buscar.
 - **Sin paradas (1.87.1):** arriba solo quedan 📂 Cargar ruta y 📍 Estás aquí en una línea, y el mapa sube; la explicación está abajo del mapa.
 - **Segunda línea:** ▶ Iniciar entregas / ■ Finalizar. Guardan la hora y el punto de salida y de cierre para el reporte. Desde que tocás ▶ Iniciar, **el orden de la ruta queda fijo** (1.72.0): los nuevos van al final y solo 📍 / 🎯 la reordenan, preguntando antes.
 - **🚦 Tráfico (1.70.0):** con la clave gratis de TomTom, el tiempo a la próxima parada toma en cuenta el tráfico.

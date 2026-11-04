@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-04
+- **1.87.2 · Ruta sin paradas conserva sus herramientas:** si una ruta abierta se queda sin paradas (por ejemplo, porque todas pasaron a ⛔ Devolver), vuelven a verse el resumen, los vehículos, 🎯 Elegir en el mapa, 📋 Lista, 🚦 Tráfico, la búsqueda y 📍 Ordenar desde aquí. En 1.87.0 desaparecían sin que Victor lo pidiera.
 - **1.87.1 · Ruta más compacta arriba:** con la lista vacía ya no sale el texto largo de "Cargá el archivo…" (la explicación sigue abajo del mapa), así que **📂 Cargar ruta** y **📍 Estás aquí** quedan en una línea. El cuadro de **▶ Iniciar entregas** es más bajo, con el texto "Al salir: guarda hora y punto de salida". El mapa sube. No se quitó ningún botón.
 - **1.87.0 · Devolver saca el paquete de Ruta:** al marcar **⛔ Devolver** en una parada, sale de la ruta (mapa, lista y globito) y queda en **Paquetes** con la etiqueta ⛔ Devolver, para saber qué llevar al almacén. **↩ Quitar devolver** lo regresa a la ruta con su ubicación. Las paradas que ya estaban marcadas también salen. Decisión de Victor.
 - **1.86.2 · Ubicación puesta en Ruta llega a Paquetes:** cuando le ponés la ubicación a una parada con "?" desde **Ruta** (link, coordenadas o tocando el mapa), la tarjeta en **Paquetes** se actualiza de una vez a *Ubicación lista* y *En la ruta* (antes se guardaba pero la tarjeta seguía diciendo *Falta ubicación*).
