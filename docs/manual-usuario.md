@@ -49,6 +49,7 @@ Resumen de cómo está la app ahora. Más abajo se explica cada parte con la ver
 
 **Mensajes**
 - Están **1. Coordinar**, **2. Formulario**, **3. Voy en camino** (lleva el ícono del vehículo después de "camino"), **4. Comprensión** y **5. Horario extendido** (1.73.0).
+- **Filtros (1.88.0):** debajo de buscar están **Todos**, **🟡 Sin contestar**, **📵 No responde** y **🔵 Confirmados**, con cuántos hay en cada uno. Tocá uno para ver solo esos clientes (por ejemplo, a quién volver a escribirle). La etiqueta cambia con **Confirmó**, **No responde** o al pegar la respuesta con ubicación. Los entregados, devueltos y para devolver solo salen en *Todos*.
 - Los clientes salen en el **mismo orden que en Ruta** (1.69.3). Los entregados, en Hold o devueltos se ven grises y bajan al final, y los que no están en la ruta van después de los pendientes.
 
 **Confirmaciones:** desde la 1.69.0, al borrar, devolver, vaciar o guardar cambios sale una hoja abajo con dos botones grandes: **Cancelar** y la acción (en rojo si borra o desactiva).

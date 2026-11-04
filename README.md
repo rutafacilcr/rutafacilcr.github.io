@@ -32,6 +32,7 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
 - **Mensajes:**
   - Coordinar, Formulario, Voy en camino (con el ícono del vehículo), Comprensión y Horario extendido (5 a 9 p. m.).
   - Los clientes van en el mismo orden que en Ruta; los cerrados o en Hold quedan en gris al final.
+  - Filtros Todos, Sin contestar, No responde y Confirmados, con su número, para ver a quién volver a escribir.
 
 | Paso | Qué resuelve |
 |---|---|

@@ -104,6 +104,7 @@ nav.tabs .n:empty{display:none}
 .trackmap{height:320px;border-radius:10px;overflow:hidden;background:var(--bg);z-index:0}
 .tracklist{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px;font-size:14px}
 .enthead{display:flex;gap:10px;align-items:center;flex-wrap:wrap}#entGps{margin-left:auto;max-width:100%}#entGps:empty{display:none}
+.msgfil{display:flex;gap:4px;flex-wrap:wrap;margin:8px 0}.msgfil button{font:inherit;font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:inherit;cursor:pointer}.msgfil button b{margin-left:2px}.msgfil button[aria-pressed=true]{background:var(--accent-btn);border-color:var(--accent-btn);color:#fff;font-weight:700}
 .jorbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px 8px;margin:6px 0}#entInfo:empty{display:none}
 .jorbar .jtxt{flex:1 1 120px;font-size:12.5px;line-height:1.25}.jorbar .jtxt b{white-space:nowrap}
 .jorbar .jini{background:#1f9d55;border-color:#1f9d55;color:#fff;font-weight:700}.jorbar .jfin{background:#c0392b;border-color:#c0392b;color:#fff;font-weight:700}
@@ -381,6 +382,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
   </div>
   <div class="row" style="justify-content:space-between"><h2>Clientes</h2><span class="small muted" id="sentCount"></span></div>
   <input id="m-buscar" type="search" placeholder="🔍 Buscar por nombre, teléfono o guía" autocomplete="off" aria-label="Buscar cliente">
+  <div class="msgfil" id="msgFil" role="group" aria-label="Filtrar clientes"></div>
   <div class="list" id="msgList"></div>
   <div class="panel" id="syncPanel" hidden>
     <div class="row" style="justify-content:space-between"><h3>Respuestas del formulario</h3><span class="small muted" id="syncInfo"></span></div>
@@ -461,7 +463,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.87.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.88.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -779,13 +781,18 @@ function vehIcono(){return {moto:'🏍️',carro:'🚙',buseta:'🚐'}[S.veh]||'
 function conVeh(t){return String(t).replace(/camino/i,m=>m+' '+vehIcono())}
 function msgText(p,k){k=k||msgSel(p);return k==='form'?fill(S.form,p):k==='camino'?conVeh(fill(S.camino,p,{eta:routeEta(p)})):k==='comp'?fill(S.comp||DEF_COMP,p):k==='ext'?fill(S.ext||DEF_EXT,p):coordText(p)}
 function routeEta(p){const R=S.route;if(!R||!R.ids.includes(p.id))return '15';const vel=+S.vel||25;let prev=R.start;for(const id of R.ids){const q=S.pk.find(x=>x.id===id);const c=q&&parseCoord(q.ubic);if(!c)continue;if(id===p.id)return String(Math.round(hav(prev,c)/vel*60)+2);prev=c}return '15'}
+let MSGF='todos'; // 1.88.0: filtro de Mensajes (solo en este aparato)
 function renderMsg(){
   const L=$('#msgList');
   $('#sentCount').textContent=S.pk.length?`${S.pk.filter(p=>p.sent).length} de ${S.pk.length} enviados`:'';
   if(!S.pk.length){L.innerHTML='<div class="empty">Agregá paquetes en el paso 1 para preparar los mensajes.</div>';return}
   const q=($('#m-buscar').value||'').trim().toLowerCase(),qd=q.replace(/\D/g,'');
   // Buscar: por nombre o guía, o por los últimos dígitos del teléfono (sirve para ver de quién es un número que contesta)
-  const hit=p=>!q||(p.nombre||'').toLowerCase().includes(q)||(p.guia||'').toLowerCase().includes(q)||(qd.length>=3&&String(p.tel||'').replace(/\D/g,'').includes(qd.slice(-8)));
+  // 1.88.0: filtros por estado (Todos, Sin contestar, No responde, Confirmados). Solo cuentan los que siguen activos (no entregados, devueltos ni para devolver)
+  const act=p=>p.st!=='entregado'&&p.st!=='devuelto'&&!p.devolver,FIL={sin:p=>act(p)&&p.st==='pendiente',nr:p=>act(p)&&p.st==='noresponde',ok:p=>act(p)&&p.st==='confirmado'};
+  if(MSGF!=='todos'&&!FIL[MSGF])MSGF='todos';
+  $('#msgFil').innerHTML=[['todos','Todos',S.pk.length],['sin','🟡 Sin contestar',S.pk.filter(FIL.sin).length],['nr','📵 No responde',S.pk.filter(FIL.nr).length],['ok','🔵 Confirmados',S.pk.filter(FIL.ok).length]].map(([k,t,n])=>`<button type="button" data-msgf="${k}" aria-pressed="${k===MSGF}">${t} <b>${n}</b></button>`).join('');
+  const hit=p=>(MSGF==='todos'||FIL[MSGF](p))&&hit0(p),hit0=p=>!q||(p.nombre||'').toLowerCase().includes(q)||(p.guia||'').toLowerCase().includes(q)||(qd.length>=3&&String(p.tel||'').replace(/\D/g,'').includes(qd.slice(-8)));
   // 1.52.1: como en Paquetes, los entregados se ven en gris (número tachado) y bajan; al final los devueltos
   // 1.52.4: los que están en Hold en la Ruta también van en gris, después de los pendientes y antes de los entregados
   const HOLD=new Map(),enHold=p=>{if(p.st==='entregado'||p.st==='devuelto')return false;if(!HOLD.has(p)){let h=false;try{h=entParadasDe(p).some(x=>x.hold&&!x.done)}catch(e){}HOLD.set(p,h)}return HOLD.get(p)}; // 1.77.0: se calcula una vez por paquete
@@ -804,7 +811,7 @@ function renderMsg(){
       <button class="btn sm" data-act="copy" data-id="${p.id}">Copiar texto</button>
       <button class="btn sm" data-act="set" data-st="confirmado" data-id="${p.id}">Confirmó</button>
       <button class="btn sm" data-act="set" data-st="noresponde" data-id="${p.id}">No responde</button></div>
-  ${devBar(p)}</div>`}).join('');
+  ${devBar(p)}</div>`}).join('')+(S.pk.some(hit)?'':'<div class="empty">Ningún cliente en este filtro.</div>');
 }
 
 // ---- Ruta ----
@@ -1178,6 +1185,7 @@ document.querySelector('[data-tab="cierres"]').addEventListener('click',()=>tras
   $('#repInfo').textContent='Buscando reportes de cierres anteriores…';repCierres().then(()=>{repLista();guiLista();$('#repInfo').textContent=''})}));
 $('#m-pref').addEventListener('input',()=>{$('#vcfEj').textContent=vcfName({nombre:'Nombre',guia:'pedido'})});
 $('#m-buscar').addEventListener('input',()=>renderMsg());
+$('#msgFil').addEventListener('click',e=>{const b=e.target.closest('[data-msgf]');if(!b)return;MSGF=b.dataset.msgf;renderMsg()});
 $('#p-buscar').addEventListener('input',()=>renderPk());
 $('#r-here').onclick=()=>{const b=$('#r-here');if(!navigator.geolocation){toast('Este navegador no da la ubicación');return}b.textContent='Buscando…';
   navigator.geolocation.getCurrentPosition(g=>{S.start=g.coords.latitude.toFixed(6)+','+g.coords.longitude.toFixed(6);$('#r-start').value=S.start;
