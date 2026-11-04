@@ -104,8 +104,8 @@ nav.tabs .n:empty{display:none}
 .trackmap{height:320px;border-radius:10px;overflow:hidden;background:var(--bg);z-index:0}
 .tracklist{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px;font-size:14px}
 .enthead{display:flex;gap:10px;align-items:center;flex-wrap:wrap}#entGps{margin-left:auto;max-width:100%}#entGps:empty{display:none}
-.jorbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:8px 0}
-.jorbar .jtxt{flex:1 1 140px;font-size:13px;line-height:1.3}.jorbar .jtxt b{white-space:nowrap}
+.jorbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px 8px;margin:6px 0}#entInfo:empty{display:none}
+.jorbar .jtxt{flex:1 1 120px;font-size:12.5px;line-height:1.25}.jorbar .jtxt b{white-space:nowrap}
 .jorbar .jini{background:#1f9d55;border-color:#1f9d55;color:#fff;font-weight:700}.jorbar .jfin{background:#c0392b;border-color:#c0392b;color:#fff;font-weight:700}
 .entmap{position:sticky;top:0;z-index:5;height:42vh;min-height:220px;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--surface)}
 .epin{width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#d7261e;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center}
@@ -461,7 +461,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.87.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.87.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -1827,7 +1827,7 @@ function jorGps(){return new Promise(ok=>{if(!navigator.geolocation)return ok(EP
 const jorHm=t=>new Date(t).toLocaleTimeString('es-CR',{hour:'numeric',minute:'2-digit'});
 const jorDur=m=>`${Math.floor(m/60)} h ${String(Math.round(m%60)).padStart(2,'0')} min`;
 function jorRender(){const el=$('#jorBar');if(!el)return;const J=(S.jor||{})[jorHoy()];
-  el.innerHTML=!J||!J.ini?`<span class="jtxt">Tocá <b>▶ Iniciar</b> al salir a repartir: guarda la hora y el punto de salida para el reporte.</span><button class="btn sm jini" type="button" data-jor="ini">▶ Iniciar entregas</button>`
+  el.innerHTML=!J||!J.ini?`<span class="jtxt">Al salir: guarda hora y punto de salida.</span><button class="btn sm jini" type="button" data-jor="ini">▶ Iniciar entregas</button>`
    :!J.fin?`<span class="jtxt">En ruta desde <b>${jorHm(J.ini.t)}</b>${J.ini.c?' 📍':' (sin GPS)'}</span><button class="btn sm jfin" type="button" data-jor="fin">■ Finalizar</button>`
    :`<span class="jtxt">Jornada <b>${jorHm(J.ini.t)}–${jorHm(J.fin.t)}</b> · ${jorDur((J.fin.t-J.ini.t)/60000)}</span><button class="btn sm" type="button" data-jor="seguir" title="Borra la hora de fin para seguir entregando">▶ Seguir entregando</button>`}
 $('#jorBar').addEventListener('click',async e=>{const b=e.target.closest('[data-jor]');if(!b)return;const k=jorHoy(),a=b.dataset.jor;S.jor=S.jor||{};
@@ -1839,7 +1839,7 @@ $('#jorBar').addEventListener('click',async e=>{const b=e.target.closest('[data-
 async function renderEnt(){entSyncPk();rutaGlobo();jorRender();vehPintar();ttPintar();
   // La ruta se arma el día antes: vale la de hoy o la de mañana (fecha local del celular).
   const dia=d=>'Ruta '+new Date(Date.now()+d*864e5).toLocaleDateString('en-CA'),hoy=dia(0),man=dia(1);const E=S.ent,LI=$('#entList');
-  if(!E||!E.stops||!E.stops.length){$('#entTools').hidden=true;$('#entAqui').hidden=true;$('#entGps').hidden=false;$('#entBus').hidden=true;$('#entInfo').textContent=`Cargá el archivo de la ruta ("${hoy}.xlsx" o "${man}.xlsx") o agregá paquetes con ➕ Agregar a la ruta en Paquetes`;LI.innerHTML='<div class="empty">Tocá <b>📂 Cargar ruta</b> y elegí el Excel de la ruta del día, o en <b>Paquetes</b> tocá <b>➕ Agregar a la ruta</b> en cada paquete con ubicación. Arriba está el mapa con tu punto.</div>';
+  if(!E||!E.stops||!E.stops.length){$('#entTools').hidden=true;$('#entAqui').hidden=true;$('#entGps').hidden=false;$('#entBus').hidden=true;$('#entInfo').textContent='';/* 1.87.1: sin texto arriba (la explicación está abajo del mapa); Cargar ruta y Estás aquí quedan en una línea */LI.innerHTML='<div class="empty">Tocá <b>📂 Cargar ruta</b> y elegí el Excel de la ruta del día, o en <b>Paquetes</b> tocá <b>➕ Agregar a la ruta</b> en cada paquete con ubicación. Arriba está el mapa con tu punto.</div>';
     // 1.86.1: el mapa siempre está, aunque no haya ruta: muestra dónde estás
     entVigilar();$('#entMap').hidden=false;if($('#v-entrega').hidden)return;
     try{if(!document.querySelector('link[data-leaflet]')){const l=document.createElement('link');l.rel='stylesheet';l.href=CSS_MAP;l.dataset.leaflet=1;document.head.appendChild(l)}
