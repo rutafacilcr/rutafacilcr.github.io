@@ -4,12 +4,25 @@ Para quien vaya a modificar el código o el diseño.
 
 ## 1. Principios
 
-- **Celular primero y responsive (regla de Victor, 30-oct):** todo se diseña para 360–400 px y se prueba a ese ancho. Botones de tamaño normal (no de ancho completo salvo la acción principal de una pantalla), áreas de toque de al menos 40 px y nada de scroll horizontal.
+- **Celular primero y responsive (regla de Victor, 30-oct):** todo se diseña para 360–400 px y se prueba a ese ancho. Botones de tamaño normal (no de ancho completo salvo la acción principal de una pantalla), áreas de toque de al menos 44 px (1.80.0) y nada de scroll horizontal.
 
 - **Sin build ni frameworks.** HTML, CSS y JavaScript plano. Se edita el archivo y se hace push.
 - **Un archivo por pantalla:** `index.html` (app del repartidor), `entrega.html` (formulario del cliente; `f.html` solo redirige links viejos) y `admin.html` (panel). CSS y JS van dentro de cada archivo. La única pieza compartida es `auth.js` (cuentas).
 - **Celular primero:** se diseña para 400 px de ancho y se agranda hasta 760 px.
 - **Funciona sin backend:** si `config.js` está vacío, todo lo que no sea el formulario sigue funcionando.
+
+## 1a. Diseño accesible (1.80.0, WCAG 2.2 AA)
+
+Todo vive al final del `<style>` de `index.html`, en el bloque «1.80.0 · Diseño y accesibilidad». Reglas para lo que se agregue de aquí en adelante:
+
+- **Dos naranjas.** `--accent` (#f26b1d) es la marca: logo, raya del encabezado, pestaña activa, bordes, pines. `--accent-btn` (#c4510f, 4,6 a 1 con blanco) es para **todo botón naranja con letra blanca** (`.btn.primary`, «↪ Regresar a Ruta», «← Regresar», globito de pestañas). Al tocar/pasar: `--accent-btn-hover` (#a9450d). Para texto naranja sobre fondo claro: `--accent-text` (#b8470f). Nunca poner letra blanca sobre #f26b1d (3,05 a 1, no cumple).
+- **WhatsApp:** `--wa-btn` (#15803d, 5 a 1).
+- **Bordes de controles:** `--ctl-line` (3 a 1 contra la tarjeta). `--line` queda solo para separadores.
+- **Estados de entrega:** variables `--st-<estado>` y `--st-<estado>-bg` (claro y oscuro). Clases `.chip.st-pendiente|confirmado|noresponde|entregado|fallido` (el ícono sale de `::before`, no del texto, así `SLABEL`, Excel y mensajes no cambian) y `.devtag` gris para ⛔ Devuelto. `.devtag.on` (rojo) queda solo para «⛔ Devolver» (pendiente de devolver).
+- **Área táctil:** `--tap` (44 px) como `min-height` de `.btn` y `.coordbtn` dentro de `#v-paquetes`, `#v-entrega`, `#v-ruta`, `#v-cierres`, `.sheet` y `.rfdlg`; selector de vehículo de 44 × 44; etiquetas de 32 px; 8 px entre botones. **Mensajes no se tocó** (regla de Victor): solo hereda los colores compartidos.
+- **Estados de botón:** `:active` (se encoge y oscurece un poco), `:focus-visible` (contorno de 3 px), `:disabled`/`aria-disabled="true"` (gris punteado, no se toca) y `.cargando`/`aria-busy="true"` (ruedita, no se toca). Para mostrar carga: `b.classList.add('cargando')` y quitarla al terminar.
+- **Tarjetas cerradas** (`.pkg.entregado`, `.estop.ok`): no usar `opacity` ni `grayscale` para apagar (bajan el contraste del texto). Se apagan con fondo gris, texto `--muted` y botones con borde punteado, igual que los devueltos (1.76.2).
+- **Cómo verificar:** Lighthouse (accesibilidad 100 en `index.html`, `admin.html`, `entrega.html`, `conoce.html`) y axe-core sobre las cuatro pestañas en claro y oscuro, a 390 px y 1280 px, con paquetes de prueba en cada estado y `config.js` vacío.
 
 ## 1b. Páginas públicas (1.75.0)
 

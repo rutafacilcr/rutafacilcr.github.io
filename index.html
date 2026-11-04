@@ -224,6 +224,66 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
 .sysbtn.sysdanger{color:var(--bad)}
 /* Número del paquete en tema oscuro: el grafito no se veía sobre la tarjeta oscura */
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .pkg .num{color:var(--ink)}}:root[data-theme="dark"] .pkg .num{color:var(--ink)}
+/* ===== 1.80.0 · Diseño y accesibilidad (WCAG 2.2 AA). Solo estilos: no cambia qué hace ningún botón. =====
+   Naranja de marca #f26b1d: logo, encabezado, pestañas y bordes. Naranja de botón #c4510f: todo botón naranja con letra blanca (4,6 a 1). */
+:root{--accent-btn:#c4510f;--accent-btn-hover:#a9450d;--accent-btn-ink:#ffffff;--wa-btn:#15803d;--wa-btn-hover:#116632;--ctl-line:#8c8680;--tap:44px;--ok:#23753f;--warn:#9a4d0f;
+  --st-pend-bg:#fef3c7;--st-pend:#854d0e;--st-conf-bg:#dbeafe;--st-conf:#1e40af;--st-nores-bg:#ffedd5;--st-nores:#9a3412;--st-ent-bg:#dcfce7;--st-ent:#166534;--st-fall-bg:#fee2e2;--st-fall:#991b1b;--st-dev-bg:#e5e7eb;--st-dev:#374151}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ctl-line:#7a7f87;--ok:#6cc98b;--warn:#e9a463;
+  --st-pend-bg:#3a2f0b;--st-pend:#fcd34d;--st-conf-bg:#172a46;--st-conf:#93c5fd;--st-nores-bg:#3b2210;--st-nores:#fdba74;--st-ent-bg:#14301f;--st-ent:#86efac;--st-fall-bg:#3a1717;--st-fall:#fca5a5;--st-dev-bg:#2b2e33;--st-dev:#d1d5db}}
+:root[data-theme="dark"]{--ctl-line:#7a7f87;--ok:#6cc98b;--warn:#e9a463;
+  --st-pend-bg:#3a2f0b;--st-pend:#fcd34d;--st-conf-bg:#172a46;--st-conf:#93c5fd;--st-nores-bg:#3b2210;--st-nores:#fdba74;--st-ent-bg:#14301f;--st-ent:#86efac;--st-fall-bg:#3a1717;--st-fall:#fca5a5;--st-dev-bg:#2b2e33;--st-dev:#d1d5db}
+/* Botones: borde visible (3 a 1), esquinas de 10 px, estados de tocar, foco, deshabilitado y cargando */
+.btn{border-color:var(--ctl-line);border-radius:10px;transition:background-color .15s,filter .15s,transform .1s}
+.btn:active{transform:scale(.98);filter:brightness(.94)}
+.btn:focus-visible,.chip:focus-visible,.coordbtn:focus-visible,.vehsel button:focus-visible,.rfdlg-btns button:focus-visible{outline:3px solid var(--accent-btn);outline-offset:2px}
+.btn.primary,.rfdlg-si:not(.mal),nav.tabs .n{background:var(--accent-btn);color:var(--accent-btn-ink);border-color:var(--accent-btn)}
+.btn.primary:hover{background:var(--accent-btn-hover);border-color:var(--accent-btn-hover)}
+.btn.wa,.jorbar .jini{background:var(--wa-btn);border-color:var(--wa-btn);color:#fff}.btn.wa:hover{background:var(--wa-btn-hover);border-color:var(--wa-btn-hover)}
+.btn.ghost{border-color:transparent}.btn.ghost.danger{border-color:var(--bad)}
+.btn:disabled,.btn[aria-disabled="true"]{background:var(--line)!important;color:var(--muted)!important;border:1px dashed var(--ctl-line)!important;cursor:not-allowed;transform:none;filter:none}
+.btn.cargando,.btn[aria-busy="true"]{position:relative;color:transparent!important;pointer-events:none}
+.btn.cargando::after,.btn[aria-busy="true"]::after{content:"";position:absolute;inset:0;margin:auto;width:18px;height:18px;border-radius:50%;border:2.5px solid currentColor;border-color:var(--accent-btn-ink) var(--accent-btn-ink) transparent transparent;animation:rfgira .7s linear infinite}
+.btn:not(.primary):not(.wa).cargando::after,.btn:not(.primary):not(.wa)[aria-busy="true"]::after{border-color:var(--ink) var(--ink) transparent transparent}
+@keyframes rfgira{to{transform:rotate(360deg)}}
+/* ↪ Regresar a Ruta, ↩ Quitar devolver y ← Regresar: naranja intenso uniforme, letra e ícono blancos */
+.devkeep .btn.devno,.btn.ghost.subback,.btn.sm.subback,.estop .btn[data-edevno]{background:var(--accent-btn)!important;color:var(--accent-btn-ink)!important;border-color:var(--accent-btn)!important;border-radius:10px}
+.devkeep .btn.devno:hover,.btn.subback:hover{background:var(--accent-btn-hover)!important}
+/* Área táctil de 44 px en las pantallas del repartidor (Paquetes, Ruta, Cierres y ventanas). Mensajes queda igual. */
+:is(#v-paquetes,#v-entrega,#v-ruta,#v-cierres,.sheet,.rfdlg) :is(.btn,.coordbtn){min-height:var(--tap)}
+:is(#v-paquetes,#v-entrega,#v-ruta,#v-cierres) .vehsel button{min-width:var(--tap);min-height:var(--tap)}
+#entTools .vehsel button{min-width:var(--tap);min-height:var(--tap)}#entTools .entbtns .btn{min-height:var(--tap)}
+#pkgList .pkg .actions,.pkruta,.estop .acts,.estop .acts2,.estop .acts3{gap:8px}#pkgList .pkg .actions+.actions{margin-top:2px}
+.sysbtn{min-height:68px}.hdsop{min-height:var(--tap)}.eub{min-height:32px;padding:4px 10px}
+.coordbtn.off{border-color:var(--ctl-line)}
+/* Estados de entrega: ícono + texto + color (nunca solo color). Pendiente amarillo, Confirmado azul, Entregado verde, No se entregó rojo, Devuelto gris */
+.chip{display:inline-flex;align-items:center;gap:4px;min-height:32px;padding:4px 10px;font-size:12.5px;font-weight:700;border:1px solid transparent;line-height:1.2;vertical-align:middle}
+.st-pendiente{background:var(--st-pend-bg);color:var(--st-pend);border-color:var(--st-pend)}.st-pendiente::before{content:"⏳"}
+.st-confirmado{background:var(--st-conf-bg);color:var(--st-conf);border-color:var(--st-conf)}.st-confirmado::before{content:"🚚"}
+.st-noresponde{background:var(--st-nores-bg);color:var(--st-nores);border-color:var(--st-nores)}.st-noresponde::before{content:"📵"}
+.st-entregado{background:var(--st-ent-bg);color:var(--st-ent);border-color:var(--st-ent)}.st-entregado::before{content:"✅"}
+.st-fallido{background:var(--st-fall-bg);color:var(--st-fall);border-color:var(--st-fall)}.st-fallido::before{content:"✖"}
+.st-devuelto,.devtag:not(.on),.chip.devtag{background:var(--st-dev-bg);color:var(--st-dev);border:1px solid var(--st-dev)}
+.devtag,button.devtag{display:inline-flex;align-items:center;gap:4px;min-height:32px;padding:4px 10px;font-size:12.5px;line-height:1.2}
+/* Las tarjetas grises (entregado) no apagan la etiqueta: se lee completa */
+.pkg.entregado .chip{filter:none}
+/* Ubicación lista / falta: verde y café más oscuros (4,5 a 1) */
+.pin.yes{color:var(--ok)}.pin.no{color:var(--warn)}
+/* Entregado (Ruta) visible también en tema oscuro */
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .estop .acts3 .edone{border-color:#6b7078}}:root[data-theme="dark"] .estop .acts3 .edone{border-color:#6b7078}
+/* Pin de la ruta seleccionado y número de parada: naranja de botón para el número blanco */
+.tpin,.epin.sel{background:var(--accent-btn)}
+/* Tarjetas cerradas (entregado en Paquetes/Mensajes y paradas hechas en Ruta): antes se apagaban con transparencia y el texto no se leía.
+   Ahora se ven apagadas con fondo gris, texto gris oscuro y botones con borde punteado; la etiqueta de estado conserva su color. Todo se sigue pudiendo tocar igual. */
+.pkg.entregado,.estop.ok:not(.devol){opacity:1;filter:none}
+.pkg.entregado{background:#eceef0}.estop.ok:not(.devol){background:#f1f1f2}
+.pkg.entregado :is(.name,.addr,.meta,.mono,.pin,.small,.num),.estop.ok:not(.devol) :is(.dir,.small,b){color:var(--muted)!important}
+.pkg.entregado :is(.btn,.coordbtn,.msgsel button),.estop.ok:not(.devol) :is(.acts,.acts2) :is(.btn,a,button){background:transparent!important;color:var(--muted)!important;border:1px dashed var(--ctl-line)!important;box-shadow:none!important}
+.estop.ok .n{background:#6b6560}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) :is(.pkg.entregado,.estop.ok:not(.devol)){background:#26282c}}:root[data-theme="dark"] :is(.pkg.entregado,.estop.ok:not(.devol)){background:#26282c}
+.estop.devol .devtag{color:var(--st-dev)}
+
+/* Tarjetas cerradas (entregado) en tema oscuro: fondo oscuro para que el nombre se lea (antes quedaba gris claro) */
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .pkg.entregado{background:#26282c}}:root[data-theme="dark"] .pkg.entregado{background:#26282c}
 </style>
 </head>
 <body>
@@ -391,7 +451,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.78.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.80.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -625,7 +685,7 @@ const waze=c=>`https://waze.com/ul?ll=${c[0]},${c[1]}&navigate=yes`;
 // ⛔ Devolver (1.66.0): la tarjeta queda desactivada (gris) y solo quedan la etiqueta en color y ↩ Quitar devolver
 const pkDevol=p=>!!p.devolver&&p.st!=='devuelto'&&p.st!=='entregado';
 const pkOff=p=>pkDevol(p)||p.st==='devuelto'; // 1.66.2: los devueltos también quedan desactivados
-function devBar(p,enPk){if(p.st==='devuelto')return `<div class="devkeep"><span class="devtag on">⛔ Devuelto</span><button type="button" class="btn sm devno" data-act="dev" data-id="${p.id}">${enPk?'↪ Regresar a Ruta':'↪ Quitar devuelto'}</button></div>`;return pkDevol(p)?`<div class="devkeep"><span class="devtag on">⛔ Devolver</span><button type="button" class="btn sm devno" data-act="devno" data-id="${p.id}">↩ Quitar devolver</button></div>`:''}
+function devBar(p,enPk){if(p.st==='devuelto')return `<div class="devkeep"><span class="devtag">⛔ Devuelto</span><button type="button" class="btn sm devno" data-act="dev" data-id="${p.id}">${enPk?'↪ Regresar a Ruta':'↪ Quitar devuelto'}</button></div>`;return pkDevol(p)?`<div class="devkeep"><span class="devtag on">⛔ Devolver</span><button type="button" class="btn sm devno" data-act="devno" data-id="${p.id}">↩ Quitar devolver</button></div>`:''}
 function pkChip(p){if(p.st==='entregado'||p.st==='devuelto')return stChip(p);const l=waLink(p,coordText(p));
   return l?`<a class="coordbtn" href="${l}" target="_blank" rel="noopener" data-act="sent" data-k="coord" data-id="${p.id}" title="Abrir WhatsApp con el mensaje de coordinar">1. Coordinar${p.sent?' ✓':''}</a>`:`<span class="coordbtn off" title="Teléfono inválido: corregilo con Editar">1. Coordinar</span>`}
 function stChip(p){if(p.st==='devuelto')return `<button class="chip devtag" data-act="st" data-id="${p.id}" title="Devuelto al almacén. Tocá para cambiar el estado">⛔ Devuelto</button>`; // 1.56.0: devueltos con la misma etiqueta que ⛔ Devolver

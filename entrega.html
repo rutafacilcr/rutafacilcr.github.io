@@ -41,7 +41,7 @@ textarea{min-height:96px;resize:vertical}
 input:focus,textarea:focus{outline:2px solid var(--accent);border-color:transparent}
 .btn{font:inherit;font-weight:700;font-size:16px;border-radius:10px;border:0;padding:14px 16px;cursor:pointer;width:100%}
 .btn.loc{background:var(--surface);color:var(--road);border:2px solid var(--road)}
-.btn.send{background:var(--accent);color:var(--accent-ink);font-size:18px}
+.btn.send{background:#c4510f;color:#fff;font-size:18px} /* 1.80.0: naranja de botón (4,6 a 1 con blanco) */
 .btn:disabled{opacity:.6}
 .ok{color:var(--ok);font-weight:600;font-size:14px}
 .err{background:var(--bad-bg);color:var(--bad);border-radius:9px;padding:10px 12px;font-size:14px}
@@ -50,6 +50,9 @@ input:focus,textarea:focus{outline:2px solid var(--accent);border-color:transpar
 details summary{cursor:pointer}
 .done{text-align:center;padding:32px 16px}
 .done .big{font-family:var(--f-display);font-size:28px;font-weight:800;color:var(--ok)}
+/* 1.80.0: naranja más oscuro para texto sobre fondo claro (4,5 a 1); en tema oscuro sigue el naranja de marca */
+:root{--accent-text:#b8470f}@media (prefers-color-scheme: dark){:root{--accent-text:var(--accent)}}
+.hint a{color:var(--accent-text)!important}
 </style>
 </head>
 <body>
