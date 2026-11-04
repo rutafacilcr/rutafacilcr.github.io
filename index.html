@@ -451,7 +451,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.79.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.81.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -486,7 +486,16 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
   <p class="small muted" id="pasteWho"></p>
   <p class="small">En WhatsApp, mantené presionado lo que respondió el cliente (la hora, la ubicación o los dos) &gt; <b>Copiar</b>, y pegalo aquí.</p>
   <textarea id="pasteBoxR" placeholder="Ej: 4 pm  https://maps.google.com/?q=9.93,-84.08"></textarea>
-  <div class="row"><button class="btn primary" id="pasteOk">Usar esta respuesta</button><button class="btn ghost" id="pasteCancel">Cancelar</button></div>
+  <div class="row"><button class="btn primary" id="pasteOk">Usar esta respuesta</button><button class="btn" id="pasteMapa" type="button">🎯 Marcar en el mapa</button><button class="btn ghost" id="pasteCancel">Cancelar</button></div>
+</div></div>
+<!-- 1.81.0: marcar la ubicación a mano cuando el cliente manda un lugar o negocio sin coordenadas -->
+<div class="sheet" id="pickSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="pickTitle">
+  <h2 id="pickTitle">🎯 Marcar en el mapa</h2>
+  <p class="small muted" id="pickWho"></p>
+  <p class="small" id="pickAviso"></p>
+  <div id="pickMap" style="height:300px;border-radius:12px;margin:6px 0"></div>
+  <p class="small muted" id="pickInfo">Tocá el mapa donde va el paquete. Podés acercar con dos dedos.</p>
+  <div class="row"><button class="btn primary" id="pickOk" type="button" disabled>Usar este punto</button><button class="btn ghost" id="pickCancel" type="button">Cancelar</button></div>
 </div></div>
 <div class="sheet" id="evSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="evTitle">
   <h2 id="evTitle">Evidencia de entrega</h2>
@@ -1182,8 +1191,11 @@ async function geocodeText(t){
     return j[0]?[+(+j[0].lat).toFixed(6),+(+j[0].lon).toFixed(6)]:null}catch(e){return null}
 }
 let PASTE=null;
+// 1.81.0: nombre del lugar cuando el cliente manda un negocio (iPhone copia "Aby al grill" + el link de su página, sin coordenadas)
+function lugarDe(t){const L=String(t||'').split(/\n+/).map(x=>x.replace(/\[[^\]]*\]\s*[^:]*:\s*/,'').replace(/https?:\/\/\S+/g,'').trim()).filter(x=>x.length>=3&&/[a-záéíóúñ]/i.test(x)&&!TIME_RE.test(x));return {nombre:L[0]||'',zona:L[1]||''}}
 async function applyReply(p,t){
   const c=parseCoord(t)||await geocodeText(t);const h=findTime(t);
+  if(!c&&(/https?:\/\//i.test(t)||(!h&&lugarDe(t).nombre))){if(h){p.horario=h;save()}pickAbrir(p,t);return true} // 1.81.0: sin coordenadas: se marca en el mapa
   if(!c&&!h){toast('No encontré hora ni ubicación en lo que pegaste');return false}
   if(c)p.ubic=cTxt(c);if(h)p.horario=h;
   if(p.st==='pendiente'||p.st==='noresponde')p.st='confirmado';
@@ -1197,6 +1209,31 @@ async function pasteReply(p){
 }
 $('#pasteOk').onclick=async()=>{if(!PASTE)return;if(await applyReply(PASTE,$('#pasteBoxR').value)){PASTE=null;$('#pasteSheet').hidden=true}};
 $('#pasteCancel').onclick=()=>{PASTE=null;$('#pasteSheet').hidden=true};
+$('#pasteMapa').onclick=()=>{if(!PASTE)return;const p=PASTE,t=$('#pasteBoxR').value;PASTE=null;$('#pasteSheet').hidden=true;pickAbrir(p,t)};
+// 1.81.0: 🎯 Marcar en el mapa (Leaflet + OpenStreetMap, gratis). Busca el nombre del lugar en Costa Rica y deja tocar el punto exacto.
+let PICK=null,PMAP=null;
+async function pickBuscar(q){if(!q)return null;try{const r=await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=cr&q='+encodeURIComponent(q));const j=await r.json();return j[0]?[+j[0].lat,+j[0].lon]:null}catch(e){return null}}
+async function pickAbrir(p,t){
+  const lg=lugarDe(t),actual=parseCoord(p.ubic);PICK={p,c:actual};
+  $('#pickWho').textContent=p.nombre||'';
+  $('#pickAviso').innerHTML=lg.nombre&&!actual?`Lo que pegaste es un <b>lugar o negocio</b> (${esc(lg.nombre)}), no una ubicación con coordenadas. Marcá el punto en el mapa, o pedile al cliente: 📎 &gt; <b>Ubicación</b> &gt; <b>Enviar mi ubicación actual</b>.`:'Marcá el punto exacto de la entrega.';
+  $('#pickOk').disabled=!actual;$('#pickInfo').textContent='Buscando en el mapa…';$('#pickSheet').hidden=false;document.body.style.overflow='hidden';
+  try{if(!document.querySelector('link[data-leaflet]')){const l=document.createElement('link');l.rel='stylesheet';l.href=CSS_MAP;l.dataset.leaflet=1;document.head.appendChild(l)}
+    await loadScript(LIB_MAP)}catch(e){$('#pickInfo').textContent='No se pudo cargar el mapa. Revisá el internet.';return}
+  if(!PMAP){PMAP=L.map('pickMap');L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(PMAP);
+    PMAP.on('click',e=>{if(!PICK)return;pickPoner([+e.latlng.lat.toFixed(6),+e.latlng.lng.toFixed(6)]);$('#pickInfo').textContent='Listo. Si no es ahí, tocá otro punto.'})}
+  if(PMAP.pin){PMAP.removeLayer(PMAP.pin);PMAP.pin=null}
+  PMAP.setView(actual||parseCoord(S.start)||[9.9333,-84.0833],actual?17:13);setTimeout(()=>PMAP.invalidateSize(),50);
+  if(actual){pickPoner(actual);$('#pickInfo').textContent='Esta es la ubicación guardada. Tocá otro punto para cambiarla.';return}
+  const zona=lg.zona.replace(/\b(CR-SJ|CR)\b/g,'').replace(/[ ,]+$/,'');
+  let c=await pickBuscar([lg.nombre,zona].filter(Boolean).join(', ')),aprox=false;if(!c&&zona){c=await pickBuscar(zona);aprox=!!c}
+  if(!PICK||PICK.p!==p)return;
+  if(c){PMAP.setView(c,aprox?14:17);$('#pickInfo').textContent=aprox?`No encontré "${lg.nombre}"; el mapa quedó en ${zona}. Tocá el punto exacto.`:`Encontré "${lg.nombre}" (puede no ser exacto). Tocá el punto donde va el paquete.`}
+  else $('#pickInfo').textContent=lg.nombre?`No encontré "${lg.nombre}" en el mapa. Buscalo vos y tocá el punto.`:'Tocá el mapa donde va el paquete.'}
+function pickPoner(c){PICK.c=c;if(PMAP.pin)PMAP.pin.setLatLng(c);else PMAP.pin=L.marker(c).addTo(PMAP);$('#pickOk').disabled=false}
+function pickCerrar(){PICK=null;$('#pickSheet').hidden=true;document.body.style.overflow=''}
+$('#pickCancel').onclick=pickCerrar;
+$('#pickOk').onclick=()=>{if(!PICK||!PICK.c)return;const p=PICK.p;p.ubic=cTxt(PICK.c);if(p.st==='pendiente'||p.st==='noresponde')p.st='confirmado';S.route=null;pickCerrar();save();render();toast(`${p.nombre}: 📍 ubicación lista${p.horario?' · 🕓 '+p.horario:''}`)};
 
 // ---- Prueba de entrega: GPS + fecha/hora + mínimo 3 fotos con sello ----
 const MIN_FOTOS=3;

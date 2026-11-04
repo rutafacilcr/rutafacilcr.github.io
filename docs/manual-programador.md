@@ -185,6 +185,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 ## 3c-quindecies. Tarjeta desactivada por Devolver (1.66.0)
 
+- 1.81.0: `lugarDe(t)` saca nombre y zona del texto pegado (sin links ni horas). `applyReply` llama `pickAbrir(p,t)` si no hay coordenadas y hay un link o un nombre de lugar (guarda la hora si venía). `#pickSheet` + `#pickMap` (Leaflet, `PMAP`, `PICK={p,c}`); `pickBuscar` usa Nominatim (`countrycodes=cr`) con "nombre, zona" y si no, solo la zona; `pickOk` guarda `p.ubic=cTxt(c)`, pasa a *Confirmado* y borra `S.route`. Botón `#pasteMapa` en `#pasteSheet`.
 - 1.73.3: `guiPdf` suma la columna *Hora entrega* = `fmtT2(repT(p))` (la misma hora real del reporte de entregas).
 - 1.73.2: `#v-cierres` ya no tiene el primer `.panel` ("Cierres … Próximamente"); empieza con *Reporte de entregas* (`#repLista`).
 - 1.73.1: `.epin.ok` y `.estop.ok .n` sin `line-through` (siguen en gris; `.estop.ok` con opacidad).
