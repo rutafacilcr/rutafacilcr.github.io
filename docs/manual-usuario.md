@@ -42,7 +42,16 @@ Resumen de cómo está la app ahora. Más abajo se explica cada parte con la ver
 - **✓ Entregado** guarda la fecha y la hora reales del toque.
 
 **Cierres**
-- Empieza directo en *Reporte de entregas* (1.73.2: se quitó el aviso "Próximamente").
+- **Arriba (1.93.0) elegís el período:** **Hoy**, **Semana** (de lunes a hoy), **Mes** (del 1 a hoy) o **Mes pasado**. Ganancia, Zonas y Resumen usan ese período.
+- **💰 Ganancia:** cuatro cuadros: **Entregados** (y devueltos), **Pago**, **Gasolina** y **Te quedó** (en verde). Abajo sale cada día con sus entregas, km, horas y lo que quedó.
+  - **⚙️ Tarifas:** cuánto te pagan por paquete entregado (**₡500** de entrada), por devuelto (vacío si no te pagan), cuántos km hacés por litro (si lo dejás vacío usa 12 para carro, 30 para moto y 8 para buseta, según el vehículo de *Ruta*) y el precio del litro. Tocá **Guardar tarifas**.
+  - **⛽ de cada día:** la gasolina se calcula sola con los km aproximados de ese día (sale en gris). Si anotás lo que echaste de verdad, se usa ese número. Para volver al cálculo, borralo.
+  - Los km son aproximados (línea recta entre entregas con un ajuste por calles), así que la gasolina estimada también.
+- **💹 Rentabilidad** (dentro de Ganancia): **te deja cada paquete** (lo que quedó ÷ entregados), **por hora** (lo que quedó ÷ horas trabajadas) y **por km** (lo que quedó ÷ km). Abajo dice cuántos minutos y km te toma cada paquete en promedio y cuánto se va en gasolina por paquete. Sirve para ver si ₡500 por paquete te alcanza según la distancia.
+- **📍 Ranking de zonas:** **💹 Donde más te deja cada hora** (pago del paquete menos la gasolina del tramo, convertido a ₡ por hora con los minutos del tramo), **⚡ Donde entregás más rápido** (minutos promedio desde la entrega anterior; hacen falta 2 entregas en la zona) y **↩️ Donde más te devuelven** (porcentaje de devueltos). La zona es el cantón o distrito de la GAM más cercano a la ubicación del cliente; si no tiene ubicación se busca el lugar en la dirección.
+- **📊 Resumen:** **💬 WhatsApp** arma el texto del período (entregados, devueltos, km, horas, pago, gasolina, lo que quedó y las zonas) para mandarlo a vos mismo o a quien querás. **📊 Excel** baja un archivo con una fila por día y una hoja de zonas.
+- **¿Y el mes si los cierres se borran a los 15 días?** Cada vez que abrís *Cierres* (y al *Vaciar lista*) la app guarda un total chiquito de cada día en tu cuenta, por 70 días. Así *Mes* y *Mes pasado* salen completos. Solo cuentan los días que pasaron por la app desde la 1.93.0 o que todavía estaban en los cierres.
+- Después sigue *Reporte de entregas* (1.73.2: se quitó el aviso "Próximamente").
 - Hay un reporte por cada grupo de *Entregas del …*, según el día en que se recibieron los paquetes. También salen las listas ya vaciadas.
 - Cada grupo tiene su botón **📄 PDF** horizontal.
 - **Guías por fecha de recibido** (1.71.0 a 1.72.3): un PDF por fecha de recibido (*Guías · Paquetes recibidos 31/10/2026*) con Nombre, Tel., Guía, Dirección y Hora entrega, separado por día de entrega.
