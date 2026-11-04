@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-04
+- **1.92.1 · Contactos y Excel abajo en Mensajes:** el bloque *Prefijo*, **📇 Guardar contactos del día** y **📊 Bajar Excel del día** (con su explicación) pasa abajo de la lista de clientes. Arriba quedan *Tu nombre* y *Día de entrega*.
 - **1.92.0 · Estado automático en Mensajes:** la etiqueta a la par del nombre cambia sola: **🟡 Sin enviar** → **📨 Esperando respuesta** (al abrir WhatsApp) → **🔵 Confirmado** (al pegar la ubicación o si ya la tiene). Tocarla no hace nada ni pide evidencia. Los filtros usan esos mismos estados. Decisión de Victor.
 - **1.91.1 · Pedir ubicación en Mensajes:** el mensaje **1. Coordinar** ahora se llama **1. Pedir ubicación**, igual que el botón de Paquetes. El texto del mensaje no cambia.
 - **1.91.0 · Ruta y Mensajes más limpios (pedido de Victor):** en *Ruta* ya no sale "📍 Estás aquí" (tu punto sigue en el mapa y 📍 Ordenar desde aquí funciona igual) y **▶ Iniciar entregas / ■ Finalizar** pasa a la misma línea, a la derecha, sin cuadro aparte. En *Paquetes* el botón **1. Coordinar** ahora se llama **Pedir ubicación** y solo sale si el paquete no tiene ubicación (si se la borrás, vuelve). En *Mensajes* se quitaron el texto de ayuda, el título *Clientes*, el botón *Pegar respuesta* y la tarjeta *Respuestas del formulario* (las respuestas se siguen revisando solas).

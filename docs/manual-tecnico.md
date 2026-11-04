@@ -362,6 +362,8 @@ delete from respuestas where updated_at < now() - interval '30 days';
 - **Publicación:** push a `main` y GitHub Pages. En computadora, Ctrl + Shift + R fuerza la versión nueva. Si la app falla, sale un aviso rojo con la versión y la línea, para soporte.
 - **PIN olvidado del administrador:** en el SQL Editor, `update auth.users set encrypted_password = extensions.crypt('NUEVO', extensions.gen_salt('bf')), updated_at = now() where email = '<número>@rutafacilcr.github.io';`. El PIN no se puede leer, solo reemplazar.
 
+Contactos y Excel abajo (1.92.1): solo diseño.
+
 Estado automático en Mensajes (1.92.0): solo pantalla, se calcula con datos que ya existen.
 
 Pedir ubicación en Mensajes (1.91.1): solo el nombre del botón.

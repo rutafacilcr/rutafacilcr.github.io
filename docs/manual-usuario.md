@@ -191,7 +191,7 @@ Desde la versión 1.18.0 la lista se guarda en tu cuenta. Si entrás con tu núm
 
 **Aviso de la cédula:** los mensajes *1. Coordinar* y *3. Voy en camino* terminan con *Recuerde que para la entrega debe presentar la cédula.* Se puede quitar o cambiar en **✏️ Editar textos de los mensajes**.
 
-**Guardar contactos del día:** en *Mensajes*, arriba, tocá **📇 Guardar contactos del día**. Baja un archivo con todos los clientes con el nombre **TM-Nombre-pedido** (el pedido es la guía; si no tiene guía queda *TM-Nombre*). Así, cuando te contesten, WhatsApp muestra quién es. El prefijo *TM* se puede cambiar en la casilla **Prefijo**.
+**Guardar contactos del día:** en *Mensajes*, abajo de la lista de clientes (desde la 1.92.1; antes estaba arriba), tocá **📇 Guardar contactos del día**. Baja un archivo con todos los clientes con el nombre **TM-Nombre-pedido** (el pedido es la guía; si no tiene guía queda *TM-Nombre*). Así, cuando te contesten, WhatsApp muestra quién es. El prefijo *TM* se puede cambiar en la casilla **Prefijo**.
 - **iPhone:** la app muestra primero los pasos y luego el menú de compartir. **No toqués *Contactos* ni la vista previa** (el iPhone solo guarda el primero). Lo más fácil: elegí **Mail**, mandátelo a tu correo y abrí el adjunto > **Agregar todos los contactos** > **Crear contactos nuevos**. También sirve **Guardar en Archivos** y abrirlo desde la app **Archivos**.
 - **Android:** abrí el archivo descargado y elegí **Contactos** para importarlos.
 - Los nombres salen bien escritos aunque el escáner los haya leído con mayúsculas raras (*Chavarría*, no *ChavarríA*) o con un guion al inicio.
