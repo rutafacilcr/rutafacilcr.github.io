@@ -461,7 +461,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.85.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.86.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -469,7 +469,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
   <button role="tab" id="tab-paquetes" aria-selected="true" data-tab="paquetes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg>Paquetes<span class="n" id="n-pk"></span></button>
   <button role="tab" id="tab-cierres" aria-selected="false" data-tab="cierres"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h4"/><path d="m14 16 1.5 1.5L19 14"/></svg>Cierres</button>
   <button role="tab" id="tab-mensajes" aria-selected="false" data-tab="mensajes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>Mensajes</button>
-  <button role="tab" id="tab-entrega" aria-selected="false" data-tab="entrega"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21z"/><path d="m9 9.5 2 2 4-4"/></svg>Ruta</button>
+  <button role="tab" id="tab-entrega" aria-selected="false" data-tab="entrega"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21z"/><path d="m9 9.5 2 2 4-4"/></svg>Ruta<span class="n" id="n-ruta"></span></button>
 </div></nav>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
   <h2 id="podTitle">Prueba de entrega</h2>
@@ -739,7 +739,10 @@ function renderStats(){
   const sinUb=pk.filter(p=>!cerr(p)&&!parseCoord(p.ubic)&&!par(p).some(x=>x.c)).length;
   $('#stats').innerHTML=[[pk.length,'Recibidos'],[ent,'Entregados'],[hold,'Hold'],[dev,'Devueltos'],[sinUb,'Sin 📍']].map(([n,l])=>`<div class="stat"><b>${n}</b><span>${l}</span></div>`).join('');
   $('#n-pk').textContent=S.ex?'':(S.pk.filter(p=>p.st!=='entregado'&&p.st!=='devuelto'&&!p.devolver).length||''); // globito = paquetes que faltan por entregar
+  rutaGlobo();
 }
+// 1.86.0: globito en Ruta = paradas de la ruta que faltan por entregar (sin contar entregadas ni devueltas; las de Hold sí cuentan)
+function rutaGlobo(){const el=$('#n-ruta');if(!el)return;let n=0;try{if(S.ent&&S.ent.stops&&!S.ent.cerrada&&typeof entDone==='function')n=S.ent.stops.filter(x=>!entDone(x)).length}catch(e){}el.textContent=n||''}
 function renderPk(){
   const L=$('#pkgList');
   if(!S.pk.length){L.innerHTML='<div class="empty">Todavía no hay paquetes. Pegá tu lista arriba o agregá uno a mano.</div>';return}
@@ -1826,7 +1829,7 @@ $('#jorBar').addEventListener('click',async e=>{const b=e.target.closest('[data-
   b.disabled=true;b.textContent='Tomando ubicación…';const c=await jorGps(),t=Date.now();
   if(a==='ini'){S.jor[k]={ini:{t,c}};if(S.ent)S.ent.stops.forEach(s=>delete s.o)}else S.jor[k]={...S.jor[k],fin:{t,c}};
   save();jorRender();toast(a==='ini'?`Entregas iniciadas a las ${jorHm(t)}${c?'':' (sin GPS)'}`:`Entregas finalizadas a las ${jorHm(t)}`)});
-async function renderEnt(){entSyncPk();jorRender();vehPintar();ttPintar();
+async function renderEnt(){entSyncPk();rutaGlobo();jorRender();vehPintar();ttPintar();
   // La ruta se arma el día antes: vale la de hoy o la de mañana (fecha local del celular).
   const dia=d=>'Ruta '+new Date(Date.now()+d*864e5).toLocaleDateString('en-CA'),hoy=dia(0),man=dia(1);const E=S.ent,LI=$('#entList');
   if(!E||!E.stops||!E.stops.length){$('#entMap').hidden=true;$('#entTools').hidden=true;$('#entAqui').hidden=true;$('#entGps').hidden=true;$('#entBus').hidden=true;$('#entInfo').textContent=`Cargá el archivo de la ruta ("${hoy}.xlsx" o "${man}.xlsx")`;LI.innerHTML='<div class="empty">Tocá <b>📂 Cargar ruta</b> y elegí el Excel de la ruta del día. Arriba sale el mapa con las paradas en orden y abajo la lista: tocá una parada para verla en el mapa e ir con Waze o Google Maps.</div>';return}
