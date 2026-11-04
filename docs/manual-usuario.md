@@ -247,7 +247,7 @@ En la pestaña **Ruta**, abajo, aparece **Recorrido de hoy** en cuanto hacés la
 
 ## 3. Estados de un paquete
 
-Cada etiqueta lleva ícono, nombre y color (1.80.0), así se distingue aunque no se vean bien los colores:
+Cada etiqueta lleva ícono, nombre y color (1.79.0), así se distingue aunque no se vean bien los colores:
 
 | Etiqueta | Color | Significa |
 |---|---|---|
@@ -260,7 +260,7 @@ Cada etiqueta lleva ícono, nombre y color (1.80.0), así se distingue aunque no
 
 Tocá la etiqueta de color para pasar al siguiente estado.
 
-Desde la 1.80.0 los botones de Paquetes, Ruta y Cierres son más grandes (44 px, cómodos para el dedo) y los naranja son más intensos para leerse bien al sol. Si un botón muestra una ruedita, está trabajando: esperá a que termine. Si se ve gris con borde punteado, está desactivado.
+Desde la 1.79.0 los botones de Paquetes, Ruta y Cierres son más grandes (44 px, cómodos para el dedo) y los naranja son más intensos para leerse bien al sol. Si un botón muestra una ruedita, está trabajando: esperá a que termine. Si se ve gris con borde punteado, está desactivado.
 
 ---
 

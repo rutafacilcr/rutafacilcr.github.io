@@ -4,16 +4,16 @@ Para quien vaya a modificar el código o el diseño.
 
 ## 1. Principios
 
-- **Celular primero y responsive (regla de Victor, 30-oct):** todo se diseña para 360–400 px y se prueba a ese ancho. Botones de tamaño normal (no de ancho completo salvo la acción principal de una pantalla), áreas de toque de al menos 44 px (1.80.0) y nada de scroll horizontal.
+- **Celular primero y responsive (regla de Victor, 30-oct):** todo se diseña para 360–400 px y se prueba a ese ancho. Botones de tamaño normal (no de ancho completo salvo la acción principal de una pantalla), áreas de toque de al menos 44 px (1.79.0) y nada de scroll horizontal.
 
 - **Sin build ni frameworks.** HTML, CSS y JavaScript plano. Se edita el archivo y se hace push.
 - **Un archivo por pantalla:** `index.html` (app del repartidor), `entrega.html` (formulario del cliente; `f.html` solo redirige links viejos) y `admin.html` (panel). CSS y JS van dentro de cada archivo. La única pieza compartida es `auth.js` (cuentas).
 - **Celular primero:** se diseña para 400 px de ancho y se agranda hasta 760 px.
 - **Funciona sin backend:** si `config.js` está vacío, todo lo que no sea el formulario sigue funcionando.
 
-## 1a. Diseño accesible (1.80.0, WCAG 2.2 AA)
+## 1a. Diseño accesible (1.79.0, WCAG 2.2 AA)
 
-Todo vive al final del `<style>` de `index.html`, en el bloque «1.80.0 · Diseño y accesibilidad». Reglas para lo que se agregue de aquí en adelante:
+Todo vive al final del `<style>` de `index.html`, en el bloque «1.79.0 · Diseño y accesibilidad». Reglas para lo que se agregue de aquí en adelante:
 
 - **Dos naranjas.** `--accent` (#f26b1d) es la marca: logo, raya del encabezado, pestaña activa, bordes, pines. `--accent-btn` (#c4510f, 4,6 a 1 con blanco) es para **todo botón naranja con letra blanca** (`.btn.primary`, «↪ Regresar a Ruta», «← Regresar», globito de pestañas). Al tocar/pasar: `--accent-btn-hover` (#a9450d). Para texto naranja sobre fondo claro: `--accent-text` (#b8470f). Nunca poner letra blanca sobre #f26b1d (3,05 a 1, no cumple).
 - **WhatsApp:** `--wa-btn` (#15803d, 5 a 1).
