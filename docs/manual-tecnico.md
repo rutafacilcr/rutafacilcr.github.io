@@ -362,6 +362,10 @@ delete from respuestas where updated_at < now() - interval '30 days';
 - **Publicación:** push a `main` y GitHub Pages. En computadora, Ctrl + Shift + R fuerza la versión nueva. Si la app falla, sale un aviso rojo con la versión y la línea, para soporte.
 - **PIN olvidado del administrador:** en el SQL Editor, `update auth.users set encrypted_password = extensions.crypt('NUEVO', extensions.gen_salt('bf')), updated_at = now() where email = '<número>@rutafacilcr.github.io';`. El PIN no se puede leer, solo reemplazar.
 
+### Diseño y accesibilidad (1.79.0)
+
+Solo cambia CSS (y la clase de la etiqueta ⛔ Devuelto). No toca Supabase, `config.js`, `auth.js` ni los datos guardados, así que no hace falta correr SQL ni limpiar caché: al publicar, los celulares ven el aviso de versión nueva como siempre. Para revisarlo: Lighthouse en Chrome (DevTools > Lighthouse > Accesibilidad) debe dar 100 en la app, el Panel, el formulario y «Conocé la app».
+
 ## 4. Configuración (`config.js`)
 
 ```js

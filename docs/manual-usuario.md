@@ -247,15 +247,20 @@ En la pestaña **Ruta**, abajo, aparece **Recorrido de hoy** en cuanto hacés la
 
 ## 3. Estados de un paquete
 
-| Estado | Significa |
-|---|---|
-| Pendiente | Todavía no confirma. |
-| Confirmado | Confirmó por WhatsApp o llenó el formulario. |
-| No responde | Le escribiste y no contestó. |
-| Entregado | Listo. |
-| No se entregó | Intentaste y no se pudo. |
+Cada etiqueta lleva ícono, nombre y color (1.79.0), así se distingue aunque no se vean bien los colores:
+
+| Etiqueta | Color | Significa |
+|---|---|---|
+| ⏳ Pendiente | Amarillo | Todavía no confirma. |
+| 🚚 Confirmado | Azul | Confirmó por WhatsApp o llenó el formulario: va en la ruta. |
+| 📵 No responde | Naranja claro | Le escribiste y no contestó. |
+| ✅ Entregado | Verde | Listo. La tarjeta queda gris, pero se lee completa y sus botones se pueden tocar. |
+| ✖ No se entregó | Rojo | Intentaste y no se pudo. |
+| ⛔ Devuelto | Gris | Volvió al almacén. Para que vuelva a la ruta, tocá el botón naranja **↪ Regresar a Ruta**. |
 
 Tocá la etiqueta de color para pasar al siguiente estado.
+
+Desde la 1.79.0 los botones de Paquetes, Ruta y Cierres son más grandes (44 px, cómodos para el dedo) y los naranja son más intensos para leerse bien al sol. Si un botón muestra una ruedita, está trabajando: esperá a que termine. Si se ve gris con borde punteado, está desactivado.
 
 ---
 
