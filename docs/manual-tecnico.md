@@ -362,6 +362,8 @@ delete from respuestas where updated_at < now() - interval '30 days';
 - **Publicación:** push a `main` y GitHub Pages. En computadora, Ctrl + Shift + R fuerza la versión nueva. Si la app falla, sale un aviso rojo con la versión y la línea, para soporte.
 - **PIN olvidado del administrador:** en el SQL Editor, `update auth.users set encrypted_password = extensions.crypt('NUEVO', extensions.gen_salt('bf')), updated_at = now() where email = '<número>@rutafacilcr.github.io';`. El PIN no se puede leer, solo reemplazar.
 
+Ubicación de Ruta a Paquetes (1.86.2): solo pantalla, se guarda igual que antes.
+
 Mapa siempre en Ruta (1.86.1): solo pantalla; usa el mismo GPS y mapa de antes, sin datos nuevos.
 
 Globito en Ruta (1.86.0): solo pantalla, sin datos nuevos.

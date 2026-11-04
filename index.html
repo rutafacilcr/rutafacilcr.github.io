@@ -461,7 +461,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.86.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.86.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -1990,7 +1990,7 @@ $('#entAqui').onclick=()=>{if(!navigator.geolocation){gpsFail();return}EAUTO=tru
     {enableHighAccuracy:true,timeout:15000,maximumAge:30000})};
 $('#entPick').onclick=()=>{if(!EMAP){toast('Primero cargá la ruta');return}EMAP.pick=true;$('#entMap').style.cursor='crosshair';$('#entMap').scrollIntoView({behavior:'smooth',block:'start'});toast('Tocá el mapa donde estás');};
 // Parada sin ubicación: pegar link/coordenadas o tocar el mapa; entra a la ruta y se reordena desde tu punto
-function entPonerC(i,c){entMod();const s=S.ent.stops[i];s.c=c;delete s.ub;try{const p=entPkg(s);if(p&&entFuerte(s,p)&&!parseCoord(p.ubic)){p.ubic=cTxt(c);s.pkId=p.id}}catch(e){} // la ubicación también queda en Paquetess.n=Math.max(0,...S.ent.stops.filter(x=>x.c&&x!==s).map(x=>x.n||0))+1;
+function entPonerC(i,c){entMod();const s=S.ent.stops[i];s.c=c;delete s.ub;let pkC=false;try{const p=entPkg(s);if(p&&entFuerte(s,p)&&!parseCoord(p.ubic)){p.ubic=cTxt(c);s.pkId=p.id;s.pkFijo=p.id;pkC=true}}catch(e){}if(pkC){save();render()} /* 1.86.2: repinta Paquetes y Mensajes con la ubicación nueva */ // la ubicación también queda en Paquetess.n=Math.max(0,...S.ent.stops.filter(x=>x.c&&x!==s).map(x=>x.n||0))+1;
   const sinC=S.ent.stops.filter(x=>!x.c);S.ent.stops=[...S.ent.stops.filter(x=>x.c),...sinC];
   toast(`Ubicación agregada a ${s.nombre}`);if(EPOS)entOrdenar(EPOS.c,'donde estás');else{save();renderEnt()}}
 async function entUbicar(i){const s=S.ent.stops[i];const t=await pedir({ico:'📍',titulo:`Ubicación de ${s.nombre||'la parada'}`,texto:'Pegá el link de Google Maps o Waze, o las coordenadas. <b>Dejalo vacío</b> para tocar el punto en el mapa.',label:'Link o coordenadas',placeholder:'https://maps.app.goo.gl/… o 9.93,-84.08',si:'Poner ubicación'});if(t===null)return;
