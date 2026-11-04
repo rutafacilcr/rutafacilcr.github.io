@@ -400,7 +400,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
   <!-- Plantillas plegadas: se usan poco y el mensaje se elige en cada cliente -->
   <details class="panel" id="tplPanel">
     <summary>✏️ Editar textos de los mensajes</summary>
-    <label>1. Coordinar (día antes, sin links)<textarea id="m-coord"></textarea></label>
+    <label>1. Pedir ubicación (día antes, sin links)<textarea id="m-coord"></textarea></label>
     <label hidden>Formulario (ya no se usa en Mensajes)<textarea id="m-form"></textarea></label>
     <label>2. Voy en camino<textarea id="m-camino"></textarea></label>
     <label>3. Comprensión<textarea id="m-comp"></textarea></label>
@@ -471,7 +471,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.91.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.91.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -781,7 +781,7 @@ function renderPk(){
   if(cards.length>60)setTimeout(()=>tanda(60),0);
 }
 // Mensajes que se pueden mandar a cada cliente desde la pestaña Mensajes.
-function msgOpts(){return [['coord','Coordinar'],['camino','En camino'] /* 1.89.0: sin Formulario (Victor) */,['comp','Comprensión'],['ext','Horario extendido']].map(([k,t],i)=>[k,`${i+1}. ${t}`])} // 1.73.0: 4 y 5
+function msgOpts(){return [['coord','Pedir ubicación'], /* 1.91.1: antes "Coordinar" (Victor) */['camino','En camino'] /* 1.89.0: sin Formulario (Victor) */,['comp','Comprensión'],['ext','Horario extendido']].map(([k,t],i)=>[k,`${i+1}. ${t}`])} // 1.73.0: 4 y 5
 function msgSel(p){const ok=msgOpts().map(o=>o[0]);if(ok.includes(p.msgSel))return p.msgSel;return 'coord'}
 // Ícono del vehículo elegido en Ruta (1.56.4): va después de la palabra "camino" en el mensaje de en camino (Mensajes y Ruta)
 function vehIcono(){return {moto:'🏍️',carro:'🚙',buseta:'🚐'}[S.veh]||'🚙'}

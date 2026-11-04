@@ -50,7 +50,7 @@ Resumen de cómo está la app ahora. Más abajo se explica cada parte con la ver
 - Las **filas** van por fecha y hora de entrega, con estas columnas: número, guía / pedido, teléfono, nombre, estado, fecha recibido, fecha y hora de entrega, y tiempo y km desde la entrega anterior.
 
 **Mensajes**
-- Están **1. Coordinar**, **2. Voy en camino** (lleva el ícono del vehículo después de "camino"), **3. Comprensión** y **4. Horario extendido**, en dos filas. Desde la 1.89.0 ya no está *Formulario*.
+- Están **1. Pedir ubicación** (antes *1. Coordinar*, 1.91.1), **2. Voy en camino** (lleva el ícono del vehículo después de "camino"), **3. Comprensión** y **4. Horario extendido**, en dos filas. Desde la 1.89.0 ya no está *Formulario*.
 - **Botones (1.89.0; 1.91.0):** abajo a la derecha queda **Abrir WhatsApp** (*Pegar respuesta* se usa desde *Paquetes*). Desde la 1.91.0 tampoco están el texto de ayuda, el título *Clientes* ni la tarjeta *Respuestas del formulario*. Se quitaron *Copiar texto*, *Confirmó* y *No responde*; el estado se cambia tocando la etiqueta del cliente (por ejemplo 🟡 Pendiente).
 - **Filtros (1.88.0):** debajo de buscar están **Todos**, **🟡 Sin contestar**, **📵 No responde** y **🔵 Confirmados**, con cuántos hay en cada uno. Tocá uno para ver solo esos clientes (por ejemplo, a quién volver a escribirle). La etiqueta cambia con **Confirmó**, **No responde** o al pegar la respuesta con ubicación. Los entregados, devueltos y para devolver solo salen en *Todos*.
 - Los clientes salen en el **mismo orden que en Ruta** (1.69.3). Los entregados, en Hold o devueltos se ven grises y bajan al final, y los que no están en la ruta van después de los pendientes.

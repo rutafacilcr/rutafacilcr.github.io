@@ -30,7 +30,7 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
   - Las filas van ordenadas por fecha y hora de entrega.
   - También hay un PDF **Guías** por cada fecha de recibido, con nombre, teléfono, guía, dirección y hora de entrega, agrupado por fecha de recibido.
 - **Mensajes:**
-  - Coordinar, Voy en camino (con el ícono del vehículo), Comprensión y Horario extendido (5 a 9 p. m.). Cada cliente tiene abajo a la derecha Abrir WhatsApp. En Paquetes, **Pedir ubicación** solo sale si al paquete le falta la ubicación.
+  - Pedir ubicación, Voy en camino (con el ícono del vehículo), Comprensión y Horario extendido (5 a 9 p. m.). Cada cliente tiene abajo a la derecha Abrir WhatsApp. En Paquetes, **Pedir ubicación** solo sale si al paquete le falta la ubicación.
   - Los clientes van en el mismo orden que en Ruta; los cerrados o en Hold quedan en gris al final.
   - Filtros Todos, Sin contestar, No responde y Confirmados, con su número, para ver a quién volver a escribir.
 
