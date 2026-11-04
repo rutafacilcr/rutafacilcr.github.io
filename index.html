@@ -103,7 +103,8 @@ nav.tabs .n:empty{display:none}
 .sig.ok{border-style:solid;border-color:var(--ok)}
 .trackmap{height:320px;border-radius:10px;overflow:hidden;background:var(--bg);z-index:0}
 .tracklist{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px;font-size:14px}
-.enthead{display:flex;gap:10px;align-items:center;flex-wrap:wrap}#entGps{margin-left:auto;max-width:100%}#entGps:empty{display:none}
+.enthead{display:flex;gap:10px;align-items:center;flex-wrap:wrap}#entGps{flex-basis:100%;max-width:100%}#entGps:empty{display:none}#entInfo{flex:1 1 160px}
+.enthead .jorbar{background:none;border:0;padding:0;margin:0 0 0 auto;flex-wrap:nowrap;justify-content:flex-end}.enthead .jorbar .jtxt{flex:0 1 auto;text-align:right;font-size:12.5px} /* 1.91.0 */
 .msgfil{display:flex;gap:4px;flex-wrap:wrap;margin:8px 0}.msgfil button{font:inherit;font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:inherit;cursor:pointer}.msgfil button b{margin-left:2px}.msgfil button[aria-pressed=true]{background:var(--accent-btn);border-color:var(--accent-btn);color:#fff;font-weight:700}
 .jorbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px 8px;margin:6px 0}#entInfo:empty{display:none}
 .jorbar .jtxt{flex:1 1 120px;font-size:12.5px;line-height:1.25}.jorbar .jtxt b{white-space:nowrap}
@@ -414,9 +415,9 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <label class="btn sm primary" for="entFile">📂 Cargar ruta</label><input type="file" id="entFile" accept=".xlsx,.xls,.csv" hidden>
     <span class="small muted" id="entInfo"></span>
     <button class="btn sm road" id="entAqui" type="button" hidden>📍 Ordenar desde aquí</button>
+    <div class="jorbar" id="jorBar"></div><!-- 1.91.0: Iniciar / Finalizar en la misma línea, a la derecha -->
     <span class="small muted" id="entGps"></span>
   </div>
-  <div class="jorbar" id="jorBar"></div>
   <div class="enthead" id="entTools" hidden>
     <span class="enttot" id="entTot"></span>
     <span class="vehsel" id="vehSel" role="group" aria-label="Vehículo"><button type="button" data-veh="moto" title="Moto">🏍</button><button type="button" data-veh="carro" title="Carro">🚙</button><button type="button" data-veh="buseta" title="Buseta">🚐</button></span>
@@ -470,7 +471,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.89.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.91.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -1837,8 +1838,8 @@ function jorGps(){return new Promise(ok=>{if(!navigator.geolocation)return ok(EP
 const jorHm=t=>new Date(t).toLocaleTimeString('es-CR',{hour:'numeric',minute:'2-digit'});
 const jorDur=m=>`${Math.floor(m/60)} h ${String(Math.round(m%60)).padStart(2,'0')} min`;
 function jorRender(){const el=$('#jorBar');if(!el)return;const J=(S.jor||{})[jorHoy()];
-  el.innerHTML=!J||!J.ini?`<span class="jtxt">Al salir: guarda hora y punto de salida.</span><button class="btn sm jini" type="button" data-jor="ini">▶ Iniciar entregas</button>`
-   :!J.fin?`<span class="jtxt">En ruta desde <b>${jorHm(J.ini.t)}</b>${J.ini.c?' 📍':' (sin GPS)'}</span><button class="btn sm jfin" type="button" data-jor="fin">■ Finalizar</button>`
+  el.innerHTML=!J||!J.ini?`<button class="btn sm jini" type="button" data-jor="ini" title="Guarda la hora y el punto de salida para el reporte">▶ Iniciar entregas</button>`
+   :!J.fin?`<span class="jtxt" title="En ruta desde ${jorHm(J.ini.t)}${J.ini.c?'':' (sin GPS)'}">⏱ <b>${jorHm(J.ini.t)}</b>${J.ini.c?'':' (sin GPS)'}</span><button class="btn sm jfin" type="button" data-jor="fin">■ Finalizar</button>`
    :`<span class="jtxt">Jornada <b>${jorHm(J.ini.t)}–${jorHm(J.fin.t)}</b> · ${jorDur((J.fin.t-J.ini.t)/60000)}</span><button class="btn sm" type="button" data-jor="seguir" title="Borra la hora de fin para seguir entregando">▶ Seguir entregando</button>`}
 $('#jorBar').addEventListener('click',async e=>{const b=e.target.closest('[data-jor]');if(!b)return;const k=jorHoy(),a=b.dataset.jor;S.jor=S.jor||{};
   if(a==='seguir'){if(S.jor[k])delete S.jor[k].fin;save();jorRender();toast('Seguís en ruta: tocá ■ Finalizar al terminar');return}
@@ -1970,7 +1971,7 @@ function entMe(){entEta();entTotal();if(!EMAP||!window.L)return;const c=EPOS?EPO
   if(!c){if(EMAP.me){EMAP.removeLayer(EMAP.me);EMAP.me=null}return}
   if(EMAP.fitted==='vacio'&&!EMAP.meC){EMAP.meC=1;EMAP.setView(c,15)} // 1.86.1: sin ruta, el mapa se centra en vos al tener GPS
   if(!EMAP.me)EMAP.me=L.marker(c,{icon:L.divIcon({className:'',html:'<div class="mepos"></div>',iconSize:[18,18],iconAnchor:[9,9]}),zIndexOffset:2000,interactive:false}).addTo(EMAP);else EMAP.me.setLatLng(c)}
-const gpsOk=g=>{EPOS={c:[+g.coords.latitude.toFixed(6),+g.coords.longitude.toFixed(6)],acc:g.coords.accuracy};$('#entGps').textContent=`📍 Estás aquí (±${Math.round(EPOS.acc)} m)`;entMe();
+const gpsOk=g=>{EPOS={c:[+g.coords.latitude.toFixed(6),+g.coords.longitude.toFixed(6)],acc:g.coords.accuracy};$('#entGps').textContent='';entMe(); /* 1.91.0: sin "Estás aquí" (Victor); el punto azul del mapa lo muestra */
   // La primera vez que el GPS responde, si la ruta no se ordenó desde cerca de aquí, se ordena sola desde tu punto
   if(!EAUTO&&S.ent&&S.ent.stops&&S.ent.stops.some(x=>x.c)&&EPOS.acc<500){EAUTO=true;if(!S.ent.inicio||hav(S.ent.inicio,EPOS.c)>0.8)entOrdenar(EPOS.c,'donde estás')}};
 const gpsFail=e=>{$('#entGps').innerHTML=e&&e.code===1?'Ubicación bloqueada. En iPhone: <b>Ajustes</b> &gt; <b>Privacidad</b> &gt; <b>Localización</b> &gt; <b>Sitios web de Safari</b> &gt; <b>Al usar la app</b>. O usá <b>🎯 Elegir en el mapa</b>.':'No se pudo obtener la ubicación. Usá <b>🎯 Elegir en el mapa</b>.'};
@@ -1995,7 +1996,7 @@ async function entOrdenar(start,desde,manual){
   if(!pend.length&&held.length){pend=held;held=[]} // solo quedan las de Hold: se ordenan entre ellas
   if(!pend.length){toast('No quedan paradas pendientes con ubicación');return}
   const pts=[start,...pend.map(s=>s.c)],W=[null,...pend.map(s=>{const p=entPkg(s);return p?parseWin(p.horario):null})],d=new Date();
-  $('#entGps').textContent='Calculando la ruta por calle…';const Mx=await osrmMatriz(pts);if(EPOS)$('#entGps').textContent=`📍 Estás aquí (±${Math.round(EPOS.acc)} m)`;
+  $('#entGps').textContent='Calculando la ruta por calle…';const Mx=await osrmMatriz(pts);if(EPOS)$('#entGps').textContent='';
   const ord=optimize(pts,W,d.getHours()*60+d.getMinutes(),+S.min||0,+S.vel||25,false,Mx);
   entMod();let k=0;E.stops=[...ord.map(i=>pend[i-1]),...held,...hechas,...sinC];E.stops.forEach(s=>{delete s.o;if(s.c)s.n=++k});E.inicio=start;ESEL=-1;
   if(EMAP)EMAP.fitted=null;save();renderEnt().then(()=>{if(EMAP)EMAP.fitBounds([start,...pend.map(s=>s.c)],{padding:[24,24]})});
