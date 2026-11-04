@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-03
+- **1.81.4 · Varios resultados para escoger:** *Marcar en el mapa* ya no limita a 30 km: muestra hasta 6 lugares (TomTom y OpenStreetMap) con el barrio o cantón, la provincia y los km desde tu zona. Si el más cercano está a 30 km o menos lo marca solo; si no, escogés vos de la lista.
 - **1.81.3 · Buscar solo en tu zona:** *Marcar en el mapa* busca negocios a no más de 30 km del centro de tus paquetes (o de tu GPS); si algo con ese nombre queda más lejos (por ejemplo otro *Urbano Bar* en Zarcero) avisa y no pone el pin.
 - **1.81.2 · Buscar negocios con TomTom:** *Marcar en el mapa* busca primero en TomTom (con la misma clave gratis de 🚦 Tráfico), que conoce muchos más negocios que OpenStreetMap, y trae un buscador arriba del mapa para escribir el lugar, barrio o calle.
 - **1.81.1 · Marcar en el mapa busca lo pegado:** ahora busca primero el negocio y la dirección que pegaste (por ejemplo *Cosmos Classic Restaurante, Ruta Nacional Secundaria 211, San José*) aunque el paquete ya tenga ubicación; si lo encuentra deja el pin puesto para revisar. Si no, prueba la dirección y la ciudad.

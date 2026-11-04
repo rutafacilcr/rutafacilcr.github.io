@@ -111,6 +111,7 @@ nav.tabs .n:empty{display:none}
 .estop{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;cursor:pointer}
 .estop.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
 .estop.ok{opacity:.6}.estop.ok.devol{opacity:1}.estop.devol{background:#eceef0}.estop.devol>*:not(.acts3):not(:has(.acts3)),.estop.devol>*:has(.acts3)>*:not(.acts3){opacity:.45;filter:grayscale(1);pointer-events:none}.estop.devol .acts3{align-items:center;justify-content:space-between}/* 1.70.9: regresar a la derecha, a mano del pulgar */.btn.subback{display:flex!important;width:fit-content;margin-left:auto!important;align-self:flex-end!important}.devkeep{justify-content:space-between}.devkeep .btn.devno{margin-left:auto}.estop.devol .acts a,.estop.devol .acts button,.estop.devol .acts2 a,.estop.devol .acts2 button,.estop.devol .eub{pointer-events:none;opacity:.45}.estop.devol .acts3{filter:none}.coordbtn{display:inline-flex;align-items:center;font:600 12px var(--f-body);padding:5px 10px;border-radius:999px;background:var(--road);color:var(--road-ink);border:1px solid var(--road);text-decoration:none;min-height:30px;vertical-align:1px;white-space:nowrap}.pkg .name>.coordbtn{margin-left:auto} /* 1.73.0: Coordinar a la derecha */
+/* 1.81.4: lista de resultados en Marcar en el mapa */.pickres{display:flex;flex-direction:column;gap:6px;max-height:190px;overflow:auto;margin:6px 0}.pickopt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:8px 10px;min-height:44px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit;cursor:pointer}.pickopt[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
 .coordbtn.off{background:var(--surface);color:var(--muted);border-color:var(--line)}.ttbtn-on{background:#e8f6ee;border-color:#1f9d55;color:#146c3b;font-weight:700}.vehsel{display:inline-flex;gap:4px;vertical-align:middle}.vehsel button{font-size:20px;line-height:1;min-width:40px;min-height:34px;padding:4px 6px;border-radius:10px;border:1px solid var(--line);background:var(--surface);cursor:pointer;filter:grayscale(1);opacity:.6}.vehsel button.on{filter:none;opacity:1;border-color:#f26b1d;box-shadow:0 0 0 2px rgba(242,107,29,.25)}.replin{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line)}.replin:first-child{border-top:0}.replin .btn{width:auto;flex:none}.chips1{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;vertical-align:1px}button.devtag{border:0;cursor:pointer;font-family:inherit;min-height:28px}button.devtag:active{transform:scale(.96)}.devtag,.chip.devtag{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:#5f6368;color:#fff;vertical-align:1px}.estop .acts3 .edevol{font-weight:700;padding:7px 14px;color:var(--bad);border-color:var(--bad)}
 .estop .n{width:30px;height:30px;border-radius:50%;background:#d7261e;color:#fff;font:700 13px var(--f-body);display:flex;align-items:center;justify-content:center;grid-row:span 2}
 .estop.ok .n{background:#9aa0a6}#pkgList .pkg.sinub{border:2px solid var(--bad,#d93025)}.pkg.entregado{background:#eceef0;filter:grayscale(1);opacity:.6}.pkg.entregado:focus-within{opacity:1}.pkg .num.tachado{color:#9aa0a6} /* 1.73.0: sin tachado */.estop .n.no{background:#f5c518;color:#1f2125}
@@ -451,7 +452,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.81.3</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.81.4</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 <div class="sheet" id="podSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="podTitle">
@@ -494,6 +495,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
   <p class="small muted" id="pickWho"></p>
   <p class="small" id="pickAviso"></p>
   <form id="pickBusca" class="row" style="gap:6px;flex-wrap:nowrap"><input id="pickQ" type="search" placeholder="Buscar lugar, barrio o dirección" aria-label="Buscar en el mapa" style="flex:1;min-width:0"><button class="btn sm" type="submit">🔍 Buscar</button></form>
+  <div id="pickRes" class="pickres" hidden></div>
   <div id="pickMap" style="height:300px;border-radius:12px;margin:6px 0"></div>
   <p class="small muted" id="pickInfo">Tocá el mapa donde va el paquete. Podés acercar con dos dedos.</p>
   <div class="row"><button class="btn primary" id="pickOk" type="button" disabled>Usar este punto</button><button class="btn ghost" id="pickCancel" type="button">Cancelar</button></div>
@@ -1215,25 +1217,35 @@ $('#pasteMapa').onclick=()=>{if(!PASTE)return;const p=PASTE,t=$('#pasteBoxR').va
 let PICK=null,PMAP=null;
 // 1.81.3: buscar solo cerca de tu zona: el centro (mediana) de los demás paquetes con ubicación, si no tu GPS, si no el punto de inicio, si no San José.
 // Un resultado a más de PICK_KM en línea recta no se da por bueno (hay negocios con el mismo nombre en otras provincias).
-const PICK_KM=30;
+const PICK_KM=30; // 1.81.4: ya no es un límite; solo decide si el resultado más cercano se marca solo
 function pickRef(p){const cs=S.pk.filter(q=>q!==p).map(q=>parseCoord(q.ubic)).filter(Boolean);
   if(cs.length>=3){const med=a=>{a=a.slice().sort((x,y)=>x-y);return a[Math.floor(a.length/2)]};return [med(cs.map(c=>c[0])),med(cs.map(c=>c[1]))]}
   return (EPOS&&EPOS.c)||cs[0]||parseCoord(S.start)||[9.9333,-84.0833]}
 const pickKm=(a,b)=>hav(a,b)/1.35;
-// 1.81.2: si hay clave de TomTom (la misma de 🚦 Tráfico, plan gratis) busca primero ahí: conoce muchos más negocios que OpenStreetMap
-async function pickTomTom(q){if(!S.ttKey||!q)return null;const R=PICK.ref;try{const r=await fetch(`https://api.tomtom.com/search/2/search/${encodeURIComponent(q)}.json?key=${encodeURIComponent(S.ttKey)}&countrySet=CR&limit=1&language=es-419&lat=${R[0]}&lon=${R[1]}&radius=${PICK_KM*1000}`);if(!r.ok)return null;const j=await r.json(),x=j.results&&j.results[0];
-  return x&&x.position&&(x.type==='POI'||x.type==='Point Address'||x.type==='Address Range'||x.type==='Street')?{c:[+x.position.lat,+x.position.lon],poi:x.type==='POI',txt:(x.poi&&x.poi.name?x.poi.name+', ':'')+((x.address&&x.address.freeformAddress)||'')}:null}catch(e){return null}}
-async function pickBuscar(q){if(!q)return null;const R=PICK.ref,d=PICK_KM/111;try{const r=await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=cr&bounded=1&viewbox='+[R[1]-d,R[0]+d,R[1]+d,R[0]-d].map(x=>x.toFixed(4)).join(',')+'&q='+encodeURIComponent(q));const j=await r.json();return j[0]?[+j[0].lat,+j[0].lon]:null}catch(e){return null}}
+// 1.81.4: varios resultados (TomTom con la clave gratis de 🚦 Tráfico + OpenStreetMap) con provincia y distancia; el mensajero escoge.
+async function pickTomTom(q){if(!S.ttKey||!q)return [];const R=PICK.ref;try{const r=await fetch(`https://api.tomtom.com/search/2/search/${encodeURIComponent(q)}.json?key=${encodeURIComponent(S.ttKey)}&countrySet=CR&limit=6&language=es-419&lat=${R[0]}&lon=${R[1]}`);if(!r.ok)return [];const j=await r.json();
+  return (j.results||[]).filter(x=>x.position).map(x=>{const A=x.address||{};return {c:[+x.position.lat,+x.position.lon],poi:x.type==='POI',nom:(x.poi&&x.poi.name)||A.streetName||A.freeformAddress||q,dir:[A.municipalitySubdivision,A.municipality,A.countrySubdivision].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).join(', ')}})}catch(e){return []}}
+async function pickOsm(q){if(!q)return [];try{const r=await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=6&countrycodes=cr&q='+encodeURIComponent(q));const j=await r.json();
+  return (j||[]).map(x=>{const d=String(x.display_name||'').split(',').map(t=>t.trim()).filter(t=>t&&!/^\d+$/.test(t)&&t!=='Costa Rica');return {c:[+x.lat,+x.lon],poi:!!x.name,nom:x.name||d[0]||q,dir:d.slice(1).slice(-3).join(', ')}})}catch(e){return []}}
+async function pickBuscar(q){const r=await pickOsm(q);return r[0]?r[0].c:null}
+async function pickTodos(q){const T=[...await pickTomTom(q),...await pickOsm(q)],out=[];
+  for(const x of T){x.c=[+x.c[0].toFixed(6),+x.c[1].toFixed(6)];x.km=pickKm(PICK.ref,x.c);if(!out.some(y=>pickKm(y.c,x.c)<0.15))out.push(x)}
+  return out.sort((a,b)=>a.km-b.km).slice(0,6)}
+function pickLista(R,auto){const el=$('#pickRes');PICK.res=R;
+  el.innerHTML=R.map((x,i)=>`<button type="button" class="pickopt" data-i="${i}"><b>${esc(x.nom)}</b><span class="small muted">${esc(x.dir||'')}${x.dir?' · ':''}${x.km<1?'menos de 1':Math.round(x.km)} km</span></button>`).join('');
+  el.hidden=!R.length;if(auto!=null&&R[auto])pickElegir(auto)}
+function pickElegir(i){const x=PICK.res[i];if(!x)return;PMAP.setView(x.c,17);pickPoner(x.c);document.querySelectorAll('#pickRes .pickopt').forEach(b=>b.setAttribute('aria-pressed',b.dataset.i==i))}
+$('#pickRes').addEventListener('click',e=>{const b=e.target.closest('.pickopt');if(b&&PICK){pickElegir(+b.dataset.i);$('#pickInfo').textContent='Revisá el pin; si no es ahí, escogé otro o tocá el punto correcto.'}});
 async function pickAbrir(p,t){
   // 1.81.1: primero lo que pegaste (nombre del negocio + dirección); la ubicación guardada solo si no pegaste nada
-  const lg=lugarDe(t),pegado=!!(lg.nombre||lg.zona),actual=pegado?null:parseCoord(p.ubic);PICK={p,c:actual,ref:pickRef(p)};
-  $('#pickWho').textContent=p.nombre||'';$('#pickQ').value=[lg.nombre,lg.zona].filter(Boolean).join(', ');
-  $('#pickAviso').innerHTML=pegado?`Lo que pegaste es un <b>lugar o negocio</b> (${esc(lg.nombre)}), no una ubicación con coordenadas. Revisá el punto en el mapa, o pedile al cliente: 📎 &gt; <b>Ubicación</b> &gt; <b>Enviar mi ubicación actual</b>.`:'Marcá el punto exacto de la entrega.';
+  const lg=lugarDe(t),pegado=!!(lg.nombre||lg.zona),actual=pegado?null:parseCoord(p.ubic);PICK={p,c:actual,ref:pickRef(p),res:[]};
+  $('#pickWho').textContent=p.nombre||'';$('#pickQ').value=[lg.nombre,lg.zona].filter(Boolean).join(', ');$('#pickRes').innerHTML='';$('#pickRes').hidden=true;
+  $('#pickAviso').innerHTML=pegado?`Lo que pegaste es un <b>lugar o negocio</b> (${esc(lg.nombre)}), no una ubicación con coordenadas. Escogé el correcto de la lista, o pedile al cliente: 📎 &gt; <b>Ubicación</b> &gt; <b>Enviar mi ubicación actual</b>.`:'Marcá el punto exacto de la entrega.';
   $('#pickOk').disabled=!actual;$('#pickInfo').textContent='Buscando en el mapa…';$('#pickSheet').hidden=false;document.body.style.overflow='hidden';
   try{if(!document.querySelector('link[data-leaflet]')){const l=document.createElement('link');l.rel='stylesheet';l.href=CSS_MAP;l.dataset.leaflet=1;document.head.appendChild(l)}
     await loadScript(LIB_MAP)}catch(e){$('#pickInfo').textContent='No se pudo cargar el mapa. Revisá el internet.';return}
   if(!PMAP){PMAP=L.map('pickMap');L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(PMAP);
-    PMAP.on('click',e=>{if(!PICK)return;pickPoner([+e.latlng.lat.toFixed(6),+e.latlng.lng.toFixed(6)]);$('#pickInfo').textContent='Listo. Si no es ahí, tocá otro punto.'})}
+    PMAP.on('click',e=>{if(!PICK)return;pickPoner([+e.latlng.lat.toFixed(6),+e.latlng.lng.toFixed(6)]);document.querySelectorAll('#pickRes .pickopt').forEach(b=>b.setAttribute('aria-pressed','false'));$('#pickInfo').textContent='Listo. Si no es ahí, tocá otro punto.'})}
   if(PMAP.pin){PMAP.removeLayer(PMAP.pin);PMAP.pin=null}
   PMAP.setView(actual||PICK.ref,actual?17:13);setTimeout(()=>PMAP.invalidateSize(),50);
   if(actual){pickPoner(actual);$('#pickInfo').textContent='Esta es la ubicación guardada. Tocá otro punto para cambiarla.';return}
@@ -1241,24 +1253,22 @@ async function pickAbrir(p,t){
   // Dirección limpia: sin código postal ni "CR-SJ, CR"; "Ruta Nacional Secundaria 211" también se prueba como "Ruta 211"
   const zona=lg.zona.replace(/\b\d{5}\b/g,'').replace(/\bCR(-[A-Z]{1,2})?\b/g,'').replace(/(\s*,\s*)+/g,', ').replace(/^[ ,]+|[ ,]+$/g,'');
   const ruta=zona.replace(/Ruta Nacional (Primaria|Secundaria|Terciaria)\s*/i,'Ruta '),ciudad=zona.split(',').map(x=>x.trim()).filter(Boolean).pop()||'';
-  const exactos=[lg.nombre&&zona&&`${lg.nombre}, ${zona}`,lg.nombre&&ciudad&&`${lg.nombre}, ${ciudad}`,lg.nombre].filter(Boolean),aprox=[zona,ruta!==zona&&ruta,ciudad].filter(Boolean);
-  let c=null,ex=false;const tt=lg.nombre?await pickTomTom([lg.nombre,zona||ciudad].filter(Boolean).join(', ')):null;if(tt&&tt.poi){c=tt.c;ex=true}
-  if(!c)for(const q of [...new Set(exactos)]){c=await pickBuscar(q);if(c){ex=true;break}}
-  if(!c)for(const q of [...new Set(aprox)]){c=await pickBuscar(q);if(c)break}
+  let R=[];for(const q of [...new Set([lg.nombre&&zona&&`${lg.nombre}, ${zona}`,lg.nombre].filter(Boolean))]){R=await pickTodos(q);if(R.length)break}
   if(!PICK||PICK.p!==p)return;
-  if(c&&pickKm(PICK.ref,c)>PICK_KM){PMAP.setView(PICK.ref,13);$('#pickInfo').textContent=`Encontré algo con ese nombre pero queda a ${Math.round(pickKm(PICK.ref,c))} km de tu zona; no parece el correcto. Buscá el barrio o tocá el punto.`;return}
-  if(c&&ex){c=[+c[0].toFixed(6),+c[1].toFixed(6)];PMAP.setView(c,17);pickPoner(c);$('#pickInfo').textContent=`Encontré "${tt&&tt.poi&&tt.txt?tt.txt:lg.nombre}". Revisá que el pin esté bien; si no, tocá el punto correcto.`}
-  else if(c){PMAP.setView(c,15);$('#pickInfo').textContent=`No encontré "${lg.nombre}"; el mapa quedó cerca de ${zona||ciudad}. Tocá el punto exacto.`}
+  if(R.length){const cerca=R[0].km<=PICK_KM;pickLista(R,cerca?0:null);if(!cerca)PMAP.setView(R[0].c,13);
+    $('#pickInfo').textContent=cerca?`Marqué el más cercano (${R[0].nom}). Si no es, escogé otro de la lista o tocá el punto.`:`Ninguno está cerca de tu zona. Escogé el correcto de la lista (mirá la provincia) o tocá el punto.`;return}
+  let c=null;for(const q of [...new Set([zona,ruta!==zona&&ruta,ciudad].filter(Boolean))]){c=await pickBuscar(q);if(c)break}
+  if(!PICK||PICK.p!==p)return;
+  if(c){PMAP.setView(c,15);$('#pickInfo').textContent=`No encontré "${lg.nombre}"; el mapa quedó cerca de ${zona||ciudad}. Tocá el punto exacto.`}
   else $('#pickInfo').textContent=lg.nombre?`No encontré "${lg.nombre}". Escribí arriba el barrio o una calle cercana y tocá 🔍 Buscar, o tocá el punto en el mapa.`:'Tocá el mapa donde va el paquete.'}
 function pickPoner(c){PICK.c=c;if(PMAP.pin)PMAP.pin.setLatLng(c);else PMAP.pin=L.marker(c).addTo(PMAP);$('#pickOk').disabled=false}
 function pickCerrar(){PICK=null;$('#pickSheet').hidden=true;document.body.style.overflow=''}
 $('#pickCancel').onclick=pickCerrar;
-// 1.81.2: buscar a mano dentro del mapa (TomTom si hay clave, si no OpenStreetMap)
+// 1.81.2: buscar a mano dentro del mapa; 1.81.4: muestra la lista de resultados
 $('#pickBusca').onsubmit=async e=>{e.preventDefault();const q=$('#pickQ').value.trim();if(!q||!PMAP)return;$('#pickInfo').textContent='Buscando…';
-  const tt=await pickTomTom(q);const c=tt?tt.c:await pickBuscar(q);if(!PICK)return;
-  if(c&&pickKm(PICK.ref,c)>PICK_KM){$('#pickInfo').textContent=`"${q}" queda a ${Math.round(pickKm(PICK.ref,c))} km de tu zona; no parece el correcto. Probá con el barrio o tocá el punto.`;return}
-  if(c){const cc=[+c[0].toFixed(6),+c[1].toFixed(6)];PMAP.setView(cc,17);pickPoner(cc);$('#pickInfo').textContent=`${tt&&tt.txt?'Encontré: '+tt.txt+'. ':''}Revisá el pin; si no es ahí, tocá el punto correcto.`}
-  else $('#pickInfo').textContent=`No encontré "${q}". Probá con el barrio o una calle cercana, o tocá el punto en el mapa.`};
+  const R=await pickTodos(q);if(!PICK)return;
+  if(R.length){pickLista(R,R.length===1?0:null);$('#pickInfo').textContent=R.length===1?'Revisá el pin; si no es ahí, tocá el punto correcto.':'Escogé el correcto de la lista (mirá la provincia y los km).'}
+  else{pickLista([]);$('#pickInfo').textContent=`No encontré "${q}". Probá con el barrio o una calle cercana, o tocá el punto en el mapa.`}};
 $('#pickOk').onclick=()=>{if(!PICK||!PICK.c)return;const p=PICK.p;p.ubic=cTxt(PICK.c);if(p.st==='pendiente'||p.st==='noresponde')p.st='confirmado';S.route=null;pickCerrar();save();render();toast(`${p.nombre}: 📍 ubicación lista${p.horario?' · 🕓 '+p.horario:''}`)};
 
 // ---- Prueba de entrega: GPS + fecha/hora + mínimo 3 fotos con sello ----

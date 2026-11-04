@@ -185,6 +185,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 ## 3c-quindecies. Tarjeta desactivada por Devolver (1.66.0)
 
+- 1.81.4: sin límite de distancia. `pickTodos(q)` junta `pickTomTom` (hasta 6, sesgo `lat/lon` sin `radius`) y `pickOsm` (Nominatim, 6, sin `viewbox`), quita repetidos a menos de 150 m, calcula `km` desde `PICK.ref` y ordena por cercanía. `pickLista(R,auto)` pinta `#pickRes` (`.pickopt`, `aria-pressed`) y `pickElegir(i)` pone el pin. Se marca solo el primero si `km<=PICK_KM`.
 - 1.81.3: `pickRef(p)` = mediana de las coordenadas de los demás paquetes (3 o más), si no `EPOS`, `S.start` o San José; se guarda en `PICK.ref`. TomTom recibe `lat`, `lon` y `radius` (`PICK_KM`=30 km) y Nominatim `viewbox` con `bounded=1`. Si un resultado queda a más de `PICK_KM` (`pickKm`, `hav` sin el ×1,35) no pone pin y avisa.
 - 1.81.2: `pickTomTom(q)` usa TomTom Search (`/search/2/search/{q}.json`, `countrySet=CR`, `S.ttKey`) y solo cuenta como hallazgo exacto si `type==="POI"`; se prueba antes que Nominatim. `#pickBusca` (`#pickQ`, se llena con nombre y zona pegados) busca a mano: TomTom y si no Nominatim, pone el pin.
 - 1.81.1: `pickAbrir` prioriza lo pegado: si `lugarDe(t)` trae nombre o zona ignora `p.ubic`; limpia la zona (sin código postal ni `CR-SJ, CR`), prueba en Nominatim "nombre, zona", "nombre, ciudad", "nombre" (si encuentra, pone el pin y habilita *Usar este punto*) y luego la zona, "Ruta N, ciudad" y la ciudad (solo centra). La ubicación guardada sale solo con el botón 🎯 y nada pegado.
