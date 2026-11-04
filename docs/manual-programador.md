@@ -186,6 +186,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 ## 3c-quindecies. Tarjeta desactivada por Devolver (1.66.0)
 
+- 1.85.2: en modo a mano `pickAbrir` ya no busca (return antes de `pickTodos`; el código de búsqueda queda sin usar), `#pickBusca` va `hidden` y `#pickAviso` dice que se guíe por la tarjeta. `pickTodos`, `pickTomTom`, `pickOsm` y `pickLista` se pueden borrar más adelante.
 - 1.84.1: se quitaron `#pickPedir`, `PIDE_UBIC` y `p.pideUbic`; `#pickNeg` solo trae la guía de Waze y `#pickAMano`.
 - 1.82.0: `pickAbrir(p,t,mano)`: con negocio pegado y sin `mano` (`guia`) muestra `#pickNeg` (título "📍 Falta la ubicación", `#pickPedir` = `waLink(p, fill(PIDE_UBIC,p))`, guía de Waze) y esconde `#pickManual` y `#pickOk`, sin buscar. `#pickPedir` marca `p.pideUbic` y cierra. `#pickAMano` llama `pickAbrirMano` (= `pickAbrir(p,t,true)`) con el buscador y la lista de antes.
 - 1.81.5: el autoseleccionado exige que todas las palabras del nombre pegado (3+ letras, sin "bar", "restaurante", "soda", etc.) estén en `x.nom` (sin tildes) y `km<=PICK_KM`; si no, `pickLista(R,null)` y el mapa vuelve a `PICK.ref`.

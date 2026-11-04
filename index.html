@@ -461,7 +461,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.85.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.85.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -517,7 +517,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <button class="btn sm" id="pickAMano" type="button">🎯 Marcar a mano en el mapa</button>
   </div>
   <div id="pickManual">
-  <form id="pickBusca" class="row" style="gap:6px;flex-wrap:nowrap"><input id="pickQ" type="search" placeholder="Buscar lugar, barrio o dirección" aria-label="Buscar en el mapa" style="flex:1;min-width:0"><button class="btn sm" type="submit">🔍 Buscar</button></form>
+  <form id="pickBusca" class="row" style="gap:6px;flex-wrap:nowrap" hidden><input id="pickQ" type="search" placeholder="Buscar lugar, barrio o dirección" aria-label="Buscar en el mapa" style="flex:1;min-width:0"><button class="btn sm" type="submit">🔍 Buscar</button></form>
   <div id="pickRes" class="pickres" hidden></div>
   <div id="pickMap" style="height:300px;border-radius:12px;margin:6px 0"></div>
   <p class="small muted" id="pickInfo">Tocá el mapa donde va el paquete. Podés acercar con dos dedos.</p>
@@ -1266,7 +1266,7 @@ async function pickAbrir(p,t,mano){
   // 1.81.1: primero lo que pegaste (nombre del negocio + dirección); la ubicación guardada solo si no pegaste nada
   const lg=lugarDe(t),pegado=!!(lg.nombre||lg.zona),guia=pegado&&!mano,actual=pegado?null:parseCoord(p.ubic);PICK={p,c:actual,ref:pickRef(p),res:[]};
   $('#pickWho').textContent=p.nombre||'';$('#pickQ').value=[lg.nombre,lg.zona].filter(Boolean).join(', ');$('#pickRes').innerHTML='';$('#pickRes').hidden=true;
-  $('#pickAviso').innerHTML=pegado?`Lo que pegaste es un <b>lugar o negocio</b> (${esc(lg.nombre)}), no una ubicación con coordenadas. Escogé el correcto de la lista, o pedile al cliente: 📎 &gt; <b>Ubicación</b> &gt; <b>Enviar mi ubicación actual</b>.`:'Marcá el punto exacto de la entrega.';
+  $('#pickAviso').innerHTML='Acercá el mapa a donde muestra la tarjeta de WhatsApp y tocá el punto exacto.'; // 1.85.2: sin lista ni búsqueda por nombre
   $('#pickOk').disabled=!actual;$('#pickInfo').textContent='Buscando en el mapa…';$('#pickSheet').hidden=false;document.body.style.overflow='hidden';
   // 1.82.0: con un negocio pegado, lo principal es pedirle la ubicación al cliente o sacarla con Waze; el mapa queda en "Marcar a mano"
   $('#pickTitle').textContent=guia?'📍 Falta la ubicación':'🎯 Marcar en el mapa';$('#pickNeg').hidden=!guia;$('#pickManual').hidden=guia;$('#pickOk').hidden=guia;
@@ -1279,7 +1279,7 @@ async function pickAbrir(p,t,mano){
   if(PMAP.pin){PMAP.removeLayer(PMAP.pin);PMAP.pin=null}
   PMAP.setView(actual||PICK.ref,actual?17:13);setTimeout(()=>PMAP.invalidateSize(),50);
   if(actual){pickPoner(actual);$('#pickInfo').textContent='Esta es la ubicación guardada. Tocá otro punto para cambiarla.';return}
-  if(!pegado){$('#pickInfo').textContent='Tocá el mapa donde va el paquete.';return}
+  $('#pickInfo').textContent='Tocá el mapa donde va el paquete. Podés acercar con dos dedos.';return; // 1.85.2: ya no busca el nombre (los mapas gratis no tienen negocios pequeños y salían lugares equivocados)
   // Dirección limpia: sin código postal ni "CR-SJ, CR"; "Ruta Nacional Secundaria 211" también se prueba como "Ruta 211"
   const zona=lg.zona.replace(/\b\d{5}\b/g,'').replace(/\bCR(-[A-Z]{1,2})?\b/g,'').replace(/(\s*,\s*)+/g,', ').replace(/^[ ,]+|[ ,]+$/g,'');
   const ruta=zona.replace(/Ruta Nacional (Primaria|Secundaria|Terciaria)\s*/i,'Ruta '),ciudad=zona.split(',').map(x=>x.trim()).filter(Boolean).pop()||'';
