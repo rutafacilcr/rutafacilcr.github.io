@@ -22,7 +22,7 @@ Resumen de cómo está la app ahora. Más abajo se explica cada parte con la ver
 - Arriba, cinco contadores: **Recibidos**, **Entregados**, **Hold**, **Devueltos** y **Sin 📍** (sin ubicación).
 - Cuatro botones grandes: **🧹 Vaciar lista** (en rojo), **Agregar a mano**, **Importar** y **Escanear**.
 - Después, el buscador 🔍 y enseguida las tarjetas (desde la 1.69.1 ya no está el título *Lista del día*).
-- El orden de las tarjetas es: activos, Hold, devueltos y al final los entregados (en gris; desde la 1.73.0 el número ya no sale tachado).
+- El orden de las tarjetas es (desde la 1.92.3): primero los que tienen ubicación o ya están en la ruta, luego Hold, luego los que no tienen ubicación ni están en la ruta, después los devueltos (y ⛔ Devolver) y al final los entregados (en gris; desde la 1.73.0 el número ya no sale tachado).
 - Cada tarjeta tiene **1. Coordinar** (arriba a la derecha desde la 1.73.0), **Pegar respuesta**, **Editar**, **Escáner**, **Eliminar** (1.69.9; antes *Borrar*), **Devuelto** y **WhatsApp**.
 - **⛔ Devolver en Ruta (1.87.0):** el paquete sale de la ruta y queda en *Paquetes* con ⛔ Devolver, para que al final del día sepás qué llevar al almacén. **↩ Quitar devolver** lo vuelve a meter en la ruta (si tiene ubicación).
 - **Pedir ubicación (1.91.0):** el botón negro a la par del nombre (antes *1. Coordinar*) abre WhatsApp con el mensaje para pedir la ubicación. Solo sale cuando el paquete **no tiene ubicación**; si la tiene se quita, y si se la borrás con *Editar*, vuelve.

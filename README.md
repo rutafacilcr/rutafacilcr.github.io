@@ -14,7 +14,7 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
   - Cinco contadores: Recibidos, Entregados, Hold, Devueltos y Sin 📍.
   - Cuatro botones grandes: 🧹 Vaciar lista, Agregar a mano, Importar y Escanear.
   - Un buscador por nombre, teléfono, guía o número.
-  - Las tarjetas van en orden: activos, Hold, devueltos y al final los entregados en gris.
+  - Las tarjetas van en orden (1.92.3): con ubicación o en la ruta, Hold, sin ubicación ni ruta, devueltos y al final los entregados en gris.
   - Los paquetes ⛔ Devolver y ⛔ Devuelto quedan desactivados, con un solo botón para quitar la marca.
   - Botón 📷 que abre el WhatsApp del cliente para mandarle una foto (1.92.2).
   - Todas las fechas salen como dd/mm/aaaa (1.92.2).
