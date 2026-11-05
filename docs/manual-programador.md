@@ -186,6 +186,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 ## 3c-quindecies. Tarjeta desactivada por Devolver (1.66.0)
 
+- 1.92.2: helpers `fDMY(t)` (dd/mm/aaaa), `fDMYh(t)` (con hora) e `isoDMY(x)` (cambia AAAA-MM-DD a dd/mm/aaaa solo para mostrar; el nombre guardado de la ruta y los nombres de archivo siguen en ISO). `fmtDT`, `tomorrow`, `repEntregasDe`, el encabezado de Ruta y `#entInfo` los usan; `admin.html` y `auth.js` tienen su propio `fecha`. `FIL.dev` = `p.devolver && p.st!=='entregado'` con su botón `dev` en `#msgFil`. Tarjeta de Paquetes: `<a class="btn sm wa">📷</a>` con `https://wa.me/<tel>` antes del botón *WhatsApp*.
 - 1.92.1: `.vcfrow`, su `<p>` y los avisos `#xlsIos` / `#vcfIos` se movieron a `#vcfPanel`, después de `#msgList` y `#syncPanel` y antes de `#tplPanel`.
 - 1.92.0: en Mensajes la etiqueta es `msgChip(p)` (un `<span class="msgst">`, no se toca) con `msgEst(p)`: `ok` si `p.st==='confirmado'` o tiene coordenadas, `esp` si `p.sent`, si no `sin`. Los filtros `FIL` usan `msgEst`. En Paquetes y Ruta `p.st` sigue igual; `stChip` ya no se usa en Mensajes.
 - 1.91.1: en `msgOpts` la clave `coord` se muestra como "Pedir ubicación" (la clave interna sigue siendo `coord`).

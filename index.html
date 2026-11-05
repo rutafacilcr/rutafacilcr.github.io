@@ -475,7 +475,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.92.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.92.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -616,7 +616,11 @@ const trasPintar=fn=>requestAnimationFrame(()=>setTimeout(fn,0));
 const KEY='rutafacil-cr-v1';
 const STATUS=[['pendiente','Pendiente'],['confirmado','Confirmado'],['noresponde','No responde'],['entregado','Entregado'],['fallido','No se entregó'],['devuelto','Devuelto']];
 const SLABEL=Object.fromEntries(STATUS);
-const tomorrow=()=>{const d=new Date();d.setDate(d.getDate()+1);return d.toLocaleDateString('es-CR',{weekday:'long',day:'numeric',month:'long'})};
+// 1.92.2: todas las fechas que se ven van como dd/mm/aaaa (pedido de Victor)
+const fDMY=t=>{const d=new Date(t);return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`};
+const fDMYh=t=>fDMY(t)+' '+new Date(t).toLocaleTimeString('es-CR',{hour:'numeric',minute:'2-digit'});
+const isoDMY=x=>String(x||'').replace(/(\d{4})-(\d{2})-(\d{2})/g,'$3/$2/$1'); // "Ruta 2026-11-03" → "Ruta 03/11/2026" (solo para mostrar)
+const tomorrow=()=>{const d=new Date();d.setDate(d.getDate()+1);return d.toLocaleDateString('es-CR',{weekday:'long'})+' '+fDMY(d)};
 const CEDULA='Recuerde que para la entrega debe presentar la cédula.';
 const DEF_SIMPLE='Hola {nombre}, soy {yo}, le llevo su paquete de Temu el {fecha}. ¿A qué hora le queda bien recibirlo? Si puede, mándeme su ubicación por aquí 📍 '+CEDULA+' ¡Gracias!';
 const DEF_COORD3='Hola {nombre} , soy {yo} tenemos un paquete de *TEMU* a su nombre y nos gustaria coordinar la entrega para el {fecha}.\n\nNos puedes enviar la ubicación por acá para agrfegarlo a la ruta, una vez que tengamos la ubicacion nos contactamoos con usted para la hora.';
@@ -775,7 +779,7 @@ function renderPk(){
     <div class="meta"><span class="mono">${p.tel?`Tel. ${esc(p.tel)}`:'sin teléfono'}</span>${p.guia?`<span class="mono">Guía: ${esc(p.guia)}</span>`:''}<span class="pin ${c?'yes':'no'}">${c?'● Ubicación lista':'○ Falta ubicación'}</span>${S.ent&&S.ent.stops?(enR[p.id]?(enR[p.id].c||!c||p.st==='entregado'||p.st==='devuelto'?`<span class="small muted">🏍️ En la ruta${enR[p.id].c?'':' (sin ubicación)'}</span>`:''):c&&p.st!=='entregado'&&p.st!=='devuelto'?'':'<span class="small muted">No está en la ruta</span>'):''}</div>${p.ubic&&!c?`<div class="small ubwarn" style="color:var(--bad)">⚠ No reconozco esta ubicación (${esc(String(p.ubic).slice(0,40))}). Pegá el link que trae coordenadas, por ejemplo el de "Compartir ubicación" de WhatsApp o un link de Waze.</div>`:''}${p.pod?`<div class="ev">📷 ${p.pod.n} fotos · ${fmtDT(p.pod.at)}${p.pod.lat!=null?' · 📍 ±'+Math.round(p.pod.acc)+' m':' · sin GPS'} · ${p.pod.up?'☁️ respaldada':'⏳ sin subir'} <button class="btn sm" data-act="ev" data-id="${p.id}" style="margin-left:4px">Ver evidencia</button></div>`:p.entAt?`<div class="ev">✓ Entregado ${fmtDT(p.entAt)}${p.entGps?` · <a href="https://www.google.com/maps?q=${p.entGps.lat},${p.entGps.lng}" target="_blank" rel="noopener">📍 dónde (±${p.entGps.acc} m)</a>`:' · sin GPS'}</div>`:''}
     <div class="pkruta">${S.ent&&S.ent.stops?(enR[p.id]?(enR[p.id].c||!c||p.st==='entregado'||p.st==='devuelto'?'':`<button class="btn sm" data-act="aruta" data-id="${p.id}">📍 Poner en la ruta</button>`):c&&p.st!=='entregado'&&p.st!=='devuelto'&&!p.devolver?`<button class="btn sm" data-act="aruta" data-id="${p.id}">➕ Agregar a la ruta</button>`:''):''}<button class="btn sm primary" data-act="paste" data-id="${p.id}">📋 Pegar respuesta</button></div>
     <div class="actions"><button class="btn sm" data-act="edit" data-id="${p.id}">Editar</button><button class="btn sm" data-act="rescan" data-id="${p.id}" title="Volver a escanear la etiqueta de este paquete"><svg class="bcico" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="vertical-align:-0.15em"><rect x="2" y="4" width="2" height="16"/><rect x="5.5" y="4" width="1" height="16"/><rect x="8" y="4" width="2.5" height="16"/><rect x="12" y="4" width="1" height="16"/><rect x="14.5" y="4" width="2" height="16"/><rect x="18" y="4" width="1" height="16"/><rect x="20.5" y="4" width="1.5" height="16"/></svg> Escáner</button></div>
-    <div class="actions"><button class="btn sm ghost danger" data-act="del" data-id="${p.id}">Eliminar</button><button class="btn sm" data-act="dev" data-id="${p.id}">${p.st==='devuelto'?'↪ Regresar a Ruta':'↩ Devuelto'}</button>${phoneWA(p.tel)?`<a class="btn sm wa" href="https://wa.me/${phoneWA(p.tel)}" target="_blank" rel="noopener">WhatsApp</a>`:''}</div>
+    <div class="actions"><button class="btn sm ghost danger" data-act="del" data-id="${p.id}">Eliminar</button><button class="btn sm" data-act="dev" data-id="${p.id}">${p.st==='devuelto'?'↪ Regresar a Ruta':'↩ Devuelto'}</button>${phoneWA(p.tel)?`<a class="btn sm wa" href="https://wa.me/${phoneWA(p.tel)}" target="_blank" rel="noopener" title="Abrir el WhatsApp de este cliente para mandarle una foto" aria-label="Abrir WhatsApp para mandar foto">📷</a><a class="btn sm wa" href="https://wa.me/${phoneWA(p.tel)}" target="_blank" rel="noopener">WhatsApp</a>`:''}</div>
     ${devBar(p,1)}
   </div>`});
   // 1.74.0: con listas grandes (cientos de paquetes) se pintan las primeras 60 de una vez y el resto en tandas,
@@ -804,9 +808,9 @@ function renderMsg(){
   const q=($('#m-buscar').value||'').trim().toLowerCase(),qd=q.replace(/\D/g,'');
   // Buscar: por nombre o guía, o por los últimos dígitos del teléfono (sirve para ver de quién es un número que contesta)
   // 1.88.0: filtros por estado (Todos, Sin contestar, No responde, Confirmados). Solo cuentan los que siguen activos (no entregados, devueltos ni para devolver)
-  const act=p=>p.st!=='entregado'&&p.st!=='devuelto'&&!p.devolver,FIL={sin:p=>act(p)&&msgEst(p)==='sin',nr:p=>act(p)&&msgEst(p)==='esp',ok:p=>act(p)&&msgEst(p)==='ok'}; // 1.92.0: estado automático
+  const act=p=>p.st!=='entregado'&&p.st!=='devuelto'&&!p.devolver,FIL={sin:p=>act(p)&&msgEst(p)==='sin',nr:p=>act(p)&&msgEst(p)==='esp',ok:p=>act(p)&&msgEst(p)==='ok',dev:p=>p.devolver&&p.st!=='entregado'}; // 1.92.0: estado automático · 1.92.2: filtro Devolver
   if(MSGF!=='todos'&&!FIL[MSGF])MSGF='todos';
-  $('#msgFil').innerHTML=[['todos','Todos',S.pk.length],['sin','🟡 Sin enviar',S.pk.filter(FIL.sin).length],['nr','📨 Esperando respuesta',S.pk.filter(FIL.nr).length],['ok','🔵 Confirmados',S.pk.filter(FIL.ok).length]].map(([k,t,n])=>`<button type="button" data-msgf="${k}" aria-pressed="${k===MSGF}">${t} <b>${n}</b></button>`).join('');
+  $('#msgFil').innerHTML=[['todos','Todos',S.pk.length],['sin','🟡 Sin enviar',S.pk.filter(FIL.sin).length],['nr','📨 Esperando respuesta',S.pk.filter(FIL.nr).length],['ok','🔵 Confirmados',S.pk.filter(FIL.ok).length],['dev','⛔ Devolver',S.pk.filter(FIL.dev).length]].map(([k,t,n])=>`<button type="button" data-msgf="${k}" aria-pressed="${k===MSGF}">${t} <b>${n}</b></button>`).join('');
   const hit=p=>(MSGF==='todos'||FIL[MSGF](p))&&hit0(p),hit0=p=>!q||(p.nombre||'').toLowerCase().includes(q)||(p.guia||'').toLowerCase().includes(q)||(qd.length>=3&&String(p.tel||'').replace(/\D/g,'').includes(qd.slice(-8)));
   // 1.52.1: como en Paquetes, los entregados se ven en gris (número tachado) y bajan; al final los devueltos
   // 1.52.4: los que están en Hold en la Ruta también van en gris, después de los pendientes y antes de los entregados
@@ -817,7 +821,7 @@ function renderMsg(){
   const rp=(p,i)=>rpos[p.id]!==undefined?rpos[p.id]:1e6+i;
   L.innerHTML=S.pk.map((p,i)=>[p,i]).sort((a,b)=>rk(a[0])-rk(b[0])||rp(a[0],a[1])-rp(b[0],b[1])).map(([p,i])=>{const sel=msgSel(p),txt=msgText(p,sel);const l=waLink(p,txt);return `<div class="pkg${p.st==='entregado'||enHold(p)?' entregado':''}${pkOff(p)?' devol':''}"${hit(p)?'':' style="display:none"'}>
     <div class="num${p.st==='entregado'?' tachado':''}">${p.num||i+1}</div>
-    <div class="name">${esc(p.nombre)} ${msgChip(p)}${enHold(p)?' <span class="small" style="font-weight:700">⏸ hold</span>':''} ${p.sent?'<span class="small muted">✓ mensaje abierto</span>':''}${p.formSent?'<span class="small muted">· formulario enviado</span>':''}</div>
+    <div class="name">${esc(p.nombre)} ${msgChip(p)}${enHold(p)?' <span class="small" style="font-weight:700">⏸ hold</span>':''}</div>
     <div class="addr"><span class="mono">${esc(p.tel||'sin teléfono')}</span>${p.resp?' <span class="small" style="color:var(--ok);font-weight:600">✓ llenó el formulario</span>':''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
     <div class="msgsel" role="radiogroup" aria-label="Qué mensaje mandar">${msgOpts().map(([k,t])=>`<button type="button" role="radio" aria-checked="${k===sel}" data-act="msgsel" data-k="${k}" data-id="${p.id}">${t}</button>`).join('')}</div>
     <details class="small"><summary>Ver mensaje</summary><div class="preview">${esc(txt)}</div></details>
@@ -1026,7 +1030,7 @@ async function cerrarDia(b){
   const t=Date.now();S.pk=[];S.ex=false;S.nums={};S.route=null;S.jor={}; // totalmente limpio: la jornada ya va dentro del cierre (ruta.jor)
   S.ent={nombre:'',at:t,mod:t,stops:[],cerrada:fc}; // ruta vacía y más nueva que la de la nube, para que la sincronización no la reviva
   ESEL=-1;save();render();if(typeof renderEnt==='function')renderEnt();if(NUBE.on)nubeSync(true);
-  b.textContent='Vaciar lista';toast(`Cierre guardado (${new Date(fc).toLocaleString('es-CR')}). Listo para una ruta nueva.`)}
+  b.textContent='Vaciar lista';toast(`Cierre guardado (${fDMYh(fc)}). Listo para una ruta nueva.`)}
 $('#vaciarTile').onclick=async()=>{const pk=S.ex?[]:S.pk,pend=pk.filter(p=>p.st!=='entregado'&&p.st!=='devuelto'&&!p.devolver).length;
   if(!await rfConfirm(`¿Vaciar la lista y cerrar la ruta?\nSe guardan en la base ${pk.length} paquete(s) y la ruta con la fecha de hoy, y la app queda limpia.${pend?`\n\nOjo: todavía hay ${pend} sin entregar ni devolver.`:''}`))return;
   cerrarDia($('#clearAll'))};
@@ -1089,7 +1093,7 @@ function repT(p){return p.st==='entregado'?((p.pod&&p.pod.at)||repParadas(p).fil
 const repDia=t=>{if(!t)return '';const d=new Date(t);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
 const repDiaTxt=k=>k?k.split('-').reverse().join('/'):'Sin fecha';
 // Nombre del grupo (1.60.0): "Entregas del 2 de noviembre" = los paquetes recibidos ese día, aunque se entreguen en días siguientes
-const repEntregasDe=k=>{if(!k)return 'Entregas sin fecha';const [y,m,d]=k.split('-').map(Number);return 'Entregas del '+new Date(y,m-1,d).toLocaleDateString('es-CR',{day:'numeric',month:'long'})};
+const repEntregasDe=k=>{if(!k)return 'Entregas sin fecha';const [y,m,d]=k.split('-').map(Number);return 'Entregas del '+fDMY(new Date(y,m-1,d))};
 function repTodos(){const ids=new Set(S.pk.map(p=>p.id));return [...S.pk,...REPC.pk.filter(p=>!ids.has(p.id))]}
 function repGrupos(){const g={};repTodos().forEach(p=>{const k=repDia(p.ing);(g[k]=g[k]||[]).push(p)});return Object.keys(g).sort((a,b)=>!a?1:!b?-1:b.localeCompare(a)).map(k=>({k,pk:g[k]}))}
 // 1.74.0: un cierre no cambia nunca; se guarda en el celular (IndexedDB, separado por cuenta) y solo se baja la primera vez.
@@ -1332,7 +1336,7 @@ $('#pickOk').onclick=()=>{if(!PICK||!PICK.c)return;const p=PICK.p;p.ubic=cTxt(PI
 
 // ---- Prueba de entrega: GPS + fecha/hora + mínimo 3 fotos con sello ----
 const MIN_FOTOS=3;
-const fmtDT=t=>new Date(t).toLocaleString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'numeric',minute:'2-digit'});
+const fmtDT=t=>fDMYh(t);
 const IDB={db:null,
   open(){return this.db||(this.db=new Promise((res,rej)=>{const r=indexedDB.open('rutafacil-evidencias',1);r.onupgradeneeded=()=>r.result.createObjectStore('ev',{keyPath:'id'});r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}))},
   async put(v){const d=await this.open();return new Promise((res,rej)=>{const t=d.transaction('ev','readwrite');t.objectStore('ev').put(v);t.oncomplete=res;t.onerror=()=>rej(t.error)})},
@@ -1596,8 +1600,8 @@ $('#scanSave').onclick=()=>{
 };
 
 // Diagnóstico: copia en texto cómo están unidas las paradas sin ubicación y los paquetes con ubicación, para mandarlo a soporte
-$('#supDiag').onclick=async()=>{let t=`RutaFácil ${$('#appVer').textContent} · ${new Date().toLocaleString('es-CR')}\n`;const E=S.ent;
-  try{if(!E){t+='Sin ruta cargada\n'}else{t+=`Ruta ${E.nombre}: ${E.stops.length} paradas, ${E.stops.filter(x=>!x.c).length} sin ubicación\n`;
+$('#supDiag').onclick=async()=>{let t=`RutaFácil ${$('#appVer').textContent} · ${fDMYh(Date.now())}\n`;const E=S.ent;
+  try{if(!E){t+='Sin ruta cargada\n'}else{t+=`Ruta ${isoDMY(E.nombre)}: ${E.stops.length} paradas, ${E.stops.filter(x=>!x.c).length} sin ubicación\n`;
     const f=p=>p?`#${p.num} ${p.nombre} | tel ${p.tel||'-'} | guía ${p.guia||'-'} | nota ${p.nota||'-'} | ubic ${String(p.ubic||'-').slice(0,70)} | ${parseCoord(p.ubic)?'OK':'NO'} | ${p.st}`:'(ninguno)';
     t+='\n-- Paradas sin ubicación --\n';E.stops.filter(x=>!x.c).forEach(x=>{t+=`* ${x.nombre} | tel ${x.tel||'-'} | guía ${x.guia||'-'} | nota ${x.nota||'-'} | pkId ${x.pkId||'-'} | fijo ${x.pkFijo||'-'}\n   -> ${f(entPkg(x))}\n`});
     const us=new Set(E.stops.map(x=>{const q=entPkg(x);return q&&q.id}));t+='\n-- Paquetes con ubicación sin parada --\n';S.pk.filter(p=>parseCoord(p.ubic)&&!us.has(p.id)).forEach(p=>{t+=`* ${f(p)}\n`});
@@ -1620,7 +1624,7 @@ $('#ttBtn').onclick=async()=>{
   S.ttOn=S.ttOn===false;save();TT.k='';ttPintar();entEta(true);toast(S.ttOn?'Tráfico en vivo activado':'Tráfico en vivo apagado');if(S.ttOn)ttPedir(true)};
 $('#entLista').onclick=()=>{const E=S.ent;if(!E||!E.stops)return;const erk=s=>entDone(s)?2:s.c?(s.hold?0.5:0):1;let k=0;
   const L=E.stops.map((s,i)=>[s,i]).sort((a,b)=>erk(a[0])-erk(b[0])||a[1]-b[1]).map(([s])=>{const p=entPkg(s);return `${++k}. #${eNum(s)} ${s.nombre||''}${p&&p.tel?' · '+p.tel:''}${s.devolver?' ⛔ devolver':entDev(s)?' ↩ devuelto':entDone(s)?' ✓ entregado':s.hold?' ⏸ hold':!s.c?' (sin ubicación)':''}`});
-  $('#diagIco').textContent='📋';$('#diagTitle').textContent='Ruta en orden';$('#diagTxt').textContent=`${E.nombre} · ${new Date().toLocaleString('es-CR')}\n\n`+L.join('\n');$('#diagSheet').hidden=false;document.body.style.overflow='hidden'};
+  $('#diagIco').textContent='📋';$('#diagTitle').textContent='Ruta en orden';$('#diagTxt').textContent=`${isoDMY(E.nombre)} · ${fDMYh(Date.now())}\n\n`+L.join('\n');$('#diagSheet').hidden=false;document.body.style.overflow='hidden'};
 $('#diagClose').onclick=()=>{$('#diagSheet').hidden=true;document.body.style.overflow=''};
 $('#diagShare').onclick=async()=>{const t=$('#diagTxt').textContent;if(navigator.share){try{await navigator.share({title:$('#diagTitle').textContent,text:t});return}catch(e){if(e.name==='AbortError')return}}
   location.href=`https://wa.me/${SOPORTE_WA}?text=${encodeURIComponent(t.slice(0,3500))}`};
@@ -1867,7 +1871,7 @@ async function renderEnt(){entSyncPk();rutaGlobo();jorRender();vehPintar();ttPin
       if(EMAP.fitted!=='vacio'){EMAP.setView(EPOS?EPOS.c:(parseCoord(S.start)||[9.9333,-84.0833]),EPOS?15:12);EMAP.fitted='vacio'}EMAP.invalidateSize()}catch(e){}
     return}
   $('#entTools').hidden=false;$('#entAqui').hidden=false;$('#entGps').hidden=false;$('#entBus').hidden=false;const ok=E.stops.filter(x=>entDone(x)&&!entDev(x)).length,conC=E.stops.filter(s=>s.c);
-  $('#entInfo').innerHTML=`<b>${esc(E.nombre)}</b> · ${ok} de ${E.stops.length} entregadas`;
+  $('#entInfo').innerHTML=`<b>${esc(isoDMY(E.nombre))}</b> · ${ok} de ${E.stops.length} entregadas`;
   // Pendientes arriba (en orden de ruta; las sin ubicación después) y las entregadas totalmente de últimas
   const erk=s=>entDone(s)?2:s.c?(s.hold?0.5:0):1;
   LI.innerHTML=E.stops.map((s,i)=>[s,i]).sort((a,b)=>erk(a[0])-erk(b[0])||a[1]-b[1]).map(([s,i])=>{const d=entDone(s),p=entPkg(s),ubx=s.ub!==undefined?s.ub:(p&&p.ubic&&!parseCoord(p.ubic)?String(p.ubic):undefined),nav=s.c?`https://www.google.com/maps/dir/?api=1&destination=${s.c[0]},${s.c[1]}&travelmode=driving`:'',wz=s.waze||(s.c?`https://waze.com/ul?ll=${s.c[0]},${s.c[1]}&navigate=yes`:''),wa=phoneWA(p&&entFuerte(s,p)?p.tel:s.tel);

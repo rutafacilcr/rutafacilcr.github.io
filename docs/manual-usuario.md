@@ -53,7 +53,8 @@ Resumen de cómo está la app ahora. Más abajo se explica cada parte con la ver
 - Están **1. Pedir ubicación** (antes *1. Coordinar*, 1.91.1), **2. Voy en camino** (lleva el ícono del vehículo después de "camino"), **3. Comprensión** y **4. Horario extendido**, en dos filas. Desde la 1.89.0 ya no está *Formulario*.
 - **Botones (1.89.0; 1.91.0):** abajo a la derecha queda **Abrir WhatsApp** (*Pegar respuesta* se usa desde *Paquetes*). Desde la 1.91.0 tampoco están el texto de ayuda, el título *Clientes* ni la tarjeta *Respuestas del formulario*. Se quitaron *Copiar texto*, *Confirmó* y *No responde*; el estado se cambia tocando la etiqueta del cliente (por ejemplo 🟡 Pendiente).
 - **Estado automático (1.92.0):** la etiqueta a la par del nombre cambia sola: **🟡 Sin enviar**, luego **📨 Esperando respuesta** cuando tocás *Abrir WhatsApp*, y **🔵 Confirmado** cuando pegás la ubicación (o si el paquete ya la tiene). Tocarla no hace nada. Los entregados y devueltos solo dicen su estado.
-- **Filtros (1.88.0; nombres desde 1.92.0):** debajo de buscar están **Todos**, **🟡 Sin enviar**, **📨 Esperando respuesta** y **🔵 Confirmados**, con cuántos hay en cada uno. Tocá uno para ver solo esos clientes (por ejemplo, a quién volver a escribirle). La etiqueta cambia con **Confirmó**, **No responde** o al pegar la respuesta con ubicación. Los entregados, devueltos y para devolver solo salen en *Todos*.
+- **Filtros (1.88.0; nombres desde 1.92.0):** debajo de buscar están **Todos**, **🟡 Sin enviar**, **📨 Esperando respuesta** y **🔵 Confirmados**, con cuántos hay en cada uno. Tocá uno para ver solo esos clientes (por ejemplo, a quién volver a escribirle). La etiqueta cambia con **Confirmó**, **No responde** o al pegar la respuesta con ubicación. Los entregados y devueltos solo salen en *Todos*. **⛔ Devolver (1.92.2)** muestra los paquetes marcados para devolver. Ya no sale el texto "✓ mensaje abierto": eso lo dice la etiqueta **📨 Esperando respuesta**.
+- **Fechas (1.92.2):** todas las fechas de la app salen como **dd/mm/aaaa** (por ejemplo, *Ruta 03/11/2026*).
 - Los clientes salen en el **mismo orden que en Ruta** (1.69.3). Los entregados, en Hold o devueltos se ven grises y bajan al final, y los que no están en la ruta van después de los pendientes.
 
 **Confirmaciones:** desde la 1.69.0, al borrar, devolver, vaciar o guardar cambios sale una hoja abajo con dos botones grandes: **Cancelar** y la acción (en rojo si borra o desactiva).
@@ -493,6 +494,8 @@ En *Paquetes*, tocá **📷 Escáner** (antes *Etiqueta*) en el paquete que qued
 ### WhatsApp desde Paquetes (1.32.0)
 
 Debajo de **📷 Escáner** está el botón verde **WhatsApp**, que abre el chat con ese cliente (sin mensaje escrito). Si el paquete no tiene teléfono válido, el botón no aparece.
+
+**Botón 📷 (1.92.2):** a la par de **WhatsApp**, el botón verde con la cámara abre el WhatsApp de ese cliente para que le mandés una foto (del paquete o de la entrega): ahí tocás la cámara de WhatsApp y la mandás.
 
 
 ### Cambios de teléfono llegan a Entrega (1.34.0)

@@ -364,6 +364,8 @@ delete from respuestas where updated_at < now() - interval '30 days';
 
 Contactos y Excel abajo (1.92.1): solo diseño.
 
+Fechas dd/mm/aaaa, botón 📷 y filtro Devolver (1.92.2): solo pantalla; la base no cambia y las fechas se siguen guardando igual.
+
 Estado automático en Mensajes (1.92.0): solo pantalla, se calcula con datos que ya existen.
 
 Pedir ubicación en Mensajes (1.91.1): solo el nombre del botón.
