@@ -495,6 +495,34 @@ En *Paquetes*, tocá **📷 Escáner** (antes *Etiqueta*) en el paquete que qued
 
 Debajo de **📷 Escáner** está el botón verde **WhatsApp**, que abre el chat con ese cliente (sin mensaje escrito). Si el paquete no tiene teléfono válido, el botón no aparece.
 
+### Mejoras de noviembre (1.94.0)
+
+**Paquetes**
+- **Nota en MAYÚSCULAS:** lo que escribás en *Nota* se guarda siempre en mayúsculas (también las notas que ya tenías).
+- **Contadores con color:** Recibidos (negro), Entregados (verde), **En ruta** (azul, nuevo: los que tienen parada activa en la ruta), Hold (amarillo), Devueltos (rojo) y Sin 📍.
+- **Orden de la tarjeta:** Nombre, Guía, Tel. y Dirección.
+- **Devuelto en rojo:** el botón **↩ Devuelto** es rojo y, cuando el paquete está devuelto, la etiqueta **🔴 Devuelto** sale arriba a la derecha (una sola vez). Abajo queda solo **↪ Regresar a Ruta**.
+- **Regresar a Ruta / Quitar devolver:** si el paquete tiene ubicación vuelve a la ruta. Si no tiene, sale de la ruta y queda en Paquetes con **➕ Agregar a la ruta**; al tocarlo te pide la ubicación (link de Maps, Waze o WhatsApp) y lo agrega.
+- **Orden por hora:** los entregados van por hora de entrega, los de Hold por la hora en que los pusiste en Hold y los devueltos por la hora en que los devolviste. Igual en Mensajes.
+
+**Mensajes**
+- Etiquetas: **✅ Entregado** en verde, **🔴 Devuelto** y **⛔ Devolver** en rojo, **⏸ HOLD** en amarillo (antes decía *Confirmado*).
+- La tarjeta muestra la guía y la nota.
+- Mensajes nuevos: **5. Hablar con cliente** (abre el chat sin texto: escribís, mandás y volvés a RutaFácil), **6. Entregado** ("Su paquete, Orden *guía*, fue entregado. ¡Ha sido un placer servirle!"), **7. Horario 8:30 a 12 md** y **8. Horario 12 md a 5 p. m.** (como el de horario extendido). Los textos se cambian en *✏️ Editar textos de los mensajes*.
+
+**Ruta**
+- Debajo de la dirección salen el **Tel.** y la **nota**.
+- Los paquetes devueltos (o para devolver) salen en el mapa con un pin **rojo oscuro con ↩**, solo para ver dónde eran: no entran a la ruta.
+- Al tocar **✓ Entregado** se guarda la hora y el punto como siempre y sale un aviso con el botón **WhatsApp: Entregado**. Tocalo, mandá el mensaje y volvé a RutaFácil (en el celular, con la flecha de regresar o cambiando de app).
+- **↩ Deshacer** en una entregada: la parada sale de la ruta y el paquete queda en Paquetes con **➕ Agregar a la ruta**.
+- **⛔ Devolver** primero pide el motivo (se suma a la nota que ya tenga, separada con coma) y después pregunta **¿Devolverá el paquete de …?**.
+- El WhatsApp de "en camino" trae tres líneas nuevas después de la política de entrega: entrega **GRATIS** en el primer intento, segundo intento si la ruta lo permite, y que un tercero puede recibir con nombre y cédula.
+- **📋 Lista** ahora es solo lo que falta por entregar: primero los de **HOLD** y después los **pendientes**, en orden de ruta.
+
+**Otros detalles:** el botón **📷** (WhatsApp para mandar foto) ahora es blanco; la nota amarilla va con letra negra para que se lea en la calle, también en tarjetas apagadas; en los PDF de Cierres donde decía *Mensajero* ahora dice **Entregado por**.
+
+**En la computadora:** al abrir https://rutafacilcr.github.io/ en una laptop, la app se ve dentro de un marco de iPhone, igual que en el celular. Abajo está **Ver sin marco** para usarla a pantalla completa.
+
 **Nota en amarillo (1.92.4):** si el paquete tiene nota, sale abajo de la dirección en letra blanca con fondo amarillo (📝), para que no se te pase.
 
 **Disculpe la hora (1.92.4):** si tocás **Pedir ubicación** en *Paquetes* entre las 9:30 p. m. y las 5 a. m., el mensaje empieza con **DISCULPE LA HORA.** Estamos trabajando para que su paquete sea entregado lo antes posible. En *Mensajes* el mensaje no cambia.
