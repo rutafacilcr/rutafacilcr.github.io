@@ -442,11 +442,11 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <label hidden>Formulario (ya no se usa en Mensajes)<textarea id="m-form"></textarea></label>
     <label>2. Voy en camino<textarea id="m-camino"></textarea></label>
     <label>3. Comprensión<textarea id="m-comp"></textarea></label>
-    <label>4. Horario extendido<textarea id="m-ext"></textarea></label>
-    <p class="small muted" style="margin:0">5. Hablar con cliente no tiene texto: abre el chat vacío.</p>
-    <label>6. Entregado<textarea id="m-entr"></textarea></label>
-    <label>7. Horario 8:30 a. m. a 12 md<textarea id="m-h1"></textarea></label>
-    <label>8. Horario 12 md a 5 p. m.<textarea id="m-h2"></textarea></label>
+    <p class="small muted" style="margin:0">4. Hablar con cliente no tiene texto: abre el chat vacío.</p>
+    <label>5. Entregado<textarea id="m-entr"></textarea></label>
+    <label>6. Horario 8:30 a. m. a 12 md<textarea id="m-h1"></textarea></label>
+    <label>7. Horario 12 md a 5 p. m.<textarea id="m-h2"></textarea></label>
+    <label>8. Horario extendido<textarea id="m-ext"></textarea></label>
     <p class="small muted">Variables: <span class="mono">{nombre} {guia} {direccion} {fecha} {yo} {eta} {formulario}</span></p>
   </details>
 </section>
@@ -547,7 +547,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div class="replin" style="border-top:0"><label style="flex-direction:row;align-items:center;gap:8px">Fecha <input type="date" id="guiFechaEnt"></label><button class="btn sm primary" type="button" id="guiEntBtn">📄 PDF</button></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.95.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.95.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -880,7 +880,7 @@ function renderPk(){
   if(cards.length>60)setTimeout(()=>tanda(60),0);
 }
 // Mensajes que se pueden mandar a cada cliente desde la pestaña Mensajes.
-function msgOpts(){return [['coord','Pedir ubicación'], /* 1.91.1: antes "Coordinar" (Victor) */['camino','En camino'] /* 1.89.0: sin Formulario (Victor) */,['comp','Comprensión'],['ext','Horario extendido'],['hablar','Hablar con cliente'],['entr','Entregado'],['h1','Horario 8:30 a 12 md'],['h2','Horario 12 md a 5 p. m.']].map(([k,t],i)=>[k,`${i+1}. ${t}`])} // 1.73.0: 4 y 5
+function msgOpts(){return [['coord','Pedir ubicación'], /* 1.91.1: antes "Coordinar" (Victor) */['camino','En camino'] /* 1.89.0: sin Formulario (Victor) */,['comp','Comprensión'],['hablar','Hablar con cliente'],['entr','Entregado'],['h1','Horario 8:30 a 12 md'],['h2','Horario 12 md a 5 p. m.'],['ext','Horario extendido'] /* 1.95.1 (Victor): Horario extendido pasa al final */].map(([k,t],i)=>[k,`${i+1}. ${t}`])} // 1.73.0: 4 y 5
 function msgSel(p){const ok=msgOpts().map(o=>o[0]);if(ok.includes(p.msgSel))return p.msgSel;return 'coord'}
 // Ícono del vehículo elegido en Ruta (1.56.4): va después de la palabra "camino" en el mensaje de en camino (Mensajes y Ruta)
 function vehIcono(){return {moto:'🏍️',carro:'🚙',buseta:'🚐'}[S.veh]||'🚙'}

@@ -317,6 +317,10 @@ Recomendado al pasar a varios mensajeros: en el Panel encender **Exigir cuenta a
 
 Si más adelante hace falta guardar las 3 fotos por meses, la única opción es pagar (Supabase Pro, 25 USD al mes, 100 GB).
 
+### Orden de los mensajes (1.95.1)
+
+Solo pantalla: cada cliente guarda el mensaje elegido por su clave (`ext`, `entr`…), no por número, así que no cambia nada guardado.
+
 ### Reportes de Cierres (1.95.0)
 
 Solo cambia el PDF y la pantalla: la base no cambia. El estado de cada paquete en el reporte sale de `p.st`, `p.devolver` y sus paradas (las de la ruta actual o las guardadas en los cierres).
