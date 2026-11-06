@@ -20,7 +20,7 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
   - La nota del paquete resalta en amarillo, y *Pedir ubicación* después de las 9:30 p. m. se disculpa por la hora (1.92.4).
   - Botón 📷 que abre el WhatsApp del cliente para mandarle una foto (1.92.2).
   - Todas las fechas salen como dd/mm/aaaa (1.92.2).
-- **Mensajes (1.94.0):** ocho mensajes por cliente (1. Pedir ubicación … 5. Hablar con cliente, 6. Entregado, 7. Horario 8:30 a 12 md, 8. Horario 12 md a 5 p. m.) y etiquetas ✅ Entregado, 🔴 Devuelto y ⏸ HOLD.
+- **Mensajes (1.94.0):** ocho mensajes por cliente (1. Pedir ubicación, 2. En camino, 3. Comprensión, 4. Hablar con cliente, 5. Entregado, 6. Horario 8:30 a 12 md, 7. Horario 12 md a 5 p. m. y 8. Horario extendido, desde la 1.95.1) y etiquetas ✅ Entregado, 🔴 Devuelto y ⏸ HOLD.
 - **En la computadora (1.94.0):** la app se ve dentro de un marco de iPhone; *Ver sin marco* la abre a pantalla completa.
 - **Ruta:**
   - Tel. y nota en cada parada; devueltos visibles en el mapa sin entrar a la ruta; al marcar ✓ Entregado sale el botón para mandar el WhatsApp "Entregado"; *Devolver* pide el motivo; la *Lista* muestra solo lo pendiente, Hold primero (1.94.0).
