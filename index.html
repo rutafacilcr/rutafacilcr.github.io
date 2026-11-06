@@ -335,8 +335,8 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
 #pkgList .pkg .actions .btn.devbtn{background:#c0392b;color:#fff;border-color:#c0392b;font-weight:700}
 /* Etiqueta Devuelto / Devolver arriba a la derecha de la tarjeta */
 .pkg .name>:is(.chip,.msgst,.coordbtn){margin-left:auto} /* 1.95.4 (Victor): la etiqueta o botón del estado siempre a la derecha, sin importar el largo del nombre */
-#pkgList .pkg:not(.entregado){border:2px solid var(--ink)} /* 1.95.4 (Victor): los no entregados con borde negro */
-#pkgList .pkg.sinub{border:2px solid var(--bad,#d93025)} /* sin ubicación sigue en rojo */
+#pkgList .pkg:not(.entregado):not(.devol){border:2px solid var(--ink)} /* 1.95.4 (Victor): borde negro solo en los que están por entregar (1.95.5: no en devueltos ni para devolver) */
+#pkgList .pkg.sinub:not(.entregado):not(.devol){border:2px solid var(--bad,#d93025)} /* sin ubicación sigue en rojo */
 html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el encabezado deja espacio para la isla de arriba */
 #pkgList .pkg .actions .btn.camwa{background:#fff;color:#1f2125;border:1px solid #9aa0a6} /* 1.94.0 (Victor): botón 📷 en blanco */
 .pknota{color:#1f2125!important} /* 1.94.0 (Victor): nota amarilla con letra negra (se lee mejor), también en tarjetas apagadas */
@@ -550,7 +550,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div class="replin" style="border-top:0"><label style="flex-direction:row;align-items:center;gap:8px">Fecha <input type="date" id="guiFechaEnt"></label><button class="btn sm primary" type="button" id="guiEntBtn">📄 PDF</button></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.95.4</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.95.5</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -830,7 +830,7 @@ function devBar(p,enPk){if(p.st==='devuelto')return `<div class="devkeep"><butto
 const DISC_HORA='*DISCULPE LA HORA.* Estamos trabajando para que su paquete sea entregado lo antes posible.\n\n';
 function esTarde(d=new Date()){const m=d.getHours()*60+d.getMinutes();return m>=21*60+30||m<5*60}
 function pkCoordText(p){return (esTarde()?DISC_HORA:'')+coordText(p)}
-function pkChip(p){if(p.st==='entregado'||p.st==='devuelto')return stChip(p);if(pkDevol(p))return '<span class="chip devtag on">⛔ Devolver</span>'; /* 1.94.0: arriba a la derecha (Victor) */if(parseCoord(p.ubic))return ''; /* 1.91.0: Pedir ubicación solo sale si el paquete no tiene ubicación */const l=waLink(p,pkCoordText(p));
+function pkChip(p){if(p.st==='entregado'||p.st==='devuelto')return stChip(p);if(pkDevol(p))return '<span class="chip devtag on">⛔ Devolver</span>'; /* 1.94.0: arriba a la derecha (Victor) */let hd=false;try{hd=entParadasDe(p).some(x=>x.hold&&!x.done)}catch(e){}if(hd)return '<span class="msgst ms-hold">⏸ HOLD</span>'; /* 1.95.5 (Victor): los de Hold dicen HOLD también en Paquetes */if(parseCoord(p.ubic))return ''; /* 1.91.0: Pedir ubicación solo sale si el paquete no tiene ubicación */const l=waLink(p,pkCoordText(p));
   return l?`<a class="coordbtn" href="${l}" target="_blank" rel="noopener" data-act="sent" data-k="coord" data-id="${p.id}" title="Abrir WhatsApp con el mensaje para pedir la ubicación (1. Coordinar)">Pedir ubicación${p.sent?' ✓':''}</a>`:`<span class="coordbtn off" title="Teléfono inválido: corregilo con Editar">Pedir ubicación</span>`} /* 1.91.0: antes decía "1. Coordinar" (Victor) */
 function stChip(p){if(p.st==='devuelto')return `<button class="chip devtag" data-act="st" data-id="${p.id}" title="Devuelto al almacén. Tocá para cambiar el estado">🔴 Devuelto</button>`; // 1.56.0: devueltos con la misma etiqueta que ⛔ Devolver
   return `<button class="chip st-${p.st}" data-act="st" data-id="${p.id}" title="Cambiar estado">${SLABEL[p.st]}</button>`}
