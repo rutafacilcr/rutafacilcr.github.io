@@ -26,6 +26,7 @@ Servicios externos sin cuenta: wa.me (WhatsApp), Google Maps, Waze
 - La lista de paquetes vive en `localStorage` del navegador (clave `rutafacil-cr-v1`).
 - En Supabase se guardan las respuestas del formulario y las **pruebas de entrega** (tabla `entregas` + fotos en Storage, carpeta `evidencias`).
 - **Escanear etiquetas** corre todo en el celular: no manda fotos ni datos a ningún servidor y no tiene costo. Las librerías se bajan solo al usar el escáner.
+- Desde la 1.96.0 el escáner usa la **cámara en vivo** del navegador (`getUserMedia`): necesita HTTPS (GitHub Pages ya lo da) y el permiso de cámara del sitio. En iPhone: *Ajustes > Safari > Cámara* (o *aA > Configuración del sitio web > Cámara*). Si el permiso está negado, la app usa la cámara normal del celular como antes. La foto no se guarda ni se sube.
 - Las fotos de evidencia también quedan en el celular (IndexedDB `rutafacil-evidencias`).
 
 ## 2. Publicación (GitHub Pages)
@@ -317,7 +318,7 @@ Recomendado al pasar a varios mensajeros: en el Panel encender **Exigir cuenta a
 
 Si más adelante hace falta guardar las 3 fotos por meses, la única opción es pagar (Supabase Pro, 25 USD al mes, 100 GB).
 
-### Filtros de Mensajes y Hold (1.95.8)
+### Filtros de Mensajes y Hold (1.96.1)
 
 Solo pantalla; no cambia datos ni Supabase.
 
@@ -463,6 +464,7 @@ Si los dos valores están vacíos, la app funciona sin formulario: los mensajes 
 | Google Fonts | Tipografías | Usa fuentes del sistema. |
 | `wa.me` | Abrir WhatsApp con texto | Botón **Copiar texto**. |
 | Google Maps / Waze | Navegación | Se pueden copiar las coordenadas. |
+| jsDelivr `zxing-wasm 3.1.6` (`dist/iife/reader/index.js` + `zxing_reader.wasm` desde fastly.jsdelivr.net, ~1 MB la primera vez) | Leer la guía del código de barras o del QR, también con la etiqueta inclinada (desde 1.96.0) | Se usa ZXing JS de abajo. |
 | jsDelivr `@zxing/library 0.21.3` | Leer el código de barras de la etiqueta (solo si el navegador no trae `BarcodeDetector`, como en iPhone) | Se escribe la guía a mano. |
 | jsDelivr `tesseract.js 5.1.1` (+ núcleo WASM y datos de idioma `spa`, unos 5 MB la primera vez; luego quedan en IndexedDB del navegador) | Leer el texto de la etiqueta (OCR) | Se llenan los datos a mano. |
 | cdnjs `leaflet 1.9.4` + mosaicos de OpenStreetMap | Mapa de *Recorrido de hoy* (se carga solo al abrir *Ruta* con entregas del día) | Botón *Abrir en Google Maps*. Uso bajo, sin llave. |
