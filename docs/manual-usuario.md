@@ -791,7 +791,12 @@ En la tarjeta de *Paquetes*, la línea del teléfono dice por ejemplo: **Tel. 62
 
 ### Reporte de guías por fecha de recibido (1.71.0, 1.72.3)
 
-En **Cierres**, debajo de *Reporte de entregas*, está **Guías por fecha de recibido**. Hay una línea por cada fecha en que recibiste paquetes (por ejemplo **🧾 Guías · Paquetes recibidos 31/10/2026 · 25 entregado(s)**). Tocá **📄 PDF** para bajar un PDF horizontal con **Nombre, Tel., Guía, Dirección y Hora entrega** (1.73.3) de los paquetes de esa fecha que ya entregaste. Adentro van agrupados por día de entrega (**Entregados 02/11/2026**, **Entregados 03/11/2026**), en el orden en que se entregaron. Arriba dice el mensajero, la fecha de recibido y cuántos paquetes son. La fecha de recibido es la de **Pertenece a** en cada paquete (se cambia con ✏️ Editar).
+**Desde la 1.95.0:**
+- El **Reporte de entregas** trae **todos** los paquetes de esa fecha, ordenados por estado: Entregado, En ruta, Hold, Por entregar, Sin ubicación y Devuelto. Arriba dice también **Paquetes en ruta** y **Paquetes en Hold**, y donde decía *Mensajero* ahora dice **Entregado por**.
+- **Guías por fecha de recibido** trae todos los paquetes recibidos ese día (no solo los entregados), con su **estado** y la **hora de escaneo**, en el orden en que se escanearon.
+- **Guías por fecha de entrega** (nuevo): elegí la fecha (sale la de hoy) y tocá **📄 PDF**: salen las guías entregadas ese día, en el orden de entrega.
+
+(Antes de la 1.95.0:) En **Cierres**, debajo de *Reporte de entregas*, está **Guías por fecha de recibido**. Hay una línea por cada fecha en que recibiste paquetes (por ejemplo **🧾 Guías · Paquetes recibidos 31/10/2026 · 25 entregado(s)**). Tocá **📄 PDF** para bajar un PDF horizontal con **Nombre, Tel., Guía, Dirección y Hora entrega** (1.73.3) de los paquetes de esa fecha que ya entregaste. Adentro van agrupados por día de entrega (**Entregados 02/11/2026**, **Entregados 03/11/2026**), en el orden en que se entregaron. Arriba dice el mensajero, la fecha de recibido y cuántos paquetes son. La fecha de recibido es la de **Pertenece a** en cada paquete (se cambia con ✏️ Editar).
 
 
 ### Voy en camino: WhatsApp y después Waze (1.78.0)

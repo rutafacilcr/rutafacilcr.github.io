@@ -334,9 +334,9 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
 #pkgList .pkg .actions .btn.devbtn{background:#c0392b;color:#fff;border-color:#c0392b;font-weight:700}
 /* Etiqueta Devuelto / Devolver arriba a la derecha de la tarjeta */
 .pkg .name>.chip.devtag{margin-left:auto}
-html.enmarco header.top{padding-top:40px}
+html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el encabezado deja espacio para la isla de arriba */
 #pkgList .pkg .actions .btn.camwa{background:#fff;color:#1f2125;border:1px solid #9aa0a6} /* 1.94.0 (Victor): botón 📷 en blanco */
-.pknota{color:#1f2125!important} /* 1.94.0 (Victor): nota amarilla con letra negra (se lee mejor), también en tarjetas apagadas */ /* dentro del marco de iPhone, el encabezado deja espacio para la isla de arriba */
+.pknota{color:#1f2125!important} /* 1.94.0 (Victor): nota amarilla con letra negra (se lee mejor), también en tarjetas apagadas */
 #pkgList .pkg>:is(.name,.meta,.addr){grid-column:2}.addr .pknota{display:block;width:fit-content} /* la tarjeta ahora tiene Guía y Tel. antes de la dirección: todo en la columna de la derecha */
 /* Contadores de Paquetes: Recibidos negro, Entregados verde, En ruta azul, Hold amarillo, Devueltos rojo */
 .stat.s-rec b{color:var(--ink)}.stat.s-ent b{color:#15803d}.stat.s-ruta b{color:#1d4ed8}.stat.s-hold b{color:#a16207}.stat.s-hold{background:#fef9c3;border-color:#eab308}.stat.s-dev b{color:#b91c1c}
@@ -539,11 +539,15 @@ html.enmarco header.top{padding-top:40px}
   </div>
   <div class="panel">
     <h2>Guías por fecha de recibido</h2>
-    <p class="small muted">Un PDF horizontal por cada día en que entregaste paquetes (<b>Guías 03/11/2026</b>, por ejemplo) con nombre, teléfono, guía y nota de cada paquete entregado ese día, en el orden en que se entregaron.</p>
+    <p class="small muted">Un PDF horizontal por cada día en que recibiste paquetes con <b>todos los paquetes recibidos</b> ese día: nombre, teléfono, guía, dirección, estado y hora en que se escanearon.</p>
     <div id="guiLista"></div>
+    <!-- 1.95.0 (Victor): Guías por fecha de ENTREGA, eligiendo la fecha -->
+    <h2 style="margin-top:16px">Guías por fecha de entrega</h2>
+    <p class="small muted">Elegí la fecha y bajá el PDF con las guías de los paquetes entregados ese día, en el orden en que se entregaron.</p>
+    <div class="replin" style="border-top:0"><label style="flex-direction:row;align-items:center;gap:8px">Fecha <input type="date" id="guiFechaEnt"></label><button class="btn sm primary" type="button" id="guiEntBtn">📄 PDF</button></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.94.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.95.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -1212,10 +1216,15 @@ function repFilas(L){
   const tl=x=>{const d=String(x||'').replace(/\D/g,'');return d.length===11&&d.startsWith('506')?d.slice(3):d};
   // Orden (1.56.1): por fecha y hora de entrega (o devolución), la más vieja primero; los que no tienen hora van al final por número
   const TR=repTramos(L);
-  return L.filter(p=>p.st==='entregado'||p.st==='devuelto'||p.devolver).sort((a,b)=>(repT(a)||Infinity)-(repT(b)||Infinity)||(+a.num||0)-(+b.num||0)).map(p=>{
-    const ent=p.st==='entregado',t=repT(p),r=TR.get(p.id);
+  // 1.95.0 (Victor): todos los paquetes, ordenados por estado (Entregado, En ruta, Hold, Por entregar, Sin ubicación, Devuelto) y dentro por hora
+  const EO=['Entregado','En ruta','Hold','Por entregar','Sin ubicación','Devuelto'];
+  return L.map(p=>[p,repEstado(p)]).sort((a,b)=>EO.indexOf(a[1])-EO.indexOf(b[1])||(repT(a[0])||Infinity)-(repT(b[0])||Infinity)||(+a[0].num||0)-(+b[0].num||0)).map(([p,est])=>{
+    const ent=p.st==='entregado',t=repT(p),r=ent||p.st==='devuelto'?TR.get(p.id):null;
     const tt=!r?'—':r.inicio?'Inicio':`${r.desdeIni?'desde inicio: ':''}${r.min>=60?Math.floor(r.min/60)+' h ':''}${Math.round(r.min%60)} min`,kk=!r||r.inicio||r.km==null?(r&&r.inicio?'Inicio':'—'):r.km.toFixed(1)+' km';
-    return [String(p.num||''),p.guia||'',tl(p.tel),tidyName(p.nombre||''),ent?'Entregado':'Devuelto',f(p.ing),f(t),h(t),tt,kk]})}
+    return [String(p.num||''),p.guia||'',tl(p.tel),tidyName(p.nombre||''),est,f(p.ing),f(t),h(t),ent?tt:'—',ent?kk:'—']})}
+// 1.95.0: estado de un paquete para los reportes
+function repEstado(p){if(p.st==='entregado')return 'Entregado';if(p.st==='devuelto'||p.devolver)return 'Devuelto';const ps=repParadas(p).filter(x=>!x.done);
+  if(ps.some(x=>x.hold))return 'Hold';if(ps.some(x=>x.c))return 'En ruta';return parseCoord(p.ubic)?'Por entregar':'Sin ubicación'}
 // Tramos (1.58.0): cada entrega mide tiempo y km desde la entrega ANTERIOR del mismo día (orden por hora real).
 // La primera entrega de cada día es el inicio: no tiene tramo. Los devueltos no cuentan (no son una parada de entrega).
 function repCoord(p){const g=p.entGps||(p.pod&&p.pod.lat!=null?p.pod:null),st=repParadas(p).find(x=>x.c);return g&&g.lat!=null?[g.lat,g.lng]:(st&&st.c)||parseCoord(p.ubic)}
@@ -1240,10 +1249,11 @@ function repResumen(L){
   const {km,min}=repTotales(L);
   const E=L.filter(p=>p.st==='entregado'&&repT(p)),dias=new Set(E.map(p=>repDia(repT(p)))).size;
   const pMin=min!=null&&E.length?min/E.length:null,pKm=km!=null&&E.length?km/E.length:null; // promedio por paquete entregado (1.62.0)
-  return {rec,ent,dev,km,min,pMin,pKm,dias}}
+  const ruta=L.filter(p=>repEstado(p)==='En ruta').length,hold=L.filter(p=>repEstado(p)==='Hold').length;
+  return {rec,ent,dev,km,min,pMin,pKm,dias,ruta,hold}}
 function repPdf(k){
   const G=repGrupos().find(x=>x.k===k);const L=G?G.pk:[];
-  const fil=repFilas(L);if(!fil.length){toast('Esa fecha no tiene paquetes entregados ni devueltos');return}
+  const fil=repFilas(L);if(!fil.length){toast('Esa fecha no tiene paquetes');return}
   if(!(window.jspdf&&window.jspdf.jsPDF&&window.jspdf.jsPDF.API.autoTable)){toast('Cargando el reporte… tocá otra vez en un momento');repCargar().catch(()=>toast('No se pudo cargar el PDF. Revisá el internet.'));return}
   const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'letter'}),hoy=new Date();
   const R=repResumen(L),fd=hoy.toLocaleDateString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric'});
@@ -1252,11 +1262,11 @@ function repPdf(k){
   // Posiciones fijas (1.56.2), cuadrícula de 4 columnas: col. 1 fecha y mensajero debajo; col. 2 km y horas; col. 3 fecha de recibido (1.57.0); col. 4 recibidos, entregados y devueltos
   const KM=['Km recorridos',R.km==null||R.km<0.05?'—':R.km.toFixed(1)+' km aprox.'],HR=['Horas invertidas',R.min==null?'—':`${Math.floor(R.min/60)} h ${String(Math.round(R.min%60)).padStart(2,'0')} min`];
   const PR=['Promedio por entrega',R.pMin==null?'—':`${Math.round(R.pMin)} min${R.pKm!=null?' · '+R.pKm.toFixed(1)+' km':''}`];
-  const enc=[['Fecha',fd],KM,['Recibidos el',repDiaTxt(k)],['Paquetes recibidos',String(R.rec)],['Entregado por',S.yo||'—'],HR,['Días de entrega',String(R.dias)],['Paquetes entregados',String(R.ent)],null,PR,null,['Paquetes devueltos',String(R.dev)]];
+  const enc=[['Fecha',fd],KM,['Recibidos el',repDiaTxt(k)],['Paquetes recibidos',String(R.rec)],['Entregado por',S.yo||'—'],HR,['Días de entrega',String(R.dias)],['Paquetes entregados',String(R.ent)],['Paquetes en ruta',String(R.ruta)],PR,null,['Paquetes devueltos',String(R.dev)],['Paquetes en Hold',String(R.hold)]];
   doc.setFontSize(10);enc.forEach((e,i)=>{if(!e)return;const [kk,v]=e,x=14+(i%4)*64,y=23+Math.floor(i/4)*6;doc.setFont(undefined,'bold');doc.text(kk+':',x,y);const w=doc.getTextWidth(kk+': ')+1;doc.setFont(undefined,'normal');doc.text(v,x+w,y)});
-  doc.autoTable({startY:40,head:[['No. paquete','No. guía / pedido','No. teléfono','Nombre','Estado','Fecha recibido','Fecha entrega','Hora entrega','Tiempo desde anterior','Km desde anterior']],body:fil,
+  doc.autoTable({startY:46,head:[['No. paquete','No. guía / pedido','No. teléfono','Nombre','Estado','Fecha recibido','Fecha entrega','Hora entrega','Tiempo desde anterior','Km desde anterior']],body:fil,
     styles:{fontSize:8.5,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},
-    didParseCell:d=>{if(d.section==='body'&&d.column.index===4)d.cell.styles.textColor=d.cell.raw==='Entregado'?[30,130,60]:[200,40,40]}});
+    didParseCell:d=>{if(d.section==='body'&&d.column.index===4)d.cell.styles.textColor={'Entregado':[30,130,60],'Devuelto':[200,40,40],'En ruta':[29,78,216],'Hold':[161,98,7]}[d.cell.raw]||[60,60,60]}});
   const name=`entregas-del-${k||'sin-fecha'}.pdf`;
   if(IOS&&navigator.canShare){const file=new File([doc.output('blob')],name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Reporte guardado')).catch(()=>{});return}}
   doc.save(name);toast(`Reporte con ${fil.length} paquete(s)`)}
@@ -1266,29 +1276,40 @@ const diasCierres=()=>{const c=window.RF_AUTH&&RF_AUTH.cuenta;return c&&c.dias_c
 function repBorraEn(k){const d=diasCierres();if(!d||!k)return null;const [y,m,dd]=k.split('-').map(Number);return Math.ceil((new Date(y,m-1,dd).getTime()+d*864e5-Date.now())/864e5)}
 function repLista(){const G=repGrupos(),el=$('#repLista');if(!el)return;
   const av=$('#cierreAviso'),dc=diasCierres();if(av){av.hidden=!dc;av.innerHTML=dc?`📌 Los cierres se guardan <b>${dc} días</b> y después se borran. <b>Bajá el PDF</b> de cada fecha e imprimilo o guardalo: ese es tu respaldo.`:''}
-  el.innerHTML=G.length?G.map(g=>{const R=repResumen(g.pk),n=repFilas(g.pk).length,be=repBorraEn(g.k);return `<div class="replin"><div><b>📦 ${repEntregasDe(g.k)}</b>${be!=null&&be<=3?`<div class="small" style="color:var(--bad);font-weight:600">⚠ ${be<=0?'Se borra hoy':'Se borra en '+be+' día'+(be===1?'':'s')}: bajá el PDF</div>`:''}<div class="small muted">${R.rec} recibidos · ${R.ent} entregados · ${R.dev} devueltos${R.pMin!=null?` · prom. ${Math.round(R.pMin)} min${R.pKm!=null?' / '+R.pKm.toFixed(1)+' km':''} por entrega`:''}</div></div><button class="btn sm primary" type="button" data-rep="${g.k}"${n?'':' disabled'}>📄 PDF</button></div>`}).join(''):'<p class="small muted">Todavía no hay paquetes.</p>'}
+  el.innerHTML=G.length?G.map(g=>{const R=repResumen(g.pk),n=repFilas(g.pk).length,be=repBorraEn(g.k);return `<div class="replin"><div><b>📦 ${repEntregasDe(g.k)}</b>${be!=null&&be<=3?`<div class="small" style="color:var(--bad);font-weight:600">⚠ ${be<=0?'Se borra hoy':'Se borra en '+be+' día'+(be===1?'':'s')}: bajá el PDF</div>`:''}<div class="small muted">${R.rec} recibidos · ${R.ent} entregados · ${R.ruta} en ruta · ${R.hold} hold · ${R.dev} devueltos${R.pMin!=null?` · prom. ${Math.round(R.pMin)} min${R.pKm!=null?' / '+R.pKm.toFixed(1)+' km':''} por entrega`:''}</div></div><button class="btn sm primary" type="button" data-rep="${g.k}"${n?'':' disabled'}>📄 PDF</button></div>`}).join(''):'<p class="small muted">Todavía no hay paquetes.</p>'}
 $('#repLista').addEventListener('click',e=>{const b=e.target.closest('[data-rep]');if(b)repPdf(b.dataset.rep)});
 // Reporte "Guías + fecha" (1.71.0): entregados agrupados por día de ENTREGA (repT), con Nombre, Tel., Guía y Nota
-function guiGrupos(){const g={};repTodos().filter(p=>p.st==='entregado').forEach(p=>{const k=p.ing?repDia(p.ing):'sin';(g[k]=g[k]||[]).push(p)}); // 1.72.3: un reporte por fecha de RECIBIDO
+function guiGrupos(){const g={};repTodos().forEach(p=>{ /* 1.95.0 (Victor): todos los recibidos, no solo los entregados */const k=p.ing?repDia(p.ing):'sin';(g[k]=g[k]||[]).push(p)}); // 1.72.3: un reporte por fecha de RECIBIDO
   return Object.keys(g).sort((a,b)=>a==='sin'?1:b==='sin'?-1:b.localeCompare(a)).map(k=>({k,pk:g[k].sort((a,b)=>(repT(a)||0)-(repT(b)||0))}))}
 function guiTit(k){return k==='sin'?'Sin fecha de recibido':`Paquetes recibidos ${repDiaTxt(k)}`}
 function guiLista(){const el=$('#guiLista');if(!el)return;const G=guiGrupos();
-  el.innerHTML=G.length?G.map(g=>`<div class="replin"><div><b>🧾 Guías · ${guiTit(g.k)}</b><div class="small muted">${g.pk.length} entregado(s)</div></div><button class="btn sm primary" type="button" data-gui="${g.k}">📄 PDF</button></div>`).join(''):'<p class="small muted">Todavía no hay paquetes entregados.</p>'}
+  el.innerHTML=G.length?G.map(g=>`<div class="replin"><div><b>🧾 Guías · ${guiTit(g.k)}</b><div class="small muted">${g.pk.length} recibido(s) · ${g.pk.filter(p=>p.st==='entregado').length} entregado(s)</div></div><button class="btn sm primary" type="button" data-gui="${g.k}">📄 PDF</button></div>`).join(''):'<p class="small muted">Todavía no hay paquetes.</p>'}
 function guiPdf(k){const G=guiGrupos().find(x=>x.k===k);if(!G){toast('No hay entregas de esa fecha');return}
   if(!(window.jspdf&&window.jspdf.jsPDF&&window.jspdf.jsPDF.API.autoTable)){toast('Cargando el reporte… tocá otra vez en un momento');repCargar().catch(()=>toast('No se pudo cargar el PDF. Revisá el internet.'));return}
   const tl=x=>{const d=String(x||'').replace(/\D/g,'');return d.length===11&&d.startsWith('506')?d.slice(3):d};
   const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'letter'}),tit=`Guías · ${guiTit(k)}`;
   doc.setFontSize(15);doc.text(`RutaFácil CR · ${tit}`,14,15);doc.setFontSize(10);
-  doc.text(`Entregado por: ${S.yo||'—'}   ·   Fecha de recibido: ${k==='sin'?'—':repDiaTxt(k)}   ·   Paquetes entregados: ${G.pk.length}`,14,22);
-  const EG={};G.pk.forEach(p=>{const r=repDia(repT(p))||'';(EG[r]=EG[r]||[]).push(p)}); // un título por fecha de entrega
-  let y=29;Object.keys(EG).sort().forEach(r=>{const L=EG[r];if(y>185){doc.addPage();y=15}
-    doc.setFontSize(12);doc.setFont(undefined,'bold');doc.text(`Entregados ${r?repDiaTxt(r):''} (${L.length})`,14,y);doc.setFont(undefined,'normal');
-    doc.autoTable({startY:y+3,head:[['Nombre','Tel.','Guía','Dirección','Hora entrega']],body:L.map(p=>[tidyName(p.nombre||''),tl(p.tel),p.guia||'',p.dir||'',repT(p)?fmtT2(repT(p)):'']),
-      styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},columnStyles:{0:{cellWidth:60},1:{cellWidth:28},2:{cellWidth:50},4:{cellWidth:28,halign:'center'}}});
-    y=doc.lastAutoTable.finalY+10});
+  doc.text(`Entregado por: ${S.yo||'—'}   ·   Fecha de recibido: ${k==='sin'?'—':repDiaTxt(k)}   ·   Paquetes recibidos: ${G.pk.length}`,14,22);
+  // 1.95.0 (Victor): todos los recibidos ese día, en el orden en que se escanearon, con la hora de escaneo y el estado
+  const L=G.pk.slice().sort((a,b)=>(a.ing||0)-(b.ing||0));
+  doc.autoTable({startY:27,head:[['Nombre','Tel.','Guía','Dirección','Estado','Hora escaneo']],body:L.map(p=>[tidyName(p.nombre||''),tl(p.tel),p.guia||'',p.dir||'',repEstado(p),p.ing?fmtT2(p.ing):'']),
+    styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},columnStyles:{0:{cellWidth:55},1:{cellWidth:26},2:{cellWidth:46},4:{cellWidth:24},5:{cellWidth:26,halign:'center'}}});
   const name=`guias-${k}.pdf`;
   if(IOS&&navigator.canShare){const file=new File([doc.output('blob')],name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Reporte guardado')).catch(()=>{});return}}
   doc.save(name);toast(`${tit}: ${G.pk.length} guía(s)`)}
+// 1.95.0: PDF de guías entregadas en la fecha elegida
+function guiEntPdf(){const d=$('#guiFechaEnt').value;if(!d){toast('Elegí la fecha de entrega');return}
+  if(!(window.jspdf&&window.jspdf.jsPDF&&window.jspdf.jsPDF.API.autoTable)){toast('Cargando el reporte… tocá otra vez en un momento');repCargar().catch(()=>toast('No se pudo cargar el PDF. Revisá el internet.'));return}
+  const L=repTodos().filter(p=>p.st==='entregado'&&repDia(repT(p))===d).sort((a,b)=>(repT(a)||0)-(repT(b)||0));if(!L.length){toast(`No hay entregas el ${repDiaTxt(d)}`);return}
+  const tl=x=>{const t=String(x||'').replace(/\D/g,'');return t.length===11&&t.startsWith('506')?t.slice(3):t};
+  const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'letter'}),tit=`Guías · Entregados ${repDiaTxt(d)}`;
+  doc.setFontSize(15);doc.text(`RutaFácil CR · ${tit}`,14,15);doc.setFontSize(10);doc.text(`Entregado por: ${S.yo||'—'}   ·   Paquetes entregados: ${L.length}`,14,22);
+  doc.autoTable({startY:27,head:[['Nombre','Tel.','Guía','Dirección','Recibido','Hora entrega']],body:L.map(p=>[tidyName(p.nombre||''),tl(p.tel),p.guia||'',p.dir||'',p.ing?repDiaTxt(repDia(p.ing)):'',fmtT2(repT(p))]),
+    styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},columnStyles:{0:{cellWidth:55},1:{cellWidth:26},2:{cellWidth:46},4:{cellWidth:26},5:{cellWidth:26,halign:'center'}}});
+  const name=`guias-entregados-${d}.pdf`;
+  if(IOS&&navigator.canShare){const file=new File([doc.output('blob')],name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Reporte guardado')).catch(()=>{});return}}
+  doc.save(name);toast(`${tit}: ${L.length} guía(s)`)}
+$('#guiEntBtn').addEventListener('click',guiEntPdf);
 $('#guiLista').addEventListener('click',e=>{const b=e.target.closest('[data-gui]');if(b)guiPdf(b.dataset.gui)});
 // ===== 1.93.0 · Ganancia, ranking de zonas y resumen semanal / mensual (pestaña Cierres) =====
 // S.gan (se sincroniza con la cuenta, ver NUBE_KEYS): tarifas, gasolina anotada por día y un total pequeño por día de entrega
@@ -1377,7 +1398,7 @@ function ganWa(){const P=ganPeriodo(GPER);if(!P.dias.length){toast('No hay entre
   window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank','noopener')}
 async function ganXls(){const P=ganPeriodo(GPER);if(!P.dias.length){toast('No hay entregas en este período');return}
   let XL;try{XL=await cargarXlsx()}catch(e){toast('No se pudo cargar Excel. Revisá el internet.');return}
-  const T=P.T,h=m=>m==null?'':Math.round(m/6)/10,R=[['RutaFácil CR · Resumen de '+GAN_TIT[GPER]],['Mensajero',S.yo||''],['Del',repDiaTxt(P.a),'al',repDiaTxt(P.b)],[],
+  const T=P.T,h=m=>m==null?'':Math.round(m/6)/10,R=[['RutaFácil CR · Resumen de '+GAN_TIT[GPER]],['Entregado por',S.yo||''],['Del',repDiaTxt(P.a),'al',repDiaTxt(P.b)],[],
     ['Fecha','Entregados','Devueltos','Km aprox.','Horas','Pago (₡)','Gasolina (₡)','Gasolina','Te quedó (₡)','₡ por paquete','Min por paquete','Km por paquete','₡ por hora','₡ por km'],
     ...P.dias.map(x=>[repDiaTxt(x.k),x.e,x.d,x.km??'',h(x.min),Math.round(x.ing),x.gas==null?'':Math.round(x.gas),x.gas==null?'':x.real?'anotada':'estimada',Math.round(x.neto),...ganRentaFila({e:x.e,neto:x.neto,min:x.min||0,km:x.km||0,gas:x.gas||0})]),
     ['Total',T.e,T.d,Math.round(T.km*10)/10,h(T.min),Math.round(T.ing),Math.round(T.gas),'',Math.round(T.neto),...ganRentaFila(T)]];
@@ -1396,7 +1417,7 @@ $('#ganGuardar').onclick=()=>{const g=ganS(),n=id=>{const v=$(id).value.trim();r
   save();$('#ganCfg').hidden=true;$('#ganCfgBtn').setAttribute('aria-expanded',false);ganPintar();toast('Tarifas guardadas')};
 $('#ganDias').addEventListener('change',e=>{const i=e.target.closest('[data-gas]');if(!i)return;const g=ganS(),v=i.value.trim();if(v==='')delete g.gas[i.dataset.gas];else g.gas[i.dataset.gas]=Math.max(0,Math.round(+v));save();ganPintar()});
 $('#resWa').onclick=ganWa;$('#resXls').onclick=ganXls;
-document.querySelector('[data-tab="cierres"]').addEventListener('click',()=>trasPintar(()=>{fixIng1031();try{ganActualizar();ganPintar()}catch(e){console.warn('ganancia',e)}repLista();guiLista();repCargar().catch(()=>{});
+document.querySelector('[data-tab="cierres"]').addEventListener('click',()=>trasPintar(()=>{fixIng1031();if(!$('#guiFechaEnt').value)$('#guiFechaEnt').value=new Date().toLocaleDateString('en-CA');try{ganActualizar();ganPintar()}catch(e){console.warn('ganancia',e)}repLista();guiLista();repCargar().catch(()=>{});
   $('#repInfo').textContent='Buscando reportes de cierres anteriores…';repCierres().then(()=>{try{ganActualizar();ganPintar()}catch(e){console.warn('ganancia',e)}repLista();guiLista();$('#repInfo').textContent=''})}));
 $('#m-pref').addEventListener('input',()=>{$('#vcfEj').textContent=vcfName({nombre:'Nombre',guia:'pedido'})});
 $('#m-buscar').addEventListener('input',()=>renderMsg());

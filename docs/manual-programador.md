@@ -135,6 +135,13 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - *Guardar* abre la cámara **dentro del mismo toque** (iPhone no deja abrirla después de un `await`) y agrega con `mkPkg()`. Las fotos de etiqueta no se guardan.
 - Prueba local: las CDN están bloqueadas en el sandbox; se instalan los paquetes con npm y Playwright sirve los archivos interceptando las URL de jsDelivr. Las etiquetas de prueba se generan con JsBarcode.
 
+## 3c-0c. Reportes de Cierres (1.95.0)
+
+- `repEstado(p)`: Entregado, Devuelto (incluye ⛔ Devolver), Hold, En ruta, Por entregar, Sin ubicación (usa `repParadas`).
+- `repFilas(L)` ya no filtra: ordena por `EO` (orden de estados) y luego por `repT`; tiempo y km solo en entregados. `repResumen` suma `ruta` y `hold`; el encabezado del PDF tiene una cuarta fila (Hold) y la tabla empieza en `startY:46`.
+- `guiGrupos()` toma todos los recibidos; `guiPdf` lista por `p.ing` con Estado y Hora escaneo. `guiEntPdf()` + `#guiFechaEnt` / `#guiEntBtn`: entregados cuyo `repDia(repT(p))` es la fecha elegida.
+- La 1.93.0 (PR #18) se juntó con main en esta versión; `NUBE_KEYS` lleva `entr`, `h1`, `h2` y `gan`.
+
 ## 3c-0d. Ganancia, zonas y resumen en Cierres (1.93.0)
 
 - **Marcado:** al inicio de `#v-cierres`: `.ganper` con `#ganPer` (`.segper`, botones `data-per` = `hoy|semana|mes|mespas`) y `#ganRango`; panel 💰 con `#ganCfgBtn`, `#ganCfg` (`#g-pago`, `#g-dev`, `#g-kml`, `#g-litro`, `#ganGuardar`), `#ganRes` (`.gangrid` de 4 `.stat`, 2×2 en celular; `.ganneto` en verde) y `#ganDias` (`.gandia` con `input[data-gas]`); panel 📍 `#zonRes` (`.zont`, `.zonlist`); panel 📊 `#resTxt`, `#resWa`, `#resXls` (naranja, a la derecha, `.ganacts`).
