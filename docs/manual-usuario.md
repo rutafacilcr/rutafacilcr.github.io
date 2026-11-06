@@ -519,6 +519,8 @@ Debajo de **📷 Escáner** está el botón verde **WhatsApp**, que abre el chat
 - El WhatsApp de "en camino" trae tres líneas nuevas después de la política de entrega: entrega **GRATIS** en el primer intento, segundo intento si la ruta lo permite, y que un tercero puede recibir con nombre y cédula.
 - **📋 Lista** ahora es solo lo que falta por entregar: primero los de **HOLD** y después los **pendientes**, en orden de ruta.
 
+**Otros detalles:** el botón **📷** (WhatsApp para mandar foto) ahora es blanco; la nota amarilla va con letra negra para que se lea en la calle, también en tarjetas apagadas; en los PDF de Cierres donde decía *Mensajero* ahora dice **Entregado por**.
+
 **En la computadora:** al abrir https://rutafacilcr.github.io/ en una laptop, la app se ve dentro de un marco de iPhone, igual que en el celular. Abajo está **Ver sin marco** para usarla a pantalla completa.
 
 **Nota en amarillo (1.92.4):** si el paquete tiene nota, sale abajo de la dirección en letra blanca con fondo amarillo (📝), para que no se te pase.

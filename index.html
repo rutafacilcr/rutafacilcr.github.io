@@ -323,7 +323,9 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
 #pkgList .pkg .actions .btn.devbtn{background:#c0392b;color:#fff;border-color:#c0392b;font-weight:700}
 /* Etiqueta Devuelto / Devolver arriba a la derecha de la tarjeta */
 .pkg .name>.chip.devtag{margin-left:auto}
-html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el encabezado deja espacio para la isla de arriba */
+html.enmarco header.top{padding-top:40px}
+#pkgList .pkg .actions .btn.camwa{background:#fff;color:#1f2125;border:1px solid #9aa0a6} /* 1.94.0 (Victor): botón 📷 en blanco */
+.pknota{color:#1f2125!important} /* 1.94.0 (Victor): nota amarilla con letra negra (se lee mejor), también en tarjetas apagadas */ /* dentro del marco de iPhone, el encabezado deja espacio para la isla de arriba */
 #pkgList .pkg>:is(.name,.meta,.addr){grid-column:2}.addr .pknota{display:block;width:fit-content} /* la tarjeta ahora tiene Guía y Tel. antes de la dirección: todo en la columna de la derecha */
 /* Contadores de Paquetes: Recibidos negro, Entregados verde, En ruta azul, Hold amarillo, Devueltos rojo */
 .stat.s-rec b{color:var(--ink)}.stat.s-ent b{color:#15803d}.stat.s-ruta b{color:#1d4ed8}.stat.s-hold b{color:#a16207}.stat.s-hold{background:#fef9c3;border-color:#eab308}.stat.s-dev b{color:#b91c1c}
@@ -823,7 +825,7 @@ function renderPk(){
     <div class="meta"><span class="pin ${c?'yes':'no'}">${c?'● Ubicación lista':'○ Falta ubicación'}</span>${S.ent&&S.ent.stops?(enR[p.id]?(enR[p.id].c||!c||p.st==='entregado'||p.st==='devuelto'?`<span class="small muted">🏍️ En la ruta${enR[p.id].c?'':' (sin ubicación)'}</span>`:''):c&&p.st!=='entregado'&&p.st!=='devuelto'?'':'<span class="small muted">No está en la ruta</span>'):''}</div>${p.ubic&&!c?`<div class="small ubwarn" style="color:var(--bad)">⚠ No reconozco esta ubicación (${esc(String(p.ubic).slice(0,40))}). Pegá el link que trae coordenadas, por ejemplo el de "Compartir ubicación" de WhatsApp o un link de Waze.</div>`:''}${p.pod?`<div class="ev">📷 ${p.pod.n} fotos · ${fmtDT(p.pod.at)}${p.pod.lat!=null?' · 📍 ±'+Math.round(p.pod.acc)+' m':' · sin GPS'} · ${p.pod.up?'☁️ respaldada':'⏳ sin subir'} <button class="btn sm" data-act="ev" data-id="${p.id}" style="margin-left:4px">Ver evidencia</button></div>`:p.entAt?`<div class="ev">✓ Entregado ${fmtDT(p.entAt)}${p.entGps?` · <a href="https://www.google.com/maps?q=${p.entGps.lat},${p.entGps.lng}" target="_blank" rel="noopener">📍 dónde (±${p.entGps.acc} m)</a>`:' · sin GPS'}</div>`:''}
     <div class="pkruta">${enR[p.id]?(enR[p.id].c||!c||p.st==='entregado'||p.st==='devuelto'?'':`<button class="btn sm" data-act="aruta" data-id="${p.id}">📍 Poner en la ruta</button>`):p.st!=='entregado'&&p.st!=='devuelto'&&!p.devolver?`<button class="btn sm" data-act="aruta" data-id="${p.id}">➕ Agregar a la ruta</button>`:''}<button class="btn sm primary" data-act="paste" data-id="${p.id}">📋 Pegar respuesta</button></div>
     <div class="actions"><button class="btn sm" data-act="edit" data-id="${p.id}">Editar</button><button class="btn sm" data-act="rescan" data-id="${p.id}" title="Volver a escanear la etiqueta de este paquete"><svg class="bcico" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="vertical-align:-0.15em"><rect x="2" y="4" width="2" height="16"/><rect x="5.5" y="4" width="1" height="16"/><rect x="8" y="4" width="2.5" height="16"/><rect x="12" y="4" width="1" height="16"/><rect x="14.5" y="4" width="2" height="16"/><rect x="18" y="4" width="1" height="16"/><rect x="20.5" y="4" width="1.5" height="16"/></svg> Escáner</button></div>
-    <div class="actions"><button class="btn sm ghost danger" data-act="del" data-id="${p.id}">Eliminar</button><button class="btn sm devbtn" data-act="dev" data-id="${p.id}">${p.st==='devuelto'?'↪ Regresar a Ruta':'↩ Devuelto'}</button>${phoneWA(p.tel)?`<a class="btn sm wa" href="https://wa.me/${phoneWA(p.tel)}" target="_blank" rel="noopener" title="Abrir el WhatsApp de este cliente para mandarle una foto" aria-label="Abrir WhatsApp para mandar foto">📷</a><a class="btn sm wa" href="https://wa.me/${phoneWA(p.tel)}" target="_blank" rel="noopener">WhatsApp</a>`:''}</div>
+    <div class="actions"><button class="btn sm ghost danger" data-act="del" data-id="${p.id}">Eliminar</button><button class="btn sm devbtn" data-act="dev" data-id="${p.id}">${p.st==='devuelto'?'↪ Regresar a Ruta':'↩ Devuelto'}</button>${phoneWA(p.tel)?`<a class="btn sm camwa" href="https://wa.me/${phoneWA(p.tel)}" target="_blank" rel="noopener" title="Abrir el WhatsApp de este cliente para mandarle una foto" aria-label="Abrir WhatsApp para mandar foto">📷</a><a class="btn sm wa" href="https://wa.me/${phoneWA(p.tel)}" target="_blank" rel="noopener">WhatsApp</a>`:''}</div>
     ${devBar(p,1)}
   </div>`});
   // 1.74.0: con listas grandes (cientos de paquetes) se pintan las primeras 60 de una vez y el resto en tandas,
@@ -1208,7 +1210,7 @@ function repPdf(k){
   // Posiciones fijas (1.56.2), cuadrícula de 4 columnas: col. 1 fecha y mensajero debajo; col. 2 km y horas; col. 3 fecha de recibido (1.57.0); col. 4 recibidos, entregados y devueltos
   const KM=['Km recorridos',R.km==null||R.km<0.05?'—':R.km.toFixed(1)+' km aprox.'],HR=['Horas invertidas',R.min==null?'—':`${Math.floor(R.min/60)} h ${String(Math.round(R.min%60)).padStart(2,'0')} min`];
   const PR=['Promedio por entrega',R.pMin==null?'—':`${Math.round(R.pMin)} min${R.pKm!=null?' · '+R.pKm.toFixed(1)+' km':''}`];
-  const enc=[['Fecha',fd],KM,['Recibidos el',repDiaTxt(k)],['Paquetes recibidos',String(R.rec)],['Mensajero',S.yo||'—'],HR,['Días de entrega',String(R.dias)],['Paquetes entregados',String(R.ent)],null,PR,null,['Paquetes devueltos',String(R.dev)]];
+  const enc=[['Fecha',fd],KM,['Recibidos el',repDiaTxt(k)],['Paquetes recibidos',String(R.rec)],['Entregado por',S.yo||'—'],HR,['Días de entrega',String(R.dias)],['Paquetes entregados',String(R.ent)],null,PR,null,['Paquetes devueltos',String(R.dev)]];
   doc.setFontSize(10);enc.forEach((e,i)=>{if(!e)return;const [kk,v]=e,x=14+(i%4)*64,y=23+Math.floor(i/4)*6;doc.setFont(undefined,'bold');doc.text(kk+':',x,y);const w=doc.getTextWidth(kk+': ')+1;doc.setFont(undefined,'normal');doc.text(v,x+w,y)});
   doc.autoTable({startY:40,head:[['No. paquete','No. guía / pedido','No. teléfono','Nombre','Estado','Fecha recibido','Fecha entrega','Hora entrega','Tiempo desde anterior','Km desde anterior']],body:fil,
     styles:{fontSize:8.5,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},
@@ -1235,7 +1237,7 @@ function guiPdf(k){const G=guiGrupos().find(x=>x.k===k);if(!G){toast('No hay ent
   const tl=x=>{const d=String(x||'').replace(/\D/g,'');return d.length===11&&d.startsWith('506')?d.slice(3):d};
   const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'letter'}),tit=`Guías · ${guiTit(k)}`;
   doc.setFontSize(15);doc.text(`RutaFácil CR · ${tit}`,14,15);doc.setFontSize(10);
-  doc.text(`Mensajero: ${S.yo||'—'}   ·   Fecha de recibido: ${k==='sin'?'—':repDiaTxt(k)}   ·   Paquetes entregados: ${G.pk.length}`,14,22);
+  doc.text(`Entregado por: ${S.yo||'—'}   ·   Fecha de recibido: ${k==='sin'?'—':repDiaTxt(k)}   ·   Paquetes entregados: ${G.pk.length}`,14,22);
   const EG={};G.pk.forEach(p=>{const r=repDia(repT(p))||'';(EG[r]=EG[r]||[]).push(p)}); // un título por fecha de entrega
   let y=29;Object.keys(EG).sort().forEach(r=>{const L=EG[r];if(y>185){doc.addPage();y=15}
     doc.setFontSize(12);doc.setFont(undefined,'bold');doc.text(`Entregados ${r?repDiaTxt(r):''} (${L.length})`,14,y);doc.setFont(undefined,'normal');
@@ -2165,7 +2167,13 @@ function nubeMezclar(srv){
 function fixIng1031(){try{const c=window.RF_AUTH&&RF_AUTH.cuenta,t=String(c&&(c.telefono||c.tel)||'').replace(/\D/g,'').slice(-8);if(t!=='62700666')return false;
   const a=new Date(2026,9,31).getTime(),b=new Date(2026,10,4).getTime(),f=new Date(2026,9,31,12).getTime();let n=0;
   S.pk.forEach(p=>{if(p.ing&&p.ing>=a&&p.ing<b&&p.ing!==f){p.ing=f;n++}});if(n){S.dirty=true;saveLocal();if(NUBE.on)nubeSoon()}return n}catch(e){return false}}
-function nubeAplicar(ver){S.syncVer=ver;S.baseIds=S.pk.map(p=>p.id);nubeHuella();S.pk.forEach(p=>{if(!p.tok)p.tok=tok();fixOldName(p)});fixIng1031();saveLocal();
+// 1.94.0 · Arreglo único pedido por Victor (06/11/2026): en su cuenta, el paquete de Alejandra Barquero pasa a entregado. Borrar en una versión futura.
+function fixAleja(){try{const c=window.RF_AUTH&&RF_AUTH.cuenta,t=String(c&&(c.telefono||c.tel)||'').replace(/\D/g,'').slice(-8);if(t!=='62700666'||S.fixAleja)return false;
+  const nt=x=>String(x||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();let n=0;
+  S.pk.forEach(p=>{const m=nt(p.nombre);if(!(m.includes('alejandra')&&m.includes('barquero'))||p.st==='entregado')return;const ps=entParadasDe(p),at=Date.now();
+    p.st='entregado';p.entAt=p.entAt||at;delete p.devolver;delete p.devolverAt;delete p.devAt;delete p.stAntes;ps.forEach(x=>{x.done=true;x.at=x.at||at;delete x.hold;delete x.devolver});if(ps.length)entMod();n++});
+  if(n){S.fixAleja=1;S.dirty=true;saveLocal();if(NUBE.on)nubeSoon()}return n}catch(e){return false}}
+function nubeAplicar(ver){S.syncVer=ver;S.baseIds=S.pk.map(p=>p.id);nubeHuella();S.pk.forEach(p=>{if(!p.tok)p.tok=tok();fixOldName(p)});fixIng1031();fixAleja();saveLocal();
   ['#m-coord','#m-form','#m-camino','#m-comp','#m-ext','#m-entr','#m-h1','#m-h2','#m-pref','#m-fecha','#r-start','#r-hora','#r-vel','#r-min'].forEach(id=>{const el=$(id),k={'#m-coord':'coord','#m-form':'form','#m-camino':'camino','#m-comp':'comp','#m-ext':'ext','#m-entr':'entr','#m-h1':'h1','#m-h2':'h2','#m-pref':'pref','#m-fecha':'fecha','#r-start':'start','#r-hora':'hora','#r-vel':'vel','#r-min':'min'}[id];if(el&&document.activeElement!==el)el.value=S[k]??''});
   $('#r-return').checked=!!S.ret;render()}
 // 1.74.0: manda la versión que ya tiene; si no cambió, la nube responde sin datos (cuida la transferencia del plan gratis).
