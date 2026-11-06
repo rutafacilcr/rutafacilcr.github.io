@@ -23,6 +23,9 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.1 | — | *Crear cuenta* con los campos en blanco |
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
+## 2026-11-06
+- **1.95.3 · Elegir en el mapa funciona en el celular:** al tocar *🎯 Elegir en el mapa* el botón queda naranja, el mapa se marca con borde naranja y sale el aviso *Tocá el mapa donde estás* con **✖ Cancelar**. El toque en el mapa ya no se pierde si el dedo se mueve un poquito ni si cae sobre un pin; tocar el botón otra vez cancela. Lo mismo al poner a mano la ubicación de una parada sin 📍.
+
 ## 2026-11-04
 - **1.95.2 · Un solo Devuelto en Mensajes:** la tarjeta devuelta (o para devolver) de *Mensajes* mostraba la etiqueta dos veces; ahora sale solo arriba a la derecha, como en Paquetes, y abajo queda solo el botón para quitarlo.
 - **1.95.1 · Orden de los mensajes:** *Horario extendido* pasa al final. Quedan 1. Pedir ubicación, 2. En camino, 3. Comprensión, 4. Hablar con cliente, 5. Entregado, 6. Horario 8:30 a 12 md, 7. Horario 12 md a 5 p. m. y 8. Horario extendido.

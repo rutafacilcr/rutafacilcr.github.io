@@ -115,6 +115,7 @@ nav.tabs .n:empty{display:none}
 .jorbar .jtxt{flex:1 1 120px;font-size:12.5px;line-height:1.25}.jorbar .jtxt b{white-space:nowrap}
 .jorbar .jini{background:#1f9d55;border-color:#1f9d55;color:#fff;font-weight:700}.jorbar .jfin{background:#c0392b;border-color:#c0392b;color:#fff;font-weight:700}
 .entmap{position:sticky;top:0;z-index:5;height:42vh;min-height:220px;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--surface)}
+/* 1.95.3: modo Elegir en el mapa visible (borde naranja y aviso con Cancelar arriba del mapa) */.entmap.picking{outline:3px solid var(--accent);outline-offset:-3px}.pickban{position:absolute;top:8px;left:52px;right:8px;z-index:1000;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 5px 5px 12px;border-radius:12px;background:#1f2125;color:#fff;font-size:13px;font-weight:600;line-height:1.25;box-shadow:0 2px 10px rgba(0,0,0,.35);cursor:default}.pickban .btn{flex:none;font-size:12.5px;padding:6px 10px;min-height:36px}#entPick.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .epin{width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#d7261e;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center}
 .mepos{width:18px;height:18px;border-radius:50%;background:#1a73e8;border:3px solid #fff;box-shadow:0 0 0 2px rgba(26,115,232,.35),0 1px 4px rgba(0,0,0,.4)}
 .epin b{transform:rotate(45deg);color:#fff;font:700 12px var(--f-body)}
@@ -547,7 +548,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div class="replin" style="border-top:0"><label style="flex-direction:row;align-items:center;gap:8px">Fecha <input type="date" id="guiFechaEnt"></label><button class="btn sm primary" type="button" id="guiEntBtn">📄 PDF</button></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.95.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.95.3</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -2119,7 +2120,7 @@ async function renderEnt(){entSyncPk();rutaGlobo();jorRender();vehPintar();ttPin
     const EPILA={},eOrd=E.stops.map((s,i)=>[s,i]).filter(([s])=>s.c).sort((a,b)=>(entDone(a[0])?1:0)-(entDone(b[0])?1:0)||a[1]-b[1]),eDx={};
     eOrd.forEach(([s,i])=>{const k=s.c[0].toFixed(4)+','+s.c[1].toFixed(4);const n=EPILA[k]=(EPILA[k]||0)+1;eDx[i]=(n-1)*12});
     E.stops.forEach((s,i)=>{if(!s.c)return;const m=L.marker(s.c,{icon:L.divIcon({className:'',html:`<div class="epin${entDone(s)?' ok':s.hold?' hold':''}${i===ESEL?' sel':''}"><b>${eNum(s)}</b></div>`,iconSize:[30,30],iconAnchor:[15-(eDx[i]||0),30]}),zIndexOffset:i===ESEL?3000:entDone(s)?-1000:s.hold?500:1000})
-      .on('click',()=>entSel(i,true)).bindPopup(`<b>${eNum(s)}. ${esc(s.nombre)}</b>`).addTo(EMAP.layer);EMAP.mk[i]=m});
+      .on('click',()=>{if(entPicking()||Date.now()-(EMAP.pickAt||0)<800)return;entSel(i,true)}).bindPopup(`<b>${eNum(s)}. ${esc(s.nombre)}</b>`).addTo(EMAP.layer);EMAP.mk[i]=m});
     // 1.94.0 (Victor): los devueltos (y los marcados ⛔ Devolver) se ven en el mapa en rojo oscuro con ↩, solo para ver dónde eran; no entran a la ruta
     S.pk.forEach(p=>{if(!(p.st==='devuelto'||pkDevol(p)))return;const c=parseCoord(p.ubic);if(!c||entParadasDe(p).some(x=>x.c&&!entDev(x)&&!x.devolver))return;
       L.marker(c,{icon:L.divIcon({className:'',html:`<div class="epin dev"><b>↩</b></div>`,iconSize:[30,30],iconAnchor:[15,30]}),zIndexOffset:-2000,keyboard:false}).bindPopup(`<b>#${p.num||''} ${esc(p.nombre||'')}</b><br>${p.st==='devuelto'?'🔴 Devuelto':'⛔ Devolver'} · no está en la ruta${p.nota?`<br>📝 ${esc(p.nota)}`:''}`).addTo(EMAP.layer)});
@@ -2127,7 +2128,26 @@ async function renderEnt(){entSyncPk();rutaGlobo();jorRender();vehPintar();ttPin
   }catch(e){$('#entMap').innerHTML='<p class="small muted" style="padding:12px">No se pudo cargar el mapa. Usá los botones de Waze o Maps.</p>'}
 }
 // 1.86.1: crea el mapa de Ruta una sola vez (también sin ruta cargada)
-async function entMapaCrear(){if(!EMAP){EMAP=L.map('entMap');L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(EMAP);EMAP.layer=L.layerGroup().addTo(EMAP);EMAP.fitted=null;EMAP.on('click',e=>{if(EMAP.pickStop!=null){const i=EMAP.pickStop;EMAP.pickStop=null;$('#entMap').style.cursor='';entPonerC(i,[+e.latlng.lat.toFixed(6),+e.latlng.lng.toFixed(6)]);return}if(EMAP.pick){EMAP.pick=false;$('#entMap').style.cursor='';entOrdenar([+e.latlng.lat.toFixed(6),+e.latlng.lng.toFixed(6)],'el punto que elegiste',true)}})}}
+async function entMapaCrear(){if(!EMAP){EMAP=L.map('entMap');L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(EMAP);EMAP.layer=L.layerGroup().addTo(EMAP);EMAP.fitted=null;EMAP.on('click',e=>entPickTap(e.latlng));
+  // 1.95.3: en el celular Leaflet se traga el toque si el dedo se mueve más de 3 px (lo toma como arrastre) o si cae sobre un pin.
+  // Mientras se elige un punto, el toque se lee directo del dedo (hasta 14 px de movimiento, con un solo dedo) y vale aunque caiga sobre un pin.
+  const mc=EMAP.getContainer(),PT=new Map();let pd=null;
+  mc.addEventListener('pointerdown',e=>{PT.set(e.pointerId,1);pd=PT.size===1&&entPicking()?{x:e.clientX,y:e.clientY}:null},true);
+  mc.addEventListener('pointerup',e=>{PT.delete(e.pointerId);const d=pd;pd=null;if(!d||e.target.closest('.pickban,.leaflet-control'))return;
+    if(Math.hypot(e.clientX-d.x,e.clientY-d.y)<=14)entPickTap(EMAP.mouseEventToLatLng(e))},true);
+  mc.addEventListener('pointercancel',e=>{PT.delete(e.pointerId);pd=null},true);
+  mc.addEventListener('pointermove',e=>{if(PT.size>1)pd=null},true)}}
+// 1.95.3: modo 🎯 Elegir en el mapa (o tocar la casa de una parada sin ubicación): se ve en el botón, en el borde del mapa y en un aviso con Cancelar
+function entPicking(){return !!(EMAP&&(EMAP.pick||EMAP.pickStop!=null))}
+function entPickModo(on,txt){const m=$('#entMap');if(!on&&EMAP){EMAP.pick=false;EMAP.pickStop=null}
+  m.classList.toggle('picking',!!on);m.style.cursor=on?'crosshair':'';const b=$('#entPick');b.classList.toggle('on',!!(on&&EMAP&&EMAP.pick));b.setAttribute('aria-pressed',!!(on&&EMAP&&EMAP.pick));
+  let bn=m.querySelector('.pickban');if(!on){if(bn)bn.remove();return}
+  if(!bn){bn=document.createElement('div');bn.className='pickban';bn.setAttribute('role','status');bn.innerHTML='<span></span><button class="btn sm primary" type="button">✖ Cancelar</button>';
+    if(window.L)L.DomEvent.disableClickPropagation(bn);bn.querySelector('button').onclick=e=>{e.stopPropagation();entPickModo(false);toast('Listo, no se eligió ningún punto')};m.appendChild(bn)}
+  bn.firstChild.textContent=txt}
+function entPickTap(ll){if(!entPicking()||!ll)return false;const c=[+ll.lat.toFixed(6),+ll.lng.toFixed(6)];EMAP.pickAt=Date.now();
+  if(EMAP.pickStop!=null){const i=EMAP.pickStop;entPickModo(false);entPonerC(i,c);return true}
+  entPickModo(false);entOrdenar(c,'el punto que elegiste',true);return true}
 // Tocar una parada: la marca y centra el mapa; tocar un pin: baja a esa parada en la lista.
 function entSel(i,desdeMapa){ESEL=i;const s=S.ent.stops[i];renderEnt().then(()=>{
   if(s.c&&EMAP){EMAP.setView(s.c,Math.max(EMAP.getZoom(),16));EMAP.mk[i]&&EMAP.mk[i].openPopup()}
@@ -2250,14 +2270,15 @@ $('#entAqui').onclick=()=>{if(!navigator.geolocation){gpsFail();return}EAUTO=tru
   navigator.geolocation.getCurrentPosition(g=>{gpsOk(g);entOrdenar(EPOS.c,'tu ubicación',true);entVigilar()},
     e=>{if(e.code===1)return gpsFail(e);navigator.geolocation.getCurrentPosition(g=>{gpsOk(g);entOrdenar(EPOS.c,'tu ubicación',true)},gpsFail,{enableHighAccuracy:false,timeout:20000,maximumAge:120000})},
     {enableHighAccuracy:true,timeout:15000,maximumAge:30000})};
-$('#entPick').onclick=()=>{if(!EMAP){toast('Primero cargá la ruta');return}EMAP.pick=true;$('#entMap').style.cursor='crosshair';$('#entMap').scrollIntoView({behavior:'smooth',block:'start'});toast('Tocá el mapa donde estás');};
+$('#entPick').onclick=()=>{if(!EMAP){toast('Primero cargá la ruta');return}if(EMAP.pick){entPickModo(false);return} // 1.95.3: tocarlo otra vez cancela
+  EMAP.pickStop=null;EMAP.pick=true;entPickModo(true,'Tocá el mapa donde estás');$('#entMap').scrollIntoView({behavior:'smooth',block:'start'})};
 // Parada sin ubicación: pegar link/coordenadas o tocar el mapa; entra a la ruta y se reordena desde tu punto
 function entPonerC(i,c){entMod();const s=S.ent.stops[i];s.c=c;delete s.ub;let pkC=false;try{const p=entPkg(s);if(p&&entFuerte(s,p)&&!parseCoord(p.ubic)){p.ubic=cTxt(c);s.pkId=p.id;s.pkFijo=p.id;pkC=true}}catch(e){}if(pkC){save();render()} /* 1.86.2: repinta Paquetes y Mensajes con la ubicación nueva */ // la ubicación también queda en Paquetess.n=Math.max(0,...S.ent.stops.filter(x=>x.c&&x!==s).map(x=>x.n||0))+1;
   const sinC=S.ent.stops.filter(x=>!x.c);S.ent.stops=[...S.ent.stops.filter(x=>x.c),...sinC];
   toast(`Ubicación agregada a ${s.nombre}`);if(EPOS)entOrdenar(EPOS.c,'donde estás');else{save();renderEnt()}}
 async function entUbicar(i){const s=S.ent.stops[i];const t=await pedir({ico:'📍',titulo:`Ubicación de ${s.nombre||'la parada'}`,texto:'Pegá el link de Google Maps o Waze, o las coordenadas. <b>Dejalo vacío</b> para tocar el punto en el mapa.',label:'Link o coordenadas',placeholder:'https://maps.app.goo.gl/… o 9.93,-84.08',si:'Poner ubicación'});if(t===null)return;
   if(t.trim()){const c=parseCoord(t.trim());if(!c){toast('No reconocí esa ubicación. Probá con el link completo o las coordenadas');return}entPonerC(i,c);return}
-  if(!EMAP){toast('Primero tiene que verse el mapa');return}EMAP.pickStop=i;$('#entMap').style.cursor='crosshair';$('#entMap').scrollIntoView({behavior:'smooth',block:'start'});toast(`Tocá el mapa donde vive ${s.nombre}`)}
+  if(!EMAP){toast('Primero tiene que verse el mapa');return}EMAP.pick=false;EMAP.pickStop=i;entPickModo(true,`Tocá el mapa donde vive ${s.nombre||'el cliente'}`);$('#entMap').scrollIntoView({behavior:'smooth',block:'start'})}
 $('#entFile').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)entCargar(f).catch(()=>toast('No se pudo leer ese archivo'))};
 $('#entList').addEventListener('click',async e=>{if(e.target.closest('[data-edone],[data-eundo],[data-edevol],[data-edevno],[data-ehold],[data-equitar],[data-elink],[data-eok]'))entMod();
   const b=e.target.closest('[data-eok]');if(b){const s=S.ent.stops[+b.dataset.eok],p=entPkg(s);if(p&&p.st!=='entregado'){openPOD(p);return}s.done=true;save();renderEnt();return}
