@@ -186,6 +186,15 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 ## 3c-quindecies. Tarjeta desactivada por Devolver (1.66.0)
 
+- 1.94.0 (lista de noviembre):
+  - `notasMay()` (al inicio de `render`) y `mkPkg` pasan `nota` a mayúsculas; `#f-nota` con `text-transform:uppercase`.
+  - `renderStats`: contador `enRuta` (pendiente con parada con `c`, sin Hold, sin `done`) y clases `.stat.s-rec/.s-ent/.s-ruta/.s-hold/.s-dev/.s-sin`; en el celular la grilla es de 3×2.
+  - Tarjeta de Paquetes: `.meta` con Guía y Tel. antes de `.addr` (`#pkgList .pkg>:is(.name,.meta,.addr){grid-column:2}`); `pkChip` pone `⛔ Devolver` arriba y `devBar(p,1)` ya no repite la etiqueta; `.devtag` y `.devbtn` en rojo `#c0392b`.
+  - `pkSacarDeRuta(p)` quita las paradas pendientes; `dev` y `devno` llaman `entAgregarPk` con ubicación (aunque no haya ruta abierta) o `pkSacarDeRuta` sin ella. `aruta` sin ubicación la pide con `pedir()`.
+  - Orden: `pkEntT(p)` y `pkGrupoT(p)` (entregado → hora de entrega; devuelto → `devAt`; ⛔ Devolver → `devolverAt`; Hold → `s.holdAt`) después de `rk` en `renderPk` y `renderMsg`.
+  - Mensajes: `msgChip(p,hold)` con `.ms-ent`, `.ms-dev`, `.ms-hold`; `msgOpts` suma `hablar`, `entr`, `h1`, `h2` (`DEF_ENTR`, `DEF_H1`, `DEF_H2`, textareas `#m-entr`, `#m-h1`, `#m-h2`); `waLink` sin texto abre `wa.me/<número>` limpio.
+  - Ruta: Tel. (`.etel`) y nota (`.pknota`) en `.estop`; pines `.epin.dev` para devueltos sin parada (`zIndexOffset:-2000`); `entrAvisar(p)` abre `#enSheet` tras `data-edone`; `data-eundo` saca la parada y agrega el id a `S.ent.quitadas`; `data-edevol` pide nota con `pedir()` y confirma con `rfConfirm`; `entWaUrl` con 3 líneas más; `#entLista` agrupa Hold y pendientes.
+  - Marco de iPhone: script al inicio de `<head>` redirige a `marco.html` (pantalla ≥ 900 px, `hover:hover`, `pointer:fine`, `window.top===window`, sin `?marco=no`); dentro del iframe se agrega `html.enmarco` (espacio para la isla). `#diagShare` usa `window.open` dentro del iframe porque wa.me no deja abrirse en un iframe.
 - 1.92.4: `esTarde(d)` (21:30 a 4:59), `DISC_HORA` y `pkCoordText(p)` antepone la disculpa; lo usa `pkChip` y el clic `data-act="sent"` de `.coordbtn` recalcula el `href` al tocar (la hora de pintar puede ser vieja). Mensajes sigue con `coordText`. La nota en Paquetes va en `<div class="pknota">` (fondo #e0a100, letra blanca en negrita).
 - 1.92.3: en `renderPk`, `rk(p)` = 0 con coordenadas (`parseCoord`) o con parada en la ruta (`enR`), 1 Hold, 2 sin ubicación ni ruta, 3 devuelto / ⛔ Devolver, 4 entregado; empates por orden de la lista. `enR` se calcula antes de `rk`.
 - 1.92.2: helpers `fDMY(t)` (dd/mm/aaaa), `fDMYh(t)` (con hora) e `isoDMY(x)` (cambia AAAA-MM-DD a dd/mm/aaaa solo para mostrar; el nombre guardado de la ruta y los nombres de archivo siguen en ISO). `fmtDT`, `tomorrow`, `repEntregasDe`, el encabezado de Ruta y `#entInfo` los usan; `admin.html` y `auth.js` tienen su propio `fecha`. `FIL.dev` = `p.devolver && p.st!=='entregado'` con su botón `dev` en `#msgFil`. Tarjeta de Paquetes: `<a class="btn sm wa">📷</a>` con `https://wa.me/<tel>` antes del botón *WhatsApp*.

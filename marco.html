@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RutaFácil CR</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<meta name="theme-color" content="#1f2125">
+<!-- 1.94.0 (Victor): en la laptop la app se ve dentro de un marco de iPhone, como si corriera en el celular.
+     La app va en un iframe de 390 px para que use el mismo diseño del celular. En celular o tableta esta página manda directo a la app. -->
+<script>
+if(!matchMedia('(min-width:900px) and (hover:hover) and (pointer:fine)').matches)location.replace('./'+location.search.replace(/[?&]marco=[^&]*/,'')+location.hash);
+</script>
+<style>
+:root{--bg:#e9eaec;--ink:#1f2125;--muted:#5b6068}
+@media (prefers-color-scheme:dark){:root{--bg:#141517;--ink:#e8e9eb;--muted:#a3a7ad}}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;overflow:hidden}
+.phone{position:relative;width:414px;height:min(868px,calc(100vh - 70px));border-radius:58px;background:#0d0e10;padding:12px;box-shadow:0 0 0 2px #3a3d44,0 0 0 5px #1b1c1f,0 30px 80px rgba(0,0,0,.45)}
+.phone::before{content:"";position:absolute;top:22px;left:50%;transform:translateX(-50%);width:118px;height:34px;border-radius:20px;background:#000;z-index:2;pointer-events:none}
+.phone::after{content:"";position:absolute;right:-7px;top:180px;width:4px;height:90px;border-radius:3px;background:#2a2c31}
+iframe{display:block;width:100%;height:100%;border:0;border-radius:46px;background:#1f2125}
+.pie{display:flex;gap:16px;align-items:center;color:var(--muted)}
+.pie a{color:var(--ink);font-weight:600}
+</style>
+</head>
+<body>
+<div class="phone"><iframe id="app" title="RutaFácil CR" allow="camera; geolocation; clipboard-read; clipboard-write; web-share; fullscreen"></iframe></div>
+<div class="pie"><span>Vista de celular en la computadora</span><a href="./?marco=no">Ver sin marco</a></div>
+<script>
+const q=new URLSearchParams(location.search);q.delete('marco');q.set('marco','no');
+document.getElementById('app').src='./?'+q.toString()+location.hash;
+</script>
+</body>
+</html>

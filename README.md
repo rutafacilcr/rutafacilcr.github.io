@@ -11,7 +11,8 @@ Herramienta web para repartidores de paquetes en Costa Rica. Cargás la lista de
 La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cierres**, **Mensajes** y **Ruta** (Paquetes y Ruta con una burbuja de lo que falta por entregar) y Ruta siempre muestra el mapa con tu ubicación, aunque no haya paradas (con la parte de arriba compacta); la ubicación que pongás en Ruta queda también en Paquetes. El botón **Soporte** está arriba, en el encabezado.
 
 - **Paquetes:**
-  - Cinco contadores: Recibidos, Entregados, Hold, Devueltos y Sin 📍.
+  - Seis contadores con color (1.94.0): Recibidos (negro), Entregados (verde), En ruta (azul), Hold (amarillo), Devueltos (rojo) y Sin 📍.
+  - Tarjeta en orden Nombre, Guía, Tel. y Dirección; la nota se guarda en MAYÚSCULAS; *Devuelto* en rojo arriba a la derecha (1.94.0).
   - Cuatro botones grandes: 🧹 Vaciar lista, Agregar a mano, Importar y Escanear.
   - Un buscador por nombre, teléfono, guía o número.
   - Las tarjetas van en orden (1.92.3): con ubicación o en la ruta, Hold, sin ubicación ni ruta, devueltos y al final los entregados en gris.
@@ -19,7 +20,10 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
   - La nota del paquete resalta en amarillo, y *Pedir ubicación* después de las 9:30 p. m. se disculpa por la hora (1.92.4).
   - Botón 📷 que abre el WhatsApp del cliente para mandarle una foto (1.92.2).
   - Todas las fechas salen como dd/mm/aaaa (1.92.2).
+- **Mensajes (1.94.0):** ocho mensajes por cliente (1. Pedir ubicación … 5. Hablar con cliente, 6. Entregado, 7. Horario 8:30 a 12 md, 8. Horario 12 md a 5 p. m.) y etiquetas ✅ Entregado, 🔴 Devuelto y ⏸ HOLD.
+- **En la computadora (1.94.0):** la app se ve dentro de un marco de iPhone; *Ver sin marco* la abre a pantalla completa.
 - **Ruta:**
+  - Tel. y nota en cada parada; devueltos visibles en el mapa sin entrar a la ruta; al marcar ✓ Entregado sale el botón para mandar el WhatsApp "Entregado"; *Devolver* pide el motivo; la *Lista* muestra solo lo pendiente, Hold primero (1.94.0).
   - Mapa con la línea por calles reales (OSRM, gratis).
   - Ordenar desde tu GPS o desde un punto del mapa.
   - ▶ Iniciar / ■ Finalizar entregas para el reporte. Desde ▶ Iniciar el orden de la ruta queda fijo (solo cambia si lo reordenás a mano).
