@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-06
+- **1.96.1 · Filtros de Mensajes que suman y Hold habilitado:** los filtros de Mensajes ahora son Todos, Sin enviar, Esperando respuesta, Confirmados, ⏸ Hold, ⛔ Devolver, ✅ Entregados y 🔴 Devueltos; cada paquete cae en uno solo, así la suma da el número de Todos. Los paquetes en Hold ya no se ven apagados: sus mensajes se pueden enviar normalmente.
 - **1.96.0 · Escáner de etiquetas más certero:** la cámara se abre dentro de la app y toma la foto sola cuando lee la guía (también del QR); lector de códigos nuevo (zxing-wasm) que lee etiquetas inclinadas; en las etiquetas J&T se recorta, endereza y agranda solo el bloque del cliente y se lee en varias pasadas. Con las 3 fotos de prueba de Victor: guía 3 de 3 (antes 0), nombre 3 de 3 (antes 0), teléfono 2 de 3 (antes 1). La cámara normal y la Galería siguen igual.
 - **1.95.7 · Pegar ubicación en blanco si ya hay ubicación:** en Paquetes el botón *📋 Pegar ubicación* solo va en naranja cuando al paquete le falta la ubicación; si ya la tiene, va blanco como los demás.
 - **1.95.6 · Pegar ubicación:** en Paquetes el botón *📋 Pegar respuesta* (y su ventana) ahora se llama **📋 Pegar ubicación**. Hace lo mismo.

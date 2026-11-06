@@ -554,7 +554,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div class="replin" style="border-top:0"><label style="flex-direction:row;align-items:center;gap:8px">Fecha <input type="date" id="guiFechaEnt"></label><button class="btn sm primary" type="button" id="guiEntBtn">📄 PDF</button></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.96.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.96.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -912,18 +912,19 @@ function renderMsg(){
   const q=($('#m-buscar').value||'').trim().toLowerCase(),qd=q.replace(/\D/g,'');
   // Buscar: por nombre o guía, o por los últimos dígitos del teléfono (sirve para ver de quién es un número que contesta)
   // 1.88.0: filtros por estado (Todos, Sin contestar, No responde, Confirmados). Solo cuentan los que siguen activos (no entregados, devueltos ni para devolver)
-  const act=p=>p.st!=='entregado'&&p.st!=='devuelto'&&!p.devolver,FIL={sin:p=>act(p)&&msgEst(p)==='sin',nr:p=>act(p)&&msgEst(p)==='esp',ok:p=>act(p)&&msgEst(p)==='ok',dev:p=>p.devolver&&p.st!=='entregado'}; // 1.92.0: estado automático · 1.92.2: filtro Devolver
+  // 1.96.1 (Victor): cada paquete cae en un solo filtro, así la suma de los filtros da el número de Todos (antes Todos contaba los entregados, devueltos y en Hold y los demás no)
+  const HOLD=new Map(),enHold=p=>{if(p.st==='entregado'||p.st==='devuelto')return false;if(!HOLD.has(p)){let h=false;try{h=entParadasDe(p).some(x=>x.hold&&!x.done)}catch(e){}HOLD.set(p,h)}return HOLD.get(p)}; // 1.77.0: se calcula una vez por paquete
+  const act=p=>p.st!=='entregado'&&p.st!=='devuelto'&&!p.devolver,act2=p=>act(p)&&!enHold(p),FIL={sin:p=>act2(p)&&msgEst(p)==='sin',nr:p=>act2(p)&&msgEst(p)==='esp',ok:p=>act2(p)&&msgEst(p)==='ok',hold:p=>act(p)&&enHold(p),dev:p=>p.devolver&&p.st!=='entregado'&&p.st!=='devuelto',ent:p=>p.st==='entregado',devu:p=>p.st==='devuelto'}; // 1.92.0: estado automático · 1.92.2: filtro Devolver · 1.96.1: Hold, Entregados y Devueltos
   if(MSGF!=='todos'&&!FIL[MSGF])MSGF='todos';
-  $('#msgFil').innerHTML=[['todos','Todos',S.pk.length],['sin','🟡 Sin enviar',S.pk.filter(FIL.sin).length],['nr','📨 Esperando respuesta',S.pk.filter(FIL.nr).length],['ok','🔵 Confirmados',S.pk.filter(FIL.ok).length],['dev','⛔ Devolver',S.pk.filter(FIL.dev).length]].map(([k,t,n])=>`<button type="button" data-msgf="${k}" aria-pressed="${k===MSGF}">${t} <b>${n}</b></button>`).join('');
+  $('#msgFil').innerHTML=[['todos','Todos',S.pk.length],['sin','🟡 Sin enviar',S.pk.filter(FIL.sin).length],['nr','📨 Esperando respuesta',S.pk.filter(FIL.nr).length],['ok','🔵 Confirmados',S.pk.filter(FIL.ok).length],['hold','⏸ Hold',S.pk.filter(FIL.hold).length],['dev','⛔ Devolver',S.pk.filter(FIL.dev).length],['ent','✅ Entregados',S.pk.filter(FIL.ent).length],['devu','🔴 Devueltos',S.pk.filter(FIL.devu).length]].map(([k,t,n])=>`<button type="button" data-msgf="${k}" aria-pressed="${k===MSGF}">${t} <b>${n}</b></button>`).join('');
   const hit=p=>(MSGF==='todos'||FIL[MSGF](p))&&hit0(p),hit0=p=>!q||(p.nombre||'').toLowerCase().includes(q)||(p.guia||'').toLowerCase().includes(q)||(qd.length>=3&&String(p.tel||'').replace(/\D/g,'').includes(qd.slice(-8)));
   // 1.52.1: como en Paquetes, los entregados se ven en gris (número tachado) y bajan; al final los devueltos
-  // 1.52.4: los que están en Hold en la Ruta también van en gris, después de los pendientes y antes de los entregados
-  const HOLD=new Map(),enHold=p=>{if(p.st==='entregado'||p.st==='devuelto')return false;if(!HOLD.has(p)){let h=false;try{h=entParadasDe(p).some(x=>x.hold&&!x.done)}catch(e){}HOLD.set(p,h)}return HOLD.get(p)}; // 1.77.0: se calcula una vez por paquete
+  // 1.52.4: los que están en Hold en la Ruta van después de los pendientes y antes de los entregados (1.96.1: ya no en gris, sus mensajes se pueden enviar)
   const rk=p=>p.st==='entregado'?2:p.st==='devuelto'?3:enHold(p)?1:0;
   // 1.69.3: dentro de cada grupo, el mismo orden que en Ruta (posición de su parada en la lista de Ruta); los que no están en la ruta van después, en el orden de la lista
   const rpos={};try{const E=S.ent;if(E&&E.stops){const erk=s=>entDone(s)?2:s.c?(s.hold?0.5:0):1;let k=0;E.stops.map((s,i)=>[s,i]).sort((a,b)=>erk(a[0])-erk(b[0])||a[1]-b[1]).forEach(([s])=>{const q=entPkg(s);if(q&&rpos[q.id]===undefined)rpos[q.id]=k;k++})}}catch(e){}
   const rp=(p,i)=>rpos[p.id]!==undefined?rpos[p.id]:1e6+i;
-  L.innerHTML=S.pk.map((p,i)=>[p,i]).sort((a,b)=>rk(a[0])-rk(b[0])||(rk(a[0])?pkGrupoT(a[0])-pkGrupoT(b[0]):0)||rp(a[0],a[1])-rp(b[0],b[1])).map(([p,i])=>{const sel=msgSel(p),txt=msgText(p,sel);const l=waLink(p,txt);return `<div class="pkg${p.st==='entregado'||enHold(p)?' entregado':''}${pkOff(p)?' devol':''}"${hit(p)?'':' style="display:none"'}>
+  L.innerHTML=S.pk.map((p,i)=>[p,i]).sort((a,b)=>rk(a[0])-rk(b[0])||(rk(a[0])?pkGrupoT(a[0])-pkGrupoT(b[0]):0)||rp(a[0],a[1])-rp(b[0],b[1])).map(([p,i])=>{const sel=msgSel(p),txt=msgText(p,sel);const l=waLink(p,txt);return `<div class="pkg${p.st==='entregado'?' entregado':''}${pkOff(p)?' devol':''}"${hit(p)?'':' style="display:none"'}>
     <div class="num${p.st==='entregado'?' tachado':''}">${p.num||i+1}</div>
     <div class="name">${esc(p.nombre)} ${msgChip(p,enHold(p))}</div>
     <div class="addr">${p.guia?`<span class="mono">Guía: ${esc(p.guia)}</span> · `:''}<span class="mono">${esc(p.tel||'sin teléfono')}</span>${p.nota?`<div class="pknota">📝 ${esc(p.nota)}</div>`:''}${p.resp?' <span class="small" style="color:var(--ok);font-weight:600">✓ llenó el formulario</span>':''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
