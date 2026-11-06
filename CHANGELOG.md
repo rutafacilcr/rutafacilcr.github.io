@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-06
+- **1.95.4 · Tarjetas de Paquetes:** la etiqueta o botón del estado (Entregado, Devuelto, Pedir ubicación…) va siempre a la derecha, sin importar el largo del nombre; los paquetes no entregados llevan borde negro (los sin ubicación siguen con borde rojo). En Mensajes la etiqueta también va a la derecha.
 - **1.95.3 · Elegir en el mapa funciona en el celular:** al tocar *🎯 Elegir en el mapa* el botón queda naranja, el mapa se marca con borde naranja y sale el aviso *Tocá el mapa donde estás* con **✖ Cancelar**. El toque en el mapa ya no se pierde si el dedo se mueve un poquito ni si cae sobre un pin; tocar el botón otra vez cancela. Lo mismo al poner a mano la ubicación de una parada sin 📍.
 
 ## 2026-11-04
