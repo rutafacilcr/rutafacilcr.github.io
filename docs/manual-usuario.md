@@ -133,11 +133,14 @@ La primera vez vas a ver datos de ejemplo: tocá **Borrar ejemplo**.
 
 Tenés cuatro formas de cargar:
 
-1. **Escanear etiquetas (lo más rápido con muchos paquetes):** tocá **📷 Escanear etiquetas** y tomale foto a la etiqueta.
-   - La app saca la **guía** del código de barras y trata de leer **nombre, teléfono y dirección**.
+1. **Escanear etiquetas (lo más rápido con muchos paquetes):** tocá **📷 Escanear etiquetas** y apuntá la cámara a la etiqueta.
+   - Desde la 1.96.0 la cámara se abre dentro de la app: no tenés que tocar nada. Cuando lee la guía (del código de barras o de un QR) el cuadro se pone verde, el celular vibra y la foto se toma sola. La primera vez el celular pregunta si la app puede usar la cámara: tocá **Permitir**.
+   - Si una etiqueta no tiene código, tocá **📸 Tomar ahora**. Con poca luz, **🔦 Luz** prende el foco (solo en los celulares que lo permiten). **Cámara normal** abre la cámara del celular como antes.
+   - Al guardar, la cámara se vuelve a abrir sola para el siguiente paquete. Si todavía ve la etiqueta que acabás de guardar, no la repite: te avisa que apuntés a la siguiente.
+   - La app saca la **guía** del código de barras y trata de leer **nombre, teléfono y dirección**. En las etiquetas **J&T** (las de Temu) busca el bloque del cliente (Nombre, C.P./Tel y la dirección hasta *Distrito/Cantón/Provincia*) y no se confunde con el remitente de China.
    - Revisá los datos, corregí lo que haga falta y tocá **Guardar y tomar otra**. Así seguís con los 70 sin salir de la pantalla. Al final tocá **Terminar**.
    - **Si ya tomaste las fotos:** tocá **🖼️ Galería** y seleccioná varias. La app las va mostrando una por una.
-   - **Para que lea bien:** etiqueta derecha y llenando la pantalla, a la sombra, sin reflejo y con la bolsa estirada. Si sale mal, tocá **↻ Girar y leer de nuevo** o tomá otra foto.
+   - **Para que lea bien:** que se vea la etiqueta completa (incluidos los dos QR de abajo), a la sombra, sin reflejo y con la bolsa estirada. Desde la 1.96.0 no importa si está inclinada. Si sale mal, tocá **↻ Girar y leer de nuevo** o tomá otra foto.
    - Si la guía ya estaba en la lista, sale un aviso en rojo para que no la repitás.
    - La primera vez tarda un poco más porque baja el lector de texto (unos MB). Después queda guardado en el celular.
    - Lo que no lea, lo escribís a mano en el mismo cuadro. En **Ver texto leído** está todo lo que la app alcanzó a leer.
