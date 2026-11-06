@@ -517,6 +517,7 @@ Debajo de **📷 Escáner** está el botón verde **WhatsApp**, que abre el chat
 **Mensajes**
 - Etiquetas: **✅ Entregado** en verde, **🔴 Devuelto** y **⛔ Devolver** en rojo, **⏸ HOLD** en amarillo (antes decía *Confirmado*).
 - La tarjeta muestra la guía y la nota.
+- Desde la 1.95.8, en *Mensajes*, los filtros de arriba son **Todos, Sin enviar, Esperando respuesta, Confirmados, ⏸ Hold, ⛔ Devolver, ✅ Entregados y 🔴 Devueltos**. Cada paquete está en uno solo, entonces la suma de todos da el número de *Todos*. Los paquetes en **Hold** se ven normales y sus mensajes se pueden enviar.
 - Desde la 1.95.7 **📋 Pegar ubicación** va naranja solo si al paquete le falta la ubicación; si ya la tiene, va blanco.
 - Desde la 1.95.6 el botón **📋 Pegar respuesta** de Paquetes se llama **📋 Pegar ubicación** (hace lo mismo).
 - Desde la 1.95.5 el borde negro va solo en las tarjetas **por entregar** (las sin ubicación siguen en rojo) y los paquetes en Hold dicen **⏸ HOLD** arriba a la derecha, igual que en Mensajes.

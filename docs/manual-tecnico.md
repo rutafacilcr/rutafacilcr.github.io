@@ -317,6 +317,10 @@ Recomendado al pasar a varios mensajeros: en el Panel encender **Exigir cuenta a
 
 Si más adelante hace falta guardar las 3 fotos por meses, la única opción es pagar (Supabase Pro, 25 USD al mes, 100 GB).
 
+### Filtros de Mensajes y Hold (1.95.8)
+
+Solo pantalla; no cambia datos ni Supabase.
+
 ### Elegir en el mapa (1.95.3)
 
 Solo pantalla: no cambia la base ni la configuración. Usa *pointer events* del navegador (Safari de iPhone 13+ y Chrome de Android los traen).
