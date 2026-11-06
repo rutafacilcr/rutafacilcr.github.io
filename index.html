@@ -334,7 +334,9 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
 .st-devuelto,.devtag,.chip.devtag,button.devtag{background:#c0392b!important;color:#fff!important;border:1px solid #c0392b!important}
 #pkgList .pkg .actions .btn.devbtn{background:#c0392b;color:#fff;border-color:#c0392b;font-weight:700}
 /* Etiqueta Devuelto / Devolver arriba a la derecha de la tarjeta */
-.pkg .name>.chip.devtag,#v-mensajes .pkg .name>.msgst.ms-dev{margin-left:auto}
+.pkg .name>:is(.chip,.msgst,.coordbtn){margin-left:auto} /* 1.95.4 (Victor): la etiqueta o botón del estado siempre a la derecha, sin importar el largo del nombre */
+#pkgList .pkg:not(.entregado){border:2px solid var(--ink)} /* 1.95.4 (Victor): los no entregados con borde negro */
+#pkgList .pkg.sinub{border:2px solid var(--bad,#d93025)} /* sin ubicación sigue en rojo */
 html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el encabezado deja espacio para la isla de arriba */
 #pkgList .pkg .actions .btn.camwa{background:#fff;color:#1f2125;border:1px solid #9aa0a6} /* 1.94.0 (Victor): botón 📷 en blanco */
 .pknota{color:#1f2125!important} /* 1.94.0 (Victor): nota amarilla con letra negra (se lee mejor), también en tarjetas apagadas */
@@ -548,7 +550,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div class="replin" style="border-top:0"><label style="flex-direction:row;align-items:center;gap:8px">Fecha <input type="date" id="guiFechaEnt"></label><button class="btn sm primary" type="button" id="guiEntBtn">📄 PDF</button></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.95.3</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.95.4</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>

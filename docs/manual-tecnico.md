@@ -321,6 +321,10 @@ Si más adelante hace falta guardar las 3 fotos por meses, la única opción es 
 
 Solo pantalla: no cambia la base ni la configuración. Usa *pointer events* del navegador (Safari de iPhone 13+ y Chrome de Android los traen).
 
+### Estado a la derecha y borde negro (1.95.4)
+
+Solo estilos.
+
 ### Un solo Devuelto (1.95.2)
 
 Solo pantalla.

@@ -517,6 +517,7 @@ Debajo de **📷 Escáner** está el botón verde **WhatsApp**, que abre el chat
 **Mensajes**
 - Etiquetas: **✅ Entregado** en verde, **🔴 Devuelto** y **⛔ Devolver** en rojo, **⏸ HOLD** en amarillo (antes decía *Confirmado*).
 - La tarjeta muestra la guía y la nota.
+- Desde la 1.95.4 la etiqueta del estado va siempre a la derecha del nombre (aunque el nombre sea corto) y en *Paquetes* las tarjetas no entregadas tienen **borde negro** (las que no tienen ubicación siguen con borde rojo).
 - Desde la 1.95.2 la etiqueta **🔴 Devuelto** / **⛔ Devolver** sale una sola vez, arriba a la derecha; abajo queda solo el botón naranja para quitarla.
 - Orden desde la 1.95.1: 1. Pedir ubicación, 2. En camino, 3. Comprensión, 4. Hablar con cliente, 5. Entregado, 6. Horario 8:30 a 12 md, 7. Horario 12 md a 5 p. m. y **8. Horario extendido** (pasó al final).
 - Mensajes nuevos: **5. Hablar con cliente** (abre el chat sin texto: escribís, mandás y volvés a RutaFácil), **6. Entregado** ("Su paquete, Orden *guía*, fue entregado. ¡Ha sido un placer servirle!"), **7. Horario 8:30 a 12 md** y **8. Horario 12 md a 5 p. m.** (como el de horario extendido). Los textos se cambian en *✏️ Editar textos de los mensajes*.
