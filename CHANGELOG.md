@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-06
+- **1.95.7 · Pegar ubicación en blanco si ya hay ubicación:** en Paquetes el botón *📋 Pegar ubicación* solo va en naranja cuando al paquete le falta la ubicación; si ya la tiene, va blanco como los demás.
 - **1.95.6 · Pegar ubicación:** en Paquetes el botón *📋 Pegar respuesta* (y su ventana) ahora se llama **📋 Pegar ubicación**. Hace lo mismo.
 - **1.95.5 · Borde solo en los por entregar y HOLD en Paquetes:** el borde negro queda solo en las tarjetas por entregar (no en devueltas ni para devolver; entregadas tampoco) y los paquetes en Hold muestran la etiqueta **⏸ HOLD** amarilla arriba a la derecha.
 - **1.95.4 · Tarjetas de Paquetes:** la etiqueta o botón del estado (Entregado, Devuelto, Pedir ubicación…) va siempre a la derecha, sin importar el largo del nombre; los paquetes no entregados llevan borde negro (los sin ubicación siguen con borde rojo). En Mensajes la etiqueta también va a la derecha.
