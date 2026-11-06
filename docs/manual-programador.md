@@ -135,6 +135,23 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 - *Guardar* abre la cámara **dentro del mismo toque** (iPhone no deja abrirla después de un `await`) y agrega con `mkPkg()`. Las fotos de etiqueta no se guardan.
 - Prueba local: las CDN están bloqueadas en el sandbox; se instalan los paquetes con npm y Playwright sirve los archivos interceptando las URL de jsDelivr. Las etiquetas de prueba se generan con JsBarcode.
 
+## 3c-0c. Reportes de Cierres (1.95.0)
+
+- `repEstado(p)`: Entregado, Devuelto (incluye ⛔ Devolver), Hold, En ruta, Por entregar, Sin ubicación (usa `repParadas`).
+- `repFilas(L)` ya no filtra: ordena por `EO` (orden de estados) y luego por `repT`; tiempo y km solo en entregados. `repResumen` suma `ruta` y `hold`; el encabezado del PDF tiene una cuarta fila (Hold) y la tabla empieza en `startY:46`.
+- `guiGrupos()` toma todos los recibidos; `guiPdf` lista por `p.ing` con Estado y Hora escaneo. `guiEntPdf()` + `#guiFechaEnt` / `#guiEntBtn`: entregados cuyo `repDia(repT(p))` es la fecha elegida.
+- La 1.93.0 (PR #18) se juntó con main en esta versión; `NUBE_KEYS` lleva `entr`, `h1`, `h2` y `gan`.
+
+## 3c-0d. Ganancia, zonas y resumen en Cierres (1.93.0)
+
+- **Marcado:** al inicio de `#v-cierres`: `.ganper` con `#ganPer` (`.segper`, botones `data-per` = `hoy|semana|mes|mespas`) y `#ganRango`; panel 💰 con `#ganCfgBtn`, `#ganCfg` (`#g-pago`, `#g-dev`, `#g-kml`, `#g-litro`, `#ganGuardar`), `#ganRes` (`.gangrid` de 4 `.stat`, 2×2 en celular; `.ganneto` en verde) y `#ganDias` (`.gandia` con `input[data-gas]`); panel 📍 `#zonRes` (`.zont`, `.zonlist`); panel 📊 `#resTxt`, `#resWa`, `#resXls` (naranja, a la derecha, `.ganacts`).
+- **Datos:** `S.gan = {pago, pagoDev, kml, litro, gas:{'AAAA-MM-DD':₡}, dias:{'AAAA-MM-DD':{e,d,km,min,z:{zona:[entregados,devueltos,minutos,tramos]}}}}`. `'gan'` está en `NUBE_KEYS`. `ganS()` lo crea si falta. `pago` vacío = `GAN_PAGO` (500); `kml` vacío = `GAN_KML[S.veh]` (moto 30, carro 12, buseta 8).
+- **`ganActualizar()`:** agrupa `repTodos()` por día de entrega (`repDia(repT(p))`) y de devolución (`repDia(p.devAt)`), y con `ganDiaCalc(E,D)` usa `repTramos`/`repTotales` (los mismos km y horas del PDF) y `zonaDe(p)`. Un día solo se reemplaza si ahora hay igual o más paquetes (cuando un cierre se borra, el día queda como estaba). Borra días con más de `GAN_DIAS` (70). Se llama al abrir Cierres, cuando llegan los cierres guardados (`repCierres`) y al empezar `cerrarDia` (Vaciar lista).
+- **`zonaDe(p)`:** con `repCoord(p)` toma el punto más cercano de `ZONAS` (`[nombre, lat, lng, alias]`, distancia `hav/1.35` = línea recta, ≤ 12 km; si no, "Fuera de la GAM"). Sin coordenadas, busca los alias (sin tildes) en `p.dir` + `p.senas`; gana el alias más largo. Si no, "Sin ubicación" (no entra al ranking).
+- **`ganPeriodo(per)`:** `ganRango` (semana = lunes a hoy) → días, totales `T`, gasolina por día (`ganGasDia`: anotada en `gas[k]` o `km / kml × litro`), y rankings `rap` (≥ 2 tramos, min. promedio asc.) y `dev` (≥ 2 paquetes, % devueltos desc.), 5 cada uno. `ganPintar()` pinta todo; `ganTexto()` arma el WhatsApp; `ganWa()` usa `navigator.share` en Android/iPhone o `wa.me/?text=`; `ganXls()` usa `cargarXlsx()` y en iPhone comparte el archivo (`resumen-semana-DD-MM-AAAA.xlsx`, fechas en pantalla y en el Excel como dd/mm/aaaa; hojas *Resumen* y *Zonas*). Colones con `ganCol(n)` → `₡18.500`.
+- **Rentabilidad:** `ganRentaCalc(T)` → `pkNeto` (neto ÷ entregados), `pkMin`, `pkKm`, `pkGas`, `hora` (neto ÷ horas) y `km` (neto ÷ km); `ganRenta(T)` pinta `.ganrent`/`.ganrent3` dentro de `#ganRes`; `ganRentaFila(T)` agrega 5 columnas al Excel. Las zonas guardan además `[4]` km de tramos y `[5]` cuántos tramos con km (los días viejos con 4 valores siguen sirviendo). `ganPeriodo` arma `renta` (≥ 2 tramos, `(pago − kmProm × litro/kml) ÷ minProm × 60`, mayor primero); va arriba del ranking, en el WhatsApp y en la hoja *Zonas* (*Km promedio por entrega*, *₡ por hora*).
+- **Diseño:** botones de período tipo píldora (naranja = elegido); "Guardar tarifas", "WhatsApp" y "Excel" en naranja con letra blanca en negrita, compactos y a la derecha.
+
 ## 3c-0c. Voy en camino: Waze al volver de WhatsApp (1.78.0)
 
 - Un navegador no puede abrir dos apps con un solo toque, y abrir Waze sin que la persona toque se bloquea (no es gesto del usuario). Por eso es en dos pasos.

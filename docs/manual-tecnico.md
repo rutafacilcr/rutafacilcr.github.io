@@ -317,6 +317,14 @@ Recomendado al pasar a varios mensajeros: en el Panel encender **Exigir cuenta a
 
 Si más adelante hace falta guardar las 3 fotos por meses, la única opción es pagar (Supabase Pro, 25 USD al mes, 100 GB).
 
+### Reportes de Cierres (1.95.0)
+
+Solo cambia el PDF y la pantalla: la base no cambia. El estado de cada paquete en el reporte sale de `p.st`, `p.devolver` y sus paradas (las de la ruta actual o las guardadas en los cierres).
+
+### Ganancia, zonas y resumen en Cierres (1.93.0)
+
+Solo `index.html`; **no hay SQL nuevo** ni funciones nuevas. Todo se calcula en el celular. Lo que se guarda (`gan`: tarifas, gasolina anotada por día y un total pequeño por día de entrega) viaja dentro de la lista de cada cuenta con `rf_lista_guardar` / `rf_lista_leer`, que ya exigen licencia y separan por `owner_id`: no se mezcla nada entre mensajeros. Los totales por día duran 70 días (unos 150 bytes por día, ~10 KB) para que *Mes pasado* salga completo aunque los cierres se borren a los 15; no cambia el borrado de cierres. La rentabilidad (₡ por paquete, por hora y por km, también por zona) se calcula con esos mismos totales; no guarda nada aparte salvo los km por zona dentro del total del día. Las zonas salen de una lista fija de ~40 puntos de la GAM dentro de `index.html` (sin API, sin costo). El Excel usa la misma SheetJS 0.18.5 de cdnjs que ya cargaba la app y el WhatsApp es un link `wa.me` (o el menú de compartir del celular): sin costo. Nada que configurar en Supabase ni en el Panel.
+
 ### Voy en camino (1.78.0)
 
 Solo JavaScript y HTML en `index.html` (aviso `#wzSheet`); no toca Supabase, `auth.js` ni `supabase.sql`. No guarda nada nuevo ni en el celular ni en la nube. El mensaje de WhatsApp es el mismo de antes.

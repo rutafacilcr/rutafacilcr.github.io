@@ -313,6 +313,17 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
 .btn[aria-busy="true"]{cursor:progress}
 /* Confirmación: el aviso de abajo se anuncia al lector de pantalla y se ve con borde de color */
 .toast{border-left:4px solid var(--accent-btn);font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+/* 1.93.0: Cierres · Ganancia, Zonas y Resumen (usa los estilos de la 1.79.0: naranja de botón y 44 px) */
+.ganper{flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 12px}.segper{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--bg)}
+.segper button{font:600 13px var(--f-body);border:0;background:none;color:var(--ink);padding:7px 12px;cursor:pointer;min-height:var(--tap);white-space:nowrap}.segper button+button{border-left:1px solid var(--line)}
+.segper button.on{background:var(--accent-btn);color:var(--accent-btn-ink);font-weight:700}.segper button:focus-visible{outline:3px solid var(--accent-btn);outline-offset:-3px}.segper{border-color:var(--ctl-line)}
+.ganhead{display:flex;align-items:center;justify-content:space-between;gap:8px}.ganhead h2{margin:0}
+.gancfg{display:flex;flex-direction:column;gap:10px;border:1px dashed var(--line);border-radius:10px;padding:10px}.ganok,.ganacts{align-self:flex-end;margin-left:auto}.ganacts{justify-content:flex-end}
+.gangrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.gangrid .stat b{font-size:20px;white-space:nowrap}.ganneto{border-color:var(--ok);background:var(--ok-bg)}.ganneto b{color:var(--ok)}
+@media (max-width:520px){.gangrid{grid-template-columns:repeat(2,minmax(0,1fr))}.gangrid .stat b{font-size:19px}}
+.gandia{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--line)}.gandia:first-child{border-top:0}
+.gangas{flex-direction:row;align-items:center;gap:4px;font-size:16px;flex:none}.gangas input{width:96px;padding:6px 8px;font-size:16px;min-height:var(--tap)}
+.zont{font-size:14px;margin:4px 0 0}.ganrent{display:flex;flex-direction:column;gap:6px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--bg)}.ganrent3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;text-align:center}.ganrent3 b{display:block;font-size:18px;font-variant-numeric:tabular-nums;white-space:nowrap}.ganrent3 span{display:block;font-size:12px;line-height:1.25;color:var(--muted)}.zonlist{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:3px;font-size:14px}
 /* 1.92.4 (Victor): nota del paquete en letra blanca con fondo amarillo */.pknota{margin-top:4px;padding:4px 8px;border-radius:8px;background:#e0a100;color:#fff;font-weight:700;font-size:.92em;display:inline-block;max-width:100%;overflow-wrap:anywhere}
 /* ===== 1.94.0 · Lista de mejoras de Victor (noviembre) ===== */
 .epin.dev{background:#7f1d1d;opacity:.85;border-style:dashed}
@@ -323,9 +334,9 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
 #pkgList .pkg .actions .btn.devbtn{background:#c0392b;color:#fff;border-color:#c0392b;font-weight:700}
 /* Etiqueta Devuelto / Devolver arriba a la derecha de la tarjeta */
 .pkg .name>.chip.devtag{margin-left:auto}
-html.enmarco header.top{padding-top:40px}
+html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el encabezado deja espacio para la isla de arriba */
 #pkgList .pkg .actions .btn.camwa{background:#fff;color:#1f2125;border:1px solid #9aa0a6} /* 1.94.0 (Victor): botón 📷 en blanco */
-.pknota{color:#1f2125!important} /* 1.94.0 (Victor): nota amarilla con letra negra (se lee mejor), también en tarjetas apagadas */ /* dentro del marco de iPhone, el encabezado deja espacio para la isla de arriba */
+.pknota{color:#1f2125!important} /* 1.94.0 (Victor): nota amarilla con letra negra (se lee mejor), también en tarjetas apagadas */
 #pkgList .pkg>:is(.name,.meta,.addr){grid-column:2}.addr .pknota{display:block;width:fit-content} /* la tarjeta ahora tiene Guía y Tel. antes de la dirección: todo en la columna de la derecha */
 /* Contadores de Paquetes: Recibidos negro, Entregados verde, En ruta azul, Hold amarillo, Devueltos rojo */
 .stat.s-rec b{color:var(--ink)}.stat.s-ent b{color:#15803d}.stat.s-ruta b{color:#1d4ed8}.stat.s-hold b{color:#a16207}.stat.s-hold{background:#fef9c3;border-color:#eab308}.stat.s-dev b{color:#b91c1c}
@@ -490,6 +501,36 @@ html.enmarco header.top{padding-top:40px}
 </section>
 <!-- CIERRES: reportes PDF (1.73.2: se quitó el panel "Próximamente") -->
 <section id="v-cierres" hidden>
+  <!-- 1.93.0: Ganancia, Zonas y Resumen (semanal / mensual). Los totales de cada día se guardan aparte (S.gan.dias) y no se borran a los 15 días como los cierres. -->
+  <div class="panel ganper">
+    <div class="segper" id="ganPer" role="group" aria-label="Período"><button type="button" data-per="hoy" class="on" aria-pressed="true">Hoy</button><button type="button" data-per="semana" aria-pressed="false">Semana</button><button type="button" data-per="mes" aria-pressed="false">Mes</button><button type="button" data-per="mespas" aria-pressed="false">Mes pasado</button></div>
+    <span class="small muted" id="ganRango"></span>
+  </div>
+  <div class="panel">
+    <div class="ganhead"><h2>💰 Ganancia</h2><button class="btn sm" id="ganCfgBtn" type="button" aria-expanded="false">⚙️ Tarifas</button></div>
+    <div id="ganCfg" class="gancfg" hidden>
+      <div class="grid2">
+        <label>Pago por paquete entregado (₡)<input id="g-pago" type="number" inputmode="numeric" min="0" step="50" placeholder="500"></label>
+        <label>Pago por paquete devuelto (₡)<input id="g-dev" type="number" inputmode="numeric" min="0" step="50" placeholder="0 si no te pagan"></label>
+        <label>Rendimiento (km por litro)<input id="g-kml" type="number" inputmode="decimal" min="1" max="80" step="0.5"></label>
+        <label>Precio del litro de gasolina (₡)<input id="g-litro" type="number" inputmode="numeric" min="0" step="1" placeholder="ej. 690"></label>
+      </div>
+      <p class="small muted" style="margin:0">La gasolina se estima con los km aproximados de cada día. Si anotás lo que gastaste de verdad en el día, se usa eso.</p>
+      <button class="btn sm primary ganok" id="ganGuardar" type="button">Guardar tarifas</button>
+    </div>
+    <div class="gangrid" id="ganRes"></div>
+    <div id="ganDias"></div>
+  </div>
+  <div class="panel">
+    <h2>📍 Ranking de zonas</h2>
+    <p class="small muted" style="margin:0">Zona aproximada de cada entrega según su ubicación (cantón o distrito de la GAM). <b>Rapidez</b> = minutos promedio desde la entrega anterior.</p>
+    <div id="zonRes"></div>
+  </div>
+  <div class="panel">
+    <h2>📊 Resumen</h2>
+    <p class="small muted" style="margin:0" id="resTxt">Mandá el resumen del período por WhatsApp (a vos mismo, a la empresa o a quien querás) o bajalo en Excel.</p>
+    <div class="row ganacts"><button class="btn sm primary" id="resWa" type="button">💬 WhatsApp</button><button class="btn sm primary" id="resXls" type="button">📊 Excel</button></div>
+  </div>
   <div class="panel">
     <h2>Reporte de entregas</h2>
     <p class="small muted">Un reporte por cada día en que se recibieron paquetes (<b>Entregas del 2 de noviembre</b>, por ejemplo), aunque se entreguen en los días siguientes; cada paquete lleva su fecha y hora real de entrega. También salen los de listas ya vaciadas. Tocá <b>📄 PDF</b> para bajar el de esa fecha: entregados y devueltos con número, guía / pedido, teléfono, nombre, estado, fecha recibido y fecha y hora de entrega.</p>
@@ -498,11 +539,15 @@ html.enmarco header.top{padding-top:40px}
   </div>
   <div class="panel">
     <h2>Guías por fecha de recibido</h2>
-    <p class="small muted">Un PDF horizontal por cada día en que entregaste paquetes (<b>Guías 03/11/2026</b>, por ejemplo) con nombre, teléfono, guía y nota de cada paquete entregado ese día, en el orden en que se entregaron.</p>
+    <p class="small muted">Un PDF horizontal por cada día en que recibiste paquetes con <b>todos los paquetes recibidos</b> ese día: nombre, teléfono, guía, dirección, estado y hora en que se escanearon.</p>
     <div id="guiLista"></div>
+    <!-- 1.95.0 (Victor): Guías por fecha de ENTREGA, eligiendo la fecha -->
+    <h2 style="margin-top:16px">Guías por fecha de entrega</h2>
+    <p class="small muted">Elegí la fecha y bajá el PDF con las guías de los paquetes entregados ese día, en el orden en que se entregaron.</p>
+    <div class="replin" style="border-top:0"><label style="flex-direction:row;align-items:center;gap:8px">Fecha <input type="date" id="guiFechaEnt"></label><button class="btn sm primary" type="button" id="guiEntBtn">📄 PDF</button></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.94.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.95.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -1071,6 +1116,7 @@ $('#clearExample').onclick=()=>{S.pk=[];S.ex=false;S.nums={};S.route=null;save()
 // Vaciar lista = cierre: guarda en la base (rf_cierre_guardar) todos los paquetes y la ruta con la fecha del cierre,
 // y después borra Paquetes y Ruta para empezar otra. Si no se pudo guardar, no se borra nada.
 async function cerrarDia(b){
+  try{ganActualizar()}catch(e){} // 1.93.0: los totales del día (Ganancia / Resumen) quedan guardados aunque se borre la lista
   const fc=new Date().toISOString(),pk=S.ex?[]:S.pk,E=S.ent&&S.ent.stops&&S.ent.stops.length?S.ent:null;
   if(!pk.length&&!E){toast('No hay paquetes ni ruta que cerrar');return}
   if(NUBE.on&&window.RF_AUTH){b.disabled=true;b.textContent='Guardando cierre…';
@@ -1170,10 +1216,15 @@ function repFilas(L){
   const tl=x=>{const d=String(x||'').replace(/\D/g,'');return d.length===11&&d.startsWith('506')?d.slice(3):d};
   // Orden (1.56.1): por fecha y hora de entrega (o devolución), la más vieja primero; los que no tienen hora van al final por número
   const TR=repTramos(L);
-  return L.filter(p=>p.st==='entregado'||p.st==='devuelto'||p.devolver).sort((a,b)=>(repT(a)||Infinity)-(repT(b)||Infinity)||(+a.num||0)-(+b.num||0)).map(p=>{
-    const ent=p.st==='entregado',t=repT(p),r=TR.get(p.id);
+  // 1.95.0 (Victor): todos los paquetes, ordenados por estado (Entregado, En ruta, Hold, Por entregar, Sin ubicación, Devuelto) y dentro por hora
+  const EO=['Entregado','En ruta','Hold','Por entregar','Sin ubicación','Devuelto'];
+  return L.map(p=>[p,repEstado(p)]).sort((a,b)=>EO.indexOf(a[1])-EO.indexOf(b[1])||(repT(a[0])||Infinity)-(repT(b[0])||Infinity)||(+a[0].num||0)-(+b[0].num||0)).map(([p,est])=>{
+    const ent=p.st==='entregado',t=repT(p),r=ent||p.st==='devuelto'?TR.get(p.id):null;
     const tt=!r?'—':r.inicio?'Inicio':`${r.desdeIni?'desde inicio: ':''}${r.min>=60?Math.floor(r.min/60)+' h ':''}${Math.round(r.min%60)} min`,kk=!r||r.inicio||r.km==null?(r&&r.inicio?'Inicio':'—'):r.km.toFixed(1)+' km';
-    return [String(p.num||''),p.guia||'',tl(p.tel),tidyName(p.nombre||''),ent?'Entregado':'Devuelto',f(p.ing),f(t),h(t),tt,kk]})}
+    return [String(p.num||''),p.guia||'',tl(p.tel),tidyName(p.nombre||''),est,f(p.ing),f(t),h(t),ent?tt:'—',ent?kk:'—']})}
+// 1.95.0: estado de un paquete para los reportes
+function repEstado(p){if(p.st==='entregado')return 'Entregado';if(p.st==='devuelto'||p.devolver)return 'Devuelto';const ps=repParadas(p).filter(x=>!x.done);
+  if(ps.some(x=>x.hold))return 'Hold';if(ps.some(x=>x.c))return 'En ruta';return parseCoord(p.ubic)?'Por entregar':'Sin ubicación'}
 // Tramos (1.58.0): cada entrega mide tiempo y km desde la entrega ANTERIOR del mismo día (orden por hora real).
 // La primera entrega de cada día es el inicio: no tiene tramo. Los devueltos no cuentan (no son una parada de entrega).
 function repCoord(p){const g=p.entGps||(p.pod&&p.pod.lat!=null?p.pod:null),st=repParadas(p).find(x=>x.c);return g&&g.lat!=null?[g.lat,g.lng]:(st&&st.c)||parseCoord(p.ubic)}
@@ -1198,10 +1249,11 @@ function repResumen(L){
   const {km,min}=repTotales(L);
   const E=L.filter(p=>p.st==='entregado'&&repT(p)),dias=new Set(E.map(p=>repDia(repT(p)))).size;
   const pMin=min!=null&&E.length?min/E.length:null,pKm=km!=null&&E.length?km/E.length:null; // promedio por paquete entregado (1.62.0)
-  return {rec,ent,dev,km,min,pMin,pKm,dias}}
+  const ruta=L.filter(p=>repEstado(p)==='En ruta').length,hold=L.filter(p=>repEstado(p)==='Hold').length;
+  return {rec,ent,dev,km,min,pMin,pKm,dias,ruta,hold}}
 function repPdf(k){
   const G=repGrupos().find(x=>x.k===k);const L=G?G.pk:[];
-  const fil=repFilas(L);if(!fil.length){toast('Esa fecha no tiene paquetes entregados ni devueltos');return}
+  const fil=repFilas(L);if(!fil.length){toast('Esa fecha no tiene paquetes');return}
   if(!(window.jspdf&&window.jspdf.jsPDF&&window.jspdf.jsPDF.API.autoTable)){toast('Cargando el reporte… tocá otra vez en un momento');repCargar().catch(()=>toast('No se pudo cargar el PDF. Revisá el internet.'));return}
   const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'letter'}),hoy=new Date();
   const R=repResumen(L),fd=hoy.toLocaleDateString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric'});
@@ -1210,11 +1262,11 @@ function repPdf(k){
   // Posiciones fijas (1.56.2), cuadrícula de 4 columnas: col. 1 fecha y mensajero debajo; col. 2 km y horas; col. 3 fecha de recibido (1.57.0); col. 4 recibidos, entregados y devueltos
   const KM=['Km recorridos',R.km==null||R.km<0.05?'—':R.km.toFixed(1)+' km aprox.'],HR=['Horas invertidas',R.min==null?'—':`${Math.floor(R.min/60)} h ${String(Math.round(R.min%60)).padStart(2,'0')} min`];
   const PR=['Promedio por entrega',R.pMin==null?'—':`${Math.round(R.pMin)} min${R.pKm!=null?' · '+R.pKm.toFixed(1)+' km':''}`];
-  const enc=[['Fecha',fd],KM,['Recibidos el',repDiaTxt(k)],['Paquetes recibidos',String(R.rec)],['Entregado por',S.yo||'—'],HR,['Días de entrega',String(R.dias)],['Paquetes entregados',String(R.ent)],null,PR,null,['Paquetes devueltos',String(R.dev)]];
+  const enc=[['Fecha',fd],KM,['Recibidos el',repDiaTxt(k)],['Paquetes recibidos',String(R.rec)],['Entregado por',S.yo||'—'],HR,['Días de entrega',String(R.dias)],['Paquetes entregados',String(R.ent)],['Paquetes en ruta',String(R.ruta)],PR,null,['Paquetes devueltos',String(R.dev)],['Paquetes en Hold',String(R.hold)]];
   doc.setFontSize(10);enc.forEach((e,i)=>{if(!e)return;const [kk,v]=e,x=14+(i%4)*64,y=23+Math.floor(i/4)*6;doc.setFont(undefined,'bold');doc.text(kk+':',x,y);const w=doc.getTextWidth(kk+': ')+1;doc.setFont(undefined,'normal');doc.text(v,x+w,y)});
-  doc.autoTable({startY:40,head:[['No. paquete','No. guía / pedido','No. teléfono','Nombre','Estado','Fecha recibido','Fecha entrega','Hora entrega','Tiempo desde anterior','Km desde anterior']],body:fil,
+  doc.autoTable({startY:46,head:[['No. paquete','No. guía / pedido','No. teléfono','Nombre','Estado','Fecha recibido','Fecha entrega','Hora entrega','Tiempo desde anterior','Km desde anterior']],body:fil,
     styles:{fontSize:8.5,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},
-    didParseCell:d=>{if(d.section==='body'&&d.column.index===4)d.cell.styles.textColor=d.cell.raw==='Entregado'?[30,130,60]:[200,40,40]}});
+    didParseCell:d=>{if(d.section==='body'&&d.column.index===4)d.cell.styles.textColor={'Entregado':[30,130,60],'Devuelto':[200,40,40],'En ruta':[29,78,216],'Hold':[161,98,7]}[d.cell.raw]||[60,60,60]}});
   const name=`entregas-del-${k||'sin-fecha'}.pdf`;
   if(IOS&&navigator.canShare){const file=new File([doc.output('blob')],name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Reporte guardado')).catch(()=>{});return}}
   doc.save(name);toast(`Reporte con ${fil.length} paquete(s)`)}
@@ -1224,32 +1276,149 @@ const diasCierres=()=>{const c=window.RF_AUTH&&RF_AUTH.cuenta;return c&&c.dias_c
 function repBorraEn(k){const d=diasCierres();if(!d||!k)return null;const [y,m,dd]=k.split('-').map(Number);return Math.ceil((new Date(y,m-1,dd).getTime()+d*864e5-Date.now())/864e5)}
 function repLista(){const G=repGrupos(),el=$('#repLista');if(!el)return;
   const av=$('#cierreAviso'),dc=diasCierres();if(av){av.hidden=!dc;av.innerHTML=dc?`📌 Los cierres se guardan <b>${dc} días</b> y después se borran. <b>Bajá el PDF</b> de cada fecha e imprimilo o guardalo: ese es tu respaldo.`:''}
-  el.innerHTML=G.length?G.map(g=>{const R=repResumen(g.pk),n=repFilas(g.pk).length,be=repBorraEn(g.k);return `<div class="replin"><div><b>📦 ${repEntregasDe(g.k)}</b>${be!=null&&be<=3?`<div class="small" style="color:var(--bad);font-weight:600">⚠ ${be<=0?'Se borra hoy':'Se borra en '+be+' día'+(be===1?'':'s')}: bajá el PDF</div>`:''}<div class="small muted">${R.rec} recibidos · ${R.ent} entregados · ${R.dev} devueltos${R.pMin!=null?` · prom. ${Math.round(R.pMin)} min${R.pKm!=null?' / '+R.pKm.toFixed(1)+' km':''} por entrega`:''}</div></div><button class="btn sm primary" type="button" data-rep="${g.k}"${n?'':' disabled'}>📄 PDF</button></div>`}).join(''):'<p class="small muted">Todavía no hay paquetes.</p>'}
+  el.innerHTML=G.length?G.map(g=>{const R=repResumen(g.pk),n=repFilas(g.pk).length,be=repBorraEn(g.k);return `<div class="replin"><div><b>📦 ${repEntregasDe(g.k)}</b>${be!=null&&be<=3?`<div class="small" style="color:var(--bad);font-weight:600">⚠ ${be<=0?'Se borra hoy':'Se borra en '+be+' día'+(be===1?'':'s')}: bajá el PDF</div>`:''}<div class="small muted">${R.rec} recibidos · ${R.ent} entregados · ${R.ruta} en ruta · ${R.hold} hold · ${R.dev} devueltos${R.pMin!=null?` · prom. ${Math.round(R.pMin)} min${R.pKm!=null?' / '+R.pKm.toFixed(1)+' km':''} por entrega`:''}</div></div><button class="btn sm primary" type="button" data-rep="${g.k}"${n?'':' disabled'}>📄 PDF</button></div>`}).join(''):'<p class="small muted">Todavía no hay paquetes.</p>'}
 $('#repLista').addEventListener('click',e=>{const b=e.target.closest('[data-rep]');if(b)repPdf(b.dataset.rep)});
 // Reporte "Guías + fecha" (1.71.0): entregados agrupados por día de ENTREGA (repT), con Nombre, Tel., Guía y Nota
-function guiGrupos(){const g={};repTodos().filter(p=>p.st==='entregado').forEach(p=>{const k=p.ing?repDia(p.ing):'sin';(g[k]=g[k]||[]).push(p)}); // 1.72.3: un reporte por fecha de RECIBIDO
+function guiGrupos(){const g={};repTodos().forEach(p=>{ /* 1.95.0 (Victor): todos los recibidos, no solo los entregados */const k=p.ing?repDia(p.ing):'sin';(g[k]=g[k]||[]).push(p)}); // 1.72.3: un reporte por fecha de RECIBIDO
   return Object.keys(g).sort((a,b)=>a==='sin'?1:b==='sin'?-1:b.localeCompare(a)).map(k=>({k,pk:g[k].sort((a,b)=>(repT(a)||0)-(repT(b)||0))}))}
 function guiTit(k){return k==='sin'?'Sin fecha de recibido':`Paquetes recibidos ${repDiaTxt(k)}`}
 function guiLista(){const el=$('#guiLista');if(!el)return;const G=guiGrupos();
-  el.innerHTML=G.length?G.map(g=>`<div class="replin"><div><b>🧾 Guías · ${guiTit(g.k)}</b><div class="small muted">${g.pk.length} entregado(s)</div></div><button class="btn sm primary" type="button" data-gui="${g.k}">📄 PDF</button></div>`).join(''):'<p class="small muted">Todavía no hay paquetes entregados.</p>'}
+  el.innerHTML=G.length?G.map(g=>`<div class="replin"><div><b>🧾 Guías · ${guiTit(g.k)}</b><div class="small muted">${g.pk.length} recibido(s) · ${g.pk.filter(p=>p.st==='entregado').length} entregado(s)</div></div><button class="btn sm primary" type="button" data-gui="${g.k}">📄 PDF</button></div>`).join(''):'<p class="small muted">Todavía no hay paquetes.</p>'}
 function guiPdf(k){const G=guiGrupos().find(x=>x.k===k);if(!G){toast('No hay entregas de esa fecha');return}
   if(!(window.jspdf&&window.jspdf.jsPDF&&window.jspdf.jsPDF.API.autoTable)){toast('Cargando el reporte… tocá otra vez en un momento');repCargar().catch(()=>toast('No se pudo cargar el PDF. Revisá el internet.'));return}
   const tl=x=>{const d=String(x||'').replace(/\D/g,'');return d.length===11&&d.startsWith('506')?d.slice(3):d};
   const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'letter'}),tit=`Guías · ${guiTit(k)}`;
   doc.setFontSize(15);doc.text(`RutaFácil CR · ${tit}`,14,15);doc.setFontSize(10);
-  doc.text(`Entregado por: ${S.yo||'—'}   ·   Fecha de recibido: ${k==='sin'?'—':repDiaTxt(k)}   ·   Paquetes entregados: ${G.pk.length}`,14,22);
-  const EG={};G.pk.forEach(p=>{const r=repDia(repT(p))||'';(EG[r]=EG[r]||[]).push(p)}); // un título por fecha de entrega
-  let y=29;Object.keys(EG).sort().forEach(r=>{const L=EG[r];if(y>185){doc.addPage();y=15}
-    doc.setFontSize(12);doc.setFont(undefined,'bold');doc.text(`Entregados ${r?repDiaTxt(r):''} (${L.length})`,14,y);doc.setFont(undefined,'normal');
-    doc.autoTable({startY:y+3,head:[['Nombre','Tel.','Guía','Dirección','Hora entrega']],body:L.map(p=>[tidyName(p.nombre||''),tl(p.tel),p.guia||'',p.dir||'',repT(p)?fmtT2(repT(p)):'']),
-      styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},columnStyles:{0:{cellWidth:60},1:{cellWidth:28},2:{cellWidth:50},4:{cellWidth:28,halign:'center'}}});
-    y=doc.lastAutoTable.finalY+10});
+  doc.text(`Entregado por: ${S.yo||'—'}   ·   Fecha de recibido: ${k==='sin'?'—':repDiaTxt(k)}   ·   Paquetes recibidos: ${G.pk.length}`,14,22);
+  // 1.95.0 (Victor): todos los recibidos ese día, en el orden en que se escanearon, con la hora de escaneo y el estado
+  const L=G.pk.slice().sort((a,b)=>(a.ing||0)-(b.ing||0));
+  doc.autoTable({startY:27,head:[['Nombre','Tel.','Guía','Dirección','Estado','Hora escaneo']],body:L.map(p=>[tidyName(p.nombre||''),tl(p.tel),p.guia||'',p.dir||'',repEstado(p),p.ing?fmtT2(p.ing):'']),
+    styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},columnStyles:{0:{cellWidth:55},1:{cellWidth:26},2:{cellWidth:46},4:{cellWidth:24},5:{cellWidth:26,halign:'center'}}});
   const name=`guias-${k}.pdf`;
   if(IOS&&navigator.canShare){const file=new File([doc.output('blob')],name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Reporte guardado')).catch(()=>{});return}}
   doc.save(name);toast(`${tit}: ${G.pk.length} guía(s)`)}
+// 1.95.0: PDF de guías entregadas en la fecha elegida
+function guiEntPdf(){const d=$('#guiFechaEnt').value;if(!d){toast('Elegí la fecha de entrega');return}
+  if(!(window.jspdf&&window.jspdf.jsPDF&&window.jspdf.jsPDF.API.autoTable)){toast('Cargando el reporte… tocá otra vez en un momento');repCargar().catch(()=>toast('No se pudo cargar el PDF. Revisá el internet.'));return}
+  const L=repTodos().filter(p=>p.st==='entregado'&&repDia(repT(p))===d).sort((a,b)=>(repT(a)||0)-(repT(b)||0));if(!L.length){toast(`No hay entregas el ${repDiaTxt(d)}`);return}
+  const tl=x=>{const t=String(x||'').replace(/\D/g,'');return t.length===11&&t.startsWith('506')?t.slice(3):t};
+  const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'letter'}),tit=`Guías · Entregados ${repDiaTxt(d)}`;
+  doc.setFontSize(15);doc.text(`RutaFácil CR · ${tit}`,14,15);doc.setFontSize(10);doc.text(`Entregado por: ${S.yo||'—'}   ·   Paquetes entregados: ${L.length}`,14,22);
+  doc.autoTable({startY:27,head:[['Nombre','Tel.','Guía','Dirección','Recibido','Hora entrega']],body:L.map(p=>[tidyName(p.nombre||''),tl(p.tel),p.guia||'',p.dir||'',p.ing?repDiaTxt(repDia(p.ing)):'',fmtT2(repT(p))]),
+    styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},columnStyles:{0:{cellWidth:55},1:{cellWidth:26},2:{cellWidth:46},4:{cellWidth:26},5:{cellWidth:26,halign:'center'}}});
+  const name=`guias-entregados-${d}.pdf`;
+  if(IOS&&navigator.canShare){const file=new File([doc.output('blob')],name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Reporte guardado')).catch(()=>{});return}}
+  doc.save(name);toast(`${tit}: ${L.length} guía(s)`)}
+$('#guiEntBtn').addEventListener('click',guiEntPdf);
 $('#guiLista').addEventListener('click',e=>{const b=e.target.closest('[data-gui]');if(b)guiPdf(b.dataset.gui)});
-document.querySelector('[data-tab="cierres"]').addEventListener('click',()=>trasPintar(()=>{fixIng1031();repLista();guiLista();repCargar().catch(()=>{});
-  $('#repInfo').textContent='Buscando reportes de cierres anteriores…';repCierres().then(()=>{repLista();guiLista();$('#repInfo').textContent=''})}));
+// ===== 1.93.0 · Ganancia, ranking de zonas y resumen semanal / mensual (pestaña Cierres) =====
+// S.gan (se sincroniza con la cuenta, ver NUBE_KEYS): tarifas, gasolina anotada por día y un total pequeño por día de entrega
+// (S.gan.dias['AAAA-MM-DD']={e,d,km,min,z:{zona:[entregados,devueltos,minutos,tramos]}}). Ese total sobrevive al borrado de
+// los cierres a los 15 días, así "Mes" y "Mes pasado" salen completos. Se guardan GAN_DIAS días (cuida la transferencia del plan gratis).
+const GAN_DIAS=70,GAN_PAGO=500,GAN_KML={moto:30,carro:12,buseta:8};
+function ganS(){const g=S.gan&&typeof S.gan==='object'?S.gan:(S.gan={});g.gas=g.gas||{};g.dias=g.dias||{};return g}
+const ganKml=()=>{const g=ganS();return +g.kml>0?+g.kml:(GAN_KML[S.veh]||12)};
+const ganCol=n=>(n<0?'−':'')+'₡'+String(Math.round(Math.abs(n))).replace(/\B(?=(\d{3})+(?!\d))/g,'.'); // ₡18.500
+const ganHrs=m=>m==null?'—':`${Math.floor(m/60)} h ${String(Math.round(m%60)).padStart(2,'0')} min`;
+// Zonas de la GAM (punto de referencia de cada cantón o distrito grande). Cada entrega cae en la más cercana (a menos de 12 km);
+// sin coordenadas se busca el nombre en la dirección. Es aproximado a propósito: gratis y sin internet.
+const ZONAS=[['San José centro',9.9333,-84.08,'san jose centro|barrio amon|barrio mexico|paso ancho|carmen|merced|hospital|catedral'],['Pavas',9.945,-84.133,'pavas|rohrmoser'],['La Uruca',9.959,-84.11,'uruca'],['Hatillo',9.916,-84.103,'hatillo'],['Sabana / Mata Redonda',9.933,-84.103,'sabana|mata redonda'],['San Sebastián',9.907,-84.08,'san sebastian'],['Zapote / San Francisco',9.92,-84.058,'zapote|san francisco de dos rios|dos rios'],
+  ['Escazú',9.919,-84.14,'escazu'],['Santa Ana',9.9325,-84.1825,'santa ana|lindora|pozos'],['Ciudad Colón',9.913,-84.242,'ciudad colon|mora'],['Alajuelita',9.902,-84.1,'alajuelita'],['Desamparados',9.899,-84.063,'desamparados|san rafael arriba|san rafael abajo|patarra'],['Aserrí',9.858,-84.092,'aserri'],
+  ['Guadalupe',9.947,-84.053,'guadalupe|goicoechea|calle blancos'],['Ipís / Purral',9.965,-84.02,'ipis|purral'],['Tibás',9.958,-84.082,'tibas|cinco esquinas|llorente'],['Moravia',9.961,-84.048,'moravia|san vicente'],['Coronado',9.978,-84.004,'coronado'],['San Pedro',9.934,-84.051,'san pedro de montes de oca|montes de oca|los yoses'],['Sabanilla',9.945,-84.035,'sabanilla'],['Curridabat',9.916,-84.035,'curridabat|granadilla|tirrases'],['Tres Ríos',9.904,-83.989,'tres rios|la union|concepcion de la union|san diego'],
+  ['Heredia centro',9.998,-84.117,'heredia'],['San Francisco de Heredia',9.99,-84.129,'san francisco de heredia'],['Barva',10.021,-84.122,'barva'],['Santo Domingo',9.981,-84.09,'santo domingo'],['Santa Bárbara',10.037,-84.157,'santa barbara'],['San Rafael de Heredia',10.013,-84.1,'san rafael de heredia'],['San Isidro de Heredia',10.017,-84.058,'san isidro de heredia'],['San Pablo de Heredia',9.995,-84.095,'san pablo'],['Belén',9.979,-84.184,'belen|san antonio de belen'],['San Joaquín de Flores',9.995,-84.158,'flores|san joaquin'],
+  ['Alajuela centro',10.016,-84.212,'alajuela'],['Río Segundo',9.998,-84.198,'rio segundo|aeropuerto'],['La Guácima',9.96,-84.25,'guacima'],['Grecia',10.073,-84.312,'grecia'],['Atenas',9.978,-84.38,'atenas'],['Poás',10.077,-84.241,'poas'],
+  ['Cartago centro',9.864,-83.92,'cartago'],['Paraíso',9.838,-83.866,'paraiso'],['El Tejar',9.843,-83.942,'tejar|guarco'],['Oreamuno',9.875,-83.905,'oreamuno|san rafael de oreamuno']];
+const ganSinTilde=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+function zonaDe(p){const c=repCoord(p);
+  if(c&&c[0]!=null){let best=null,bd=1e9;ZONAS.forEach(z=>{const d=hav(c,[z[1],z[2]])/1.35;if(d<bd){bd=d;best=z[0]}});return bd<=12?best:'Fuera de la GAM'}
+  const t=' '+ganSinTilde(p.dir+' '+(p.senas||''))+' ';let hit=null,len=0; // el nombre más largo que aparezca gana ("san pedro de montes de oca" antes que "san pedro")
+  ZONAS.forEach(z=>z[3].split('|').forEach(a=>{if(a.length>len&&new RegExp('[^a-z]'+a+'[^a-z]').test(t)){hit=z[0];len=a.length}}));return hit||'Sin ubicación'}
+// Total de un día de entrega: entregados ese día (por la hora real) y devueltos ese día
+function ganDiaCalc(E,D){const TR=repTramos(E),{km,min}=repTotales(E),z={};
+  E.forEach(p=>{const n=zonaDe(p),a=z[n]=z[n]||[0,0,0,0,0,0],r=TR.get(p.id);a[0]++;if(r&&!r.inicio){a[2]+=Math.round(r.min);a[3]++;if(r.km!=null){a[4]+=Math.round(r.km*10)/10;a[5]++}}}); // a[4]/a[5]: km de los tramos (rentabilidad por zona)
+  D.forEach(p=>{const n=zonaDe(p),a=z[n]=z[n]||[0,0,0,0,0,0];a[1]++});
+  return {e:E.length,d:D.length,km:km==null?null:Math.round(km*10)/10,min:min==null?null:Math.round(min),z}}
+// Pasa los paquetes que hay (lista actual + cierres guardados) a los totales por día. Un día solo se reemplaza si ahora se ven
+// igual o más paquetes que antes: cuando un cierre viejo se borra de la nube, el día queda como estaba.
+function ganActualizar(){const g=ganS(),E={},D={};let cam=false;
+  repTodos().forEach(p=>{const t=p.st==='entregado'?repT(p):p.st==='devuelto'?p.devAt:null,k=repDia(t);if(!k)return;(p.st==='entregado'?E:D)[k]=((p.st==='entregado'?E:D)[k]||[]).concat(p)});
+  new Set([...Object.keys(E),...Object.keys(D)]).forEach(k=>{const n=ganDiaCalc(E[k]||[],D[k]||[]),o=g.dias[k];
+    if(o&&n.e+n.d<(o.e||0)+(o.d||0))return;if(!o||JSON.stringify(o)!==JSON.stringify(n)){g.dias[k]=n;cam=true}});
+  const lim=repDia(Date.now()-GAN_DIAS*864e5);Object.keys(g.dias).forEach(k=>{if(k<lim){delete g.dias[k];cam=true}});Object.keys(g.gas).forEach(k=>{if(k<lim){delete g.gas[k];cam=true}});
+  if(cam)save();return cam}
+let GPER='hoy';const GAN_TIT={hoy:'hoy',semana:'esta semana',mes:'este mes',mespas:'el mes pasado'};
+function ganRango(per){const h=new Date(),d0=new Date(h.getFullYear(),h.getMonth(),h.getDate());
+  if(per==='semana'){const a=new Date(d0);a.setDate(a.getDate()-((a.getDay()+6)%7));return [repDia(a),repDia(d0),'Semana']} // de lunes a hoy
+  if(per==='mes')return [repDia(new Date(h.getFullYear(),h.getMonth(),1)),repDia(d0),'Mes'];
+  if(per==='mespas')return [repDia(new Date(h.getFullYear(),h.getMonth()-1,1)),repDia(new Date(h.getFullYear(),h.getMonth(),0)),'Mes pasado'];
+  return [repDia(d0),repDia(d0),'Hoy']}
+const ganGasEst=x=>{const L=+ganS().litro;return x&&x.km!=null&&L>0?x.km/ganKml()*L:null};
+const ganGasDia=k=>{const g=ganS(),v=g.gas[k];return v!=null&&v!==''?{v:+v,real:true}:{v:ganGasEst(g.dias[k]),real:false}};
+function ganPeriodo(per){const [a,b,tit]=ganRango(per),g=ganS(),pago=g.pago==null?GAN_PAGO:+g.pago||0,pdev=+g.pagoDev||0;
+  const dias=Object.keys(g.dias).filter(k=>k>=a&&k<=b).sort().map(k=>{const x=g.dias[k],gs=ganGasDia(k),ing=x.e*pago+x.d*pdev;return {k,...x,ing,gas:gs.v,real:gs.real,neto:ing-(gs.v||0)}});
+  const T={e:0,d:0,km:0,min:0,ing:0,gas:0,neto:0,sinKm:false},Z={};
+  dias.forEach(x=>{T.e+=x.e;T.d+=x.d;T.km+=x.km||0;T.min+=x.min||0;T.ing+=x.ing;T.gas+=x.gas||0;T.neto+=x.neto;if(x.gas==null)T.sinGas=true;
+    Object.entries(x.z||{}).forEach(([n,v])=>{const a=Z[n]=Z[n]||[0,0,0,0,0,0];v.forEach((y,i)=>a[i]+=y)})});
+  const gKm=+g.litro>0?+g.litro/ganKml():0; // ₡ de gasolina por km
+  const zon=Object.entries(Z).filter(([n])=>n!=='Sin ubicación').map(([n,[e,d,m,t,k=0,kn=0]])=>{const prom=t?m/t:null,kmp=kn?k/kn:null;
+    return {n,e,d,prom,t,kmp,pd:e+d?d/(e+d):0,hora:pago&&prom>0?(pago-(kmp||0)*gKm)/prom*60:null}}); // ₡ por hora en la zona = (pago − gasolina del tramo) ÷ minutos del tramo
+  return {a,b,tit,dias,T,pago,pdev,rap:zon.filter(z=>z.t>=2).sort((x,y)=>x.prom-y.prom).slice(0,5),renta:zon.filter(z=>z.t>=2&&z.hora!=null).sort((x,y)=>y.hora-x.hora).slice(0,5),dev:zon.filter(z=>z.d>0&&z.e+z.d>=2).sort((x,y)=>y.pd-x.pd||y.d-x.d).slice(0,5)}}
+const ganDiaTxt=k=>{const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d).toLocaleDateString('es-CR',{weekday:'short'}).replace('.','')+' '+repDiaTxt(k)}; // dd/mm/aaaa (regla de Victor)
+// Rentabilidad (pedido de Victor): lo que deja cada paquete y cuánto cuesta en tiempo y km; ₡ por hora y por km de trabajo.
+function ganRentaCalc(T){const e=T.e||0;return {pkNeto:e?T.neto/e:null,pkMin:e&&T.min?T.min/e:null,pkKm:e&&T.km?T.km/e:null,pkGas:e?T.gas/e:null,hora:T.min?T.neto/(T.min/60):null,km:T.km?T.neto/T.km:null}}
+const ganRentaFila=T=>{const R=ganRentaCalc(T),r=v=>v==null?'':Math.round(v),r1=v=>v==null?'':Math.round(v*10)/10;return [r(R.pkNeto),r(R.pkMin),r1(R.pkKm),r(R.hora),r(R.km)]};
+function ganRenta(T){const R=ganRentaCalc(T);
+  return `<div class="ganrent" style="grid-column:1/-1"><b>💹 Rentabilidad</b><div class="ganrent3"><div><b>${R.pkNeto==null?'—':ganCol(R.pkNeto)}</b><span>te deja cada paquete</span></div><div><b>${R.hora==null?'—':ganCol(R.hora)}</b><span>por hora</span></div><div><b>${R.km==null?'—':ganCol(R.km)}</b><span>por km</span></div></div>
+    <p class="small muted" style="margin:0">Cada paquete te toma en promedio <b>${R.pkMin==null?'—':Math.round(R.pkMin)+' min'}</b> y <b>${R.pkKm==null?'—':R.pkKm.toFixed(1)+' km'}</b>${R.pkGas?` (${ganCol(R.pkGas)} de gasolina)`:''}.</p></div>`}
+function ganPintar(){const P=ganPeriodo(GPER),T=P.T,g=ganS();
+  document.querySelectorAll('#ganPer [data-per]').forEach(b=>{b.classList.toggle('on',b.dataset.per===GPER);b.setAttribute('aria-pressed',b.dataset.per===GPER)});
+  $('#ganRango').textContent=P.a===P.b?repDiaTxt(P.a):`Del ${repDiaTxt(P.a)} al ${repDiaTxt(P.b)}`;
+  const sinPago=!P.pago;
+  $('#ganRes').innerHTML=`<div class="stat"><b>${T.e}</b><span>Entregados${T.d?` · ${T.d} dev.`:''}</span></div><div class="stat"><b>${sinPago?'—':ganCol(T.ing)}</b><span>Pago</span></div><div class="stat"><b>${T.gas?'−'+ganCol(T.gas).replace('−',''):'—'}</b><span>Gasolina${T.sinGas&&P.dias.length?' (falta)':''}</span></div><div class="stat ganneto"><b>${sinPago?'—':ganCol(T.neto)}</b><span>Te quedó</span></div>`
+    +(!sinPago&&T.e?ganRenta(T):'')
+    +(sinPago?`<p class="small" style="grid-column:1/-1;margin:0;background:var(--warn-bg);border-radius:8px;padding:8px 10px">Tocá <b>⚙️ Tarifas</b> y poné cuánto te pagan por paquete para ver lo que te quedó.</p>`:'')
+    +(!+g.litro&&P.dias.length?`<p class="small muted" style="grid-column:1/-1;margin:0">Para estimar la gasolina poné el precio del litro en <b>⚙️ Tarifas</b>, o anotá lo que gastaste en cada día.</p>`:'');
+  $('#ganDias').innerHTML=P.dias.length?P.dias.slice().reverse().map(x=>`<div class="gandia"><div><b>${ganDiaTxt(x.k)}</b><div class="small muted">${x.e} entregado${x.e===1?'':'s'}${x.d?` · ${x.d} devuelto${x.d===1?'':'s'}`:''}${x.km!=null?` · ${x.km.toFixed(1)} km`:''}${x.min!=null?` · ${ganHrs(x.min)}`:''}${P.pago?` · quedó <b>${ganCol(x.neto)}</b>`:''}</div></div><label class="gangas" title="Gasolina de ese día">⛽<input type="number" inputmode="numeric" min="0" step="100" data-gas="${x.k}" value="${x.real?x.gas:''}" placeholder="${x.gas!=null?Math.round(x.gas):'₡'}" aria-label="Gasolina del ${repDiaTxt(x.k)} en colones"></label></div>`).join('')
+    :`<p class="small muted" style="margin:0">${GPER==='hoy'?'Todavía no hay entregas hoy.':'No hay entregas en este período.'}</p>`;
+  const zl=(L,f)=>L.length?`<ol class="zonlist">${L.map(f).join('')}</ol>`:'';
+  $('#zonRes').innerHTML=`${P.pago?`<h3 class="zont">💹 Donde más te deja cada hora</h3>${zl(P.renta,z=>`<li><b>${esc(z.n)}</b> <span class="muted">· ${ganCol(z.hora)} por hora · ${Math.round(z.prom)} min${z.kmp!=null?` y ${z.kmp.toFixed(1)} km`:''} por entrega</span></li>`)||'<p class="small muted" style="margin:0">Hacen falta al menos 2 entregas seguidas en una zona.</p>'}`:''}<h3 class="zont">⚡ Donde entregás más rápido</h3>${zl(P.rap,z=>`<li><b>${esc(z.n)}</b> <span class="muted">· ${Math.round(z.prom)} min${z.kmp!=null?` y ${z.kmp.toFixed(1)} km`:''} por entrega · ${z.e} entregado${z.e===1?'':'s'}</span></li>`)||'<p class="small muted" style="margin:0">Hacen falta al menos 2 entregas seguidas en una zona.</p>'}
+    <h3 class="zont">↩️ Donde más te devuelven</h3>${zl(P.dev,z=>`<li><b>${esc(z.n)}</b> <span class="muted">· ${Math.round(z.pd*100)}% (${z.d} de ${z.e+z.d})</span></li>`)||`<p class="small muted" style="margin:0">${T.e+T.d?'Sin devoluciones en este período 🎉':'Sin datos en este período.'}</p>`}`;
+  $('#resTxt').innerHTML=`Mandá el resumen de <b>${GAN_TIT[GPER]}</b> por WhatsApp (a vos mismo, a la empresa o a quien querás) o bajalo en Excel.`}
+function ganTexto(){const P=ganPeriodo(GPER),T=P.T,r=P.a===P.b?repDiaTxt(P.a):`${repDiaTxt(P.a)} al ${repDiaTxt(P.b)}`;
+  const L=[`📊 *RutaFácil · Resumen de ${GAN_TIT[GPER]}*`,`🗓️ ${r}`,`🛵 ${S.yo||'Mensajero'}`,'',`📦 Entregados: ${T.e}`,`↩️ Devueltos: ${T.d}`];
+  if(T.km)L.push(`🛣️ Km aprox.: ${T.km.toFixed(1)}`);if(T.min)L.push(`⏱️ Horas: ${ganHrs(T.min)}`);
+  if(P.pago){L.push('',`💵 Pago: ${ganCol(T.ing)}`,`⛽ Gasolina: ${ganCol(T.gas)}`,`✅ Me quedó: *${ganCol(T.neto)}*`);const RR=ganRentaCalc(T);
+    if(T.e)L.push('',`💹 Por paquete: ${ganCol(RR.pkNeto)}${RR.pkMin!=null?` · ${Math.round(RR.pkMin)} min`:''}${RR.pkKm!=null?` · ${RR.pkKm.toFixed(1)} km`:''}`);if(RR.hora!=null)L.push(`⏱️ Por hora: ${ganCol(RR.hora)}`);if(RR.km!=null)L.push(`🛣️ Por km: ${ganCol(RR.km)}`)}
+  if(P.renta.length)L.push('','💹 Zonas que más dejan por hora: '+P.renta.slice(0,3).map(z=>`${z.n} (${ganCol(z.hora)})`).join(', '));
+  if(P.rap.length)L.push('','⚡ Zonas más rápidas: '+P.rap.slice(0,3).map(z=>`${z.n} (${Math.round(z.prom)} min)`).join(', '));
+  if(P.dev.length)L.push('↩️ Más devoluciones: '+P.dev.slice(0,3).map(z=>`${z.n} (${Math.round(z.pd*100)}%)`).join(', '));
+  return L.join('\n')}
+function ganWa(){const P=ganPeriodo(GPER);if(!P.dias.length){toast('No hay entregas en este período');return}const t=ganTexto();
+  if(navigator.share&&/Android|iPhone|iPad/i.test(navigator.userAgent)){navigator.share({text:t}).catch(()=>{});return} // en el celular deja elegir WhatsApp y el chat
+  window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank','noopener')}
+async function ganXls(){const P=ganPeriodo(GPER);if(!P.dias.length){toast('No hay entregas en este período');return}
+  let XL;try{XL=await cargarXlsx()}catch(e){toast('No se pudo cargar Excel. Revisá el internet.');return}
+  const T=P.T,h=m=>m==null?'':Math.round(m/6)/10,R=[['RutaFácil CR · Resumen de '+GAN_TIT[GPER]],['Entregado por',S.yo||''],['Del',repDiaTxt(P.a),'al',repDiaTxt(P.b)],[],
+    ['Fecha','Entregados','Devueltos','Km aprox.','Horas','Pago (₡)','Gasolina (₡)','Gasolina','Te quedó (₡)','₡ por paquete','Min por paquete','Km por paquete','₡ por hora','₡ por km'],
+    ...P.dias.map(x=>[repDiaTxt(x.k),x.e,x.d,x.km??'',h(x.min),Math.round(x.ing),x.gas==null?'':Math.round(x.gas),x.gas==null?'':x.real?'anotada':'estimada',Math.round(x.neto),...ganRentaFila({e:x.e,neto:x.neto,min:x.min||0,km:x.km||0,gas:x.gas||0})]),
+    ['Total',T.e,T.d,Math.round(T.km*10)/10,h(T.min),Math.round(T.ing),Math.round(T.gas),'',Math.round(T.neto),...ganRentaFila(T)]];
+  const Z=Object.entries(P.dias.reduce((a,x)=>{Object.entries(x.z||{}).forEach(([n,v])=>{const s=a[n]=a[n]||[0,0,0,0,0,0];v.forEach((y,i)=>s[i]+=y)});return a},{})).sort((a,b)=>b[1][0]-a[1][0]);
+  const gKm=+ganS().litro>0?+ganS().litro/ganKml():0;
+  const RZ=[['Zona (aprox.)','Entregados','Devueltos','% devueltos','Min. promedio por entrega','Km promedio por entrega','₡ por hora'],...Z.map(([n,[e,d,m,t,k=0,kn=0]])=>{const pr=t?m/t:null,kp=kn?k/kn:null;return [n,e,d,e+d?Math.round(d/(e+d)*100):0,pr==null?'':Math.round(pr),kp==null?'':Math.round(kp*10)/10,P.pago&&pr>0?Math.round((P.pago-(kp||0)*gKm)/pr*60):'']})];
+  const wb=XL.utils.book_new(),w1=XL.utils.aoa_to_sheet(R),w2=XL.utils.aoa_to_sheet(RZ);w1['!cols']=[{wch:14},{wch:11},{wch:10},{wch:10},{wch:8},{wch:11},{wch:12},{wch:10},{wch:13},{wch:13},{wch:14},{wch:14},{wch:11},{wch:10}];w2['!cols']=[{wch:26},{wch:11},{wch:10},{wch:12},{wch:24},{wch:22},{wch:11}];
+  XL.utils.book_append_sheet(wb,w1,'Resumen');XL.utils.book_append_sheet(wb,w2,'Zonas');
+  const name=`resumen-${{hoy:'dia',semana:'semana',mes:'mes',mespas:'mes'}[GPER]}-${P.a.split('-').reverse().join('-')}.xlsx`; // dd-mm-aaaa (la / no se puede en nombres de archivo)
+  if(IOS&&navigator.canShare){const file=new File([XL.write(wb,{bookType:'xlsx',type:'array'})],name,{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Excel guardado')).catch(()=>{});return}}
+  XL.writeFile(wb,name);toast('Resumen en Excel listo')}
+function ganCfgLlenar(){const g=ganS();$('#g-pago').value=g.pago??GAN_PAGO;$('#g-dev').value=g.pagoDev??'';$('#g-kml').value=g.kml??'';$('#g-kml').placeholder=`${GAN_KML[S.veh]||12} (${({moto:'moto',buseta:'buseta'})[S.veh]||'carro'})`;$('#g-litro').value=g.litro??''}
+$('#ganPer').addEventListener('click',e=>{const b=e.target.closest('[data-per]');if(!b)return;GPER=b.dataset.per;ganPintar()});
+$('#ganCfgBtn').onclick=()=>{const c=$('#ganCfg'),abre=c.hidden;c.hidden=!abre;$('#ganCfgBtn').setAttribute('aria-expanded',abre);if(abre){ganCfgLlenar();$('#g-pago').focus()}};
+$('#ganGuardar').onclick=()=>{const g=ganS(),n=id=>{const v=$(id).value.trim();return v===''?null:Math.max(0,+v)};g.pago=n('#g-pago');g.pagoDev=n('#g-dev');g.kml=n('#g-kml')||null;g.litro=n('#g-litro');
+  save();$('#ganCfg').hidden=true;$('#ganCfgBtn').setAttribute('aria-expanded',false);ganPintar();toast('Tarifas guardadas')};
+$('#ganDias').addEventListener('change',e=>{const i=e.target.closest('[data-gas]');if(!i)return;const g=ganS(),v=i.value.trim();if(v==='')delete g.gas[i.dataset.gas];else g.gas[i.dataset.gas]=Math.max(0,Math.round(+v));save();ganPintar()});
+$('#resWa').onclick=ganWa;$('#resXls').onclick=ganXls;
+document.querySelector('[data-tab="cierres"]').addEventListener('click',()=>trasPintar(()=>{fixIng1031();if(!$('#guiFechaEnt').value)$('#guiFechaEnt').value=new Date().toLocaleDateString('en-CA');try{ganActualizar();ganPintar()}catch(e){console.warn('ganancia',e)}repLista();guiLista();repCargar().catch(()=>{});
+  $('#repInfo').textContent='Buscando reportes de cierres anteriores…';repCierres().then(()=>{try{ganActualizar();ganPintar()}catch(e){console.warn('ganancia',e)}repLista();guiLista();$('#repInfo').textContent=''})}));
 $('#m-pref').addEventListener('input',()=>{$('#vcfEj').textContent=vcfName({nombre:'Nombre',guia:'pedido'})});
 $('#m-buscar').addEventListener('input',()=>renderMsg());
 $('#msgFil').addEventListener('click',e=>{const b=e.target.closest('[data-msgf]');if(!b)return;MSGF=b.dataset.msgf;renderMsg()});
@@ -2138,7 +2307,7 @@ document.querySelector('[data-tab="entrega"]').addEventListener('click',()=>{tra
 // ===== Lista en la nube: los mismos paquetes en el teléfono y en la PC (rf_lista_leer / rf_lista_guardar) =====
 // S.syncVer = última versión de la nube que vio este aparato; S.baseIds = ids que había en ese momento
 // (sirven para saber qué se borró en un lado y qué es nuevo). S.dirty = hay cambios sin subir.
-const NUBE_KEYS=['nums','jor','ent','pk','coord','form','camino','comp','ext','entr','h1','h2','pref','fecha','hora','start','vel','min','ret','route','veh','ttKey','ttOn'];
+const NUBE_KEYS=['nums','jor','ent','pk','coord','form','camino','comp','ext','entr','h1','h2','pref','fecha','hora','start','vel','min','ret','route','veh','ttKey','ttOn','gan'];
 const nubeMsg=t=>{const el=$('#nubeInfo');if(el)el.textContent=t?' · '+t:''};
 // Se sube todo lo que había en la nube (aunque esta versión no lo conozca) más las claves propias, para no borrar datos de otros aparatos.
 function nubeDatos(){const d={...(S.nubeOtros||{})};NUBE_KEYS.forEach(k=>{if(S[k]!==undefined)d[k]=S[k]});if(S.ex)d.pk=[];return d}
