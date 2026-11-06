@@ -333,7 +333,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
 .st-devuelto,.devtag,.chip.devtag,button.devtag{background:#c0392b!important;color:#fff!important;border:1px solid #c0392b!important}
 #pkgList .pkg .actions .btn.devbtn{background:#c0392b;color:#fff;border-color:#c0392b;font-weight:700}
 /* Etiqueta Devuelto / Devolver arriba a la derecha de la tarjeta */
-.pkg .name>.chip.devtag{margin-left:auto}
+.pkg .name>.chip.devtag,#v-mensajes .pkg .name>.msgst.ms-dev{margin-left:auto}
 html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el encabezado deja espacio para la isla de arriba */
 #pkgList .pkg .actions .btn.camwa{background:#fff;color:#1f2125;border:1px solid #9aa0a6} /* 1.94.0 (Victor): botón 📷 en blanco */
 .pknota{color:#1f2125!important} /* 1.94.0 (Victor): nota amarilla con letra negra (se lee mejor), también en tarjetas apagadas */
@@ -547,7 +547,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div class="replin" style="border-top:0"><label style="flex-direction:row;align-items:center;gap:8px">Fecha <input type="date" id="guiFechaEnt"></label><button class="btn sm primary" type="button" id="guiEntBtn">📄 PDF</button></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.95.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.95.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -821,7 +821,8 @@ const waze=c=>`https://waze.com/ul?ll=${c[0]},${c[1]}&navigate=yes`;
 // ⛔ Devolver (1.66.0): la tarjeta queda desactivada (gris) y solo quedan la etiqueta en color y ↩ Quitar devolver
 const pkDevol=p=>!!p.devolver&&p.st!=='devuelto'&&p.st!=='entregado';
 const pkOff=p=>pkDevol(p)||p.st==='devuelto'; // 1.66.2: los devueltos también quedan desactivados
-function devBar(p,enPk){if(p.st==='devuelto')return `<div class="devkeep">${enPk?'':'<span class="devtag">🔴 Devuelto</span>'}<button type="button" class="btn sm devno" data-act="dev" data-id="${p.id}">${enPk?'↪ Regresar a Ruta':'↪ Quitar devuelto'}</button></div>`;return pkDevol(p)?`<div class="devkeep">${enPk?'':'<span class="devtag on">⛔ Devolver</span>'}<button type="button" class="btn sm devno" data-act="devno" data-id="${p.id}">↩ Quitar devolver</button></div>`:''}
+// 1.95.2 (Victor): la etiqueta Devuelto / Devolver va solo arriba a la derecha (Paquetes y Mensajes); abajo queda solo el botón
+function devBar(p,enPk){if(p.st==='devuelto')return `<div class="devkeep"><button type="button" class="btn sm devno" data-act="dev" data-id="${p.id}">${enPk?'↪ Regresar a Ruta':'↪ Quitar devuelto'}</button></div>`;return pkDevol(p)?`<div class="devkeep"><button type="button" class="btn sm devno" data-act="devno" data-id="${p.id}">↩ Quitar devolver</button></div>`:''}
 // 1.92.4 (Victor): Pedir ubicación desde Paquetes después de las 9:30 p. m. (y hasta las 5 a. m.) empieza disculpándose por la hora
 const DISC_HORA='*DISCULPE LA HORA.* Estamos trabajando para que su paquete sea entregado lo antes posible.\n\n';
 function esTarde(d=new Date()){const m=d.getHours()*60+d.getMinutes();return m>=21*60+30||m<5*60}
