@@ -368,6 +368,14 @@ delete from respuestas where updated_at < now() - interval '30 days';
 
 Contactos y Excel abajo (1.92.1): solo diseño.
 
+Fechas dd/mm/aaaa, botón 📷 y filtro Devolver (1.92.2): solo pantalla; la base no cambia y las fechas se siguen guardando igual.
+
+Orden de Paquetes (1.92.3): solo pantalla, la base no cambia.
+
+Disculpe la hora y notas en amarillo (1.92.4): solo pantalla y texto del mensaje; usa la hora del celular.
+
+Lista de mejoras de noviembre (1.94.0): la base de Supabase no cambia (todo viaja dentro de la lista que ya se guarda con `rf_lista_guardar`). Datos nuevos dentro de la lista: `p.devolverAt`, `s.holdAt`, `p.entrSent` y las plantillas `entr`, `h1`, `h2` (agregadas a `NUBE_KEYS`, así se ven igual en el celular y la PC). Las notas se pasan a mayúsculas al pintar. Archivo nuevo **marco.html** (sin build): en pantallas de 900 px o más con mouse, `index.html` redirige ahí y la app corre en un iframe de 390 px con `?marco=no` (permisos `camera`, `geolocation`, `clipboard` y `web-share` en el `allow`). Para entrar sin marco: `https://rutafacilcr.github.io/?marco=no`. En celular o tableta `marco.html` manda directo a la app.
+
 Estado automático en Mensajes (1.92.0): solo pantalla, se calcula con datos que ya existen.
 
 Pedir ubicación en Mensajes (1.91.1): solo el nombre del botón.

@@ -22,7 +22,7 @@ Resumen de cómo está la app ahora. Más abajo se explica cada parte con la ver
 - Arriba, cinco contadores: **Recibidos**, **Entregados**, **Hold**, **Devueltos** y **Sin 📍** (sin ubicación).
 - Cuatro botones grandes: **🧹 Vaciar lista** (en rojo), **Agregar a mano**, **Importar** y **Escanear**.
 - Después, el buscador 🔍 y enseguida las tarjetas (desde la 1.69.1 ya no está el título *Lista del día*).
-- El orden de las tarjetas es: activos, Hold, devueltos y al final los entregados (en gris; desde la 1.73.0 el número ya no sale tachado).
+- El orden de las tarjetas es (desde la 1.92.3): primero los que tienen ubicación o ya están en la ruta, luego Hold, luego los que no tienen ubicación ni están en la ruta, después los devueltos (y ⛔ Devolver) y al final los entregados (en gris; desde la 1.73.0 el número ya no sale tachado).
 - Cada tarjeta tiene **1. Coordinar** (arriba a la derecha desde la 1.73.0), **Pegar respuesta**, **Editar**, **Escáner**, **Eliminar** (1.69.9; antes *Borrar*), **Devuelto** y **WhatsApp**.
 - **⛔ Devolver en Ruta (1.87.0):** el paquete sale de la ruta y queda en *Paquetes* con ⛔ Devolver, para que al final del día sepás qué llevar al almacén. **↩ Quitar devolver** lo vuelve a meter en la ruta (si tiene ubicación).
 - **Pedir ubicación (1.91.0):** el botón negro a la par del nombre (antes *1. Coordinar*) abre WhatsApp con el mensaje para pedir la ubicación. Solo sale cuando el paquete **no tiene ubicación**; si la tiene se quita, y si se la borrás con *Editar*, vuelve.
@@ -62,7 +62,8 @@ Resumen de cómo está la app ahora. Más abajo se explica cada parte con la ver
 - Están **1. Pedir ubicación** (antes *1. Coordinar*, 1.91.1), **2. Voy en camino** (lleva el ícono del vehículo después de "camino"), **3. Comprensión** y **4. Horario extendido**, en dos filas. Desde la 1.89.0 ya no está *Formulario*.
 - **Botones (1.89.0; 1.91.0):** abajo a la derecha queda **Abrir WhatsApp** (*Pegar respuesta* se usa desde *Paquetes*). Desde la 1.91.0 tampoco están el texto de ayuda, el título *Clientes* ni la tarjeta *Respuestas del formulario*. Se quitaron *Copiar texto*, *Confirmó* y *No responde*; el estado se cambia tocando la etiqueta del cliente (por ejemplo 🟡 Pendiente).
 - **Estado automático (1.92.0):** la etiqueta a la par del nombre cambia sola: **🟡 Sin enviar**, luego **📨 Esperando respuesta** cuando tocás *Abrir WhatsApp*, y **🔵 Confirmado** cuando pegás la ubicación (o si el paquete ya la tiene). Tocarla no hace nada. Los entregados y devueltos solo dicen su estado.
-- **Filtros (1.88.0; nombres desde 1.92.0):** debajo de buscar están **Todos**, **🟡 Sin enviar**, **📨 Esperando respuesta** y **🔵 Confirmados**, con cuántos hay en cada uno. Tocá uno para ver solo esos clientes (por ejemplo, a quién volver a escribirle). La etiqueta cambia con **Confirmó**, **No responde** o al pegar la respuesta con ubicación. Los entregados, devueltos y para devolver solo salen en *Todos*.
+- **Filtros (1.88.0; nombres desde 1.92.0):** debajo de buscar están **Todos**, **🟡 Sin enviar**, **📨 Esperando respuesta** y **🔵 Confirmados**, con cuántos hay en cada uno. Tocá uno para ver solo esos clientes (por ejemplo, a quién volver a escribirle). La etiqueta cambia con **Confirmó**, **No responde** o al pegar la respuesta con ubicación. Los entregados y devueltos solo salen en *Todos*. **⛔ Devolver (1.92.2)** muestra los paquetes marcados para devolver. Ya no sale el texto "✓ mensaje abierto": eso lo dice la etiqueta **📨 Esperando respuesta**.
+- **Fechas (1.92.2):** todas las fechas de la app salen como **dd/mm/aaaa** (por ejemplo, *Ruta 03/11/2026*).
 - Los clientes salen en el **mismo orden que en Ruta** (1.69.3). Los entregados, en Hold o devueltos se ven grises y bajan al final, y los que no están en la ruta van después de los pendientes.
 
 **Confirmaciones:** desde la 1.69.0, al borrar, devolver, vaciar o guardar cambios sale una hoja abajo con dos botones grandes: **Cancelar** y la acción (en rojo si borra o desactiva).
@@ -502,6 +503,40 @@ En *Paquetes*, tocá **📷 Escáner** (antes *Etiqueta*) en el paquete que qued
 ### WhatsApp desde Paquetes (1.32.0)
 
 Debajo de **📷 Escáner** está el botón verde **WhatsApp**, que abre el chat con ese cliente (sin mensaje escrito). Si el paquete no tiene teléfono válido, el botón no aparece.
+
+### Mejoras de noviembre (1.94.0)
+
+**Paquetes**
+- **Nota en MAYÚSCULAS:** lo que escribás en *Nota* se guarda siempre en mayúsculas (también las notas que ya tenías).
+- **Contadores con color:** Recibidos (negro), Entregados (verde), **En ruta** (azul, nuevo: los que tienen parada activa en la ruta), Hold (amarillo), Devueltos (rojo) y Sin 📍.
+- **Orden de la tarjeta:** Nombre, Guía, Tel. y Dirección.
+- **Devuelto en rojo:** el botón **↩ Devuelto** es rojo y, cuando el paquete está devuelto, la etiqueta **🔴 Devuelto** sale arriba a la derecha (una sola vez). Abajo queda solo **↪ Regresar a Ruta**.
+- **Regresar a Ruta / Quitar devolver:** si el paquete tiene ubicación vuelve a la ruta. Si no tiene, sale de la ruta y queda en Paquetes con **➕ Agregar a la ruta**; al tocarlo te pide la ubicación (link de Maps, Waze o WhatsApp) y lo agrega.
+- **Orden por hora:** los entregados van por hora de entrega, los de Hold por la hora en que los pusiste en Hold y los devueltos por la hora en que los devolviste. Igual en Mensajes.
+
+**Mensajes**
+- Etiquetas: **✅ Entregado** en verde, **🔴 Devuelto** y **⛔ Devolver** en rojo, **⏸ HOLD** en amarillo (antes decía *Confirmado*).
+- La tarjeta muestra la guía y la nota.
+- Mensajes nuevos: **5. Hablar con cliente** (abre el chat sin texto: escribís, mandás y volvés a RutaFácil), **6. Entregado** ("Su paquete, Orden *guía*, fue entregado. ¡Ha sido un placer servirle!"), **7. Horario 8:30 a 12 md** y **8. Horario 12 md a 5 p. m.** (como el de horario extendido). Los textos se cambian en *✏️ Editar textos de los mensajes*.
+
+**Ruta**
+- Debajo de la dirección salen el **Tel.** y la **nota**.
+- Los paquetes devueltos (o para devolver) salen en el mapa con un pin **rojo oscuro con ↩**, solo para ver dónde eran: no entran a la ruta.
+- Al tocar **✓ Entregado** se guarda la hora y el punto como siempre y sale un aviso con el botón **WhatsApp: Entregado**. Tocalo, mandá el mensaje y volvé a RutaFácil (en el celular, con la flecha de regresar o cambiando de app).
+- **↩ Deshacer** en una entregada: la parada sale de la ruta y el paquete queda en Paquetes con **➕ Agregar a la ruta**.
+- **⛔ Devolver** primero pide el motivo (se suma a la nota que ya tenga, separada con coma) y después pregunta **¿Devolverá el paquete de …?**.
+- El WhatsApp de "en camino" trae tres líneas nuevas después de la política de entrega: entrega **GRATIS** en el primer intento, segundo intento si la ruta lo permite, y que un tercero puede recibir con nombre y cédula.
+- **📋 Lista** ahora es solo lo que falta por entregar: primero los de **HOLD** y después los **pendientes**, en orden de ruta.
+
+**Otros detalles:** el botón **📷** (WhatsApp para mandar foto) ahora es blanco; la nota amarilla va con letra negra para que se lea en la calle, también en tarjetas apagadas; en los PDF de Cierres donde decía *Mensajero* ahora dice **Entregado por**.
+
+**En la computadora:** al abrir https://rutafacilcr.github.io/ en una laptop, la app se ve dentro de un marco de iPhone, igual que en el celular. Abajo está **Ver sin marco** para usarla a pantalla completa.
+
+**Nota en amarillo (1.92.4):** si el paquete tiene nota, sale abajo de la dirección en letra blanca con fondo amarillo (📝), para que no se te pase.
+
+**Disculpe la hora (1.92.4):** si tocás **Pedir ubicación** en *Paquetes* entre las 9:30 p. m. y las 5 a. m., el mensaje empieza con **DISCULPE LA HORA.** Estamos trabajando para que su paquete sea entregado lo antes posible. En *Mensajes* el mensaje no cambia.
+
+**Botón 📷 (1.92.2):** a la par de **WhatsApp**, el botón verde con la cámara abre el WhatsApp de ese cliente para que le mandés una foto (del paquete o de la entrega): ahí tocás la cámara de WhatsApp y la mandás.
 
 
 ### Cambios de teléfono llegan a Entrega (1.34.0)

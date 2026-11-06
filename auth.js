@@ -21,7 +21,7 @@ if(!dev){const a=new Uint8Array(16);crypto.getRandomValues(a);dev=[...a].map(x=>
 const tel8=t=>{let d=String(t||'').replace(/\D/g,'');if(d.length===11&&d.startsWith('506'))d=d.slice(3);return d};
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const colones=n=>'₡'+Number(n||0).toLocaleString('es-CR');
-const fecha=d=>d?new Date(d).toLocaleDateString('es-CR',{day:'numeric',month:'long',year:'numeric'}):'';
+const fecha=d=>{if(!d)return '';const x=new Date(d);return `${String(x.getDate()).padStart(2,'0')}/${String(x.getMonth()+1).padStart(2,'0')}/${x.getFullYear()}`}; // 1.92.2: dd/mm/aaaa
 
 let soltar;const listo=new Promise(r=>soltar=r);
 
