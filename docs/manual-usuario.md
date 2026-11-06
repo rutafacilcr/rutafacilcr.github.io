@@ -517,6 +517,7 @@ Debajo de **📷 Escáner** está el botón verde **WhatsApp**, que abre el chat
 **Mensajes**
 - Etiquetas: **✅ Entregado** en verde, **🔴 Devuelto** y **⛔ Devolver** en rojo, **⏸ HOLD** en amarillo (antes decía *Confirmado*).
 - La tarjeta muestra la guía y la nota.
+- Desde la 1.95.6 el botón **📋 Pegar respuesta** de Paquetes se llama **📋 Pegar ubicación** (hace lo mismo).
 - Desde la 1.95.5 el borde negro va solo en las tarjetas **por entregar** (las sin ubicación siguen en rojo) y los paquetes en Hold dicen **⏸ HOLD** arriba a la derecha, igual que en Mensajes.
 - Desde la 1.95.4 la etiqueta del estado va siempre a la derecha del nombre (aunque el nombre sea corto) y en *Paquetes* las tarjetas no entregadas tienen **borde negro** (las que no tienen ubicación siguen con borde rojo).
 - Desde la 1.95.2 la etiqueta **🔴 Devuelto** / **⛔ Devolver** sale una sola vez, arriba a la derecha; abajo queda solo el botón naranja para quitarla.
