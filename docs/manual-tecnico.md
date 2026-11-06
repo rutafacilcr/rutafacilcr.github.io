@@ -317,6 +317,10 @@ Recomendado al pasar a varios mensajeros: en el Panel encender **Exigir cuenta a
 
 Si más adelante hace falta guardar las 3 fotos por meses, la única opción es pagar (Supabase Pro, 25 USD al mes, 100 GB).
 
+### Un solo Devuelto (1.95.2)
+
+Solo pantalla.
+
 ### Orden de los mensajes (1.95.1)
 
 Solo pantalla: cada cliente guarda el mensaje elegido por su clave (`ext`, `entr`…), no por número, así que no cambia nada guardado.
