@@ -495,6 +495,10 @@ En *Paquetes*, tocá **📷 Escáner** (antes *Etiqueta*) en el paquete que qued
 
 Debajo de **📷 Escáner** está el botón verde **WhatsApp**, que abre el chat con ese cliente (sin mensaje escrito). Si el paquete no tiene teléfono válido, el botón no aparece.
 
+**Nota en amarillo (1.92.4):** si el paquete tiene nota, sale abajo de la dirección en letra blanca con fondo amarillo (📝), para que no se te pase.
+
+**Disculpe la hora (1.92.4):** si tocás **Pedir ubicación** en *Paquetes* entre las 9:30 p. m. y las 5 a. m., el mensaje empieza con **DISCULPE LA HORA.** Estamos trabajando para que su paquete sea entregado lo antes posible. En *Mensajes* el mensaje no cambia.
+
 **Botón 📷 (1.92.2):** a la par de **WhatsApp**, el botón verde con la cámara abre el WhatsApp de ese cliente para que le mandés una foto (del paquete o de la entrega): ahí tocás la cámara de WhatsApp y la mandás.
 
 

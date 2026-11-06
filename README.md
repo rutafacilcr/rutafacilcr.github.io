@@ -16,6 +16,7 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
   - Un buscador por nombre, teléfono, guía o número.
   - Las tarjetas van en orden (1.92.3): con ubicación o en la ruta, Hold, sin ubicación ni ruta, devueltos y al final los entregados en gris.
   - Los paquetes ⛔ Devolver y ⛔ Devuelto quedan desactivados, con un solo botón para quitar la marca.
+  - La nota del paquete resalta en amarillo, y *Pedir ubicación* después de las 9:30 p. m. se disculpa por la hora (1.92.4).
   - Botón 📷 que abre el WhatsApp del cliente para mandarle una foto (1.92.2).
   - Todas las fechas salen como dd/mm/aaaa (1.92.2).
 - **Ruta:**

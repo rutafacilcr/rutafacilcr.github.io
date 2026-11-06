@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-04
+- **1.92.4 · Disculpe la hora y notas en amarillo:** en Paquetes, **Pedir ubicación** tocado de 9:30 p. m. a 5 a. m. empieza con "*DISCULPE LA HORA.* Estamos trabajando para que su paquete sea entregado lo antes posible." La nota del paquete sale en letra blanca sobre fondo amarillo. Pedido de Victor.
 - **1.92.3 · Orden de Paquetes:** primero con ubicación o en la ruta, luego Hold, luego sin ubicación ni ruta, después devueltos y al final entregados. Pedido de Victor.
 - **1.92.2 · Fechas dd/mm/aaaa, botón 📷 y filtro Devolver:** toda fecha que se ve (Ruta, Cierres, reportes, Panel, día de entrega) va como dd/mm/aaaa. En Paquetes, botón **📷** a la par de *WhatsApp* que abre el chat del cliente para mandarle una foto. En Mensajes, filtro **⛔ Devolver** y se quita el texto "✓ mensaje abierto" (ya lo dice 📨 Esperando respuesta).
 - **1.92.1 · Contactos y Excel abajo en Mensajes:** el bloque *Prefijo*, **📇 Guardar contactos del día** y **📊 Bajar Excel del día** (con su explicación) pasa abajo de la lista de clientes. Arriba quedan *Tu nombre* y *Día de entrega*.

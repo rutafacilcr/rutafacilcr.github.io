@@ -368,6 +368,8 @@ Fechas dd/mm/aaaa, botón 📷 y filtro Devolver (1.92.2): solo pantalla; la bas
 
 Orden de Paquetes (1.92.3): solo pantalla, la base no cambia.
 
+Disculpe la hora y notas en amarillo (1.92.4): solo pantalla y texto del mensaje; usa la hora del celular.
+
 Estado automático en Mensajes (1.92.0): solo pantalla, se calcula con datos que ya existen.
 
 Pedir ubicación en Mensajes (1.91.1): solo el nombre del botón.

@@ -309,6 +309,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
 .btn[aria-busy="true"]{cursor:progress}
 /* Confirmación: el aviso de abajo se anuncia al lector de pantalla y se ve con borde de color */
 .toast{border-left:4px solid var(--accent-btn);font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+/* 1.92.4 (Victor): nota del paquete en letra blanca con fondo amarillo */.pknota{margin-top:4px;padding:4px 8px;border-radius:8px;background:#e0a100;color:#fff;font-weight:700;font-size:.92em;display:inline-block;max-width:100%;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -475,7 +476,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
     <div id="guiLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.92.3</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.92.4</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -741,7 +742,11 @@ const waze=c=>`https://waze.com/ul?ll=${c[0]},${c[1]}&navigate=yes`;
 const pkDevol=p=>!!p.devolver&&p.st!=='devuelto'&&p.st!=='entregado';
 const pkOff=p=>pkDevol(p)||p.st==='devuelto'; // 1.66.2: los devueltos también quedan desactivados
 function devBar(p,enPk){if(p.st==='devuelto')return `<div class="devkeep"><span class="devtag">⚪ Devuelto</span><button type="button" class="btn sm devno" data-act="dev" data-id="${p.id}">${enPk?'↪ Regresar a Ruta':'↪ Quitar devuelto'}</button></div>`;return pkDevol(p)?`<div class="devkeep"><span class="devtag on">⛔ Devolver</span><button type="button" class="btn sm devno" data-act="devno" data-id="${p.id}">↩ Quitar devolver</button></div>`:''}
-function pkChip(p){if(p.st==='entregado'||p.st==='devuelto')return stChip(p);if(parseCoord(p.ubic))return ''; /* 1.91.0: Pedir ubicación solo sale si el paquete no tiene ubicación */const l=waLink(p,coordText(p));
+// 1.92.4 (Victor): Pedir ubicación desde Paquetes después de las 9:30 p. m. (y hasta las 5 a. m.) empieza disculpándose por la hora
+const DISC_HORA='*DISCULPE LA HORA.* Estamos trabajando para que su paquete sea entregado lo antes posible.\n\n';
+function esTarde(d=new Date()){const m=d.getHours()*60+d.getMinutes();return m>=21*60+30||m<5*60}
+function pkCoordText(p){return (esTarde()?DISC_HORA:'')+coordText(p)}
+function pkChip(p){if(p.st==='entregado'||p.st==='devuelto')return stChip(p);if(parseCoord(p.ubic))return ''; /* 1.91.0: Pedir ubicación solo sale si el paquete no tiene ubicación */const l=waLink(p,pkCoordText(p));
   return l?`<a class="coordbtn" href="${l}" target="_blank" rel="noopener" data-act="sent" data-k="coord" data-id="${p.id}" title="Abrir WhatsApp con el mensaje para pedir la ubicación (1. Coordinar)">Pedir ubicación${p.sent?' ✓':''}</a>`:`<span class="coordbtn off" title="Teléfono inválido: corregilo con Editar">Pedir ubicación</span>`} /* 1.91.0: antes decía "1. Coordinar" (Victor) */
 function stChip(p){if(p.st==='devuelto')return `<button class="chip devtag" data-act="st" data-id="${p.id}" title="Devuelto al almacén. Tocá para cambiar el estado">⚪ Devuelto</button>`; // 1.56.0: devueltos con la misma etiqueta que ⛔ Devolver
   return `<button class="chip st-${p.st}" data-act="st" data-id="${p.id}" title="Cambiar estado">${SLABEL[p.st]}</button>`}
@@ -775,7 +780,7 @@ function renderPk(){
   const cards=vis.sort((a,b)=>rk(a[0])-rk(b[0])||a[1]-b[1]).map(([p],i)=>{const c=parseCoord(p.ubic);return `<div class="pkg${p.st==='entregado'?' entregado':''}${pkOff(p)?' devol':''}${!c&&p.st!=='entregado'&&p.st!=='devuelto'&&!pkDevol(p)?' sinub':''}">
     <div class="num${p.st==='entregado'?' tachado':''}">${p.num||i+1}</div>
     <div class="name">${esc(p.nombre||'(sin nombre)')} ${pkChip(p)}</div>
-    <div class="addr">${esc(p.dir||'Sin dirección')}${p.nota?` · <i>${esc(p.nota)}</i>`:''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
+    <div class="addr">${esc(p.dir||'Sin dirección')}${p.nota?`<div class="pknota">📝 ${esc(p.nota)}</div>`:''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
     <div class="meta"><span class="mono">${p.tel?`Tel. ${esc(p.tel)}`:'sin teléfono'}</span>${p.guia?`<span class="mono">Guía: ${esc(p.guia)}</span>`:''}<span class="pin ${c?'yes':'no'}">${c?'● Ubicación lista':'○ Falta ubicación'}</span>${S.ent&&S.ent.stops?(enR[p.id]?(enR[p.id].c||!c||p.st==='entregado'||p.st==='devuelto'?`<span class="small muted">🏍️ En la ruta${enR[p.id].c?'':' (sin ubicación)'}</span>`:''):c&&p.st!=='entregado'&&p.st!=='devuelto'?'':'<span class="small muted">No está en la ruta</span>'):''}</div>${p.ubic&&!c?`<div class="small ubwarn" style="color:var(--bad)">⚠ No reconozco esta ubicación (${esc(String(p.ubic).slice(0,40))}). Pegá el link que trae coordenadas, por ejemplo el de "Compartir ubicación" de WhatsApp o un link de Waze.</div>`:''}${p.pod?`<div class="ev">📷 ${p.pod.n} fotos · ${fmtDT(p.pod.at)}${p.pod.lat!=null?' · 📍 ±'+Math.round(p.pod.acc)+' m':' · sin GPS'} · ${p.pod.up?'☁️ respaldada':'⏳ sin subir'} <button class="btn sm" data-act="ev" data-id="${p.id}" style="margin-left:4px">Ver evidencia</button></div>`:p.entAt?`<div class="ev">✓ Entregado ${fmtDT(p.entAt)}${p.entGps?` · <a href="https://www.google.com/maps?q=${p.entGps.lat},${p.entGps.lng}" target="_blank" rel="noopener">📍 dónde (±${p.entGps.acc} m)</a>`:' · sin GPS'}</div>`:''}
     <div class="pkruta">${S.ent&&S.ent.stops?(enR[p.id]?(enR[p.id].c||!c||p.st==='entregado'||p.st==='devuelto'?'':`<button class="btn sm" data-act="aruta" data-id="${p.id}">📍 Poner en la ruta</button>`):c&&p.st!=='entregado'&&p.st!=='devuelto'&&!p.devolver?`<button class="btn sm" data-act="aruta" data-id="${p.id}">➕ Agregar a la ruta</button>`:''):''}<button class="btn sm primary" data-act="paste" data-id="${p.id}">📋 Pegar respuesta</button></div>
     <div class="actions"><button class="btn sm" data-act="edit" data-id="${p.id}">Editar</button><button class="btn sm" data-act="rescan" data-id="${p.id}" title="Volver a escanear la etiqueta de este paquete"><svg class="bcico" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="vertical-align:-0.15em"><rect x="2" y="4" width="2" height="16"/><rect x="5.5" y="4" width="1" height="16"/><rect x="8" y="4" width="2.5" height="16"/><rect x="12" y="4" width="1" height="16"/><rect x="14.5" y="4" width="2" height="16"/><rect x="18" y="4" width="1" height="16"/><rect x="20.5" y="4" width="1.5" height="16"/></svg> Escáner</button></div>
@@ -960,7 +965,7 @@ document.addEventListener('click',async e=>{
   else if(a==='set'&&p){if(el.dataset.st==='entregado'&&p.st!=='entregado'){openPOD(p);return}p.st=el.dataset.st;pkReflejar(p);toast(`${p.nombre}: ${SLABEL[p.st]}`)}
   else if(a==='ev'&&p){openEvidence(p);return}
   else if(a==='paste'&&p){pasteReply(p);return}
-  else if(a==='sent'&&p){const k=el.dataset.k||'coord';if(k==='coord')p.sent=true;else if(k==='form')p.formSent=true;else if(k==='camino')p.caminoSent=true;else p[k+'Sent']=true;delete p.msgSel;save();setTimeout(render,300);return}
+  else if(a==='sent'&&p){const k=el.dataset.k||'coord';if(el.classList.contains('coordbtn')){const l=waLink(p,pkCoordText(p));if(l)el.href=l} /* 1.92.4: la hora se revisa al tocar, no al pintar */if(k==='coord')p.sent=true;else if(k==='form')p.formSent=true;else if(k==='camino')p.caminoSent=true;else p[k+'Sent']=true;delete p.msgSel;save();setTimeout(render,300);return}
   else if(a==='msgsel'&&p){p.msgSel=el.dataset.k;save();renderMsg();return}
   else if(a==='copy'&&p){const t=msgText(p);try{await navigator.clipboard.writeText(t);toast('Mensaje copiado')}catch(err){const d=el.closest('.pkg').querySelector('details');d.open=true;const r=document.createRange();r.selectNodeContents(d.querySelector('.preview'));getSelection().removeAllRanges();getSelection().addRange(r);toast('Texto seleccionado, copialo')}return}
   else if(a==='del'&&p){const ps=entParadasDe(p);
