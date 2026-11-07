@@ -24,7 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-07
-- **1.97.1 · Escanear & mensaje igual a Escanear:** por ahora el botón **📷 Escanear & mensaje** hace exactamente lo mismo que *Escanear etiquetas* (ya no abre WhatsApp). Se va a modificar más adelante.
+- **1.97.2 · Escanear & mensaje con WhatsApp otra vez:** Victor confirmó que sí lo quiere así. Al tocar *Guardar y mandar mensaje* se abre WhatsApp con el mensaje **1. Pedir ubicación**, y al volver a la app la cámara sigue con el próximo paquete. La 1.97.1 lo había dejado igual a *Escanear etiquetas*.
 - **1.97.0 · Escanear & mensaje:** en *Escanear* hay un segundo botón, **📷 Escanear & mensaje**. Escanea igual que *Escanear etiquetas*, y al tocar *Guardar y mandar mensaje* abre WhatsApp con el mensaje **1. Pedir ubicación** para ese cliente (queda marcado como enviado). Al volver a la app la cámara se abre sola para el siguiente.
 - **1.96.8 · Sin filtros en Mensajes:** se quitan los botones de filtro (Todos, Sin enviar, Esperando respuesta, Confirmados, Hold, Devolver, Entregados, Devueltos); Mensajes muestra todos los clientes y se sigue pudiendo buscar.
 - **1.96.7 · Mensaje 1 nuevo también en cuentas con el texto viejo editado:** si el texto 1 guardado todavía es una versión del viejo ("…nos gustaría coordinar la entrega…"), se cambia al texto nuevo de la 1.96.6.
