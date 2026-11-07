@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-07
+- **1.98.0 · Reporte para pago:** en *Cierres*, debajo de *Reporte de entregas*, hay un reporte nuevo **Reporte para pago**: el mismo PDF por fecha de recibido, pero sin *Horas invertidas*, *Promedio por entrega*, *Tiempo desde anterior* ni *Km desde anterior*. En su lugar trae el **Pago** (entregados × tarifa de ⚙️ Tarifas, ₡500 de fábrica). El *Reporte de entregas* queda igual.
 - **1.97.2 · Escanear & mensaje con WhatsApp otra vez:** Victor confirmó que sí lo quiere así. Al tocar *Guardar y mandar mensaje* se abre WhatsApp con el mensaje **1. Pedir ubicación**, y al volver a la app la cámara sigue con el próximo paquete. La 1.97.1 lo había dejado igual a *Escanear etiquetas*.
 - **1.97.0 · Escanear & mensaje:** en *Escanear* hay un segundo botón, **📷 Escanear & mensaje**. Escanea igual que *Escanear etiquetas*, y al tocar *Guardar y mandar mensaje* abre WhatsApp con el mensaje **1. Pedir ubicación** para ese cliente (queda marcado como enviado). Al volver a la app la cámara se abre sola para el siguiente.
 - **1.96.8 · Sin filtros en Mensajes:** se quitan los botones de filtro (Todos, Sin enviar, Esperando respuesta, Confirmados, Hold, Devolver, Entregados, Devueltos); Mensajes muestra todos los clientes y se sigue pudiendo buscar.
