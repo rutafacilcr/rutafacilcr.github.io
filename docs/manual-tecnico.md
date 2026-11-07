@@ -318,6 +318,10 @@ Recomendado al pasar a varios mensajeros: en el Panel encender **Exigir cuenta a
 
 Si más adelante hace falta guardar las 3 fotos por meses, la única opción es pagar (Supabase Pro, 25 USD al mes, 100 GB).
 
+### Mensaje 1 nuevo (1.96.5)
+
+Solo texto; `coord` viaja en la sincronización y se reemplaza solo si seguía con el texto de fábrica.
+
 ### Punto elegido como ubicación (1.96.4)
 
 Solo en el aparato: el punto elegido no se guarda en la nube ni se manda como GPS de la prueba de entrega (`s.gps` queda vacío si la ubicación es manual).

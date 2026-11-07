@@ -554,7 +554,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div class="replin" style="border-top:0"><label style="flex-direction:row;align-items:center;gap:8px">Fecha <input type="date" id="guiFechaEnt"></label><button class="btn sm primary" type="button" id="guiEntBtn">📄 PDF</button></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.96.4</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.96.5</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -713,6 +713,7 @@ const CEDULA='Recuerde que para la entrega debe presentar la cédula.';
 const DEF_SIMPLE='Hola {nombre}, soy {yo}, le llevo su paquete de Temu el {fecha}. ¿A qué hora le queda bien recibirlo? Si puede, mándeme su ubicación por aquí 📍 '+CEDULA+' ¡Gracias!';
 const DEF_COORD3='Hola {nombre} , soy {yo} tenemos un paquete de *TEMU* a su nombre y nos gustaria coordinar la entrega para el {fecha}.\n\nNos puedes enviar la ubicación por acá para agrfegarlo a la ruta, una vez que tengamos la ubicacion nos contactamoos con usted para la hora.';
 const DEF_COORD4='Hola {nombre}, soy {yo}, tenemos un paquete de *TEMU* a su nombre y nos gustaría coordinar la entrega para el {fecha}.\n\nNos puede enviar la ubicación por acá para agregarlo a la ruta. Una vez que tengamos la ubicación, nos contactamos con usted para la hora.';
+const DEF_COORD5='Hola {nombre} 👋\n\nTenemos un paquete de TEMU a su nombre y queremos coordinar su entrega para el {fecha}.\n\n📍 Por favor, compártanos su ubicación por este medio para agregarla a nuestra ruta.\n\nUna vez recibida, nos comunicaremos con usted para coordinar la entrega.\n\n¡Gracias!'; // 1.96.5 (Victor): mensaje 1 nuevo
 const OLD_SIMPLE='Hola {nombre}, soy {yo}, le llevo su paquete de Temu el {fecha}. ¿A qué hora le queda bien recibirlo? Si puede, mándeme su ubicación por aquí 📍 ¡Gracias!';
 const DEF_COORD='Hola {nombre}, le saluda {yo}, el repartidor de su pedido de Temu (guía {guia}). El {fecha} se lo estaría entregando en: {direccion}.\n\n¿Me confirma si habrá alguien para recibirlo? Si puede, envíeme su ubicación por WhatsApp para llegar más fácil. ¡Muchas gracias!';
 const DEF_COORD_F='Hola {nombre}, le saluda {yo}, el repartidor de su paquete de Temu (guía {guia}). Se lo estaría entregando el {fecha}.\n\nPara coordinar, puede responderme por aquí:\n1. A qué hora puede recibir\n2. Su ubicación: toque el clip 📎 (o el signo de más) y elija Ubicación > Enviar mi ubicación actual\n\nO si le es más fácil, confírmelo en este formulario de 1 minuto. No pide pagos ni datos bancarios:\n{formulario}\n\n¡Muchas gracias!';
@@ -836,9 +837,9 @@ const pkOff=p=>pkDevol(p)||p.st==='devuelto'; // 1.66.2: los devueltos también 
 // 1.95.2 (Victor): la etiqueta Devuelto / Devolver va solo arriba a la derecha (Paquetes y Mensajes); abajo queda solo el botón
 function devBar(p,enPk){if(p.st==='devuelto')return `<div class="devkeep"><button type="button" class="btn sm devno" data-act="dev" data-id="${p.id}">${enPk?'↪ Regresar a Ruta':'↪ Quitar devuelto'}</button></div>`;return pkDevol(p)?`<div class="devkeep"><button type="button" class="btn sm devno" data-act="devno" data-id="${p.id}">↩ Quitar devolver</button></div>`:''}
 // 1.92.4 (Victor): Pedir ubicación desde Paquetes después de las 9:30 p. m. (y hasta las 5 a. m.) empieza disculpándose por la hora
-const DISC_HORA='*DISCULPE LA HORA.* Estamos trabajando para que su paquete sea entregado lo antes posible.\n\n';
+const DISC_HORA='Ofrecemos una disculpa por la hora.\n🤖 Notificación automática de entrega.'; // 1.96.5 (Victor): va después del saludo
 function esTarde(d=new Date()){const m=d.getHours()*60+d.getMinutes();return m>=21*60+30||m<5*60}
-function pkCoordText(p){return (esTarde()?DISC_HORA:'')+coordText(p)}
+function pkCoordText(p){const t=coordText(p);if(!esTarde())return t;const i=t.indexOf('\n\n');return i<0?DISC_HORA+'\n\n'+t:t.slice(0,i)+'\n\n'+DISC_HORA+'\n\n'+t.slice(i+2)} // 1.96.5: la disculpa va después de "Hola {nombre} 👋"
 function pkChip(p){if(p.st==='entregado'||p.st==='devuelto')return stChip(p);if(pkDevol(p))return '<span class="chip devtag on">⛔ Devolver</span>'; /* 1.94.0: arriba a la derecha (Victor) */let hd=false;try{hd=entParadasDe(p).some(x=>x.hold&&!x.done)}catch(e){}if(hd)return '<span class="msgst ms-hold">⏸ HOLD</span>'; /* 1.95.5 (Victor): los de Hold dicen HOLD también en Paquetes */if(parseCoord(p.ubic))return ''; /* 1.91.0: Pedir ubicación solo sale si el paquete no tiene ubicación */const l=waLink(p,pkCoordText(p));
   return l?`<a class="coordbtn" href="${l}" target="_blank" rel="noopener" data-act="sent" data-k="coord" data-id="${p.id}" title="Abrir WhatsApp con el mensaje para pedir la ubicación (1. Coordinar)">Pedir ubicación${p.sent?' ✓':''}</a>`:`<span class="coordbtn off" title="Teléfono inválido: corregilo con Editar">Pedir ubicación</span>`} /* 1.91.0: antes decía "1. Coordinar" (Victor) */
 function stChip(p){if(p.st==='devuelto')return `<button class="chip devtag" data-act="st" data-id="${p.id}" title="Devuelto al almacén. Tocá para cambiar el estado">🔴 Devuelto</button>`; // 1.56.0: devueltos con la misma etiqueta que ⛔ Devolver
@@ -898,7 +899,7 @@ function msgSel(p){const ok=msgOpts().map(o=>o[0]);if(ok.includes(p.msgSel))retu
 // Ícono del vehículo elegido en Ruta (1.56.4): va después de la palabra "camino" en el mensaje de en camino (Mensajes y Ruta)
 function vehIcono(){return {moto:'🏍️',carro:'🚙',buseta:'🚐'}[S.veh]||'🚙'}
 function conVeh(t){return String(t).replace(/camino/i,m=>m+' '+vehIcono())}
-function msgText(p,k){k=k||msgSel(p);return k==='form'?fill(S.form,p):k==='camino'?conVeh(fill(S.camino,p,{eta:routeEta(p)})):k==='comp'?fill(S.comp||DEF_COMP,p):k==='ext'?fill(S.ext||DEF_EXT,p):k==='hablar'?'':k==='entr'?fill(S.entr||DEF_ENTR,p):k==='h1'?fill(S.h1||DEF_H1,p):k==='h2'?fill(S.h2||DEF_H2,p):coordText(p)}
+function msgText(p,k){k=k||msgSel(p);return k==='form'?fill(S.form,p):k==='camino'?conVeh(fill(S.camino,p,{eta:routeEta(p)})):k==='comp'?fill(S.comp||DEF_COMP,p):k==='ext'?fill(S.ext||DEF_EXT,p):k==='hablar'?'':k==='entr'?fill(S.entr||DEF_ENTR,p):k==='h1'?fill(S.h1||DEF_H1,p):k==='h2'?fill(S.h2||DEF_H2,p):pkCoordText(p)}
 function routeEta(p){const R=S.route;if(!R||!R.ids.includes(p.id))return '15';const vel=+S.vel||25;let prev=R.start;for(const id of R.ids){const q=S.pk.find(x=>x.id===id);const c=q&&parseCoord(q.ubic);if(!c)continue;if(id===p.id)return String(Math.round(hav(prev,c)/vel*60)+2);prev=c}return '15'}
 // 1.92.0: en Mensajes la etiqueta cambia sola y no se toca: Sin enviar → Esperando respuesta (abriste WhatsApp) → Confirmado (pegaste la ubicación o confirmó)
 const msgEst=p=>p.st==='confirmado'||parseCoord(p.ubic)?'ok':p.sent?'esp':'sin';
@@ -1069,7 +1070,7 @@ document.addEventListener('click',async e=>{
   else if(a==='set'&&p){if(el.dataset.st==='entregado'&&p.st!=='entregado'){openPOD(p);return}p.st=el.dataset.st;pkReflejar(p);toast(`${p.nombre}: ${SLABEL[p.st]}`)}
   else if(a==='ev'&&p){openEvidence(p);return}
   else if(a==='paste'&&p){pasteReply(p);return}
-  else if(a==='sent'&&p){const k=el.dataset.k||'coord';if(el.classList.contains('coordbtn')){const l=waLink(p,pkCoordText(p));if(l)el.href=l} /* 1.92.4: la hora se revisa al tocar, no al pintar */if(k==='coord')p.sent=true;else if(k==='form')p.formSent=true;else if(k==='camino')p.caminoSent=true;else p[k+'Sent']=true;delete p.msgSel;save();setTimeout(render,300);return}
+  else if(a==='sent'&&p){const k=el.dataset.k||'coord';if(el.classList.contains('coordbtn')||k==='coord'){const l=waLink(p,pkCoordText(p));if(l)el.href=l} /* 1.96.5: también en Mensajes */ /* 1.92.4: la hora se revisa al tocar, no al pintar */if(k==='coord')p.sent=true;else if(k==='form')p.formSent=true;else if(k==='camino')p.caminoSent=true;else p[k+'Sent']=true;delete p.msgSel;save();setTimeout(render,300);return}
   else if(a==='msgsel'&&p){p.msgSel=el.dataset.k;save();renderMsg();return}
   else if(a==='copy'&&p){const t=msgText(p);try{await navigator.clipboard.writeText(t);toast('Mensaje copiado')}catch(err){const d=el.closest('.pkg').querySelector('details');d.open=true;const r=document.createRange();r.selectNodeContents(d.querySelector('.preview'));getSelection().removeAllRanges();getSelection().addRange(r);toast('Texto seleccionado, copialo')}return}
   else if(a==='del'&&p){const ps=entParadasDe(p);
@@ -2098,6 +2099,7 @@ if(!S.hora)S.hora='08:00';
 if(!S.comp)S.comp=DEF_COMP;if(!S.ext)S.ext=DEF_EXT;if(!S.entr)S.entr=DEF_ENTR;if(!S.h1)S.h1=DEF_H1;if(!S.h2)S.h2=DEF_H2; // 1.73.0: mensajes 4 y 5 para listas viejas
 function msgFab196(){let c=false;const nz=t=>String(t||'').replace(/\s+/g,' ').trim(),D={entr:DEF_ENTR,h1:DEF_H1,h2:DEF_H2,comp:DEF_COMP};for(const k in D)if(!S[k]||nz(S[k])===nz(OLD_MSG196[k])){if(S[k]!==D[k]){S[k]=D[k];c=true}}
   const cam=nz(String(S.camino||'').replace(CEDULA,'').replace('¡Gracias!','')).toLowerCase();if(!S.camino||cam==='hola {nombre}, voy en camino con su paquete de temu. llego en aproximadamente {eta} minutos.'){S.camino=DEF_CAMINO;c=true}
+  const nz5=t=>String(t||'').replace(/\s+/g,' ').trim();if([DEF_COORD3,DEF_COORD4].some(x=>nz5(x)===nz5(S.coord))){S.coord=DEF_COORD5;c=true} // 1.96.5: mensaje 1 nuevo si seguía de fábrica
   return c} // 1.96.2 (Victor): textos nuevos de los mensajes 2, 3, 5, 6 y 7; solo cambia los que seguían con el texto de fábrica (también si la nube trae los viejos)
 if(msgFab196())save();
 bind('#m-pref','pref');$('#vcfEj').textContent=vcfName({nombre:'Nombre',guia:'pedido'});bind('#m-yo','yo');bind('#m-fecha','fecha');bind('#m-coord','coord');bind('#m-camino','camino');bind('#m-comp','comp');bind('#m-ext','ext');bind('#m-entr','entr');bind('#m-h1','h1');bind('#m-h2','h2');bind('#m-form','form');bind('#r-start','start');bind('#r-hora','hora');bind('#r-vel','vel',1);bind('#r-min','min',1);bind('#r-filter','filter');
@@ -2116,6 +2118,7 @@ if(!S.cedula2){S.cedula2=1;if(S.coord===OLD_SIMPLE)S.coord=DEF_SIMPLE;else if(!/
 if(!S.coord3){S.coord3=1;S.coord=DEF_COORD3;$('#m-coord').value=S.coord;save()}
 // 1.52.3: misma plantilla con la ortografía corregida (solo si no la editaron)
 if(!S.coord4){S.coord4=1;if(S.coord===DEF_COORD3){S.coord=DEF_COORD4;$('#m-coord').value=S.coord;save()}}
+if(msgFab196()){$('#m-coord').value=S.coord;save()} // 1.96.5: después de las migraciones viejas del mensaje 1
 if(!S.cedula){S.cedula=1;if(!/c[eé]dula/i.test(S.camino||''))S.camino=(S.camino||'').trim()+(S.camino?'\n':'')+CEDULA;$('#m-camino').value=S.camino;save()}
 save();
 render();
@@ -2537,7 +2540,7 @@ function fixAleja(){try{const c=window.RF_AUTH&&RF_AUTH.cuenta,t=String(c&&(c.te
   S.pk.forEach(p=>{const m=nt(p.nombre);if(!(m.includes('alejandra')&&m.includes('barquero'))||p.st==='entregado')return;const ps=entParadasDe(p),at=Date.now();
     p.st='entregado';p.entAt=p.entAt||at;delete p.devolver;delete p.devolverAt;delete p.devAt;delete p.stAntes;ps.forEach(x=>{x.done=true;x.at=x.at||at;delete x.hold;delete x.devolver});if(ps.length)entMod();n++});
   if(n){S.fixAleja=1;S.dirty=true;saveLocal();if(NUBE.on)nubeSoon()}return n}catch(e){return false}}
-function nubeAplicar(ver){S.syncVer=ver;S.baseIds=S.pk.map(p=>p.id);nubeHuella();S.pk.forEach(p=>{if(!p.tok)p.tok=tok();fixOldName(p)});fixIng1031();fixAleja();if(msgFab196()){S.dirty=true;try{['entr','h1','h2','comp','camino'].forEach(k=>{const el=$('#m-'+k);if(el)el.value=S[k]})}catch(e){}}saveLocal();
+function nubeAplicar(ver){S.syncVer=ver;S.baseIds=S.pk.map(p=>p.id);nubeHuella();S.pk.forEach(p=>{if(!p.tok)p.tok=tok();fixOldName(p)});fixIng1031();fixAleja();if(msgFab196()){S.dirty=true;try{['entr','h1','h2','comp','camino','coord'].forEach(k=>{const el=$('#m-'+k);if(el)el.value=S[k]})}catch(e){}}saveLocal();
   ['#m-coord','#m-form','#m-camino','#m-comp','#m-ext','#m-entr','#m-h1','#m-h2','#m-pref','#m-fecha','#r-start','#r-hora','#r-vel','#r-min'].forEach(id=>{const el=$(id),k={'#m-coord':'coord','#m-form':'form','#m-camino':'camino','#m-comp':'comp','#m-ext':'ext','#m-entr':'entr','#m-h1':'h1','#m-h2':'h2','#m-pref':'pref','#m-fecha':'fecha','#r-start':'start','#r-hora':'hora','#r-vel':'vel','#r-min':'min'}[id];if(el&&document.activeElement!==el)el.value=S[k]??''});
   $('#r-return').checked=!!S.ret;render()}
 // 1.74.0: manda la versión que ya tiene; si no cambió, la nube responde sin datos (cuida la transferencia del plan gratis).
