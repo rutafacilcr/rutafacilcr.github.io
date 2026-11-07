@@ -561,7 +561,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div class="replin" style="border-top:0"><label style="flex-direction:row;align-items:center;gap:8px">Fecha <input type="date" id="guiFechaEnt"></label><button class="btn sm primary" type="button" id="guiEntBtn">📄 PDF</button></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.98.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.98.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -1278,7 +1278,9 @@ function repResumen(L){
 // promedio por entrega, tiempo desde anterior ni km desde anterior. 1.98.1: tampoco km recorridos ni pago.
 function repPdf(k,pago){
   const G=repGrupos().find(x=>x.k===k);const L=G?G.pk:[];
-  const fil=pago?repFilas(L).map(r=>r.slice(0,8)):repFilas(L);if(!fil.length){toast('Esa fecha no tiene paquetes');return}
+  // 1.98.2 (Victor): en el de pago van primero los entregados y luego los devueltos, cada grupo por fecha y hora (repFilas ya ordena por hora); los demás al final
+  const PO=['Entregado','Devuelto','En ruta','Hold','Por entregar','Sin ubicación'];
+  const fil=pago?repFilas(L).map(r=>r.slice(0,8)).sort((a,b)=>PO.indexOf(a[4])-PO.indexOf(b[4])):repFilas(L);if(!fil.length){toast('Esa fecha no tiene paquetes');return}
   if(!(window.jspdf&&window.jspdf.jsPDF&&window.jspdf.jsPDF.API.autoTable)){toast('Cargando el reporte… tocá otra vez en un momento');repCargar().catch(()=>toast('No se pudo cargar el PDF. Revisá el internet.'));return}
   const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'letter'}),hoy=new Date();
   const R=repResumen(L),fd=hoy.toLocaleDateString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric'});
