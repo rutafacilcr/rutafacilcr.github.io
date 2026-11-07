@@ -451,7 +451,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <label>3. Comprensión<textarea id="m-comp"></textarea></label>
     <p class="small muted" style="margin:0">4. Hablar con cliente no tiene texto: abre el chat vacío.</p>
     <label>5. Entregado<textarea id="m-entr"></textarea></label>
-    <label>6. Horario 8:30 a. m. a 12 md<textarea id="m-h1"></textarea></label>
+    <label>6. Horario 8 a. m. a 12 md<textarea id="m-h1"></textarea></label>
     <label>7. Horario 12 md a 5 p. m.<textarea id="m-h2"></textarea></label>
     <label>8. Horario extendido<textarea id="m-ext"></textarea></label>
     <p class="small muted">Variables: <span class="mono">{nombre} {guia} {direccion} {fecha} {yo} {eta} {formulario}</span></p>
@@ -554,7 +554,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div class="replin" style="border-top:0"><label style="flex-direction:row;align-items:center;gap:8px">Fecha <input type="date" id="guiFechaEnt"></label><button class="btn sm primary" type="button" id="guiEntBtn">📄 PDF</button></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.96.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.96.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -722,12 +722,13 @@ const FORM_ON=!!(window.RF_CONFIG&&RF_CONFIG.supabaseUrl&&RF_CONFIG.supabaseAnon
 const tok=()=>{const a=new Uint8Array(12);crypto.getRandomValues(a);return [...a].map(x=>'abcdefghijkmnpqrstuvwxyz23456789'[x%32]).join('')};
 const DEF_FORM='Gracias {nombre}. Para no fallarle con la entrega, ¿me ayuda marcando aquí su hora y las señas de la casa? Es 1 minuto: {formulario}';
 // 1.94.0 (Victor): mensajes 6. Entregado, 7. Horario 8:30 a 12 md y 8. Horario 12 md a 5 p. m. (5. Hablar con cliente abre el chat sin texto)
-const DEF_ENTR='Su paquete, Orden {guia}, fue entregado. ¡Ha sido un placer servirle! 😊';
-const DEF_H1='¡Hola! 😊 {nombre} - Debido al alto volumen de paquetes de TEMU recibidos, estamos ampliando nuestro horario de entregas. ¿Estaría de acuerdo en recibir su paquete hoy en horario de 8:30 a. m. a 12 md? Agradecemos mucho su comprensión y colaboración.';
-const DEF_H2='¡Hola! 😊 {nombre} - Debido al alto volumen de paquetes de TEMU recibidos, estamos ampliando nuestro horario de entregas. ¿Estaría de acuerdo en recibir su paquete hoy en horario de 12 md a 5:00 p. m.? Agradecemos mucho su comprensión y colaboración.';
-const DEF_COMP='Hola 😊 {nombre} - Entiendo su preocupación, su paquete es importante para nosotros. Estoy haciendo lo posible por entregarlo cuanto antes. Le agradezco su paciencia; por seguridad, no puedo responder mientras conduzco. ¡Muchas gracias por su comprensión!';
+const DEF_ENTR='Su paquete, con orden No.{guia}, fue entregado. ¡Ha sido un placer servirle! 😊'; // 1.96.2 (Victor)
+const DEF_H1='¡Hola! 😊 {nombre} - ¿Estaría de acuerdo en recibir su paquete hoy en horario de 8:00 a. m. a 12 md aprox.? Agradecemos mucho su comprensión y colaboración.'; // 1.96.2 (Victor)
+const DEF_H2='¡Hola! 😊 {nombre} - ¿Estaría de acuerdo en recibir su paquete hoy en horario de 12 md a 5:00 p. m. aprox.? Agradecemos mucho su comprensión y colaboración.'; // 1.96.2 (Victor)
+const DEF_COMP='Hola 😊 {nombre} - Entiendo su preocupación, su paquete 📦 es importante para nosotros. Estoy haciendo lo posible por entregarlo cuanto antes, por seguridad, no puedo responderle inmediatamente ya que voy conduciendo. ¡Muchas gracias por su comprensión!'; // 1.96.2 (Victor)
 const DEF_EXT='¡Hola! 😊 {nombre} - Debido al alto volumen de paquetes de TEMU recibidos, estamos ampliando nuestro horario de entregas. ¿Estaría de acuerdo en recibir su paquete hoy en nuestro horario extendido, de 5:00 p. m. a 9:00 p. m.? Agradecemos mucho su comprensión y colaboración.';
-const DEF_CAMINO='Hola {nombre}, voy en camino con su paquete de Temu. Llego en aproximadamente {eta} minutos. '+CEDULA+' ¡Gracias!';
+const DEF_CAMINO='Hola {nombre}, voy en camino con su paquete de *TEMU*. Llego en aprox. {eta} minutos. Recuerde que para la entrega debe mostrar la cédula.\n¡Gracias! 😁'; // 1.96.2 (Victor); el ícono del vehículo (🚙) lo pone conVeh después de "camino"
+const OLD_MSG196={entr:'Su paquete, Orden {guia}, fue entregado. ¡Ha sido un placer servirle! 😊',h1:'¡Hola! 😊 {nombre} - Debido al alto volumen de paquetes de TEMU recibidos, estamos ampliando nuestro horario de entregas. ¿Estaría de acuerdo en recibir su paquete hoy en horario de 8:30 a. m. a 12 md? Agradecemos mucho su comprensión y colaboración.',h2:'¡Hola! 😊 {nombre} - Debido al alto volumen de paquetes de TEMU recibidos, estamos ampliando nuestro horario de entregas. ¿Estaría de acuerdo en recibir su paquete hoy en horario de 12 md a 5:00 p. m.? Agradecemos mucho su comprensión y colaboración.',comp:'Hola 😊 {nombre} - Entiendo su preocupación, su paquete es importante para nosotros. Estoy haciendo lo posible por entregarlo cuanto antes. Le agradezco su paciencia; por seguridad, no puedo responder mientras conduzco. ¡Muchas gracias por su comprensión!'}; // 1.96.2: textos de fábrica anteriores
 const EXAMPLE=[
  ['María Rojas','8812-3456','Santo Domingo de Heredia, 100 m sur de la iglesia','9.9813,-84.0897','TM-58210'],
  ['José Vargas','8723-9910','Barva centro, casa verde frente al parque','10.0217,-84.1228','TM-58211'],
@@ -892,7 +893,7 @@ function renderPk(){
   if(cards.length>60)setTimeout(()=>tanda(60),0);
 }
 // Mensajes que se pueden mandar a cada cliente desde la pestaña Mensajes.
-function msgOpts(){return [['coord','Pedir ubicación'], /* 1.91.1: antes "Coordinar" (Victor) */['camino','En camino'] /* 1.89.0: sin Formulario (Victor) */,['comp','Comprensión'],['hablar','Hablar con cliente'],['entr','Entregado'],['h1','Horario 8:30 a 12 md'],['h2','Horario 12 md a 5 p. m.'],['ext','Horario extendido'] /* 1.95.1 (Victor): Horario extendido pasa al final */].map(([k,t],i)=>[k,`${i+1}. ${t}`])} // 1.73.0: 4 y 5
+function msgOpts(){return [['coord','Pedir ubicación'], /* 1.91.1: antes "Coordinar" (Victor) */['camino','En camino'] /* 1.89.0: sin Formulario (Victor) */,['comp','Comprensión'],['hablar','Hablar con cliente'],['entr','Entregado'],['h1','Horario 8 a 12 md'],['h2','Horario 12 md a 5 p. m.'],['ext','Horario extendido'] /* 1.95.1 (Victor): Horario extendido pasa al final */].map(([k,t],i)=>[k,`${i+1}. ${t}`])} // 1.73.0: 4 y 5
 function msgSel(p){const ok=msgOpts().map(o=>o[0]);if(ok.includes(p.msgSel))return p.msgSel;return 'coord'}
 // Ícono del vehículo elegido en Ruta (1.56.4): va después de la palabra "camino" en el mensaje de en camino (Mensajes y Ruta)
 function vehIcono(){return {moto:'🏍️',carro:'🚙',buseta:'🚐'}[S.veh]||'🚙'}
@@ -2095,6 +2096,10 @@ document.querySelector('[data-tab="ruta"]')?.addEventListener('click',()=>reques
 if(!load()){S.pk=EXAMPLE.map(mkPkg);S.ex=true;S.pk[0].st='confirmado';S.pk[2].st='confirmado';S.pk[1].sent=true}
 if(!S.hora)S.hora='08:00';
 if(!S.comp)S.comp=DEF_COMP;if(!S.ext)S.ext=DEF_EXT;if(!S.entr)S.entr=DEF_ENTR;if(!S.h1)S.h1=DEF_H1;if(!S.h2)S.h2=DEF_H2; // 1.73.0: mensajes 4 y 5 para listas viejas
+function msgFab196(){let c=false;const nz=t=>String(t||'').replace(/\s+/g,' ').trim(),D={entr:DEF_ENTR,h1:DEF_H1,h2:DEF_H2,comp:DEF_COMP};for(const k in D)if(!S[k]||nz(S[k])===nz(OLD_MSG196[k])){if(S[k]!==D[k]){S[k]=D[k];c=true}}
+  const cam=nz(String(S.camino||'').replace(CEDULA,'').replace('¡Gracias!','')).toLowerCase();if(!S.camino||cam==='hola {nombre}, voy en camino con su paquete de temu. llego en aproximadamente {eta} minutos.'){S.camino=DEF_CAMINO;c=true}
+  return c} // 1.96.2 (Victor): textos nuevos de los mensajes 2, 3, 5, 6 y 7; solo cambia los que seguían con el texto de fábrica (también si la nube trae los viejos)
+if(msgFab196())save();
 bind('#m-pref','pref');$('#vcfEj').textContent=vcfName({nombre:'Nombre',guia:'pedido'});bind('#m-yo','yo');bind('#m-fecha','fecha');bind('#m-coord','coord');bind('#m-camino','camino');bind('#m-comp','comp');bind('#m-ext','ext');bind('#m-entr','entr');bind('#m-h1','h1');bind('#m-h2','h2');bind('#m-form','form');bind('#r-start','start');bind('#r-hora','hora');bind('#r-vel','vel',1);bind('#r-min','min',1);bind('#r-filter','filter');
 $('#r-return').checked=!!S.ret;$('#r-return').onchange=e=>{S.ret=e.target.checked;save()};
 $('#m-fecha').placeholder=tomorrow();
@@ -2520,7 +2525,7 @@ function fixAleja(){try{const c=window.RF_AUTH&&RF_AUTH.cuenta,t=String(c&&(c.te
   S.pk.forEach(p=>{const m=nt(p.nombre);if(!(m.includes('alejandra')&&m.includes('barquero'))||p.st==='entregado')return;const ps=entParadasDe(p),at=Date.now();
     p.st='entregado';p.entAt=p.entAt||at;delete p.devolver;delete p.devolverAt;delete p.devAt;delete p.stAntes;ps.forEach(x=>{x.done=true;x.at=x.at||at;delete x.hold;delete x.devolver});if(ps.length)entMod();n++});
   if(n){S.fixAleja=1;S.dirty=true;saveLocal();if(NUBE.on)nubeSoon()}return n}catch(e){return false}}
-function nubeAplicar(ver){S.syncVer=ver;S.baseIds=S.pk.map(p=>p.id);nubeHuella();S.pk.forEach(p=>{if(!p.tok)p.tok=tok();fixOldName(p)});fixIng1031();fixAleja();saveLocal();
+function nubeAplicar(ver){S.syncVer=ver;S.baseIds=S.pk.map(p=>p.id);nubeHuella();S.pk.forEach(p=>{if(!p.tok)p.tok=tok();fixOldName(p)});fixIng1031();fixAleja();if(msgFab196()){S.dirty=true;try{['entr','h1','h2','comp','camino'].forEach(k=>{const el=$('#m-'+k);if(el)el.value=S[k]})}catch(e){}}saveLocal();
   ['#m-coord','#m-form','#m-camino','#m-comp','#m-ext','#m-entr','#m-h1','#m-h2','#m-pref','#m-fecha','#r-start','#r-hora','#r-vel','#r-min'].forEach(id=>{const el=$(id),k={'#m-coord':'coord','#m-form':'form','#m-camino':'camino','#m-comp':'comp','#m-ext':'ext','#m-entr':'entr','#m-h1':'h1','#m-h2':'h2','#m-pref':'pref','#m-fecha':'fecha','#r-start':'start','#r-hora':'hora','#r-vel':'vel','#r-min':'min'}[id];if(el&&document.activeElement!==el)el.value=S[k]??''});
   $('#r-return').checked=!!S.ret;render()}
 // 1.74.0: manda la versión que ya tiene; si no cambió, la nube responde sin datos (cuida la transferencia del plan gratis).
