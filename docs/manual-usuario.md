@@ -520,13 +520,14 @@ Debajo de **📷 Escáner** está el botón verde **WhatsApp**, que abre el chat
 **Mensajes**
 - Etiquetas: **✅ Entregado** en verde, **🔴 Devuelto** y **⛔ Devolver** en rojo, **⏸ HOLD** en amarillo (antes decía *Confirmado*).
 - La tarjeta muestra la guía y la nota.
+- Desde la 1.96.2 los mensajes 2, 3, 5, 6 y 7 tienen textos nuevos (por ejemplo *2. En camino*: "Hola Ana, voy en camino 🚙 con su paquete de *TEMU*. Llego en aprox. 15 minutos. Recuerde que para la entrega debe mostrar la cédula. ¡Gracias! 😁"; *5. Entregado*: "Su paquete, con orden No.*guía*, fue entregado…"). El 6 ahora es de **8 a. m. a 12 md**. Si usted ya había cambiado alguno en *✏️ Editar textos de los mensajes*, se queda con el suyo.
 - Desde la 1.96.1, en *Mensajes*, los filtros de arriba son **Todos, Sin enviar, Esperando respuesta, Confirmados, ⏸ Hold, ⛔ Devolver, ✅ Entregados y 🔴 Devueltos**. Cada paquete está en uno solo, entonces la suma de todos da el número de *Todos*. Los paquetes en **Hold** se ven normales y sus mensajes se pueden enviar.
 - Desde la 1.95.7 **📋 Pegar ubicación** va naranja solo si al paquete le falta la ubicación; si ya la tiene, va blanco.
 - Desde la 1.95.6 el botón **📋 Pegar respuesta** de Paquetes se llama **📋 Pegar ubicación** (hace lo mismo).
 - Desde la 1.95.5 el borde negro va solo en las tarjetas **por entregar** (las sin ubicación siguen en rojo) y los paquetes en Hold dicen **⏸ HOLD** arriba a la derecha, igual que en Mensajes.
 - Desde la 1.95.4 la etiqueta del estado va siempre a la derecha del nombre (aunque el nombre sea corto) y en *Paquetes* las tarjetas no entregadas tienen **borde negro** (las que no tienen ubicación siguen con borde rojo).
 - Desde la 1.95.2 la etiqueta **🔴 Devuelto** / **⛔ Devolver** sale una sola vez, arriba a la derecha; abajo queda solo el botón naranja para quitarla.
-- Orden desde la 1.95.1: 1. Pedir ubicación, 2. En camino, 3. Comprensión, 4. Hablar con cliente, 5. Entregado, 6. Horario 8:30 a 12 md, 7. Horario 12 md a 5 p. m. y **8. Horario extendido** (pasó al final).
+- Orden desde la 1.95.1: 1. Pedir ubicación, 2. En camino, 3. Comprensión, 4. Hablar con cliente, 5. Entregado, 6. Horario 8 a 12 md, 7. Horario 12 md a 5 p. m. y **8. Horario extendido** (pasó al final).
 - Mensajes nuevos: **5. Hablar con cliente** (abre el chat sin texto: escribís, mandás y volvés a RutaFácil), **6. Entregado** ("Su paquete, Orden *guía*, fue entregado. ¡Ha sido un placer servirle!"), **7. Horario 8:30 a 12 md** y **8. Horario 12 md a 5 p. m.** (como el de horario extendido). Los textos se cambian en *✏️ Editar textos de los mensajes*.
 
 **Ruta**
