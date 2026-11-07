@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-07
+- **1.96.5 · Mensaje 1 nuevo:** *Pedir ubicación* usa el texto nuevo de Victor ("Hola *nombre* 👋 … Tenemos un paquete de TEMU a su nombre y queremos coordinar su entrega para el *fecha*…"). Entre las 9:30 p. m. y las 5 a. m., después del saludo agrega "Ofrecemos una disculpa por la hora. 🤖 Notificación automática de entrega.", ahora también desde Mensajes. Se actualiza solo si el texto seguía de fábrica.
 - **1.96.4 · El punto elegido en el mapa pasa a ser tu ubicación:** con *🎯 Elegir en el mapa* el punto azul se mueve al lugar que tocaste, y la línea, los tiempos y el total salen de ahí. El GPS no lo cambia hasta que te movás más de 200 m o tocás *📍 Ordenar desde aquí*. La prueba de entrega sigue guardando solo el GPS real.
 - **1.96.3 · Elegir en el mapa responde al toque y te saca del mapa:** apenas tocás el punto sale un pin naranja y el aviso *⏳ Ordenando la ruta desde ese punto…* (calcular por calle tarda hasta 8 segundos y antes no se veía nada). Al terminar, la pantalla vuelve sola arriba de *Ruta* con la ruta nueva, sin tener que tocar otra pestaña. Además, *Calculando la ruta por calle…* ya no se queda pegado cuando no hay GPS.
 

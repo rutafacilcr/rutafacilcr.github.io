@@ -545,6 +545,8 @@ Debajo de **📷 Escáner** está el botón verde **WhatsApp**, que abre el chat
 
 **Nota en amarillo (1.92.4):** si el paquete tiene nota, sale abajo de la dirección en letra blanca con fondo amarillo (📝), para que no se te pase.
 
+**Mensaje 1 nuevo (1.96.5):** *Pedir ubicación* dice: "Hola Ana 👋 / Tenemos un paquete de TEMU a su nombre y queremos coordinar su entrega para el sábado 07/11/2026. / 📍 Por favor, compártanos su ubicación por este medio para agregarla a nuestra ruta. / Una vez recibida, nos comunicaremos con usted para coordinar la entrega. / ¡Gracias!". La fecha es el *Día de entrega*. Entre las 9:30 p. m. y las 5 a. m. (en Paquetes y en Mensajes), después del saludo agrega "Ofrecemos una disculpa por la hora. 🤖 Notificación automática de entrega." Esto reemplaza el "DISCULPE LA HORA" de abajo.
+
 **Disculpe la hora (1.92.4):** si tocás **Pedir ubicación** en *Paquetes* entre las 9:30 p. m. y las 5 a. m., el mensaje empieza con **DISCULPE LA HORA.** Estamos trabajando para que su paquete sea entregado lo antes posible. En *Mensajes* el mensaje no cambia.
 
 **Botón 📷 (1.92.2):** a la par de **WhatsApp**, el botón verde con la cámara abre el WhatsApp de ese cliente para que le mandés una foto (del paquete o de la entrega): ahí tocás la cámara de WhatsApp y la mandás.
