@@ -371,10 +371,10 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
   <div class="panel subpn" id="pnScan">
     <button class="btn sm ghost subback" type="button">← Regresar</button>
     <h2>Escanear etiquetas</h2>
-    <p class="small muted">Apuntá la cámara a la etiqueta de cada paquete: la foto se toma sola cuando la app lee la <b>guía</b> (código de barras o QR) y después lee <b>nombre, teléfono y dirección</b>. Revisás, corregís si hace falta y seguís con el próximo. También podés elegir varias fotos de la galería.</p>
+    <p class="small muted">Apuntá la cámara a la etiqueta de cada paquete: la foto se toma sola cuando la app lee la <b>guía</b> (código de barras o QR) y después lee <b>nombre, teléfono y dirección</b>. Revisás, corregís si hace falta y seguís con el próximo. Con <b>Escanear &amp; mensaje</b>, al guardar se abre WhatsApp con el mensaje <b>1. Pedir ubicación</b> para ese cliente. También podés elegir varias fotos de la galería.</p>
     <div class="row" style="flex-wrap:wrap;gap:8px">
       <button class="btn primary" id="scanCamBtn" style="white-space:nowrap">📷 Escanear etiquetas</button>
-      <button class="btn primary" id="scanMsgBtn" style="white-space:nowrap">📷 Escanear &amp; mensaje</button>
+      <button class="btn primary" id="scanMsgBtn" style="white-space:nowrap" title="Escanea igual y, al guardar cada paquete, abre WhatsApp con el mensaje 1. Pedir ubicación">📷 Escanear &amp; mensaje</button>
       <label class="btn" for="scanGal" title="Elegir fotos de la galería" style="text-transform:none;letter-spacing:0;font-size:14px;color:var(--ink);flex-direction:row;white-space:nowrap">🖼️ Galería</label>
     </div>
   </div>
@@ -555,7 +555,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div class="replin" style="border-top:0"><label style="flex-direction:row;align-items:center;gap:8px">Fecha <input type="date" id="guiFechaEnt"></label><button class="btn sm primary" type="button" id="guiEntBtn">📄 PDF</button></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.97.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.97.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -1704,7 +1704,7 @@ $('#evClose').onclick=()=>{$('#evSheet').hidden=true;document.body.style.overflo
 const LIB_ZXING='https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';
 const LIB_OCR='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
 const loadScript=src=>(loadScript.c||(loadScript.c={}))[src]||(loadScript.c[src]=new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>{delete loadScript.c[src];rej(new Error('lib'))};document.head.appendChild(s)}));
-const SCAN={queue:[],file:null,rot:0,busy:false,cam:false,live:false,n:0,url:null,ocr:null,fix:null}; // fix = id del paquete que se está corrigiendo
+const SCAN={queue:[],file:null,rot:0,busy:false,cam:false,live:false,msg:false,n:0,url:null,ocr:null,fix:null}; // fix = id del paquete que se está corrigiendo
 const scanSt=t=>$('#scanSt').textContent=t;
 function scanCanvas(file,rot){
   return new Promise((res,rej)=>{const img=new Image(),u=URL.createObjectURL(file);
@@ -1887,11 +1887,11 @@ function scanUI(mode){ // mode: 'wait' | 'live' | 'busy' | 'review'
   $('#scanShot').hidden=mode!=='wait';$('#scanSave').disabled=mode==='busy';
   $('#scanLive').hidden=$('#scanAhora').hidden=$('#scanFotoAlt').hidden=mode!=='live';$('#scanLuz').hidden=mode!=='live'||!LIVE.luz;if(mode==='live')$('#scanImg').hidden=true;
   const q=SCAN.queue.length;$('#scanCount').textContent=`Guardadas en esta tanda: ${SCAN.n}`+(q?` · faltan ${q} foto(s)`:'');
-  $('#scanSave').textContent=SCAN.fix?'Guardar corrección':q?'Guardar y siguiente':(SCAN.cam?'Guardar y tomar otra':'Guardar');if(SCAN.fix)$('#scanCount').textContent='Lo que no se lea se queda como estaba.';
+  $('#scanSave').textContent=SCAN.fix?'Guardar corrección':SCAN.msg?'Guardar y mandar mensaje':q?'Guardar y siguiente':(SCAN.cam?'Guardar y tomar otra':'Guardar');if(SCAN.fix)$('#scanCount').textContent='Lo que no se lea se queda como estaba.';
 }
 function openScan(){if($('#scanSheet').hidden){SCAN.n=0}$('#scanSheet').hidden=false;document.body.style.overflow='hidden';
   if(!SCAN.file){$('#scanImg').hidden=true;scanSt('Tomá la foto con la etiqueta derecha, de cerca, a la sombra y sin reflejo.');scanUI('wait')}}
-function closeScan(){liveStop();const fx=SCAN.fix;SCAN.fix=null;$('#scanTitle').textContent='Escanear etiquetas';if(fx)SCAN.n=0;$('#scanSheet').hidden=true;document.body.style.overflow='';SCAN.queue=[];SCAN.file=null;if(SCAN.url)URL.revokeObjectURL(SCAN.url);SCAN.url=null;
+function closeScan(){liveStop();SCAN.msg=false;const fx=SCAN.fix;SCAN.fix=null;$('#scanTitle').textContent='Escanear etiquetas';if(fx)SCAN.n=0;$('#scanSheet').hidden=true;document.body.style.overflow='';SCAN.queue=[];SCAN.file=null;if(SCAN.url)URL.revokeObjectURL(SCAN.url);SCAN.url=null;
   if(SCAN.n)toast(`${SCAN.n} paquete(s) agregado(s) desde etiquetas`)}
 async function scanFile(file,rot=0){
   SCAN.file=file;SCAN.rot=rot;SCAN.busy=true;
@@ -1953,7 +1953,9 @@ function scanCamara(){ // abre la cámara en vivo si se puede; si no, la cámara
 $('#scanAhora').onclick=()=>{if(LIVE.on)liveShot()};
 $('#scanFotoAlt').onclick=()=>{liveStop();SCAN.live=false;scanUI('wait');scanSt('Tomá la foto con la etiqueta derecha, de cerca, a la sombra y sin reflejo.');$('#scanCam').click()};
 $('#scanLuz').onclick=async()=>{const tr=LIVE.st&&LIVE.st.getVideoTracks()[0];if(!tr)return;try{LIVE.luzOn=!LIVE.luzOn;await tr.applyConstraints({advanced:[{torch:LIVE.luzOn}]});$('#scanLuz').setAttribute('aria-pressed',String(LIVE.luzOn))}catch(e){LIVE.luzOn=false}};
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&LIVE.on){liveStop();scanUI('wait');scanSt('Se pausó la cámara. Tocá "📷 Tomar foto" para seguir.')}});
+document.addEventListener('visibilitychange',()=>{ // al volver de WhatsApp (Escanear & mensaje) la cámara se abre sola
+  if(!document.hidden&&SCAN.msg&&SCAN.live&&!LIVE.on&&!$('#scanSheet').hidden&&!SCAN.file&&!SCAN.queue.length){liveStart();return}
+  if(document.hidden&&LIVE.on){liveStop();scanUI('wait');scanSt('Se pausó la cámara. Tocá "📷 Tomar foto" para seguir.')}});
 function scanNext(){
   const f=SCAN.queue.shift();
   if(f){scanFile(f);return}
@@ -1963,12 +1965,12 @@ function scanNext(){
 }
 // Corregir un paquete: abre la cámara y al guardar reemplaza los datos de ese paquete (no agrega uno nuevo)
 function scanCorregir(p){SCAN.fix=p.id;SCAN.cam=false;SCAN.queue=[];SCAN.file=null;$('#scanTitle').textContent=`Corregir etiqueta: ${p.nombre||p.guia||'paquete'}`;openScan();if(liveOk()){SCAN.live=true;liveStart()}else $('#scanCam').click()}
-$('#scanCamBtn').onclick=()=>{SCAN.live=liveOk();scanCamara()};
-// 1.97.1 (Victor): "Escanear & mensaje" es una copia exacta de "Escanear etiquetas"; se va a modificar después.
-$('#scanMsgBtn').onclick=$('#scanCamBtn').onclick;
+$('#scanCamBtn').onclick=()=>{SCAN.msg=false;SCAN.live=liveOk();scanCamara()};
+// 1.97.0 (Victor): "Escanear & mensaje" escanea igual y, al guardar cada paquete, abre WhatsApp con el mensaje 1. Pedir ubicación.
+$('#scanMsgBtn').onclick=()=>{SCAN.msg=true;SCAN.live=liveOk();scanCamara()};
 $('#scanShot').onclick=()=>{SCAN.cam=true;if(SCAN.live&&liveOk())liveStart();else $('#scanCam').click()};
 $('#scanCam').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f){openScan();scanFile(f)}};
-$('#scanGal').onchange=e=>{const fs=[...e.target.files];e.target.value='';if(!fs.length)return;liveStop();SCAN.cam=false;SCAN.live=false;SCAN.queue.push(...fs);openScan();if(!SCAN.file||!SCAN.busy&&$('#scanForm').hidden)scanNext();else scanUI(SCAN.busy?'busy':'review')};
+$('#scanGal').onchange=e=>{const fs=[...e.target.files];e.target.value='';if(!fs.length)return;liveStop();SCAN.msg=false;SCAN.cam=false;SCAN.live=false;SCAN.queue.push(...fs);openScan();if(!SCAN.file||!SCAN.busy&&$('#scanForm').hidden)scanNext();else scanUI(SCAN.busy?'busy':'review')};
 $('#scanRot').onclick=()=>{if(SCAN.file&&!SCAN.busy)scanFile(SCAN.file,(SCAN.rot+1)%4)};
 $('#scanSkip').onclick=()=>{if(!SCAN.busy)scanNext()};
 $('#scanEnd').onclick=closeScan;
@@ -1977,10 +1979,14 @@ $('#scanSave').onclick=()=>{
   const v=['nombre','tel','dir','','guia','nota'].map(k=>k?$('#s-'+k).value:'');
   if(!v[0].trim()&&!v[1].trim()&&!v[4].trim()){toast('Poné al menos el nombre, el teléfono o la guía');return}
   if(SCAN.fix){const p=S.pk.find(x=>x.id===SCAN.fix);if(p){const n=mkPkg(v);const ps=entParadasDe(p);if(p.tel&&phoneWA(p.tel)!==phoneWA(n.tel))p.telsAnt=[...new Set([...(p.telsAnt||[]),p.tel])];Object.assign(p,{nombre:n.nombre,tel:n.tel,dir:n.dir,guia:n.guia,nota:n.nota});entCopiarPk(p,ps);S.route=null;save();render();toast(`Corregido: ${p.nombre||p.guia}`)}closeScan();return}
-  const again=!SCAN.queue.length&&SCAN.cam&&!SCAN.live; // en vivo, scanNext vuelve a abrir la cámara sola
+  const again=!SCAN.queue.length&&SCAN.cam&&!SCAN.live&&!SCAN.msg; // con mensaje se abre WhatsApp, no la cámara; en vivo, scanNext vuelve a abrir la cámara sola
   if(again)$('#scanCam').click(); // abrir la cámara dentro del toque (iPhone lo exige)
   if(S.ex){S.pk=[];S.ex=false}
-  S.pk.push(mkPkg(v));S.route=null;save();render();SCAN.n++;toast(`Guardado (${SCAN.n})`);
+  const np=mkPkg(v);S.pk.push(np);
+  if(SCAN.msg){const l=waLink(np,pkCoordText(np)); // se abre dentro del mismo toque (iPhone lo exige)
+    if(l){np.sent=true;window.open(l,'_blank','noopener')}else toast('Teléfono inválido: no se abrió WhatsApp. Corregilo con Editar.')}
+  S.route=null;save();render();SCAN.n++;if(!SCAN.msg||!np.sent)toast(`Guardado (${SCAN.n})`);
+  if(SCAN.msg&&np.sent&&SCAN.live){SCAN.file=null;$('#scanImg').hidden=true;scanUI('wait');scanSt('Mandá el mensaje en WhatsApp y volvé: la cámara se abre sola para el siguiente.');return}
   scanNext();
 };
 
