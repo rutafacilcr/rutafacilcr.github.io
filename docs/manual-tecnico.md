@@ -318,6 +318,10 @@ Recomendado al pasar a varios mensajeros: en el Panel encender **Exigir cuenta a
 
 Si más adelante hace falta guardar las 3 fotos por meses, la única opción es pagar (Supabase Pro, 25 USD al mes, 100 GB).
 
+### Mensaje 1 en cuentas con texto editado (1.96.7)
+
+Solo texto; la nube recibe el texto nuevo en la siguiente sincronización.
+
 ### Mensaje 1 de día y de noche (1.96.6)
 
 Solo texto.
