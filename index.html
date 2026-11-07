@@ -554,7 +554,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div class="replin" style="border-top:0"><label style="flex-direction:row;align-items:center;gap:8px">Fecha <input type="date" id="guiFechaEnt"></label><button class="btn sm primary" type="button" id="guiEntBtn">📄 PDF</button></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.96.6</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.96.7</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -2100,7 +2100,7 @@ if(!S.hora)S.hora='08:00';
 if(!S.comp)S.comp=DEF_COMP;if(!S.ext)S.ext=DEF_EXT;if(!S.entr)S.entr=DEF_ENTR;if(!S.h1)S.h1=DEF_H1;if(!S.h2)S.h2=DEF_H2; // 1.73.0: mensajes 4 y 5 para listas viejas
 function msgFab196(){let c=false;const nz=t=>String(t||'').replace(/\s+/g,' ').trim(),D={entr:DEF_ENTR,h1:DEF_H1,h2:DEF_H2,comp:DEF_COMP};for(const k in D)if(!S[k]||nz(S[k])===nz(OLD_MSG196[k])){if(S[k]!==D[k]){S[k]=D[k];c=true}}
   const cam=nz(String(S.camino||'').replace(CEDULA,'').replace('¡Gracias!','')).toLowerCase();if(!S.camino||cam==='hola {nombre}, voy en camino con su paquete de temu. llego en aproximadamente {eta} minutos.'){S.camino=DEF_CAMINO;c=true}
-  const nz5=t=>String(t||'').replace(/\s+/g,' ').trim();if([DEF_COORD3,DEF_COORD4,DEF_COORD5].some(x=>nz5(x)===nz5(S.coord))){S.coord=DEF_COORD6;c=true} // 1.96.5/1.96.6: mensaje 1 nuevo si seguía de fábrica
+  const nz5=t=>String(t||'').replace(/\s+/g,' ').trim();if([DEF_COORD3,DEF_COORD4,DEF_COORD5].some(x=>nz5(x)===nz5(S.coord))||/nos gustar[ií]a coordinar la entrega/i.test(S.coord||'')){S.coord=DEF_COORD6;c=true} // 1.96.5/1.96.6: mensaje 1 nuevo si seguía de fábrica · 1.96.7: también las versiones editadas del texto viejo ("…nos gustaría coordinar la entrega…", Victor)
   return c} // 1.96.2 (Victor): textos nuevos de los mensajes 2, 3, 5, 6 y 7; solo cambia los que seguían con el texto de fábrica (también si la nube trae los viejos)
 if(msgFab196())save();
 bind('#m-pref','pref');$('#vcfEj').textContent=vcfName({nombre:'Nombre',guia:'pedido'});bind('#m-yo','yo');bind('#m-fecha','fecha');bind('#m-coord','coord');bind('#m-camino','camino');bind('#m-comp','comp');bind('#m-ext','ext');bind('#m-entr','entr');bind('#m-h1','h1');bind('#m-h2','h2');bind('#m-form','form');bind('#r-start','start');bind('#r-hora','hora');bind('#r-vel','vel',1);bind('#r-min','min',1);bind('#r-filter','filter');

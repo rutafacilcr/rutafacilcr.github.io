@@ -545,6 +545,8 @@ Debajo de **📷 Escáner** está el botón verde **WhatsApp**, que abre el chat
 
 **Nota en amarillo (1.92.4):** si el paquete tiene nota, sale abajo de la dirección en letra blanca con fondo amarillo (📝), para que no se te pase.
 
+**Desde la 1.96.7** el texto nuevo también reemplaza las versiones editadas del texto viejo (las que dicen "nos gustaría coordinar la entrega").
+
 **Mensaje 1 de día y de noche (1.96.6):** el texto dice "…Una vez recibida, lo asignaremos a la ruta y nos comunicaremos con usted para coordinar la entrega. ¡Gracias!". De 9:30 p. m. a 5 a. m. sale así: primera línea **🤖 MENSAJE AUTOMÁTICO – COORDINACIÓN DE ENTREGA**, después "Hola Ana 👋" y en la línea siguiente "Ofrecemos una disculpa por la hora.", el mismo texto, y al final "¡Gracias! Buenas noches". Esto reemplaza la versión de noche de la 1.96.5.
 
 **Mensaje 1 nuevo (1.96.5):** *Pedir ubicación* dice: "Hola Ana 👋 / Tenemos un paquete de TEMU a su nombre y queremos coordinar su entrega para el sábado 07/11/2026. / 📍 Por favor, compártanos su ubicación por este medio para agregarla a nuestra ruta. / Una vez recibida, nos comunicaremos con usted para coordinar la entrega. / ¡Gracias!". La fecha es el *Día de entrega*. Entre las 9:30 p. m. y las 5 a. m. (en Paquetes y en Mensajes), después del saludo agrega "Ofrecemos una disculpa por la hora. 🤖 Notificación automática de entrega." Esto reemplaza el "DISCULPE LA HORA" de abajo.
