@@ -54,6 +54,7 @@ Resumen de cómo está la app ahora. Más abajo se explica cada parte con la ver
 - Después sigue *Reporte de entregas* (1.73.2: se quitó el aviso "Próximamente").
 - Hay un reporte por cada grupo de *Entregas del …*, según el día en que se recibieron los paquetes. También salen las listas ya vaciadas.
 - Cada grupo tiene su botón **📄 PDF** horizontal.
+- **Reporte para pago** (1.98.0): está justo debajo de *Reporte de entregas*. Es el mismo reporte, una línea por fecha (**💵 Pago · Entregas del 06/11/2026**), pero el PDF **no trae** *Horas invertidas*, *Promedio por entrega*, *Tiempo desde anterior* ni *Km desde anterior*. En su lugar dice **Pago**, por ejemplo *¢12.500 (25 × ¢500)*: entregados por el pago de cada paquete que pusiste en **⚙️ Tarifas** (₡500 si no lo cambiaste; si anotaste pago por devuelto, también se suma). Sirve para mandarlo a quien te paga. El archivo se llama `pago-del-AAAA-MM-DD.pdf`.
 - **Guías por fecha de recibido** (1.71.0 a 1.72.3): un PDF por fecha de recibido (*Guías · Paquetes recibidos 31/10/2026*) con Nombre, Tel., Guía, Dirección y Hora entrega, separado por día de entrega.
 - El **encabezado** trae: fecha, mensajero, recibidos el, km, horas, días de entrega, promedio por entrega, y recibidos, entregados y devueltos.
 - Las **filas** van por fecha y hora de entrega, con estas columnas: número, guía / pedido, teléfono, nombre, estado, fecha recibido, fecha y hora de entrega, y tiempo y km desde la entrega anterior.
