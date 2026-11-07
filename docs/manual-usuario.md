@@ -520,6 +520,7 @@ Debajo de **📷 Escáner** está el botón verde **WhatsApp**, que abre el chat
 **Mensajes**
 - Etiquetas: **✅ Entregado** en verde, **🔴 Devuelto** y **⛔ Devolver** en rojo, **⏸ HOLD** en amarillo (antes decía *Confirmado*).
 - La tarjeta muestra la guía y la nota.
+- Desde la 1.96.8 *Mensajes* ya no tiene los botones de filtro de arriba: se ven todos los clientes (los de Hold después de los pendientes y al final los entregados y devueltos). Para encontrar uno, usá el buscador.
 - Desde la 1.96.2 los mensajes 2, 3, 5, 6 y 7 tienen textos nuevos (por ejemplo *2. En camino*: "Hola Ana, voy en camino 🚙 con su paquete de *TEMU*. Llego en aprox. 15 minutos. Recuerde que para la entrega debe mostrar la cédula. ¡Gracias! 😁"; *5. Entregado*: "Su paquete, con orden No.*guía*, fue entregado…"). El 6 ahora es de **8 a. m. a 12 md**. Si usted ya había cambiado alguno en *✏️ Editar textos de los mensajes*, se queda con el suyo.
 - Desde la 1.96.1, en *Mensajes*, los filtros de arriba son **Todos, Sin enviar, Esperando respuesta, Confirmados, ⏸ Hold, ⛔ Devolver, ✅ Entregados y 🔴 Devueltos**. Cada paquete está en uno solo, entonces la suma de todos da el número de *Todos*. Los paquetes en **Hold** se ven normales y sus mensajes se pueden enviar.
 - Desde la 1.95.7 **📋 Pegar ubicación** va naranja solo si al paquete le falta la ubicación; si ya la tiene, va blanco.

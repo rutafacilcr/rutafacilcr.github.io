@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-07
+- **1.96.8 · Sin filtros en Mensajes:** se quitan los botones de filtro (Todos, Sin enviar, Esperando respuesta, Confirmados, Hold, Devolver, Entregados, Devueltos); Mensajes muestra todos los clientes y se sigue pudiendo buscar.
 - **1.96.7 · Mensaje 1 nuevo también en cuentas con el texto viejo editado:** si el texto 1 guardado todavía es una versión del viejo ("…nos gustaría coordinar la entrega…"), se cambia al texto nuevo de la 1.96.6.
 - **1.96.6 · Mensaje 1 de día y de noche:** el mensaje 1 ahora dice "…lo asignaremos a la ruta y nos comunicaremos con usted…". Entre las 9:30 p. m. y las 5 a. m. empieza con "🤖 MENSAJE AUTOMÁTICO – COORDINACIÓN DE ENTREGA", lleva "Ofrecemos una disculpa por la hora." debajo del saludo y cierra con "¡Gracias! Buenas noches".
 - **1.96.5 · Mensaje 1 nuevo:** *Pedir ubicación* usa el texto nuevo de Victor ("Hola *nombre* 👋 … Tenemos un paquete de TEMU a su nombre y queremos coordinar su entrega para el *fecha*…"). Entre las 9:30 p. m. y las 5 a. m., después del saludo agrega "Ofrecemos una disculpa por la hora. 🤖 Notificación automática de entrega.", ahora también desde Mensajes. Se actualiza solo si el texto seguía de fábrica.
