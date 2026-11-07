@@ -548,7 +548,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
   <!-- 1.98.0 (Victor): Reporte para pago = copia del reporte de entregas sin horas, promedio, tiempo ni km desde la anterior -->
   <div class="panel">
     <h2>Reporte para pago</h2>
-    <p class="small muted">El mismo reporte de entregas, por fecha de recibido, pero sin horas invertidas, promedio por entrega, tiempo desde anterior ni km desde anterior. Lleva el <b>pago</b> según tus tarifas (⚙️ Tarifas en Ganancia). Tocá <b>📄 PDF</b> para bajarlo.</p>
+    <p class="small muted">El mismo reporte de entregas, por fecha de recibido, pero sin km recorridos, horas invertidas, promedio por entrega, tiempo desde anterior ni km desde anterior. Arriba van juntos los totales de paquetes. Tocá <b>📄 PDF</b> para bajarlo.</p>
     <div id="pagLista"></div>
   </div>
   <div class="panel">
@@ -561,7 +561,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div class="replin" style="border-top:0"><label style="flex-direction:row;align-items:center;gap:8px">Fecha <input type="date" id="guiFechaEnt"></label><button class="btn sm primary" type="button" id="guiEntBtn">📄 PDF</button></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.98.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.98.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -1275,7 +1275,7 @@ function repResumen(L){
   const ruta=L.filter(p=>repEstado(p)==='En ruta').length,hold=L.filter(p=>repEstado(p)==='Hold').length;
   return {rec,ent,dev,km,min,pMin,pKm,dias,ruta,hold}}
 // 1.98.0 (Victor): pago=true arma el "Reporte para pago": la misma copia del reporte de entregas, sin horas invertidas,
-// promedio por entrega, tiempo desde anterior ni km desde anterior; en su lugar lleva el pago según Cierres > ⚙️ Tarifas.
+// promedio por entrega, tiempo desde anterior ni km desde anterior. 1.98.1: tampoco km recorridos ni pago.
 function repPdf(k,pago){
   const G=repGrupos().find(x=>x.k===k);const L=G?G.pk:[];
   const fil=pago?repFilas(L).map(r=>r.slice(0,8)):repFilas(L);if(!fil.length){toast('Esa fecha no tiene paquetes');return}
@@ -1287,21 +1287,22 @@ function repPdf(k,pago){
   // Posiciones fijas (1.56.2), cuadrícula de 4 columnas: col. 1 fecha y mensajero debajo; col. 2 km y horas; col. 3 fecha de recibido (1.57.0); col. 4 recibidos, entregados y devueltos
   const KM=['Km recorridos',R.km==null||R.km<0.05?'—':R.km.toFixed(1)+' km aprox.'],HR=['Horas invertidas',R.min==null?'—':`${Math.floor(R.min/60)} h ${String(Math.round(R.min%60)).padStart(2,'0')} min`];
   const PR=['Promedio por entrega',R.pMin==null?'—':`${Math.round(R.pMin)} min${R.pKm!=null?' · '+R.pKm.toFixed(1)+' km':''}`];
-  // el PDF usa la letra estándar de jsPDF, que no tiene ₡: se escribe ¢ (como en los recibos a mano)
-  const PG=pago?repPago(R):null,cl=n=>ganCol(n).replace('₡','¢'),PGt=PG?['Pago',`${cl(PG.total)} (${R.ent} × ${cl(PG.pe)}${PG.pd?` + ${R.dev} dev. × ${cl(PG.pd)}`:''})`]:null;
-  const enc=[['Fecha',fd],KM,['Recibidos el',repDiaTxt(k)],['Paquetes recibidos',String(R.rec)],['Entregado por',S.yo||'—'],pago?PGt:HR,['Días de entrega',String(R.dias)],['Paquetes entregados',String(R.ent)],['Paquetes en ruta',String(R.ruta)],pago?null:PR,null,['Paquetes devueltos',String(R.dev)],['Paquetes en Hold',String(R.hold)]];
-  doc.setFontSize(10);enc.forEach((e,i)=>{if(!e)return;const [kk,v]=e,x=14+(i%4)*64,y=23+Math.floor(i/4)*6;doc.setFont(undefined,'bold');doc.text(kk+':',x,y);const w=doc.getTextWidth(kk+': ')+1;doc.setFont(undefined,'normal');doc.text(v,x+w,y)});
+  const enc=[['Fecha',fd],KM,['Recibidos el',repDiaTxt(k)],['Paquetes recibidos',String(R.rec)],['Entregado por',S.yo||'—'],HR,['Días de entrega',String(R.dias)],['Paquetes entregados',String(R.ent)],['Paquetes en ruta',String(R.ruta)],PR,null,['Paquetes devueltos',String(R.dev)],['Paquetes en Hold',String(R.hold)]];
+  const ct=(kk,v,x,y)=>{doc.setFont(undefined,'bold');doc.text(kk+':',x,y);const w=doc.getTextWidth(kk+': ')+1;doc.setFont(undefined,'normal');doc.text(v,x+w,y)};
+  doc.setFontSize(10);
+  // 1.98.1 (Victor): el de pago no lleva km ni pago; fila 1 = fecha, recibidos el, días y entregado por; fila 2 = todos los datos de paquetes juntos y alineados
+  if(pago){[['Fecha',fd],['Recibidos el',repDiaTxt(k)],['Días de entrega',String(R.dias)],['Entregado por',S.yo||'—']].forEach((e,i)=>ct(e[0],e[1],14+i*51.5,23)); // misma cuadrícula que la fila 2; el nombre va de último porque puede ser largo
+    [['Paquetes recibidos',R.rec],['Paquetes entregados',R.ent],['Paquetes en ruta',R.ruta],['Paquetes en Hold',R.hold],['Paquetes devueltos',R.dev]].forEach((e,i)=>ct(e[0],String(e[1]),14+i*51.5,30))}
+  else enc.forEach((e,i)=>{if(!e)return;ct(e[0],e[1],14+(i%4)*64,23+Math.floor(i/4)*6)});
   const CAB=['No. paquete','No. guía / pedido','No. teléfono','Nombre','Estado','Fecha recibido','Fecha entrega','Hora entrega','Tiempo desde anterior','Km desde anterior'];
-  doc.autoTable({startY:46,head:[pago?CAB.slice(0,8):CAB],body:fil,
+  doc.autoTable({startY:pago?37:46,head:[pago?CAB.slice(0,8):CAB],body:fil,
     styles:{fontSize:8.5,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},
     didParseCell:d=>{if(d.section==='body'&&d.column.index===4)d.cell.styles.textColor={'Entregado':[30,130,60],'Devuelto':[200,40,40],'En ruta':[29,78,216],'Hold':[161,98,7]}[d.cell.raw]||[60,60,60]}});
   const name=`${pago?'pago':'entregas'}-del-${k||'sin-fecha'}.pdf`;
   if(IOS&&navigator.canShare){const file=new File([doc.output('blob')],name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Reporte guardado')).catch(()=>{});return}}
   doc.save(name);toast(`Reporte con ${fil.length} paquete(s)`)}
-// 1.98.0: pago del reporte para pago, con las tarifas de Cierres (₡500 por entregado de fábrica; devuelto 0 si no se anotó)
-function repPago(R){const g=ganS(),pe=g.pago==null?GAN_PAGO:+g.pago||0,pd=+g.pagoDev||0;return {pe,pd,total:R.ent*pe+R.dev*pd}}
 function repPagoLista(){const el=$('#pagLista');if(!el)return;const G=repGrupos();
-  el.innerHTML=G.length?G.map(g=>{const R=repResumen(g.pk),n=repFilas(g.pk).length,P=repPago(R);return `<div class="replin"><div><b>💵 Pago · ${repEntregasDe(g.k)}</b><div class="small muted">${R.rec} recibidos · ${R.ent} entregados · ${R.dev} devueltos · ${ganCol(P.total)}</div></div><button class="btn sm primary" type="button" data-pag="${g.k}"${n?'':' disabled'}>📄 PDF</button></div>`}).join(''):'<p class="small muted">Todavía no hay paquetes.</p>'}
+  el.innerHTML=G.length?G.map(g=>{const R=repResumen(g.pk),n=repFilas(g.pk).length;return `<div class="replin"><div><b>💵 Pago · ${repEntregasDe(g.k)}</b><div class="small muted">${R.rec} recibidos · ${R.ent} entregados · ${R.ruta} en ruta · ${R.hold} hold · ${R.dev} devueltos</div></div><button class="btn sm primary" type="button" data-pag="${g.k}"${n?'':' disabled'}>📄 PDF</button></div>`}).join(''):'<p class="small muted">Todavía no hay paquetes.</p>'}
 $('#pagLista').addEventListener('click',e=>{const b=e.target.closest('[data-pag]');if(b)repPdf(b.dataset.pag,true)});
 // 1.74.0: los cierres se guardan en la nube los días del Panel (15 de fábrica). El PDF es el respaldo: se avisa arriba
 // y en cada fecha que está por borrarse (se cuenta desde el día de recibido, así el aviso sale antes de tiempo, nunca tarde).
