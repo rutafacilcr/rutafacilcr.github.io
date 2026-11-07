@@ -554,7 +554,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div class="replin" style="border-top:0"><label style="flex-direction:row;align-items:center;gap:8px">Fecha <input type="date" id="guiFechaEnt"></label><button class="btn sm primary" type="button" id="guiEntBtn">📄 PDF</button></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.96.3</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.96.4</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -2232,8 +2232,8 @@ const eNum=s=>{const p=entPkg(s);return p&&p.num?p.num:'–'}; // sin paquete un
 // ===== Jornada (1.59.0): ▶ Iniciar entregas y ■ Finalizar guardan hora y GPS del día en S.jor[AAAA-MM-DD] = {ini:{t,c}, fin:{t,c}}.
 // El reporte mide la primera entrega desde el inicio, suma el tramo de la última entrega al final, y las horas son fin − inicio.
 const jorHoy=()=>repDia(Date.now());
-function jorGps(){return new Promise(ok=>{if(!navigator.geolocation)return ok(EPOS?EPOS.c:null);
-  navigator.geolocation.getCurrentPosition(g=>ok([+g.coords.latitude.toFixed(6),+g.coords.longitude.toFixed(6)]),()=>ok(EPOS?EPOS.c:null),{enableHighAccuracy:true,timeout:12000,maximumAge:30000})})}
+function jorGps(){return new Promise(ok=>{if(!navigator.geolocation)return ok(EPOS&&!EPOS.manual?EPOS.c:null);
+  navigator.geolocation.getCurrentPosition(g=>ok([+g.coords.latitude.toFixed(6),+g.coords.longitude.toFixed(6)]),()=>ok(EPOS&&!EPOS.manual?EPOS.c:null),{enableHighAccuracy:true,timeout:12000,maximumAge:30000})})}
 const jorHm=t=>new Date(t).toLocaleTimeString('es-CR',{hour:'numeric',minute:'2-digit'});
 const jorDur=m=>`${Math.floor(m/60)} h ${String(Math.round(m%60)).padStart(2,'0')} min`;
 function jorRender(){const el=$('#jorBar');if(!el)return;const J=(S.jor||{})[jorHoy()];
@@ -2308,9 +2308,13 @@ function entPickModo(on,txt){const m=$('#entMap');if(!on&&EMAP){EMAP.pick=false;
   bn.firstChild.textContent=txt}
 function entPickTap(ll){if(!entPicking()||!ll)return false;const c=[+ll.lat.toFixed(6),+ll.lng.toFixed(6)];EMAP.pickAt=Date.now();
   if(EMAP.pickStop!=null){const i=EMAP.pickStop;entPickModo(false);entPonerC(i,c);entPickSalir();return true}
-  entPickModo(false);entPickEspera(c);entOrdenar(c,'el punto que elegiste',true).catch(()=>{}).finally(entPickSalir);return true}
+  entPickModo(false);entPickEspera(c);entPosManual(c);entOrdenar(c,'el punto que elegiste',true).catch(()=>{}).finally(entPickSalir);return true}
 // 1.96.3 (Victor): apenas tocás el punto sale un pin naranja y "Ordenando la ruta…" (calcular por calle tarda hasta 8 s);
 // al terminar el aviso se quita y la pantalla vuelve arriba de Ruta, para no quedar atrapado en el mapa.
+// 1.96.4 (Victor): el punto elegido pasa a ser "dónde estás" (punto azul, línea, tiempos y total salen de ahí).
+// El GPS no lo pisa hasta que te movás más de 200 m de donde estabas al elegirlo, o hasta que tocás 📍 Ordenar desde aquí.
+// No se usa como GPS de la prueba de entrega.
+function entPosManual(c){const g=EPOS&&!EPOS.manual?EPOS.c:(EPOS&&EPOS.gps0)||null;EPOS={c,acc:0,manual:true,gps0:g};EAUTO=true;entMe()}
 function entPickEspera(c){try{const m=$('#entMap');if(window.L){if(EMAP.pickPin)EMAP.removeLayer(EMAP.pickPin);EMAP.pickPin=L.marker(c,{icon:L.divIcon({className:'',html:'<div class="mepos pickpt"></div>',iconSize:[22,22],iconAnchor:[11,11]}),zIndexOffset:4000,interactive:false}).addTo(EMAP)}
   const bn=document.createElement('div');bn.className='pickban busy';bn.setAttribute('role','status');bn.textContent='⏳ Ordenando la ruta desde ese punto…';m.appendChild(bn)}catch(e){}}
 function entPickSalir(){try{const m=$('#entMap');m.querySelectorAll('.pickban.busy').forEach(x=>x.remove());if(EMAP&&EMAP.pickPin){EMAP.removeLayer(EMAP.pickPin);EMAP.pickPin=null}
@@ -2402,7 +2406,9 @@ function entMe(){entEta();entTotal();if(!EMAP||!window.L)return;const c=EPOS?EPO
   if(!c){if(EMAP.me){EMAP.removeLayer(EMAP.me);EMAP.me=null}return}
   if(EMAP.fitted==='vacio'&&!EMAP.meC){EMAP.meC=1;EMAP.setView(c,15)} // 1.86.1: sin ruta, el mapa se centra en vos al tener GPS
   if(!EMAP.me)EMAP.me=L.marker(c,{icon:L.divIcon({className:'',html:'<div class="mepos"></div>',iconSize:[18,18],iconAnchor:[9,9]}),zIndexOffset:2000,interactive:false}).addTo(EMAP);else EMAP.me.setLatLng(c)}
-const gpsOk=g=>{EPOS={c:[+g.coords.latitude.toFixed(6),+g.coords.longitude.toFixed(6)],acc:g.coords.accuracy};$('#entGps').textContent='';entMe(); /* 1.91.0: sin "Estás aquí" (Victor); el punto azul del mapa lo muestra */
+const gpsOk=(g,forzar)=>{const gc=[+g.coords.latitude.toFixed(6),+g.coords.longitude.toFixed(6)];
+  if(EPOS&&EPOS.manual&&!forzar){if(!EPOS.gps0)EPOS.gps0=gc;if(hav(EPOS.gps0,gc)<0.2)return} // 1.96.4: se respeta el punto elegido en el mapa
+  EPOS={c:gc,acc:g.coords.accuracy};$('#entGps').textContent='';entMe(); /* 1.91.0: sin "Estás aquí" (Victor); el punto azul del mapa lo muestra */
   // La primera vez que el GPS responde, si la ruta no se ordenó desde cerca de aquí, se ordena sola desde tu punto
   if(!EAUTO&&S.ent&&S.ent.stops&&S.ent.stops.some(x=>x.c)&&EPOS.acc<500){EAUTO=true;if(!S.ent.inicio||hav(S.ent.inicio,EPOS.c)>0.8)entOrdenar(EPOS.c,'donde estás')}};
 const gpsFail=e=>{$('#entGps').innerHTML=e&&e.code===1?'Ubicación bloqueada. En iPhone: <b>Ajustes</b> &gt; <b>Privacidad</b> &gt; <b>Localización</b> &gt; <b>Sitios web de Safari</b> &gt; <b>Al usar la app</b>. O usá <b>🎯 Elegir en el mapa</b>.':'No se pudo obtener la ubicación. Usá <b>🎯 Elegir en el mapa</b>.'};
@@ -2434,8 +2440,8 @@ async function entOrdenar(start,desde,manual){
   toast(`Ruta ordenada ${Mx?'por calle ':''}desde ${desde} (${pend.length} paradas)`);if(NUBE.on)nubeSoon();
 }
 $('#entAqui').onclick=()=>{if(!navigator.geolocation){gpsFail();return}EAUTO=true;$('#entGps').textContent='Buscando tu ubicación…';
-  navigator.geolocation.getCurrentPosition(g=>{gpsOk(g);entOrdenar(EPOS.c,'tu ubicación',true);entVigilar()},
-    e=>{if(e.code===1)return gpsFail(e);navigator.geolocation.getCurrentPosition(g=>{gpsOk(g);entOrdenar(EPOS.c,'tu ubicación',true)},gpsFail,{enableHighAccuracy:false,timeout:20000,maximumAge:120000})},
+  navigator.geolocation.getCurrentPosition(g=>{gpsOk(g,1);entOrdenar(EPOS.c,'tu ubicación',true);entVigilar()},
+    e=>{if(e.code===1)return gpsFail(e);navigator.geolocation.getCurrentPosition(g=>{gpsOk(g,1);entOrdenar(EPOS.c,'tu ubicación',true)},gpsFail,{enableHighAccuracy:false,timeout:20000,maximumAge:120000})},
     {enableHighAccuracy:true,timeout:15000,maximumAge:30000})};
 $('#entPick').onclick=()=>{if(!EMAP){toast('Primero cargá la ruta');return}if(EMAP.pick){entPickModo(false);return} // 1.95.3: tocarlo otra vez cancela
   EMAP.pickStop=null;EMAP.pick=true;entPickModo(true,'Tocá el mapa donde estás');$('#entMap').scrollIntoView({behavior:'smooth',block:'start'})};
@@ -2480,7 +2486,7 @@ $('#entList').addEventListener('click',async e=>{if(e.target.closest('[data-edon
     save();render();if(EPOS||jorEnCurso()){entOrdenar(EPOS?EPOS.c:null,'donde estás');return}renderEnt();toast(`${s.nombre||'Parada'} vuelve a la ruta`);return}
   const bd=e.target.closest('[data-edone]');if(bd){const s=S.ent.stops[+bd.dataset.edone],p=entPkg(s);s.done=true;
     // Hora y ubicación real (GPS del celular en ese momento) de la entrega
-    s.at=Date.now();s.gps=EPOS?{lat:EPOS.c[0],lng:EPOS.c[1],acc:Math.round(EPOS.acc)}:null;
+    s.at=Date.now();s.gps=EPOS&&!EPOS.manual?{lat:EPOS.c[0],lng:EPOS.c[1],acc:Math.round(EPOS.acc)}:null;
     // También en Paquetes: el mismo paquete pasa a entregado (se guarda el estado anterior por si se deshace)
     if(p&&p.st!=='entregado'){s.prevSt=p.st;s.pkId=p.id;p.st='entregado';p.entAt=s.at;p.entGps=s.gps}
     save();render();toast(p?`Entregado, también en Paquetes (${p.nombre})`:'Parada marcada como entregada');entrAvisar(p);return}
