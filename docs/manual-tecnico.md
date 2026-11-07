@@ -318,6 +318,10 @@ Recomendado al pasar a varios mensajeros: en el Panel encender **Exigir cuenta a
 
 Si más adelante hace falta guardar las 3 fotos por meses, la única opción es pagar (Supabase Pro, 25 USD al mes, 100 GB).
 
+### Elegir en el mapa con aviso (1.96.3)
+
+Solo pantalla. El cálculo por calle usa el servidor de demostración de OSRM (hasta 8 s de espera); mientras tanto se ve el aviso *Ordenando la ruta…*.
+
 ### Textos nuevos de Mensajes (1.96.2)
 
 Los textos viajan en la sincronización (`camino`, `comp`, `entr`, `h1`, `h2` en `NUBE_KEYS`); la app reemplaza solo los que siguen con el texto de fábrica viejo, también cuando vienen de la nube, y marca el cambio para subirlo. No toca Supabase.

@@ -25,7 +25,7 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
 - **Ruta:**
   - Tel. y nota en cada parada; devueltos visibles en el mapa sin entrar a la ruta; al marcar ✓ Entregado sale el botón para mandar el WhatsApp "Entregado"; *Devolver* pide el motivo; la *Lista* muestra solo lo pendiente, Hold primero (1.94.0).
   - Mapa con la línea por calles reales (OSRM, gratis).
-  - Ordenar desde tu GPS o desde un punto del mapa (🎯 *Elegir en el mapa*: el mapa se marca en naranja con un aviso y *Cancelar*, y el toque vale aunque el dedo se mueva un poco o caiga sobre un pin; 1.95.3).
+  - Ordenar desde tu GPS o desde un punto del mapa (🎯 *Elegir en el mapa*: el mapa se marca en naranja con un aviso y *Cancelar*, y el toque vale aunque el dedo se mueva un poco o caiga sobre un pin; 1.95.3). Al tocar el punto sale *⏳ Ordenando la ruta…* y luego la pantalla vuelve arriba de Ruta (1.96.3).
   - ▶ Iniciar / ■ Finalizar entregas para el reporte. Desde ▶ Iniciar el orden de la ruta queda fijo (solo cambia si lo reordenás a mano).
   - Vehículo 🏍️ 🚙 🚐 (carro por defecto), que va en el WhatsApp "Estamos en camino 🏍️…".
   - 📋 Lista en orden. Las paradas entregadas quedan en gris (sin tachar) en el mapa y la lista.

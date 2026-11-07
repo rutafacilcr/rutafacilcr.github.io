@@ -23,6 +23,9 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.1 | — | *Crear cuenta* con los campos en blanco |
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
+## 2026-11-07
+- **1.96.3 · Elegir en el mapa responde al toque y te saca del mapa:** apenas tocás el punto sale un pin naranja y el aviso *⏳ Ordenando la ruta desde ese punto…* (calcular por calle tarda hasta 8 segundos y antes no se veía nada). Al terminar, la pantalla vuelve sola arriba de *Ruta* con la ruta nueva, sin tener que tocar otra pestaña. Además, *Calculando la ruta por calle…* ya no se queda pegado cuando no hay GPS.
+
 ## 2026-11-06
 - **1.96.2 · Textos nuevos de Mensajes:** cambian los mensajes 2 (En camino), 3 (Comprensión), 5 (Entregado, con "orden No." y la guía), 6 (Horario 8 a 12 md, antes 8:30) y 7 (Horario 12 md a 5 p. m.) con los textos de Victor. Se actualizan solos en las cuentas que tenían el texto de fábrica; si alguien los había editado, se respeta su texto.
 - **1.96.1 · Filtros de Mensajes que suman y Hold habilitado:** los filtros de Mensajes ahora son Todos, Sin enviar, Esperando respuesta, Confirmados, ⏸ Hold, ⛔ Devolver, ✅ Entregados y 🔴 Devueltos; cada paquete cae en uno solo, así la suma da el número de Todos. Los paquetes en Hold ya no se ven apagados: sus mensajes se pueden enviar normalmente.

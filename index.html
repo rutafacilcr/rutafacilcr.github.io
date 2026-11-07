@@ -115,7 +115,7 @@ nav.tabs .n:empty{display:none}
 .jorbar .jtxt{flex:1 1 120px;font-size:12.5px;line-height:1.25}.jorbar .jtxt b{white-space:nowrap}
 .jorbar .jini{background:#1f9d55;border-color:#1f9d55;color:#fff;font-weight:700}.jorbar .jfin{background:#c0392b;border-color:#c0392b;color:#fff;font-weight:700}
 .entmap{position:sticky;top:0;z-index:5;height:42vh;min-height:220px;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--surface)}
-/* 1.95.3: modo Elegir en el mapa visible (borde naranja y aviso con Cancelar arriba del mapa) */.entmap.picking{outline:3px solid var(--accent);outline-offset:-3px}.pickban{position:absolute;top:8px;left:52px;right:8px;z-index:1000;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 5px 5px 12px;border-radius:12px;background:#1f2125;color:#fff;font-size:13px;font-weight:600;line-height:1.25;box-shadow:0 2px 10px rgba(0,0,0,.35);cursor:default}.pickban .btn{flex:none;font-size:12.5px;padding:6px 10px;min-height:36px}#entPick.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+/* 1.95.3: modo Elegir en el mapa visible (borde naranja y aviso con Cancelar arriba del mapa) */.entmap.picking{outline:3px solid var(--accent);outline-offset:-3px}.pickban{position:absolute;top:8px;left:52px;right:8px;z-index:1000;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 5px 5px 12px;border-radius:12px;background:#1f2125;color:#fff;font-size:13px;font-weight:600;line-height:1.25;box-shadow:0 2px 10px rgba(0,0,0,.35);cursor:default}.pickban.busy{justify-content:center;padding:10px 12px}.mepos.pickpt{background:var(--accent)}.pickban .btn{flex:none;font-size:12.5px;padding:6px 10px;min-height:36px}#entPick.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .epin{width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#d7261e;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center}
 .mepos{width:18px;height:18px;border-radius:50%;background:#1a73e8;border:3px solid #fff;box-shadow:0 0 0 2px rgba(26,115,232,.35),0 1px 4px rgba(0,0,0,.4)}
 .epin b{transform:rotate(45deg);color:#fff;font:700 12px var(--f-body)}
@@ -554,7 +554,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div class="replin" style="border-top:0"><label style="flex-direction:row;align-items:center;gap:8px">Fecha <input type="date" id="guiFechaEnt"></label><button class="btn sm primary" type="button" id="guiEntBtn">📄 PDF</button></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.96.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.96.3</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -2307,8 +2307,14 @@ function entPickModo(on,txt){const m=$('#entMap');if(!on&&EMAP){EMAP.pick=false;
     if(window.L)L.DomEvent.disableClickPropagation(bn);bn.querySelector('button').onclick=e=>{e.stopPropagation();entPickModo(false);toast('Listo, no se eligió ningún punto')};m.appendChild(bn)}
   bn.firstChild.textContent=txt}
 function entPickTap(ll){if(!entPicking()||!ll)return false;const c=[+ll.lat.toFixed(6),+ll.lng.toFixed(6)];EMAP.pickAt=Date.now();
-  if(EMAP.pickStop!=null){const i=EMAP.pickStop;entPickModo(false);entPonerC(i,c);return true}
-  entPickModo(false);entOrdenar(c,'el punto que elegiste',true);return true}
+  if(EMAP.pickStop!=null){const i=EMAP.pickStop;entPickModo(false);entPonerC(i,c);entPickSalir();return true}
+  entPickModo(false);entPickEspera(c);entOrdenar(c,'el punto que elegiste',true).catch(()=>{}).finally(entPickSalir);return true}
+// 1.96.3 (Victor): apenas tocás el punto sale un pin naranja y "Ordenando la ruta…" (calcular por calle tarda hasta 8 s);
+// al terminar el aviso se quita y la pantalla vuelve arriba de Ruta, para no quedar atrapado en el mapa.
+function entPickEspera(c){try{const m=$('#entMap');if(window.L){if(EMAP.pickPin)EMAP.removeLayer(EMAP.pickPin);EMAP.pickPin=L.marker(c,{icon:L.divIcon({className:'',html:'<div class="mepos pickpt"></div>',iconSize:[22,22],iconAnchor:[11,11]}),zIndexOffset:4000,interactive:false}).addTo(EMAP)}
+  const bn=document.createElement('div');bn.className='pickban busy';bn.setAttribute('role','status');bn.textContent='⏳ Ordenando la ruta desde ese punto…';m.appendChild(bn)}catch(e){}}
+function entPickSalir(){try{const m=$('#entMap');m.querySelectorAll('.pickban.busy').forEach(x=>x.remove());if(EMAP&&EMAP.pickPin){EMAP.removeLayer(EMAP.pickPin);EMAP.pickPin=null}
+  $('#v-entrega').scrollIntoView({behavior:'smooth',block:'start'})}catch(e){}} // la app se desplaza dentro de .app, no en window
 // Tocar una parada: la marca y centra el mapa; tocar un pin: baja a esa parada en la lista.
 function entSel(i,desdeMapa){ESEL=i;const s=S.ent.stops[i];renderEnt().then(()=>{
   if(s.c&&EMAP){EMAP.setView(s.c,Math.max(EMAP.getZoom(),16));EMAP.mk[i]&&EMAP.mk[i].openPopup()}
@@ -2421,7 +2427,7 @@ async function entOrdenar(start,desde,manual){
   if(!pend.length&&held.length){pend=held;held=[]} // solo quedan las de Hold: se ordenan entre ellas
   if(!pend.length){toast('No quedan paradas pendientes con ubicación');return}
   const pts=[start,...pend.map(s=>s.c)],W=[null,...pend.map(s=>{const p=entPkg(s);return p?parseWin(p.horario):null})],d=new Date();
-  $('#entGps').textContent='Calculando la ruta por calle…';const Mx=await osrmMatriz(pts);if(EPOS)$('#entGps').textContent='';
+  $('#entGps').textContent='Calculando la ruta por calle…';const Mx=await osrmMatriz(pts);$('#entGps').textContent=''; // 1.96.3: sin GPS el aviso se quedaba pegado
   const ord=optimize(pts,W,d.getHours()*60+d.getMinutes(),+S.min||0,+S.vel||25,false,Mx);
   entMod();let k=0;E.stops=[...ord.map(i=>pend[i-1]),...held,...hechas,...sinC];E.stops.forEach(s=>{delete s.o;if(s.c)s.n=++k});E.inicio=start;ESEL=-1;
   if(EMAP)EMAP.fitted=null;save();renderEnt().then(()=>{if(EMAP)EMAP.fitBounds([start,...pend.map(s=>s.c)],{padding:[24,24]})});
