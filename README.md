@@ -17,7 +17,7 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
   - Un buscador por nombre, teléfono, guía o número.
   - Las tarjetas van en orden (1.92.3): con ubicación o en la ruta, Hold, sin ubicación ni ruta, devueltos y al final los entregados en gris.
   - Los paquetes ⛔ Devolver y ⛔ Devuelto quedan desactivados, con un solo botón para quitar la marca.
-  - La nota del paquete resalta en amarillo, y *Pedir ubicación* después de las 9:30 p. m. se disculpa por la hora (1.92.4; desde la 1.96.5 con texto nuevo, después del saludo, y también en Mensajes).
+  - La nota del paquete resalta en amarillo, y *Pedir ubicación* después de las 9:30 p. m. se disculpa por la hora (1.92.4; desde la 1.96.6 como "🤖 MENSAJE AUTOMÁTICO", con la disculpa debajo del saludo y "Buenas noches", también en Mensajes).
   - Botón 📷 que abre el WhatsApp del cliente para mandarle una foto (1.92.2).
   - Todas las fechas salen como dd/mm/aaaa (1.92.2).
 - **Mensajes (1.94.0):** ocho mensajes por cliente (1. Pedir ubicación, 2. En camino, 3. Comprensión, 4. Hablar con cliente, 5. Entregado, 6. Horario 8 a 12 md, 7. Horario 12 md a 5 p. m. y 8. Horario extendido, desde la 1.95.1) y etiquetas ✅ Entregado, 🔴 Devuelto (una sola vez, arriba a la derecha) y ⏸ HOLD. Filtros por estado que suman el total de *Todos* (Sin enviar, Esperando respuesta, Confirmados, Hold, Devolver, Entregados, Devueltos) y los de Hold se pueden mensajear (1.96.1).
