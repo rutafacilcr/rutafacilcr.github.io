@@ -539,18 +539,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <p class="small muted" style="margin:0" id="resTxt">Mandá el resumen del período por WhatsApp (a vos mismo, a la empresa o a quien querás) o bajalo en Excel.</p>
     <div class="row ganacts"><button class="btn sm primary" id="resWa" type="button">💬 WhatsApp</button><button class="btn sm primary" id="resXls" type="button">📊 Excel</button></div>
   </div>
-  <div class="panel">
-    <h2>Reporte de entregas</h2>
-    <p class="small muted">Un reporte por cada día en que se recibieron paquetes (<b>Entregas del 2 de noviembre</b>, por ejemplo), aunque se entreguen en los días siguientes; cada paquete lleva su fecha y hora real de entrega. También salen los de listas ya vaciadas. Tocá <b>📄 PDF</b> para bajar el de esa fecha: entregados y devueltos con número, guía / pedido, teléfono, nombre, estado, fecha recibido y fecha y hora de entrega.</p>
-    <p class="small" id="cierreAviso" hidden style="background:var(--warn-bg,#fbecdc);border-radius:8px;padding:8px 10px;margin:0"></p>
-    <div id="repLista"></div><span class="small muted" id="repInfo"></span>
-  </div>
-  <!-- 1.98.0 (Victor): Reporte para pago = copia del reporte de entregas sin horas, promedio, tiempo ni km desde la anterior -->
-  <div class="panel">
-    <h2>Reporte para pago</h2>
-    <p class="small muted">El mismo reporte de entregas, por fecha de recibido, pero sin km recorridos, horas invertidas, promedio por entrega, tiempo desde anterior ni km desde anterior. Arriba van juntos los totales de paquetes. Tocá <b>📄 PDF</b> para bajarlo.</p>
-    <div id="pagLista"></div>
-  </div>
+  <!-- 1.99.3 (Victor): orden de reportes = Paquetes recibidos, Guías, Reporte para pago y al final Reporte de entregas -->
   <!-- 1.99.0 (Victor): Paquetes recibidos = copia exacta del Reporte de entregas con otro nombre -->
   <div class="panel">
     <h2>Paquetes recibidos</h2>
@@ -566,8 +555,20 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <p class="small muted">Elegí la fecha y bajá el PDF con las guías de los paquetes entregados ese día, en el orden en que se entregaron.</p>
     <div class="replin" style="border-top:0"><label style="flex-direction:row;align-items:center;gap:8px">Fecha <input type="date" id="guiFechaEnt"></label><button class="btn sm primary" type="button" id="guiEntBtn">📄 PDF</button></div>
   </div>
+  <!-- 1.98.0 (Victor): Reporte para pago = copia del reporte de entregas sin horas, promedio, tiempo ni km desde la anterior -->
+  <div class="panel">
+    <h2>Reporte para pago</h2>
+    <p class="small muted">El mismo reporte de entregas, por fecha de recibido, pero sin km recorridos, horas invertidas, promedio por entrega, tiempo desde anterior ni km desde anterior. Arriba van juntos los totales de paquetes. Tocá <b>📄 PDF</b> para bajarlo.</p>
+    <div id="pagLista"></div>
+  </div>
+  <div class="panel">
+    <h2>Reporte de entregas</h2>
+    <p class="small muted">Un reporte por cada día en que se recibieron paquetes (<b>Entregas del 2 de noviembre</b>, por ejemplo), aunque se entreguen en los días siguientes; cada paquete lleva su fecha y hora real de entrega. También salen los de listas ya vaciadas. Tocá <b>📄 PDF</b> para bajar el de esa fecha: entregados y devueltos con número, guía / pedido, teléfono, nombre, estado, fecha recibido y fecha y hora de entrega.</p>
+    <p class="small" id="cierreAviso" hidden style="background:var(--warn-bg,#fbecdc);border-radius:8px;padding:8px 10px;margin:0"></p>
+    <div id="repLista"></div><span class="small muted" id="repInfo"></span>
+  </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.99.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.99.3</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
