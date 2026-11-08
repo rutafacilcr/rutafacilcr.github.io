@@ -551,6 +551,12 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <p class="small muted">El mismo reporte de entregas, por fecha de recibido, pero sin km recorridos, horas invertidas, promedio por entrega, tiempo desde anterior ni km desde anterior. Arriba van juntos los totales de paquetes. Tocá <b>📄 PDF</b> para bajarlo.</p>
     <div id="pagLista"></div>
   </div>
+  <!-- 1.99.0 (Victor): Paquetes recibidos = copia exacta del Reporte de entregas con otro nombre -->
+  <div class="panel">
+    <h2>Paquetes recibidos</h2>
+    <p class="small muted">El mismo reporte de entregas, por fecha de recibido, con todos sus datos. Tocá <b>📄 PDF</b> para bajarlo.</p>
+    <div id="recLista"></div>
+  </div>
   <div class="panel">
     <h2>Guías por fecha de recibido</h2>
     <p class="small muted">Un PDF horizontal por cada día en que recibiste paquetes con <b>todos los paquetes recibidos</b> ese día: nombre, teléfono, guía, dirección, estado y hora en que se escanearon.</p>
@@ -561,7 +567,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div class="replin" style="border-top:0"><label style="flex-direction:row;align-items:center;gap:8px">Fecha <input type="date" id="guiFechaEnt"></label><button class="btn sm primary" type="button" id="guiEntBtn">📄 PDF</button></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.98.3</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.99.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -1276,7 +1282,8 @@ function repResumen(L){
   return {rec,ent,dev,km,min,pMin,pKm,dias,ruta,hold}}
 // 1.98.0 (Victor): pago=true arma el "Reporte para pago": la misma copia del reporte de entregas, sin horas invertidas,
 // promedio por entrega, tiempo desde anterior ni km desde anterior. 1.98.1: tampoco km recorridos ni pago.
-function repPdf(k,pago){
+// 1.99.0 (Victor): rec=true arma "Paquetes recibidos", copia exacta del Reporte de entregas con otro título y nombre de archivo
+function repPdf(k,pago,rec){
   const G=repGrupos().find(x=>x.k===k);const L=G?G.pk:[];
   // 1.98.2 (Victor): en el de pago van primero los entregados y luego los devueltos, cada grupo por fecha y hora (repFilas ya ordena por hora); los demás al final
   const PO=['Entregado','Devuelto','En ruta','Hold','Por entregar','Sin ubicación'];
@@ -1284,7 +1291,7 @@ function repPdf(k,pago){
   if(!(window.jspdf&&window.jspdf.jsPDF&&window.jspdf.jsPDF.API.autoTable)){toast('Cargando el reporte… tocá otra vez en un momento');repCargar().catch(()=>toast('No se pudo cargar el PDF. Revisá el internet.'));return}
   const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'letter'}),hoy=new Date();
   const R=repResumen(L),fd=hoy.toLocaleDateString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric'});
-  doc.setFontSize(15);doc.text('RutaFácil CR · '+(pago?'Reporte para pago · ':'')+repEntregasDe(k),14,15);
+  doc.setFontSize(15);doc.text('RutaFácil CR · '+(pago?'Reporte para pago · '+repEntregasDe(k):rec?repEntregasDe(k).replace('Entregas','Paquetes recibidos'):repEntregasDe(k)),14,15);
   // Encabezado (1.54.1): fecha, mensajero, recibidos, entregados, devueltos, km y horas
   // Posiciones fijas (1.56.2), cuadrícula de 4 columnas: col. 1 fecha y mensajero debajo; col. 2 km y horas; col. 3 fecha de recibido (1.57.0); col. 4 recibidos, entregados y devueltos
   const KM=['Km recorridos',R.km==null||R.km<0.05?'—':R.km.toFixed(1)+' km aprox.'],HR=['Horas invertidas',R.min==null?'—':`${Math.floor(R.min/60)} h ${String(Math.round(R.min%60)).padStart(2,'0')} min`];
@@ -1302,12 +1309,16 @@ function repPdf(k,pago){
   doc.autoTable({startY:pago?37:46,head:[pago?CAB.slice(0,8):CABE],body:fil,
     styles:{fontSize:8.5,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},
     didParseCell:d=>{if(d.section==='body'&&d.column.index===colEst)d.cell.styles.textColor={'Entregado':[30,130,60],'Devuelto':[200,40,40],'En ruta':[29,78,216],'Hold':[161,98,7]}[d.cell.raw]||[60,60,60]}});
-  const name=`${pago?'pago':'entregas'}-del-${k||'sin-fecha'}.pdf`;
+  const name=`${pago?'pago':rec?'recibidos':'entregas'}-del-${k||'sin-fecha'}.pdf`;
   if(IOS&&navigator.canShare){const file=new File([doc.output('blob')],name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Reporte guardado')).catch(()=>{});return}}
   doc.save(name);toast(`Reporte con ${fil.length} paquete(s)`)}
 function repPagoLista(){const el=$('#pagLista');if(!el)return;const G=repGrupos();
   el.innerHTML=G.length?G.map(g=>{const R=repResumen(g.pk),n=repFilas(g.pk).length;return `<div class="replin"><div><b>💵 Pago · ${repEntregasDe(g.k)}</b><div class="small muted">${R.rec} recibidos · ${R.ent} entregados · ${R.ruta} en ruta · ${R.hold} hold · ${R.dev} devueltos</div></div><button class="btn sm primary" type="button" data-pag="${g.k}"${n?'':' disabled'}>📄 PDF</button></div>`}).join(''):'<p class="small muted">Todavía no hay paquetes.</p>'}
 $('#pagLista').addEventListener('click',e=>{const b=e.target.closest('[data-pag]');if(b)repPdf(b.dataset.pag,true)});
+// 1.99.0: lista de "Paquetes recibidos" (mismas fechas y resumen que el Reporte de entregas)
+function repRecLista(){const el=$('#recLista');if(!el)return;const G=repGrupos();
+  el.innerHTML=G.length?G.map(g=>{const R=repResumen(g.pk),n=repFilas(g.pk).length;return `<div class="replin"><div><b>📥 ${repEntregasDe(g.k).replace('Entregas','Paquetes recibidos')}</b><div class="small muted">${R.rec} recibidos · ${R.ent} entregados · ${R.ruta} en ruta · ${R.hold} hold · ${R.dev} devueltos</div></div><button class="btn sm primary" type="button" data-prec="${g.k}"${n?'':' disabled'}>📄 PDF</button></div>`}).join(''):'<p class="small muted">Todavía no hay paquetes.</p>'}
+$('#recLista').addEventListener('click',e=>{const b=e.target.closest('[data-prec]');if(b)repPdf(b.dataset.prec,false,true)});
 // 1.74.0: los cierres se guardan en la nube los días del Panel (15 de fábrica). El PDF es el respaldo: se avisa arriba
 // y en cada fecha que está por borrarse (se cuenta desde el día de recibido, así el aviso sale antes de tiempo, nunca tarde).
 const diasCierres=()=>{const c=window.RF_AUTH&&RF_AUTH.cuenta;return c&&c.dias_cierres!=null?+c.dias_cierres:0};
@@ -1455,8 +1466,8 @@ $('#ganGuardar').onclick=()=>{const g=ganS(),n=id=>{const v=$(id).value.trim();r
   save();$('#ganCfg').hidden=true;$('#ganCfgBtn').setAttribute('aria-expanded',false);ganPintar();toast('Tarifas guardadas')};
 $('#ganDias').addEventListener('change',e=>{const i=e.target.closest('[data-gas]');if(!i)return;const g=ganS(),v=i.value.trim();if(v==='')delete g.gas[i.dataset.gas];else g.gas[i.dataset.gas]=Math.max(0,Math.round(+v));save();ganPintar()});
 $('#resWa').onclick=ganWa;$('#resXls').onclick=ganXls;
-document.querySelector('[data-tab="cierres"]').addEventListener('click',()=>trasPintar(()=>{fixIng1031();if(!$('#guiFechaEnt').value)$('#guiFechaEnt').value=new Date().toLocaleDateString('en-CA');try{ganActualizar();ganPintar()}catch(e){console.warn('ganancia',e)}repLista();repPagoLista();guiLista();repCargar().catch(()=>{});
-  $('#repInfo').textContent='Buscando reportes de cierres anteriores…';repCierres().then(()=>{try{ganActualizar();ganPintar()}catch(e){console.warn('ganancia',e)}repLista();repPagoLista();guiLista();$('#repInfo').textContent=''})}));
+document.querySelector('[data-tab="cierres"]').addEventListener('click',()=>trasPintar(()=>{fixIng1031();if(!$('#guiFechaEnt').value)$('#guiFechaEnt').value=new Date().toLocaleDateString('en-CA');try{ganActualizar();ganPintar()}catch(e){console.warn('ganancia',e)}repLista();repPagoLista();repRecLista();guiLista();repCargar().catch(()=>{});
+  $('#repInfo').textContent='Buscando reportes de cierres anteriores…';repCierres().then(()=>{try{ganActualizar();ganPintar()}catch(e){console.warn('ganancia',e)}repLista();repPagoLista();repRecLista();guiLista();$('#repInfo').textContent=''})}));
 $('#m-pref').addEventListener('input',()=>{$('#vcfEj').textContent=vcfName({nombre:'Nombre',guia:'pedido'})});
 $('#m-buscar').addEventListener('input',()=>renderMsg());
 $('#msgFil').addEventListener('click',e=>{const b=e.target.closest('[data-msgf]');if(!b)return;MSGF=b.dataset.msgf;renderMsg()});
