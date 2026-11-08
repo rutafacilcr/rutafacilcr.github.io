@@ -567,7 +567,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div class="replin" style="border-top:0"><label style="flex-direction:row;align-items:center;gap:8px">Fecha <input type="date" id="guiFechaEnt"></label><button class="btn sm primary" type="button" id="guiEntBtn">📄 PDF</button></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.99.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.99.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -1288,7 +1288,9 @@ function repPdf(k,pago,rec){
   const G=repGrupos().find(x=>x.k===k);const L=G?G.pk:[];
   // 1.98.2 (Victor): en el de pago van primero los entregados y luego los devueltos, cada grupo por fecha y hora (repFilas ya ordena por hora); los demás al final
   const PO=['Entregado','Devuelto','En ruta','Hold','Por entregar','Sin ubicación'];
-  const fil=pago?repFilas(L).map(r=>r.slice(0,8)).sort((a,b)=>PO.indexOf(a[4])-PO.indexOf(b[4])):repFilas(L).map(r=>[...r.slice(0,4),r[5],r[4],...r.slice(6)]).map(r=>rec?r.slice(0,5):r);if(!fil.length){toast('Esa fecha no tiene paquetes');return}
+  const fil=pago?repFilas(L).map(r=>r.slice(0,8)).sort((a,b)=>PO.indexOf(a[4])-PO.indexOf(b[4])):repFilas(L).map(r=>[...r.slice(0,4),r[5],r[4],...r.slice(6)]);
+  // 1.99.2 (Victor): Paquetes recibidos no tiene columna Estado; la fila de un devuelto va en rojo
+  const filDev=rec?fil.map(r=>r[5]==='Devuelto'):null;if(rec)fil.forEach((r,i)=>fil[i]=r.slice(0,5));if(!fil.length){toast('Esa fecha no tiene paquetes');return}
   if(!(window.jspdf&&window.jspdf.jsPDF&&window.jspdf.jsPDF.API.autoTable)){toast('Cargando el reporte… tocá otra vez en un momento');repCargar().catch(()=>toast('No se pudo cargar el PDF. Revisá el internet.'));return}
   const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'letter'}),hoy=new Date();
   const R=repResumen(L),fd=hoy.toLocaleDateString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric'});
@@ -1311,7 +1313,7 @@ function repPdf(k,pago,rec){
   const CABE=[...CAB.slice(0,4),CAB[5],CAB[4],...CAB.slice(6)],colEst=pago?4:5;
   doc.autoTable({startY:pago?37:rec?30:46,head:[pago?CAB.slice(0,8):rec?CABE.slice(0,5):CABE],body:fil,
     styles:{fontSize:8.5,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},
-    didParseCell:d=>{if(d.section==='body'&&d.column.index===colEst)d.cell.styles.textColor={'Entregado':[30,130,60],'Devuelto':[200,40,40],'En ruta':[29,78,216],'Hold':[161,98,7]}[d.cell.raw]||[60,60,60]}});
+    didParseCell:d=>{if(rec){if(d.section==='body'&&filDev[d.row.index])d.cell.styles.textColor=[200,40,40];return}if(d.section==='body'&&d.column.index===colEst)d.cell.styles.textColor={'Entregado':[30,130,60],'Devuelto':[200,40,40],'En ruta':[29,78,216],'Hold':[161,98,7]}[d.cell.raw]||[60,60,60]}});
   const name=`${pago?'pago':rec?'recibidos':'entregas'}-del-${k||'sin-fecha'}.pdf`;
   if(IOS&&navigator.canShare){const file=new File([doc.output('blob')],name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Reporte guardado')).catch(()=>{});return}}
   doc.save(name);toast(`Reporte con ${fil.length} paquete(s)`)}
