@@ -568,7 +568,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.99.6</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.99.7</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -1292,7 +1292,8 @@ function repPdf(k,pago,rec){
   const fil=pago?repFilas(L).map(r=>r.slice(0,8)).sort((a,b)=>PO.indexOf(a[4])-PO.indexOf(b[4])):repFilas(L).map(r=>[...r.slice(0,4),r[5],r[4],...r.slice(6)]);
   // 1.99.2 (Victor): Paquetes recibidos no tiene columna Estado; la fila de un devuelto va en rojo
   // 1.99.4 (Victor): Paquetes recibidos todo en negro (se quitó el rojo de devueltos de la 1.99.2) y con la hora de escaneo (p.ing)
-  if(rec){const F0=repFilas(L);fil.forEach((r,i)=>{const q=F0[i]&&F0[i].p;fil[i]=[...r.slice(0,4),(q&&q.dir)||'',q&&q.ing?fmtT2(q.ing):''] /* 1.99.5: + Dirección, sin Fecha recibido */})}if(!fil.length){toast('Esa fecha no tiene paquetes');return}
+  if(rec){const F0=repFilas(L),X=fil.map((r,i)=>({r,q:F0[i]&&F0[i].p})).sort((a,b)=>((a.q&&a.q.ing)||Infinity)-((b.q&&b.q.ing)||Infinity)); /* 1.99.7: por hora de escaneo, la más temprana primero */
+    X.forEach(({r,q},i)=>{fil[i]=[...r.slice(0,4),(q&&q.dir)||'',q&&q.ing?fmtT2(q.ing):''] /* 1.99.5: + Dirección, sin Fecha recibido */})}if(!fil.length){toast('Esa fecha no tiene paquetes');return}
   if(!(window.jspdf&&window.jspdf.jsPDF&&window.jspdf.jsPDF.API.autoTable)){toast('Cargando el reporte… tocá otra vez en un momento');repCargar().catch(()=>toast('No se pudo cargar el PDF. Revisá el internet.'));return}
   const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'letter'}),hoy=new Date();
   const R=repResumen(L),fd=hoy.toLocaleDateString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric'});
