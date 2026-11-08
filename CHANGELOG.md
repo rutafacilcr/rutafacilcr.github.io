@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-08
+- **1.99.9 · Encabezado del Reporte de entregas:** *RutaFácil CR* a la izquierda y *Entregas del …* al centro; los datos de paquetes van en una sola columna, en este orden: recibidos, entregados, en ruta, Hold y devueltos.
 - **1.99.8 · Sin Guías por fecha de recibido:** a pedido de Victor se quitó ese reporte de *Cierres*. Queda *Guías por fecha de entrega* (elegís la fecha y bajás el PDF). Además, *Reporte para pago* bajó al final de *Cierres*, debajo de *Reporte de entregas*.
 - **1.99.7 · Paquetes recibidos por hora de escaneo:** las filas van en el orden en que se escanearon, de la hora más temprana a la más tardía.
 - **1.99.6 · Paquetes recibidos más proporcional:** la columna *Dirección* es más angosta (la dirección larga baja a otra línea) y las demás columnas tienen anchos fijos parejos.

@@ -566,7 +566,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div id="pagLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.99.8</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.99.9</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -1296,7 +1296,8 @@ function repPdf(k,pago,rec){
   const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'letter'}),hoy=new Date();
   const R=repResumen(L),fd=hoy.toLocaleDateString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric'});
   doc.setFontSize(15);if(rec){doc.setTextColor(0);doc.text('RutaFácil CR',14,15);doc.text(repEntregasDe(k).replace('Entregas','Paquetes recibidos'),doc.internal.pageSize.getWidth()/2,15,{align:'center'})} // 1.99.4: título centrado; 1.99.5: RutaFácil CR a la izquierda
-  else doc.text('RutaFácil CR · '+(pago?'Reporte para pago · '+repEntregasDe(k):repEntregasDe(k)),14,15);
+  else if(pago)doc.text('RutaFácil CR · Reporte para pago · '+repEntregasDe(k),14,15);
+  else{doc.text('RutaFácil CR',14,15);doc.text(repEntregasDe(k),doc.internal.pageSize.getWidth()/2,15,{align:'center'})} // 1.99.9 (Victor): RutaFácil CR a la izquierda y "Entregas del …" al centro
   // Encabezado (1.54.1): fecha, mensajero, recibidos, entregados, devueltos, km y horas
   // Posiciones fijas (1.56.2), cuadrícula de 4 columnas: col. 1 fecha y mensajero debajo; col. 2 km y horas; col. 3 fecha de recibido (1.57.0); col. 4 recibidos, entregados y devueltos
   const KM=['Km recorridos',R.km==null||R.km<0.05?'—':R.km.toFixed(1)+' km aprox.'],HR=['Horas invertidas',R.min==null?'—':`${Math.floor(R.min/60)} h ${String(Math.round(R.min%60)).padStart(2,'0')} min`];
@@ -1310,11 +1311,14 @@ function repPdf(k,pago,rec){
   // 1.99.1 (Victor): Paquetes recibidos solo lleva fecha, entregado por, recibidos el y paquetes en ruta (no lo pidió quitar)
   // 1.99.4 (Victor): donde iba Fecha va Paquetes recibidos; Entregado por → Asignado a; sin Recibidos el ni Paquetes en ruta; la Fecha va donde iba en ruta
   else if(rec)[['Paquetes recibidos',String(R.rec)],['Asignado a',S.yo||'—'],null,['Fecha',fd]].forEach((e,i)=>{if(e)ct(e[0],e[1],14+i*64,23)});
-  else enc.forEach((e,i)=>{if(!e)return;ct(e[0],e[1],14+(i%4)*64,23+Math.floor(i/4)*6)});
+  // 1.99.9 (Victor): los datos de paquetes van en una sola columna (la 4.ª): recibidos, entregados, en ruta, Hold y devueltos
+  else [[['Fecha',fd],['Entregado por',S.yo||'—']],[KM,HR,PR],[['Recibidos el',repDiaTxt(k)],['Días de entrega',String(R.dias)]],
+    [['Paquetes recibidos',String(R.rec)],['Paquetes entregados',String(R.ent)],['Paquetes en ruta',String(R.ruta)],['Paquetes en Hold',String(R.hold)],['Paquetes devueltos',String(R.dev)]]]
+    .forEach((col,c)=>col.forEach((e,j)=>ct(e[0],e[1],14+c*64,23+j*6)));
   const CAB=['No. paquete','No. guía / pedido','No. teléfono','Nombre','Estado','Fecha recibido','Fecha entrega','Hora entrega','Tiempo desde anterior','Km desde anterior'];
   // 1.98.3 (Victor): en el Reporte de entregas va Fecha recibido antes de Estado (el de pago queda igual)
   const CABE=[...CAB.slice(0,4),CAB[5],CAB[4],...CAB.slice(6)],colEst=pago?4:5;
-  doc.autoTable({startY:pago?37:rec?30:46,head:[pago?CAB.slice(0,8):rec?[...CABE.slice(0,4),'Dirección','Hora escaneo']:CABE],body:fil,
+  doc.autoTable({startY:pago?37:rec?30:53,head:[pago?CAB.slice(0,8):rec?[...CABE.slice(0,4),'Dirección','Hora escaneo']:CABE],body:fil,
     styles:{fontSize:8.5,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},
     // 1.99.6 (Victor): Paquetes recibidos más proporcional, la dirección más angosta (ancho útil 251 mm)
     columnStyles:rec?{0:{cellWidth:23},1:{cellWidth:40},2:{cellWidth:26},3:{cellWidth:55},4:{cellWidth:80},5:{cellWidth:27,halign:'center'}}:{},
