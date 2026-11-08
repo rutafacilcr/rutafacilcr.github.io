@@ -33,7 +33,7 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
   - En cada parada: Hold, ⛔ Devolver y ✓ Entregado. ⛔ Devolver saca la parada de la ruta y deja el paquete marcado en Paquetes. ✓ Entregado guarda la fecha y la hora reales.
 - **Cierres** (solo reportes que ya funcionan; sin avisos de "Próximamente"):
   - Período arriba: **Hoy**, **Semana**, **Mes** o **Mes pasado** (1.93.0).
-  - Reporte de entregas con todos los paquetes por estado, **Reporte para pago** (el mismo sin km, horas, promedios ni tiempos, con los totales de paquetes juntos en una fila y primero entregados y luego devueltos, por fecha y hora; 1.98.0 a 1.98.2), Guías por fecha de recibido con hora de escaneo y Guías por fecha de entrega con selector de fecha (1.95.0).
+  - Reporte de entregas con todos los paquetes por estado, **Reporte para pago** (el mismo sin km, horas, promedios ni tiempos, con los totales de paquetes juntos en una fila y primero entregados y luego devueltos, por fecha y hora; 1.98.0 a 1.98.2), **Paquetes recibidos** (copia del Reporte de entregas con su propio nombre; 1.99.0), Guías por fecha de recibido con hora de escaneo y Guías por fecha de entrega con selector de fecha (1.95.0).
   - **💰 Ganancia:** entregados × pago por paquete (₡500 de fábrica) menos la gasolina (estimada por km o anotada por día) = **Te quedó**, y **💹 Rentabilidad**: ₡ por paquete (con sus minutos y km), ₡ por hora y ₡ por km.
   - **📍 Ranking de zonas:** dónde más te deja cada hora, dónde entregás más rápido y dónde más te devuelven (zona aproximada de la GAM).
   - **📊 Resumen** semanal o mensual por **WhatsApp** o en **Excel**.
