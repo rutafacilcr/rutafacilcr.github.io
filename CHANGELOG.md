@@ -23,6 +23,9 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.1 | — | *Crear cuenta* con los campos en blanco |
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
+## 2026-11-08
+- **1.98.3 · Reporte de entregas:** las columnas *Estado* y *Fecha recibido* cambiaron de lugar: ahora va primero *Fecha recibido* y después *Estado*. El Reporte para pago queda igual.
+
 ## 2026-11-07
 - **1.98.2 · Reporte para pago en orden:** primero los **entregados** y después los **devueltos**, cada grupo por fecha y hora (el más viejo primero). Los paquetes que todavía no se entregan (en ruta, Hold, por entregar) quedan al final.
 - **1.98.1 · Reporte para pago más limpio:** a pedido de Victor ya no trae *Km recorridos* ni *Pago*. El encabezado queda en dos filas: arriba fecha, recibidos el, días de entrega y entregado por; abajo, juntos y alineados, paquetes recibidos, entregados, en ruta, en Hold y devueltos.
