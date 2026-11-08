@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-08
+- **1.99.1 · Paquetes recibidos más corto:** el encabezado solo trae fecha, entregado por, recibidos el y paquetes en ruta; la tabla solo trae No. paquete, guía / pedido, teléfono, nombre y fecha recibido. Se quitaron km, horas, promedio, días de entrega, los totales de recibidos, entregados, Hold y devueltos, y las columnas estado, fecha y hora de entrega, tiempo y km desde anterior.
 - **1.99.0 · Paquetes recibidos:** en *Cierres*, debajo de *Reporte para pago*, hay un reporte nuevo **Paquetes recibidos**: es una copia exacta del *Reporte de entregas* (mismas columnas, encabezado y orden), con su propio título y archivo `recibidos-del-AAAA-MM-DD.pdf`.
 - **1.98.3 · Reporte de entregas:** las columnas *Estado* y *Fecha recibido* cambiaron de lugar: ahora va primero *Fecha recibido* y después *Estado*. El Reporte para pago queda igual.
 

@@ -554,7 +554,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
   <!-- 1.99.0 (Victor): Paquetes recibidos = copia exacta del Reporte de entregas con otro nombre -->
   <div class="panel">
     <h2>Paquetes recibidos</h2>
-    <p class="small muted">El mismo reporte de entregas, por fecha de recibido, con todos sus datos. Tocá <b>📄 PDF</b> para bajarlo.</p>
+    <p class="small muted">Lista de los paquetes recibidos en cada fecha: número, guía / pedido, teléfono, nombre y fecha recibido. Tocá <b>📄 PDF</b> para bajarlo.</p>
     <div id="recLista"></div>
   </div>
   <div class="panel">
@@ -567,7 +567,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div class="replin" style="border-top:0"><label style="flex-direction:row;align-items:center;gap:8px">Fecha <input type="date" id="guiFechaEnt"></label><button class="btn sm primary" type="button" id="guiEntBtn">📄 PDF</button></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.99.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.99.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -1282,12 +1282,13 @@ function repResumen(L){
   return {rec,ent,dev,km,min,pMin,pKm,dias,ruta,hold}}
 // 1.98.0 (Victor): pago=true arma el "Reporte para pago": la misma copia del reporte de entregas, sin horas invertidas,
 // promedio por entrega, tiempo desde anterior ni km desde anterior. 1.98.1: tampoco km recorridos ni pago.
-// 1.99.0 (Victor): rec=true arma "Paquetes recibidos", copia exacta del Reporte de entregas con otro título y nombre de archivo
+// 1.99.0 (Victor): rec=true arma "Paquetes recibidos", copia del Reporte de entregas con otro título y nombre de archivo.
+// 1.99.1: solo columnas No. paquete, guía, teléfono, nombre y fecha recibido
 function repPdf(k,pago,rec){
   const G=repGrupos().find(x=>x.k===k);const L=G?G.pk:[];
   // 1.98.2 (Victor): en el de pago van primero los entregados y luego los devueltos, cada grupo por fecha y hora (repFilas ya ordena por hora); los demás al final
   const PO=['Entregado','Devuelto','En ruta','Hold','Por entregar','Sin ubicación'];
-  const fil=pago?repFilas(L).map(r=>r.slice(0,8)).sort((a,b)=>PO.indexOf(a[4])-PO.indexOf(b[4])):repFilas(L).map(r=>[...r.slice(0,4),r[5],r[4],...r.slice(6)]);if(!fil.length){toast('Esa fecha no tiene paquetes');return}
+  const fil=pago?repFilas(L).map(r=>r.slice(0,8)).sort((a,b)=>PO.indexOf(a[4])-PO.indexOf(b[4])):repFilas(L).map(r=>[...r.slice(0,4),r[5],r[4],...r.slice(6)]).map(r=>rec?r.slice(0,5):r);if(!fil.length){toast('Esa fecha no tiene paquetes');return}
   if(!(window.jspdf&&window.jspdf.jsPDF&&window.jspdf.jsPDF.API.autoTable)){toast('Cargando el reporte… tocá otra vez en un momento');repCargar().catch(()=>toast('No se pudo cargar el PDF. Revisá el internet.'));return}
   const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'letter'}),hoy=new Date();
   const R=repResumen(L),fd=hoy.toLocaleDateString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric'});
@@ -1302,11 +1303,13 @@ function repPdf(k,pago,rec){
   // 1.98.1 (Victor): el de pago no lleva km ni pago; fila 1 = fecha, recibidos el, días y entregado por; fila 2 = todos los datos de paquetes juntos y alineados
   if(pago){[['Fecha',fd],['Recibidos el',repDiaTxt(k)],['Días de entrega',String(R.dias)],['Entregado por',S.yo||'—']].forEach((e,i)=>ct(e[0],e[1],14+i*51.5,23)); // misma cuadrícula que la fila 2; el nombre va de último porque puede ser largo
     [['Paquetes recibidos',R.rec],['Paquetes entregados',R.ent],['Paquetes en ruta',R.ruta],['Paquetes en Hold',R.hold],['Paquetes devueltos',R.dev]].forEach((e,i)=>ct(e[0],String(e[1]),14+i*51.5,30))}
+  // 1.99.1 (Victor): Paquetes recibidos solo lleva fecha, entregado por, recibidos el y paquetes en ruta (no lo pidió quitar)
+  else if(rec)[['Fecha',fd],['Entregado por',S.yo||'—'],['Recibidos el',repDiaTxt(k)],['Paquetes en ruta',String(R.ruta)]].forEach((e,i)=>ct(e[0],e[1],14+i*64,23));
   else enc.forEach((e,i)=>{if(!e)return;ct(e[0],e[1],14+(i%4)*64,23+Math.floor(i/4)*6)});
   const CAB=['No. paquete','No. guía / pedido','No. teléfono','Nombre','Estado','Fecha recibido','Fecha entrega','Hora entrega','Tiempo desde anterior','Km desde anterior'];
   // 1.98.3 (Victor): en el Reporte de entregas va Fecha recibido antes de Estado (el de pago queda igual)
   const CABE=[...CAB.slice(0,4),CAB[5],CAB[4],...CAB.slice(6)],colEst=pago?4:5;
-  doc.autoTable({startY:pago?37:46,head:[pago?CAB.slice(0,8):CABE],body:fil,
+  doc.autoTable({startY:pago?37:rec?30:46,head:[pago?CAB.slice(0,8):rec?CABE.slice(0,5):CABE],body:fil,
     styles:{fontSize:8.5,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},
     didParseCell:d=>{if(d.section==='body'&&d.column.index===colEst)d.cell.styles.textColor={'Entregado':[30,130,60],'Devuelto':[200,40,40],'En ruta':[29,78,216],'Hold':[161,98,7]}[d.cell.raw]||[60,60,60]}});
   const name=`${pago?'pago':rec?'recibidos':'entregas'}-del-${k||'sin-fecha'}.pdf`;
