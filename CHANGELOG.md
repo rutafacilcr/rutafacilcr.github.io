@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-08
+- **1.99.8 · Sin Guías por fecha de recibido:** a pedido de Victor se quitó ese reporte de *Cierres*. Queda *Guías por fecha de entrega* (elegís la fecha y bajás el PDF). Además, *Reporte para pago* bajó al final de *Cierres*, debajo de *Reporte de entregas*.
 - **1.99.7 · Paquetes recibidos por hora de escaneo:** las filas van en el orden en que se escanearon, de la hora más temprana a la más tardía.
 - **1.99.6 · Paquetes recibidos más proporcional:** la columna *Dirección* es más angosta (la dirección larga baja a otra línea) y las demás columnas tienen anchos fijos parejos.
 - **1.99.5 · Paquetes recibidos:** *RutaFácil CR* va a la izquierda y el título sigue centrado; la tabla suma **Dirección** después de *Nombre* y ya no trae *Fecha recibido*.

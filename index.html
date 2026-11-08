@@ -547,19 +547,10 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div id="recLista"></div>
   </div>
   <div class="panel">
-    <h2>Guías por fecha de recibido</h2>
-    <p class="small muted">Un PDF horizontal por cada día en que recibiste paquetes con <b>todos los paquetes recibidos</b> ese día: nombre, teléfono, guía, dirección, estado y hora en que se escanearon.</p>
-    <div id="guiLista"></div>
-    <!-- 1.95.0 (Victor): Guías por fecha de ENTREGA, eligiendo la fecha -->
-    <h2 style="margin-top:16px">Guías por fecha de entrega</h2>
+    <!-- 1.99.8 (Victor): se quitó "Guías por fecha de recibido" (#guiLista); queda Guías por fecha de ENTREGA (1.95.0) -->
+    <h2>Guías por fecha de entrega</h2>
     <p class="small muted">Elegí la fecha y bajá el PDF con las guías de los paquetes entregados ese día, en el orden en que se entregaron.</p>
     <div class="replin" style="border-top:0"><label style="flex-direction:row;align-items:center;gap:8px">Fecha <input type="date" id="guiFechaEnt"></label><button class="btn sm primary" type="button" id="guiEntBtn">📄 PDF</button></div>
-  </div>
-  <!-- 1.98.0 (Victor): Reporte para pago = copia del reporte de entregas sin horas, promedio, tiempo ni km desde la anterior -->
-  <div class="panel">
-    <h2>Reporte para pago</h2>
-    <p class="small muted">El mismo reporte de entregas, por fecha de recibido, pero sin km recorridos, horas invertidas, promedio por entrega, tiempo desde anterior ni km desde anterior. Arriba van juntos los totales de paquetes. Tocá <b>📄 PDF</b> para bajarlo.</p>
-    <div id="pagLista"></div>
   </div>
   <div class="panel">
     <h2>Reporte de entregas</h2>
@@ -567,8 +558,15 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <p class="small" id="cierreAviso" hidden style="background:var(--warn-bg,#fbecdc);border-radius:8px;padding:8px 10px;margin:0"></p>
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
+  <!-- 1.99.8 (Victor): Reporte para pago va al final -->
+  <!-- 1.98.0 (Victor): Reporte para pago = copia del reporte de entregas sin horas, promedio, tiempo ni km desde la anterior -->
+  <div class="panel">
+    <h2>Reporte para pago</h2>
+    <p class="small muted">El mismo reporte de entregas, por fecha de recibido, pero sin km recorridos, horas invertidas, promedio por entrega, tiempo desde anterior ni km desde anterior. Arriba van juntos los totales de paquetes. Tocá <b>📄 PDF</b> para bajarlo.</p>
+    <div id="pagLista"></div>
+  </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.99.7</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.99.8</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -1371,7 +1369,7 @@ function guiEntPdf(){const d=$('#guiFechaEnt').value;if(!d){toast('Elegí la fec
   if(IOS&&navigator.canShare){const file=new File([doc.output('blob')],name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Reporte guardado')).catch(()=>{});return}}
   doc.save(name);toast(`${tit}: ${L.length} guía(s)`)}
 $('#guiEntBtn').addEventListener('click',guiEntPdf);
-$('#guiLista').addEventListener('click',e=>{const b=e.target.closest('[data-gui]');if(b)guiPdf(b.dataset.gui)});
+$('#guiLista')?.addEventListener('click',e=>{const b=e.target.closest('[data-gui]');if(b)guiPdf(b.dataset.gui)});
 // ===== 1.93.0 · Ganancia, ranking de zonas y resumen semanal / mensual (pestaña Cierres) =====
 // S.gan (se sincroniza con la cuenta, ver NUBE_KEYS): tarifas, gasolina anotada por día y un total pequeño por día de entrega
 // (S.gan.dias['AAAA-MM-DD']={e,d,km,min,z:{zona:[entregados,devueltos,minutos,tramos]}}). Ese total sobrevive al borrado de
