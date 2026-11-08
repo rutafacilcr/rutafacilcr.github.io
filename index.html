@@ -568,7 +568,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.99.5</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.99.6</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -1317,6 +1317,8 @@ function repPdf(k,pago,rec){
   const CABE=[...CAB.slice(0,4),CAB[5],CAB[4],...CAB.slice(6)],colEst=pago?4:5;
   doc.autoTable({startY:pago?37:rec?30:46,head:[pago?CAB.slice(0,8):rec?[...CABE.slice(0,4),'Dirección','Hora escaneo']:CABE],body:fil,
     styles:{fontSize:8.5,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},
+    // 1.99.6 (Victor): Paquetes recibidos más proporcional, la dirección más angosta (ancho útil 251 mm)
+    columnStyles:rec?{0:{cellWidth:23},1:{cellWidth:40},2:{cellWidth:26},3:{cellWidth:55},4:{cellWidth:80},5:{cellWidth:27,halign:'center'}}:{},
     didParseCell:d=>{if(rec){if(d.section==='body')d.cell.styles.textColor=[0,0,0];else d.cell.styles.fillColor=[0,0,0];return}if(d.section==='body'&&d.column.index===colEst)d.cell.styles.textColor={'Entregado':[30,130,60],'Devuelto':[200,40,40],'En ruta':[29,78,216],'Hold':[161,98,7]}[d.cell.raw]||[60,60,60]}});
   const name=`${pago?'pago':rec?'recibidos':'entregas'}-del-${k||'sin-fecha'}.pdf`;
   if(IOS&&navigator.canShare){const file=new File([doc.output('blob')],name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Reporte guardado')).catch(()=>{});return}}
