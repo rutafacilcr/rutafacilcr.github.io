@@ -543,7 +543,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
   <!-- 1.99.0 (Victor): Paquetes recibidos = copia exacta del Reporte de entregas con otro nombre -->
   <div class="panel">
     <h2>Paquetes recibidos</h2>
-    <p class="small muted">Lista de los paquetes recibidos en cada fecha: número, guía / pedido, teléfono, nombre y fecha recibido. Tocá <b>📄 PDF</b> para bajarlo.</p>
+    <p class="small muted">Lista de los paquetes recibidos en cada fecha: número, guía / pedido, teléfono, nombre, fecha recibido y hora de escaneo. Tocá <b>📄 PDF</b> para bajarlo.</p>
     <div id="recLista"></div>
   </div>
   <div class="panel">
@@ -568,7 +568,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.99.3</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.99.4</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -1251,7 +1251,7 @@ function repFilas(L){
   return L.map(p=>[p,repEstado(p)]).sort((a,b)=>EO.indexOf(a[1])-EO.indexOf(b[1])||(repT(a[0])||Infinity)-(repT(b[0])||Infinity)||(+a[0].num||0)-(+b[0].num||0)).map(([p,est])=>{
     const ent=p.st==='entregado',t=repT(p),r=ent||p.st==='devuelto'?TR.get(p.id):null;
     const tt=!r?'—':r.inicio?'Inicio':`${r.desdeIni?'desde inicio: ':''}${r.min>=60?Math.floor(r.min/60)+' h ':''}${Math.round(r.min%60)} min`,kk=!r||r.inicio||r.km==null?(r&&r.inicio?'Inicio':'—'):r.km.toFixed(1)+' km';
-    return [String(p.num||''),p.guia||'',tl(p.tel),tidyName(p.nombre||''),est,f(p.ing),f(t),h(t),ent?tt:'—',ent?kk:'—']})}
+    const fila=[String(p.num||''),p.guia||'',tl(p.tel),tidyName(p.nombre||''),est,f(p.ing),f(t),h(t),ent?tt:'—',ent?kk:'—'];fila.p=p;return fila})} // 1.99.4: fila.p = el paquete (para la hora de escaneo)
 // 1.95.0: estado de un paquete para los reportes
 function repEstado(p){if(p.st==='entregado')return 'Entregado';if(p.st==='devuelto'||p.devolver)return 'Devuelto';const ps=repParadas(p).filter(x=>!x.done);
   if(ps.some(x=>x.hold))return 'Hold';if(ps.some(x=>x.c))return 'En ruta';return parseCoord(p.ubic)?'Por entregar':'Sin ubicación'}
@@ -1291,11 +1291,13 @@ function repPdf(k,pago,rec){
   const PO=['Entregado','Devuelto','En ruta','Hold','Por entregar','Sin ubicación'];
   const fil=pago?repFilas(L).map(r=>r.slice(0,8)).sort((a,b)=>PO.indexOf(a[4])-PO.indexOf(b[4])):repFilas(L).map(r=>[...r.slice(0,4),r[5],r[4],...r.slice(6)]);
   // 1.99.2 (Victor): Paquetes recibidos no tiene columna Estado; la fila de un devuelto va en rojo
-  const filDev=rec?fil.map(r=>r[5]==='Devuelto'):null;if(rec)fil.forEach((r,i)=>fil[i]=r.slice(0,5));if(!fil.length){toast('Esa fecha no tiene paquetes');return}
+  // 1.99.4 (Victor): Paquetes recibidos todo en negro (se quitó el rojo de devueltos de la 1.99.2) y con la hora de escaneo (p.ing)
+  if(rec){const F0=repFilas(L);fil.forEach((r,i)=>{const q=F0[i]&&F0[i].p;fil[i]=[...r.slice(0,5),q&&q.ing?fmtT2(q.ing):'']})}if(!fil.length){toast('Esa fecha no tiene paquetes');return}
   if(!(window.jspdf&&window.jspdf.jsPDF&&window.jspdf.jsPDF.API.autoTable)){toast('Cargando el reporte… tocá otra vez en un momento');repCargar().catch(()=>toast('No se pudo cargar el PDF. Revisá el internet.'));return}
   const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'letter'}),hoy=new Date();
   const R=repResumen(L),fd=hoy.toLocaleDateString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric'});
-  doc.setFontSize(15);doc.text('RutaFácil CR · '+(pago?'Reporte para pago · '+repEntregasDe(k):rec?repEntregasDe(k).replace('Entregas','Paquetes recibidos'):repEntregasDe(k)),14,15);
+  doc.setFontSize(15);if(rec){doc.setTextColor(0);doc.text('RutaFácil CR · '+repEntregasDe(k).replace('Entregas','Paquetes recibidos'),doc.internal.pageSize.getWidth()/2,15,{align:'center'})} // 1.99.4: título centrado
+  else doc.text('RutaFácil CR · '+(pago?'Reporte para pago · '+repEntregasDe(k):repEntregasDe(k)),14,15);
   // Encabezado (1.54.1): fecha, mensajero, recibidos, entregados, devueltos, km y horas
   // Posiciones fijas (1.56.2), cuadrícula de 4 columnas: col. 1 fecha y mensajero debajo; col. 2 km y horas; col. 3 fecha de recibido (1.57.0); col. 4 recibidos, entregados y devueltos
   const KM=['Km recorridos',R.km==null||R.km<0.05?'—':R.km.toFixed(1)+' km aprox.'],HR=['Horas invertidas',R.min==null?'—':`${Math.floor(R.min/60)} h ${String(Math.round(R.min%60)).padStart(2,'0')} min`];
@@ -1307,14 +1309,15 @@ function repPdf(k,pago,rec){
   if(pago){[['Fecha',fd],['Recibidos el',repDiaTxt(k)],['Días de entrega',String(R.dias)],['Entregado por',S.yo||'—']].forEach((e,i)=>ct(e[0],e[1],14+i*51.5,23)); // misma cuadrícula que la fila 2; el nombre va de último porque puede ser largo
     [['Paquetes recibidos',R.rec],['Paquetes entregados',R.ent],['Paquetes en ruta',R.ruta],['Paquetes en Hold',R.hold],['Paquetes devueltos',R.dev]].forEach((e,i)=>ct(e[0],String(e[1]),14+i*51.5,30))}
   // 1.99.1 (Victor): Paquetes recibidos solo lleva fecha, entregado por, recibidos el y paquetes en ruta (no lo pidió quitar)
-  else if(rec)[['Fecha',fd],['Entregado por',S.yo||'—'],['Recibidos el',repDiaTxt(k)],['Paquetes en ruta',String(R.ruta)]].forEach((e,i)=>ct(e[0],e[1],14+i*64,23));
+  // 1.99.4 (Victor): donde iba Fecha va Paquetes recibidos; Entregado por → Asignado a; sin Recibidos el ni Paquetes en ruta; la Fecha va donde iba en ruta
+  else if(rec)[['Paquetes recibidos',String(R.rec)],['Asignado a',S.yo||'—'],null,['Fecha',fd]].forEach((e,i)=>{if(e)ct(e[0],e[1],14+i*64,23)});
   else enc.forEach((e,i)=>{if(!e)return;ct(e[0],e[1],14+(i%4)*64,23+Math.floor(i/4)*6)});
   const CAB=['No. paquete','No. guía / pedido','No. teléfono','Nombre','Estado','Fecha recibido','Fecha entrega','Hora entrega','Tiempo desde anterior','Km desde anterior'];
   // 1.98.3 (Victor): en el Reporte de entregas va Fecha recibido antes de Estado (el de pago queda igual)
   const CABE=[...CAB.slice(0,4),CAB[5],CAB[4],...CAB.slice(6)],colEst=pago?4:5;
-  doc.autoTable({startY:pago?37:rec?30:46,head:[pago?CAB.slice(0,8):rec?CABE.slice(0,5):CABE],body:fil,
+  doc.autoTable({startY:pago?37:rec?30:46,head:[pago?CAB.slice(0,8):rec?[...CABE.slice(0,5),'Hora escaneo']:CABE],body:fil,
     styles:{fontSize:8.5,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},
-    didParseCell:d=>{if(rec){if(d.section==='body'&&filDev[d.row.index])d.cell.styles.textColor=[200,40,40];return}if(d.section==='body'&&d.column.index===colEst)d.cell.styles.textColor={'Entregado':[30,130,60],'Devuelto':[200,40,40],'En ruta':[29,78,216],'Hold':[161,98,7]}[d.cell.raw]||[60,60,60]}});
+    didParseCell:d=>{if(rec){if(d.section==='body')d.cell.styles.textColor=[0,0,0];else d.cell.styles.fillColor=[0,0,0];return}if(d.section==='body'&&d.column.index===colEst)d.cell.styles.textColor={'Entregado':[30,130,60],'Devuelto':[200,40,40],'En ruta':[29,78,216],'Hold':[161,98,7]}[d.cell.raw]||[60,60,60]}});
   const name=`${pago?'pago':rec?'recibidos':'entregas'}-del-${k||'sin-fecha'}.pdf`;
   if(IOS&&navigator.canShare){const file=new File([doc.output('blob')],name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Reporte guardado')).catch(()=>{});return}}
   doc.save(name);toast(`Reporte con ${fil.length} paquete(s)`)}
