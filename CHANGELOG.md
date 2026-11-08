@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-08
+- **1.100.0 · Cálculos de Ruta más exactos:** (1) el orden de las paradas se prueba desde varios arranques y se queda el mejor (antes, en algunos casos, salía hasta 12 % más largo de lo posible); (2) cada parada después de la próxima muestra la **hora estimada de llegada siguiendo la ruta** (🕐 ~10:42), no el tiempo directo desde donde estás; (3) en *Cierres* los km de cada tramo se calculan **por calle** (OSRM, gratis) en vez de línea recta ×1,35, y si marcaste *Entregado* a más de 300 m del cliente se usa la ubicación del cliente.
 - **1.99.10 · Sin Reporte para pago:** a pedido de Victor se eliminó toda la tarjeta *Reporte para pago* de *Cierres*. También se eliminó *Guías por fecha de entrega*. Quedan *Paquetes recibidos* y *Reporte de entregas*.
 - **1.99.9 · Encabezado del Reporte de entregas:** *RutaFácil CR* a la izquierda y *Entregas del …* al centro; los datos de paquetes van en una sola columna, en este orden: recibidos, entregados, en ruta, Hold y devueltos.
 - **1.99.8 · Sin Guías por fecha de recibido:** a pedido de Victor se quitó ese reporte de *Cierres*. Queda *Guías por fecha de entrega* (elegís la fecha y bajás el PDF). Además, *Reporte para pago* bajó al final de *Cierres*, debajo de *Reporte de entregas*.

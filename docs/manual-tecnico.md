@@ -200,6 +200,8 @@ Paradas sin ubicación (1.25.0): `entCargar` guarda el texto de la columna ubica
 
 Total de la ruta (1.24.0; la 1.24.1 se revirtió en la 1.24.2). La hora de inicio es la hora actual del celular (se refresca cada minuto) y la de fin es inicio + total. una consulta a OSRM `route/v1/driving` (`overview=false`) con tu punto y las paradas pendientes en orden. Se repite solo si cambian las pendientes o te movés más de 300 m, con un mínimo de 10 s entre consultas. Si falla, usa línea recta ×1,35.
 
+Precisión de Ruta (1.100.0): sin cambios en Supabase ni llaves nuevas. Agrega consultas al mismo OSRM público: `route/v1/driving` con los tramos de *Cierres* que falten (una por día, máximo una por segundo, solo la primera vez: se guardan en `localStorage['rf_kmc']`, máx. 4000 tramos), y reutiliza los tramos (`legs`) de la consulta de la línea de la ruta para la hora de llegada de cada parada. Si OSRM no responde, todo vuelve a la línea recta ×1,35.
+
 Orden por calle (1.22.0): `entOrdenar` pide a OSRM la matriz completa de tiempos (`table/v1/driving` con todas las paradas pendientes más tu punto, máximo 100 puntos y 8 s de espera). Si falla, ordena con línea recta.
 
 Botones de la parada (1.22.1, 1.23.0): **📸 Evidencia** (antes "Entregar") abre la prueba de entrega. **✓ Entregado** marca la parada (`done` dentro de `S.ent`, se sincroniza con la nube) y **↩ Deshacer** la desmarca.

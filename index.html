@@ -555,7 +555,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
   </div>
   <!-- 1.99.10 (Victor): se eliminó la tarjeta "Reporte para pago" (#pagLista); repPdf(k,true) queda sin uso -->
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.99.10</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.100.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -979,8 +979,12 @@ function optimize(pts,W,t0,mins,vel,ret,Mx){
       for(let L=1;L<=3;L++)for(let i=0;i+L<=o.length;i++){const seg=o.slice(i,i+L),rest=[...o.slice(0,i),...o.slice(i+L)];
         for(let k=0;k<=rest.length;k++){if(k===i)continue;const t=[...rest.slice(0,k),...seg,...rest.slice(k)];const c=C(t);if(c<best-1e-9){best=c;o=t;imp=true;break}}}}
     return o};
-  const cands=[improve(greedy(false))];if(W.some(Boolean))cands.push(improve(greedy(true)));
-  return cands.sort((a,b)=>C(a)-C(b))[0];
+  const T0=Date.now(),cands=[improve(greedy(false))];if(W.some(Boolean))cands.push(improve(greedy(true)));
+  // 1.100.0: además se prueba desde 8 arranques al azar (siempre los mismos: semilla fija) y se queda el mejor; en pruebas quitó los casos
+  // en que el orden salía hasta 12 % más largo que el mejor posible. Máximo ~1,5 s extra.
+  let sd=20261108;const rnd=()=>(sd=(sd*1103515245+12345)%2147483648)/2147483648;
+  for(let r=0;r<8&&n>3&&Date.now()-T0<1500;r++){const o=[...ids];for(let i=o.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[o[i],o[j]]=[o[j],o[i]]}cands.push(improve(o))}
+  return cands.map(o=>[C(o),o]).sort((a,b)=>a[0]-b[0])[0][1];
 }
 const t0min=()=>{const m=(S.hora||'08:00').match(/(\d{1,2}):(\d{2})/);return m?+m[1]*60+ +m[2]:480};
 function calcRoute(){
@@ -1244,12 +1248,30 @@ function repEstado(p){if(p.st==='entregado')return 'Entregado';if(p.st==='devuel
   if(ps.some(x=>x.hold))return 'Hold';if(ps.some(x=>x.c))return 'En ruta';return parseCoord(p.ubic)?'Por entregar':'Sin ubicación'}
 // Tramos (1.58.0): cada entrega mide tiempo y km desde la entrega ANTERIOR del mismo día (orden por hora real).
 // La primera entrega de cada día es el inicio: no tiene tramo. Los devueltos no cuentan (no son una parada de entrega).
-function repCoord(p){const g=p.entGps||(p.pod&&p.pod.lat!=null?p.pod:null),st=repParadas(p).find(x=>x.c);return g&&g.lat!=null?[g.lat,g.lng]:(st&&st.c)||parseCoord(p.ubic)}
+// 1.100.0: si al marcar Entregado estabas a más de 300 m del cliente (p. ej. lo marcaste después, desde otro lado), se usa la ubicación del cliente
+function repCoord(p){const g=p.entGps||(p.pod&&p.pod.lat!=null?p.pod:null),st=repParadas(p).find(x=>x.c),cli=(st&&st.c)||parseCoord(p.ubic),gc=g&&g.lat!=null?[g.lat,g.lng]:null;
+  return gc&&(!cli||hav(gc,cli)/1.35<=0.3)?gc:cli||gc}
+// 1.100.0: km POR CALLE de cada tramo (OSRM público, gratis). Los tramos que faltan se piden en cadenas (una consulta por día, máx. 1 por segundo)
+// y quedan guardados en este aparato (localStorage rf_kmc). Mientras no llegan, o sin internet, se usa la línea recta ×1,35 de siempre.
+const KMC={m:{},falta:[],fallo:{},busy:false,t:0};try{KMC.m=JSON.parse(localStorage.getItem('rf_kmc')||'{}')||{}}catch(e){}
+const kmK=(a,b)=>a[0].toFixed(5)+','+a[1].toFixed(5)+'>'+b[0].toFixed(5)+','+b[1].toFixed(5);
+function kmTramo(a,b){const d=hav(a,b);if(d<0.07)return d;const k=kmK(a,b);if(KMC.m[k]!=null)return KMC.m[k];
+  if(!KMC.fallo[k]&&!KMC.falta.some(x=>x[2]===k)){KMC.falta.push([a,b,k]);clearTimeout(KMC.t);KMC.t=setTimeout(kmPedir,600)}return d}
+async function kmPedir(){if(KMC.busy||!KMC.falta.length)return;KMC.busy=true;let nuevo=false;
+  try{while(KMC.falta.length){const ch=[KMC.falta.shift()];while(KMC.falta.length&&ch.length<90&&ch[ch.length-1][1][0]===KMC.falta[0][0][0]&&ch[ch.length-1][1][1]===KMC.falta[0][0][1])ch.push(KMC.falta.shift());
+      const pts=[ch[0][0],...ch.map(x=>x[1])];let ok=false;
+      try{const ac=new AbortController(),to=setTimeout(()=>ac.abort(),10000);const j=await (await fetch('https://router.project-osrm.org/route/v1/driving/'+pts.map(c=>c[1]+','+c[0]).join(';')+'?overview=false',{signal:ac.signal})).json();clearTimeout(to);
+        if(j.code==='Ok'&&j.routes[0]&&j.routes[0].legs.length===ch.length){j.routes[0].legs.forEach((l,i)=>{KMC.m[ch[i][2]]=Math.round(l.distance/100)/10});ok=nuevo=true}}catch(e){}
+      if(!ok)ch.forEach(x=>KMC.fallo[x[2]]=1);
+      if(KMC.falta.length)await new Promise(r=>setTimeout(r,1100))}}
+  finally{KMC.busy=false}
+  if(nuevo){try{const ks=Object.keys(KMC.m);if(ks.length>4000)ks.slice(0,ks.length-4000).forEach(k=>delete KMC.m[k]);localStorage.setItem('rf_kmc',JSON.stringify(KMC.m))}catch(e){}
+    try{if(!$('#v-cierres').hidden){ganActualizar();ganPintar();repLista();repRecLista()}}catch(e){}}}
 function repJor(d){return (S.jor||{})[d]||REPC.jor[d]||null}
 function repTramos(L){const out=new Map();let prev=null;
   L.filter(p=>p.st==='entregado'&&repT(p)).map(p=>({p,t:repT(p),c:repCoord(p)})).sort((a,b)=>a.t-b.t).forEach(x=>{const d=repDia(x.t);
     if(!prev||repDia(prev.t)!==d){const J=repJor(d);prev=J&&J.ini&&J.ini.t<=x.t?{t:J.ini.t,c:J.ini.c,ini:true}:null} // con ▶ Iniciar, la primera entrega mide desde el inicio
-    if(prev)out.set(x.p.id,{min:(x.t-prev.t)/60000,km:prev.c&&x.c?hav(prev.c,x.c):null,desdeIni:!!prev.ini});else out.set(x.p.id,{inicio:true});
+    if(prev)out.set(x.p.id,{min:(x.t-prev.t)/60000,km:prev.c&&x.c?kmTramo(prev.c,x.c):null,desdeIni:!!prev.ini});else out.set(x.p.id,{inicio:true});
     prev=x});return out}
 // Totales con jornada: por cada día con ▶ Iniciar y ■ Finalizar, horas = fin − inicio y se suma el tramo de la última entrega al punto final
 function repTotales(L){const TR=repTramos(L),T=[...TR.values()].filter(x=>!x.inicio);let km=T.some(x=>x.km!=null)?T.reduce((a,x)=>a+(x.km||0),0):null,min=T.length?T.reduce((a,x)=>a+x.min,0):null;
@@ -1258,9 +1280,9 @@ function repTotales(L){const TR=repTramos(L),T=[...TR.values()].filter(x=>!x.ini
     // horas del día: se cambia la suma de tramos de ese día por fin − inicio
     const sumDia=ed.slice(1).reduce((a,x,i)=>a+(x.t-ed[i].t)/60000,0)+(J.ini.t<=ed[0].t?(ed[0].t-J.ini.t)/60000:0);
     min=(min||0)-sumDia+Math.max(0,(J.fin.t-J.ini.t)/60000);
-    if(u&&u.c&&J.fin.c&&J.fin.t>=u.t)km=(km||0)+hav(u.c,J.fin.c)});
+    if(u&&u.c&&J.fin.c&&J.fin.t>=u.t)km=(km||0)+kmTramo(u.c,J.fin.c)});
   return {km,min}}
-// Resumen del encabezado: km = línea recta entre el inicio de la ruta y cada entrega en orden de hora (hav ya suma ×1,35 por calles); horas = de la primera a la última entrega o devolución
+// Resumen del encabezado: km = por calle (kmTramo, 1.100.0; si no hay respuesta, línea recta ×1,35) entre el inicio de la ruta y cada entrega en orden de hora; horas = de la primera a la última entrega o devolución
 function repResumen(L){
   const rec=L.length,ent=L.filter(p=>p.st==='entregado').length,dev=L.filter(p=>p.st==='devuelto'||(p.devolver&&p.st!=='entregado')).length;
   const {km,min}=repTotales(L);
@@ -2421,11 +2443,26 @@ async function ttPedir(force){if(!ttActivo()||!EPOS||TT.busy)return;const nx=ent
     const j=await r.json(),sm=j&&j.routes&&j.routes[0]&&j.routes[0].summary;
     if(sm){TT.err='';TT.k=k;TT.pos=pos;TT.min=sm.travelTimeInSeconds/60;TT.del=(sm.trafficDelayInSeconds||0)/60;ttPintar();entEta(true)}}
   catch(e){}finally{TT.busy=false}}
+// 1.100.0: hora de llegada de cada parada SIGUIENDO la ruta (no directo desde donde estás). La primera usa el mismo tiempo de su tarjeta
+// (TomTom u OSRM desde tu punto); las siguientes suman cada tramo por calle de la línea de la ruta (OSRM ×1,3, mín. 18 km/h) + 4 min por entrega.
+// Devuelve un Map parada → {min, km, calle} solo para la 2.ª parada en adelante; las de Hold no llevan hora.
+const ENT_MIN_PARADA=4;
+function entMinDirecto(s,fresco){const o=fresco&&OSRM.r[ckey(s.c)],km=o?o[0]:hav(EPOS.c,s.c),base=o?o[1]*1.3:0;let m=Math.max(1,Math.round(Math.max(base,km/18*60)+1));
+  const tt=ttActivo()&&!TT.err&&TT.min!=null&&TT.k===ckey(s.c)&&TT.pos&&hav(TT.pos,EPOS.c)<0.5&&Date.now()-TT.at<360000;if(tt)m=Math.max(1,Math.round(TT.min+1));return {m,km,o,tt}}
+function entLlegadas(){const R=new Map(),E=S.ent;if(!E||!E.stops||!EPOS)return R;
+  const pend=E.stops.filter(s=>s.c&&!entDone(s));if(pend.length<2)return R;const k=pend.map(s=>ckey(s.c)).join('|');
+  const legs=RTOT.legs&&RTOT.k===k&&RTOT.pos&&hav(RTOT.pos,EPOS.c)<=0.3&&RTOT.legs.length===pend.length?RTOT.legs:null;
+  const fresco=OSRM.pos&&hav(OSRM.pos,EPOS.c)<=0.3,d0=entMinDirecto(pend[0],fresco);let t=d0.m,km=d0.km;
+  for(let i=1;i<pend.length;i++){const s=pend[i];if(s.hold)break;const L=legs&&legs[i],dk=L?L[0]:hav(pend[i-1].c,s.c);
+    t+=ENT_MIN_PARADA+(L?Math.max(L[1]*1.3,dk/18*60):dk/18*60);km+=dk;R.set(s,{min:t,km,calle:!!L})}
+  return R}
 function entEta(sinPedir){
   if(!sinPedir)ttPedir();
   if(!sinPedir&&EPOS&&(!OSRM.pos||hav(OSRM.pos,EPOS.c)>0.15||Date.now()-OSRM.at>120000)&&Date.now()-OSRM.at>8000)osrmPedir();
-  const fresco=OSRM.pos&&EPOS&&hav(OSRM.pos,EPOS.c)<=0.3;
+  const fresco=OSRM.pos&&EPOS&&hav(OSRM.pos,EPOS.c)<=0.3,LL=entLlegadas();
   document.querySelectorAll('[data-eta]').forEach(el=>{const s=S.ent&&S.ent.stops[+el.dataset.eta];if(!EPOS||!s||!s.c){el.textContent='';return}
+    const ll=LL.get(s);if(ll){el.dataset.min=Math.round(ll.min);const ah=new Date();el.innerHTML=`🕐 ~${hm(ah.getHours()*60+ah.getMinutes()+ll.min)}<br>${fmtT(Math.round(ll.min))} · ${ll.km.toFixed(1).replace('.',',')} km`;
+      el.title=`Hora estimada de llegada siguiendo la ruta: manejo ${ll.calle?'por calle':'aprox. en línea recta'} + ${ENT_MIN_PARADA} min por cada entrega antes`;return}
     const o=fresco&&OSRM.r[ckey(s.c)],km=o?o[0]:hav(EPOS.c,s.c),base=o?o[1]*1.3:0;let m=Math.max(1,Math.round(Math.max(base,km/18*60)+1));
     // Con tráfico en vivo: la próxima parada usa el tiempo de TomTom (+1 min de parquear) si es de hace menos de 6 min y desde cerca de donde estás
     const tt=ttActivo()&&!TT.err&&TT.min!=null&&TT.k===ckey(s.c)&&TT.pos&&hav(TT.pos,EPOS.c)<0.5&&Date.now()-TT.at<360000;
@@ -2437,7 +2474,7 @@ const RTOT={k:'',at:0,busy:false,r:null,geo:null};
 function entLinea(){try{if(!EMAP||!EMAP.linea||!S.ent)return;const E=S.ent,pend=E.stops.filter(s=>s.c&&!entDone(s)),ini=EPOS?EPOS.c:(E.inicio||null);
   const k=pend.map(s=>ckey(s.c)).join('|');EMAP.linea.setLatLngs(RTOT.geo&&RTOT.k===k&&pend.length?[...(ini?[ini]:[]),...RTOT.geo]:[...(ini&&pend.length?[ini]:[]),...pend.map(s=>s.c)])}catch(e){}}
 async function osrmCadena(k,pts){RTOT.busy=true;RTOT.at=Date.now();try{const j=await (await fetch('https://router.project-osrm.org/route/v1/driving/'+pts.map(c=>c[1]+','+c[0]).join(';')+'?overview=full&geometries=geojson')).json();
-  if(j.code==='Ok'&&j.routes[0]){RTOT.k=k;RTOT.r=[j.routes[0].distance/1000,j.routes[0].duration/60];const g=j.routes[0].geometry;RTOT.geo=g&&g.coordinates?g.coordinates.map(c=>[c[1],c[0]]):null;entTotal(true);entLinea()}}catch(e){}finally{RTOT.busy=false}}
+  if(j.code==='Ok'&&j.routes[0]){RTOT.k=k;RTOT.r=[j.routes[0].distance/1000,j.routes[0].duration/60];RTOT.legs=(j.routes[0].legs||[]).map(l=>[l.distance/1000,l.duration/60]);const g=j.routes[0].geometry;RTOT.geo=g&&g.coordinates?g.coordinates.map(c=>[c[1],c[0]]):null;entTotal(true);entLinea();entEta(true)}}catch(e){}finally{RTOT.busy=false}}
 function entTotal(sinPedir){const el=$('#entTot'),E=S.ent;if(!el)return;if(!E){el.textContent='';return}
   const pend=E.stops.filter(s=>s.c&&!entDone(s)),ini=EPOS?EPOS.c:E.inicio;
   if(!pend.length){el.innerHTML=E.stops.some(s=>s.c)?'<b>✓ Ruta terminada</b>':'';return}
