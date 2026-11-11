@@ -23,6 +23,9 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.1 | — | *Crear cuenta* con los campos en blanco |
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
+## 2026-11-11
+- **1.101.0 · Número asignado al escanear:** en *Paquetes > Escanear*, apenas se lee la etiqueta aparece arriba a la derecha, en naranja, el **número asignado** que va a llevar el paquete (el mismo de Paquetes, Mensajes y Ruta). Si la guía ya está en la lista, sale en rojo con el número que ya tiene.
+
 ## 2026-11-08
 - **1.99.10 · Sin Reporte para pago:** a pedido de Victor se eliminó toda la tarjeta *Reporte para pago* de *Cierres*. También se eliminó *Guías por fecha de entrega*. Quedan *Paquetes recibidos* y *Reporte de entregas*.
 - **1.99.9 · Encabezado del Reporte de entregas:** *RutaFácil CR* a la izquierda y *Entregas del …* al centro; los datos de paquetes van en una sola columna, en este orden: recibidos, entregados, en ruta, Hold y devueltos.
