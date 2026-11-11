@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-11
+- **1.101.2 · Las tarjetas de Ruta ya no quedan debajo del mapa:** el mapa de *Ruta* ya no se queda pegado arriba al bajar por la lista; ahora sube con la pantalla y las tarjetas se ven completas. Al buscar un cliente, su tarjeta queda en el centro de la pantalla.
 - **1.101.1 · Buscar por número en Mensajes:** el buscador de *Mensajes* ahora también encuentra el paquete por su **número asignado** (el mismo de Paquetes y Ruta). Si escribe 1 a 3 dígitos y hay un paquete con ese número, se ve solo ese; si no, busca como antes (nombre, guía, teléfono).
 - **1.101.0 · Número asignado al escanear:** en *Paquetes > Escanear*, apenas se lee la etiqueta aparece arriba a la derecha, en naranja, el **número asignado** que va a llevar el paquete (el mismo de Paquetes, Mensajes y Ruta). Si la guía ya está en la lista, sale en rojo con el número que ya tiene.
 
