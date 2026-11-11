@@ -218,7 +218,7 @@ Desde la versión 1.18.0 la lista se guarda en tu cuenta. Si entrás con tu núm
 **Bajar Excel del día:** en *Mensajes*, el botón **📊 Bajar Excel del día** baja la plantilla de Excel llena con todos los clientes: nombre, teléfono, dirección, ubicación, guía, nota, **fecha ingreso** (el día en que se agregó el cliente a la app) y **contacto** (*TM-Nombre-pedido*). Sirve de respaldo y se puede volver a cargar en *Paquetes > Importar*.
 - **En iPhone:** se abre el menú de compartir. Elegí **Guardar en Archivos** > **En mi iPhone** > carpeta **RutaFacilCR** (la primera vez creala con el ícono de carpeta nueva) > **Guardar**. Después el iPhone propone esa misma carpeta. El Excel se ve en la app **Archivos** (y se abre con Numbers o Excel). Los clientes que ya estaban antes de la versión 1.17.0 quedan con la fecha del día en que se actualizó la app.
 
-**Buscar un cliente:** arriba de la lista hay un buscador. Sirve por nombre, guía o los últimos dígitos del teléfono, para saber de quién es un número que te escribe.
+**Buscar un cliente:** arriba de la lista hay un buscador. Sirve por nombre, guía o los últimos dígitos del teléfono, para saber de quién es un número que te escribe. Desde la 1.101.1 también sirve por el **número del paquete**: escribí por ejemplo 12 y queda solo el paquete 12 (el mismo número de Paquetes y Ruta). Si ningún paquete tiene ese número, busca en guías y teléfonos como siempre.
 
 **Si WhatsApp abre con un texto viejo:** WhatsApp guarda el borrador de un mensaje que no se envió y a veces lo muestra en vez del nuevo. Borrá ese texto en el chat, volvé a la app y tocá **Abrir WhatsApp** otra vez.
 

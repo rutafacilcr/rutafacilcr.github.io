@@ -433,7 +433,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     </div>
   </div>
   <div class="row" style="justify-content:flex-end"><span class="small muted" id="sentCount"></span></div><!-- 1.91.0: sin el título "Clientes" -->
-  <input id="m-buscar" type="search" placeholder="🔍 Buscar por nombre, teléfono o guía" autocomplete="off" aria-label="Buscar cliente">
+  <input id="m-buscar" type="search" placeholder="🔍 Buscar por nombre, teléfono, guía o número" autocomplete="off" aria-label="Buscar cliente">
   <div class="msgfil" id="msgFil" role="group" aria-label="Filtrar clientes" hidden></div><!-- 1.96.8 (Victor): filtros quitados, no aportaban -->
   <div class="list" id="msgList"></div>
   <!-- 1.91.0: tarjeta "Respuestas del formulario" oculta (Victor). Las respuestas se siguen revisando solas en segundo plano. -->
@@ -561,7 +561,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
   </div>
   <!-- 1.99.10 (Victor): se eliminó la tarjeta "Reporte para pago" (#pagLista); repPdf(k,true) queda sin uso -->
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.101.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.101.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -921,13 +921,15 @@ function renderMsg(){
   if(!S.pk.length){L.innerHTML='<div class="empty">Agregá paquetes en el paso 1 para preparar los mensajes.</div>';return}
   const q=($('#m-buscar').value||'').trim().toLowerCase(),qd=q.replace(/\D/g,'');
   // Buscar: por nombre o guía, o por los últimos dígitos del teléfono (sirve para ver de quién es un número que contesta)
+  // 1.101.1 (Victor): también por el número asignado del paquete, exacto (1 a 3 dígitos), igual que en Paquetes
   // 1.88.0: filtros por estado (Todos, Sin contestar, No responde, Confirmados). Solo cuentan los que siguen activos (no entregados, devueltos ni para devolver)
   // 1.96.1 (Victor): cada paquete cae en un solo filtro, así la suma de los filtros da el número de Todos (antes Todos contaba los entregados, devueltos y en Hold y los demás no)
   const HOLD=new Map(),enHold=p=>{if(p.st==='entregado'||p.st==='devuelto')return false;if(!HOLD.has(p)){let h=false;try{h=entParadasDe(p).some(x=>x.hold&&!x.done)}catch(e){}HOLD.set(p,h)}return HOLD.get(p)}; // 1.77.0: se calcula una vez por paquete
   const act=p=>p.st!=='entregado'&&p.st!=='devuelto'&&!p.devolver,act2=p=>act(p)&&!enHold(p),FIL={sin:p=>act2(p)&&msgEst(p)==='sin',nr:p=>act2(p)&&msgEst(p)==='esp',ok:p=>act2(p)&&msgEst(p)==='ok',hold:p=>act(p)&&enHold(p),dev:p=>p.devolver&&p.st!=='entregado'&&p.st!=='devuelto',ent:p=>p.st==='entregado',devu:p=>p.st==='devuelto'}; // 1.92.0: estado automático · 1.92.2: filtro Devolver · 1.96.1: Hold, Entregados y Devueltos
   MSGF='todos'; // 1.96.8 (Victor): sin filtros en Mensajes; se ven todos
   if(0)$('#msgFil').innerHTML=[['todos','Todos',S.pk.length],['sin','🟡 Sin enviar',S.pk.filter(FIL.sin).length],['nr','📨 Esperando respuesta',S.pk.filter(FIL.nr).length],['ok','🔵 Confirmados',S.pk.filter(FIL.ok).length],['hold','⏸ Hold',S.pk.filter(FIL.hold).length],['dev','⛔ Devolver',S.pk.filter(FIL.dev).length],['ent','✅ Entregados',S.pk.filter(FIL.ent).length],['devu','🔴 Devueltos',S.pk.filter(FIL.devu).length]].map(([k,t,n])=>`<button type="button" data-msgf="${k}" aria-pressed="${k===MSGF}">${t} <b>${n}</b></button>`).join('');
-  const hit=p=>(MSGF==='todos'||FIL[MSGF](p))&&hit0(p),hit0=p=>!q||(p.nombre||'').toLowerCase().includes(q)||(p.guia||'').toLowerCase().includes(q)||(qd.length>=3&&String(p.tel||'').replace(/\D/g,'').includes(qd.slice(-8)));
+  const qn=/^\d{1,3}$/.test(q)&&S.pk.some(p=>String(p.num)===q); // 1.101.1: si hay un paquete con ese número, se ve solo ese (las guías y teléfonos traen muchos dígitos y taparían el resultado)
+  const hit=p=>(MSGF==='todos'||FIL[MSGF](p))&&hit0(p),hit0=p=>!q||(qn?String(p.num)===q:(p.nombre||'').toLowerCase().includes(q)||(p.guia||'').toLowerCase().includes(q)||(qd.length>=3&&String(p.tel||'').replace(/\D/g,'').includes(qd.slice(-8))));
   // 1.52.1: como en Paquetes, los entregados se ven en gris (número tachado) y bajan; al final los devueltos
   // 1.52.4: los que están en Hold en la Ruta van después de los pendientes y antes de los entregados (1.96.1: ya no en gris, sus mensajes se pueden enviar)
   const rk=p=>p.st==='entregado'?2:p.st==='devuelto'?3:enHold(p)?1:0;
