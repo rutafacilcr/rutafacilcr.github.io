@@ -234,6 +234,12 @@ details summary{cursor:pointer;font-weight:600}
 .scanlive video{width:100%;height:100%;object-fit:cover;display:block}
 .scanmarco{position:absolute;inset:9% 8%;border:3px solid rgba(255,255,255,.85);border-radius:12px;box-shadow:0 0 0 999px rgba(0,0,0,.28);pointer-events:none;transition:border-color .15s}
 .scanlive.ok .scanmarco{border-color:#2fbf71}
+/* 1.101.0 (Victor): número asignado del paquete, arriba y destacado al escanear */
+.scanfila{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.scannum{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;margin:0;padding:6px 12px;border-radius:10px;background:var(--accent);color:var(--accent-ink);text-align:center}
+.scannum b{font-family:var(--f-display);font-size:32px;line-height:1;font-weight:700}
+.scannum span{font-size:10.5px;font-weight:700;line-height:1.2;text-transform:uppercase;letter-spacing:.03em}
+.scannum.dup{background:var(--bad);color:#fff}
 .scanraw{white-space:pre-wrap;font-family:var(--f-mono);font-size:11.5px;background:var(--bg);border-radius:7px;padding:8px;max-height:180px;overflow:auto}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 /* 1.76.2 · Contraste (Lighthouse). Devueltos: el texto se lee completo (sin opacidad ni gris); los botones siguen desactivados (no se tocan) y se ven apagados con borde punteado. */
@@ -555,7 +561,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
   </div>
   <!-- 1.99.10 (Victor): se eliminó la tarjeta "Reporte para pago" (#pagLista); repPdf(k,true) queda sin uso -->
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.99.10</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.101.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -628,7 +634,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
   <p class="small muted" id="scanCount"></p>
   <div class="scanlive" id="scanLive" hidden><video id="scanVid" playsinline muted autoplay></video><div class="scanmarco"></div></div>
   <img class="scanimg" id="scanImg" alt="Foto de la etiqueta" hidden>
-  <p class="scanst" id="scanSt"></p>
+  <div class="scanfila"><p class="scanst" id="scanSt"></p><p class="scannum" id="scanNum" role="status" aria-live="polite" hidden><span id="scanNumT"></span><b id="scanNumN"></b></p></div>
   <form id="scanForm" class="list" hidden onsubmit="return false">
     <label>Guía<input id="s-guia" class="mono" autocomplete="off"></label>
     <p class="small" id="scanDup" hidden style="color:var(--bad);margin:0"></p>
@@ -1915,11 +1921,19 @@ function parseLabel(text,codes){
   return r;
 }
 function scanDupCheck(){const g=$('#s-guia').value.replace(/\s/g,'').toUpperCase(),el=$('#scanDup');
-  const p=g&&S.pk.find(p=>!S.ex&&p.id!==SCAN.fix&&(p.guia||'').replace(/\s/g,'').toUpperCase()===g);el.hidden=!p;if(p)el.textContent=`Esta guía ya está en la lista (${p.nombre||'sin nombre'}).`}
+  const p=g&&S.pk.find(p=>!S.ex&&p.id!==SCAN.fix&&(p.guia||'').replace(/\s/g,'').toUpperCase()===g);el.hidden=!p;if(p)el.textContent=`Esta guía ya está en la lista (${p.nombre||'sin nombre'}).`;if(!$('#scanForm').hidden&&!SCAN.busy)scanNumVer()}
 $('#s-guia').addEventListener('input',scanDupCheck);
+// 1.101.0: número que lleva (o va a llevar) el paquete escaneado. Es el mismo cálculo de numerar(): max+1 y nunca se reusa.
+function scanNumSig(){if(S.ex)return 1;const nums=S.nums||{};let mx=Math.max(0,...Object.values(nums));S.pk.forEach(p=>{if(p.num)mx=Math.max(mx,p.num)});
+  const falta=S.pk.filter(p=>!p.num&&!nums[p.id]).length;return mx?mx+falta+1:S.pk.length+1}
+function scanNumPintar(n,txt,dup){const el=$('#scanNum');if(!n){el.hidden=true;return}$('#scanNumN').textContent='#'+n;$('#scanNumT').textContent=txt;el.classList.toggle('dup',!!dup);el.hidden=false}
+function scanNumVer(){const fx=SCAN.fix&&S.pk.find(x=>x.id===SCAN.fix);if(fx){scanNumPintar(fx.num,'N.º asignado');return}
+  const g=$('#s-guia').value.replace(/\s/g,'').toUpperCase(),p=g&&!S.ex&&S.pk.find(p=>(p.guia||'').replace(/\s/g,'').toUpperCase()===g);
+  if(p&&p.num){scanNumPintar(p.num,'Ya en la lista',true);return}
+  scanNumPintar(scanNumSig(),'N.º asignado')}
 function scanUI(mode){ // mode: 'wait' | 'live' | 'busy' | 'review'
   $('#scanForm').hidden=mode==='wait'||mode==='live';$('#scanSave').hidden=$('#scanRot').hidden=$('#scanSkip').hidden=mode!=='review';
-  $('#scanShot').hidden=mode!=='wait';$('#scanSave').disabled=mode==='busy';
+  $('#scanShot').hidden=mode!=='wait';$('#scanSave').disabled=mode==='busy';if(mode==='review')scanNumVer();else $('#scanNum').hidden=true;
   $('#scanLive').hidden=$('#scanAhora').hidden=$('#scanFotoAlt').hidden=mode!=='live';$('#scanLuz').hidden=mode!=='live'||!LIVE.luz;if(mode==='live')$('#scanImg').hidden=true;
   const q=SCAN.queue.length;$('#scanCount').textContent=`Guardadas en esta tanda: ${SCAN.n}`+(q?` · faltan ${q} foto(s)`:'');
   $('#scanSave').textContent=SCAN.fix?'Guardar corrección':SCAN.msg?'Guardar y mandar mensaje':q?'Guardar y siguiente':(SCAN.cam?'Guardar y tomar otra':'Guardar');if(SCAN.fix)$('#scanCount').textContent='Lo que no se lea se queda como estaba.';
@@ -2020,8 +2034,8 @@ $('#scanSave').onclick=()=>{
   const np=mkPkg(v);S.pk.push(np);
   if(SCAN.msg){const l=waLink(np,pkCoordText(np)); // se abre dentro del mismo toque (iPhone lo exige)
     if(l){np.sent=true;window.open(l,'_blank','noopener')}else toast('Teléfono inválido: no se abrió WhatsApp. Corregilo con Editar.')}
-  S.route=null;save();render();SCAN.n++;if(!SCAN.msg||!np.sent)toast(`Guardado (${SCAN.n})`);
-  if(SCAN.msg&&np.sent&&SCAN.live){SCAN.file=null;$('#scanImg').hidden=true;scanUI('wait');scanSt('Mandá el mensaje en WhatsApp y volvé: la cámara se abre sola para el siguiente.');return}
+  S.route=null;save();render();SCAN.n++;if(!SCAN.msg||!np.sent)toast(`Guardado: paquete #${np.num} (${SCAN.n} en esta tanda)`);
+  if(SCAN.msg&&np.sent&&SCAN.live){SCAN.file=null;$('#scanImg').hidden=true;scanUI('wait');scanNumPintar(np.num,'Guardado');scanSt('Mandá el mensaje en WhatsApp y volvé: la cámara se abre sola para el siguiente.');return}
   scanNext();
 };
 
