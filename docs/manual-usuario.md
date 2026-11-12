@@ -408,6 +408,18 @@ En *Ruta*, tocá **📋 Lista** (a la par de 🎯 Elegir en el mapa). Sale la ru
 
 Al final van las paradas sin ubicación y las ya entregadas. Podés tomarle captura, tocar **📋 Copiar** o **📤 Compartir** para mandarla por WhatsApp.
 
+**Hora de llegada (1.102.0):** arriba de la lista está **🕐 Hora de inicio**. Poné la hora en que salís a entregar (por ejemplo 7:30 a. m.) y cada pendiente con ubicación muestra a qué hora más o menos vas a llegar:
+
+> 🕐 Inicio 7:30 am · última entrega ~10:05 am
+> 2. #1 Ana · 8888-0010 · 🕐 ~7:33 am
+> 3. #2 Luis · 8888-0011 · 🕐 ~7:43 am
+
+- Si no ponés hora, o la hora ya pasó (por ejemplo, ya andás entregando), se cuenta **desde ahora** y desde donde estás. El botón **Ahora** vuelve a eso.
+- La hora queda guardada para esa ruta (también en la compu). Si armás la ruta la noche antes para mañana, la hora es la de mañana.
+- Es un cálculo aproximado: manejo por calle sin tráfico + 4 minutos por cada entrega. Si tenés 🚦 Tráfico activado y salís ya, la primera parada usa el tráfico de ahora.
+- Las de **Hold** y las que no tienen ubicación no llevan hora.
+- Al copiar o compartir, las horas van en el texto.
+
 ### Ubicación en grados (1.45.3)
 
 En la ubicación de un paquete podés pegar:

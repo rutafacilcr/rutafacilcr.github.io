@@ -213,6 +213,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);outline-
 .rfwin-top{display:flex;gap:12px;align-items:center;margin-bottom:12px}.rfwin-top h2{margin:0;font-size:18px;line-height:1.25}.rfwin-top p{margin:2px 0 0;font-size:13px;line-height:1.4;color:var(--muted)}
 .rfwin-ico{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:21px;background:rgba(242,107,29,.12)}
 .rfwin #diagTxt{white-space:pre-wrap;word-break:break-word;font-family:var(--f-body,system-ui,sans-serif);font-size:14px;line-height:1.5;min-height:60px;max-height:55vh;overflow:auto;background:var(--bg,#f6f5f3);color:var(--ink,#1f2125);border:1px solid var(--line);border-left:4px solid var(--accent,#f26b1d);padding:12px 14px;border-radius:12px;margin:0}
+/* 1.102.0: hora de inicio en la Lista de Ruta */.diaghora{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 10px;font-size:13.5px}.diaghora label{display:flex;align-items:center;gap:6px;font-weight:600}.diaghora input{flex:0 1 130px;width:130px;font:inherit;padding:5px 8px;min-height:36px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}.diaghora .btn{font-size:12.5px;padding:6px 10px;min-height:36px}.diaghora .small{flex-basis:100%}
 .rfwin-btns{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:14px}
 .sheet{position:fixed;inset:0;z-index:30;background:rgba(10,20,18,.55);display:flex;align-items:flex-end;justify-content:center}
 .sheet .box{background:var(--surface);width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:16px 16px 0 0;padding:18px max(16px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:12px}
@@ -561,7 +562,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
   </div>
   <!-- 1.99.10 (Victor): se eliminó la tarjeta "Reporte para pago" (#pagLista); repPdf(k,true) queda sin uso -->
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.101.4</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.102.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -659,6 +660,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
 </div></div>
 <div class="sheet rfwin" id="diagSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="diagTitle">
   <div class="rfwin-top"><div class="rfwin-ico" id="diagIco" aria-hidden="true">🧪</div><div><h2 id="diagTitle">Diagnóstico de la ruta</h2><p id="diagSub">Tomale captura de pantalla o tocá <b>Compartir</b> para mandarlo por WhatsApp.</p></div></div>
+  <div class="diaghora" id="diagHora" hidden><label for="diagIni">🕐 Hora de inicio</label><input type="time" id="diagIni" step="300"><button class="btn primary sm" id="diagAhora" type="button" style="font-weight:700">Ahora</button><span class="small muted" id="diagHoraNota"></span></div>
   <pre id="diagTxt"></pre>
   <div class="rfwin-btns"><button class="btn ghost sm" id="diagClose" type="button">Cerrar</button><button class="btn sm" id="diagCopy" type="button">📋 Copiar</button><button class="btn primary sm" id="diagShare" type="button">📤 Compartir</button></div>
 </div></div>
@@ -2054,7 +2056,7 @@ $('#supDiag').onclick=async()=>{let t=`RutaFácil ${$('#appVer').textContent} ·
     t+='\n-- Paquetes con ubicación unidos a parada sin pin, entregada o a varias --\n';S.pk.filter(p=>parseCoord(p.ubic)&&dueno[p.id]&&(dueno[p.id].length>1||dueno[p.id].some(x=>!x.c||x.done)||p.st==='entregado')).forEach(p=>{t+=`* ${f(p)}\n`;dueno[p.id].forEach(x=>{t+=`   <- parada ${x.nombre} | tel ${x.tel||'-'} | ${x.c?'pin':'SIN pin'}${x.done?' | entregada':''}${x.pkFijo?' | fijo':''}\n`})});
     t+='\n-- Paquetes con ubicación que no se lee --\n';S.pk.filter(p=>p.ubic&&!parseCoord(p.ubic)).forEach(p=>{t+=`* ${f(p)}\n`})}}catch(e){t+='ERROR '+e.message+'\n'+(e.stack||'').slice(0,300)}
   // En iPhone copiar/pegar a veces falla: se muestra en pantalla para captura, con Compartir (WhatsApp, Notas…) y Copiar
-  $('#diagIco').textContent='🧪';$('#diagTitle').textContent='Diagnóstico de la ruta';$('#diagTxt').textContent=t;$('#supSheet').hidden=true;$('#diagSheet').hidden=false;document.body.style.overflow='hidden'};
+  $('#diagIco').textContent='🧪';$('#diagTitle').textContent='Diagnóstico de la ruta';$('#diagHora').hidden=true;$('#diagTxt').textContent=t;$('#supSheet').hidden=true;$('#diagSheet').hidden=false;document.body.style.overflow='hidden'};
 // Lista de la ruta en el orden en que se va a entregar, con el número fijo de cada paquete (para copiar o mandar por WhatsApp)
 // Vehículo (1.55.0): se elige uno de los 3 y se guarda en S.veh (carro por defecto desde la 1.69.2). Todavía no cambia tiempos, km ni ruta; su uso viene después.
 function vehPintar(){const v=['moto','carro','buseta'].includes(S.veh)?S.veh:'carro';document.querySelectorAll('#vehSel [data-veh]').forEach(b=>{b.classList.toggle('on',b.dataset.veh===v);b.setAttribute('aria-pressed',b.dataset.veh===v)})}
@@ -2067,11 +2069,35 @@ $('#ttBtn').onclick=async()=>{
     if(!k)return;S.ttKey=k;S.ttOn=true;TT.err='';TT.k='';save();ttPintar();toast('Tráfico en vivo activado');ttPedir(true);return}
   S.ttOn=S.ttOn===false;save();TT.k='';ttPintar();entEta(true);toast(S.ttOn?'Tráfico en vivo activado':'Tráfico en vivo apagado');if(S.ttOn)ttPedir(true)};
 // 1.94.0 (Victor): la Lista es solo lo que falta por entregar: primero los de Hold y después los pendientes, en orden de ruta
-$('#entLista').onclick=()=>{const E=S.ent;if(!E||!E.stops)return;let k=0;
-  const fila=s=>{const p=entPkg(s);return `${++k}. #${s.c?eNum(s):'?'} ${s.nombre||''}${p&&p.tel?' · '+p.tel:''}${!s.c?' (sin ubicación)':''}`};
+// 1.102.0 (Victor): cada pendiente con ubicación lleva la hora aproximada de llegada, contando desde la hora de inicio de las entregas.
+// Inicio = la hora que pusiste en la Lista para esta ruta (S.entIni={r:nombre de la ruta,h:'07:30'}) en el día de la ruta; si ya pasó o no hay, ahora.
+// Cada tramo: por calle (OSRM de la línea de la ruta, RTOT.legs) ×1,3, mínimo a 18 km/h; sin respuesta, línea recta a 18 km/h.
+// El primer tramo, si salís ahora y hay tráfico en vivo para esa parada, usa TomTom. Se suman ENT_MIN_PARADA min por cada entrega.
+const ENT_MIN_PARADA=4;
+function entIniMs(E){const m=String(E&&E.nombre||'').match(/(\d{4})-(\d{2})-(\d{2})/),hoy=new Date(),d=m?new Date(+m[1],m[2]-1,+m[3]):new Date(hoy.getFullYear(),hoy.getMonth(),hoy.getDate());
+  const g=S.entIni&&S.entIni.r===(E&&E.nombre)&&/^\d{1,2}:\d{2}$/.test(S.entIni.h||'')?S.entIni.h.split(':'):null;
+  if(!g)return {t:Date.now(),ahora:true};d.setHours(+g[0],+g[1],0,0);return d.getTime()>Date.now()?{t:d.getTime(),ahora:false}:{t:Date.now(),ahora:true,paso:true}}
+function entHorasLlegada(E,orden,ini){const R=new Map(),pos=EPOS?EPOS.c:E.inicio;if(!pos)return R;
+  const leg=new Map();if(RTOT.legs&&RTOT.legPos&&RTOT.legK){const ks=[ckey(RTOT.legPos),...RTOT.legK.split('|')];RTOT.legs.forEach((l,i)=>ks[i+1]&&leg.set(ks[i]+'>'+ks[i+1],l))}
+  let prev=pos,pk=RTOT.legPos&&hav(RTOT.legPos,pos)<=0.3?ckey(RTOT.legPos):ckey(pos),t=0,km=0;
+  orden.forEach((s,i)=>{const L=leg.get(pk+'>'+ckey(s.c)),dk=L?L[0]:hav(prev,s.c);let m=L?Math.max(L[1]*1.3,dk/18*60):dk/18*60;
+    if(i===0&&ini.ahora&&EPOS&&ttActivo()&&!TT.err&&TT.min!=null&&TT.k===ckey(s.c)&&TT.pos&&hav(TT.pos,EPOS.c)<0.5&&Date.now()-TT.at<360000)m=TT.min;
+    t+=(i?ENT_MIN_PARADA:0)+m+1;km+=dk;R.set(s,{t:ini.t+t*60000,km});prev=s.c;pk=ckey(s.c)});return R}
+const hmT=t=>{const d=new Date(t);return hm(d.getHours()*60+d.getMinutes())};
+function entListaTxt(){const E=S.ent;if(!E||!E.stops)return '';let k=0;
   const pend=E.stops.filter(s=>!entDone(s)&&!s.devolver),H=pend.filter(s=>s.hold),R=pend.filter(s=>!s.hold).map((s,i)=>[s,i]).sort((a,b)=>(a[0].c?0:1)-(b[0].c?0:1)||a[1]-b[1]).map(x=>x[0]);
+  const ini=entIniMs(E),LL=entHorasLlegada(E,R.filter(s=>s.c),ini),ult=[...LL.values()].pop();
+  const fila=s=>{const p=entPkg(s),ll=LL.get(s);return `${++k}. #${s.c?eNum(s):'?'} ${s.nombre||''}${p&&p.tel?' · '+p.tel:''}${!s.c?' (sin ubicación)':''}${ll?' · 🕐 ~'+hmT(ll.t):''}`};
+  const cab=ult?`🕐 Inicio ${hmT(ini.t)}${ini.ahora?' (ahora)':''} · última entrega ~${hmT(ult.t)}\nHoras aproximadas: manejo sin tráfico + ${ENT_MIN_PARADA} min por entrega.\n\n`:'';
   const L=[...(H.length?[`⏸ HOLD (${H.length})`,...H.map(fila),'']:[]),`📦 PENDIENTES DE ENTREGAR (${R.length})`,...(R.length?R.map(fila):['Ninguno'])];
-  $('#diagIco').textContent='📋';$('#diagTitle').textContent='Pendientes de entregar';$('#diagTxt').textContent=`${isoDMY(E.nombre)} · ${fDMYh(Date.now())}\n\n`+L.join('\n');$('#diagSheet').hidden=false;document.body.style.overflow='hidden'};
+  return {txt:`${isoDMY(E.nombre)} · ${fDMYh(Date.now())}\n`+cab+(cab?'':'\n')+L.join('\n'),ini,hay:LL.size>0}}
+function entListaPintar(){const o=entListaTxt();if(!o)return;$('#diagTxt').textContent=o.txt;const d=new Date(o.ini.t);
+  $('#diagIni').value=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  $('#diagHoraNota').textContent=!o.hay?'Sin GPS ni punto de salida todavía: no se pueden calcular las horas.':o.ini.paso?'Esa hora ya pasó: se cuenta desde ahora.':o.ini.ahora?'Poné la hora en que salís a entregar.':'Las horas se cuentan desde esta hora.'}
+$('#diagIni').addEventListener('change',()=>{const v=$('#diagIni').value;if(!S.ent||!/^\d{1,2}:\d{2}$/.test(v))return;S.entIni={r:S.ent.nombre,h:v};save();entListaPintar()});
+$('#diagAhora').onclick=()=>{S.entIni={r:S.ent&&S.ent.nombre,h:''};save();entListaPintar()}; // vacío (no delete) para que la nube no lo reviva
+$('#entLista').onclick=()=>{const E=S.ent;if(!E||!E.stops)return;entTotal();
+  $('#diagIco').textContent='📋';$('#diagTitle').textContent='Pendientes de entregar';$('#diagHora').hidden=false;entListaPintar();$('#diagSheet').hidden=false;document.body.style.overflow='hidden'};
 $('#diagClose').onclick=()=>{$('#diagSheet').hidden=true;document.body.style.overflow=''};
 $('#diagShare').onclick=async()=>{const t=$('#diagTxt').textContent;if(navigator.share){try{await navigator.share({title:$('#diagTitle').textContent,text:t});return}catch(e){if(e.name==='AbortError')return}}
   const u=`https://wa.me/${SOPORTE_WA}?text=${encodeURIComponent(t.slice(0,3500))}`;if(window.top!==window)window.open(u,'_blank','noopener');else location.href=u}; // 1.94.0: dentro del marco de iPhone se abre aparte
@@ -2463,7 +2489,7 @@ const RTOT={k:'',at:0,busy:false,r:null,geo:null};
 function entLinea(){try{if(!EMAP||!EMAP.linea||!S.ent)return;const E=S.ent,pend=E.stops.filter(s=>s.c&&!entDone(s)),ini=EPOS?EPOS.c:(E.inicio||null);
   const k=pend.map(s=>ckey(s.c)).join('|');EMAP.linea.setLatLngs(RTOT.geo&&RTOT.k===k&&pend.length?[...(ini?[ini]:[]),...RTOT.geo]:[...(ini&&pend.length?[ini]:[]),...pend.map(s=>s.c)])}catch(e){}}
 async function osrmCadena(k,pts){RTOT.busy=true;RTOT.at=Date.now();try{const j=await (await fetch('https://router.project-osrm.org/route/v1/driving/'+pts.map(c=>c[1]+','+c[0]).join(';')+'?overview=full&geometries=geojson')).json();
-  if(j.code==='Ok'&&j.routes[0]){RTOT.k=k;RTOT.r=[j.routes[0].distance/1000,j.routes[0].duration/60];const g=j.routes[0].geometry;RTOT.geo=g&&g.coordinates?g.coordinates.map(c=>[c[1],c[0]]):null;entTotal(true);entLinea()}}catch(e){}finally{RTOT.busy=false}}
+  if(j.code==='Ok'&&j.routes[0]){RTOT.k=k;RTOT.r=[j.routes[0].distance/1000,j.routes[0].duration/60];RTOT.legs=(j.routes[0].legs||[]).map(l=>[l.distance/1000,l.duration/60]);RTOT.legPos=pts[0];RTOT.legK=k;const g=j.routes[0].geometry;RTOT.geo=g&&g.coordinates?g.coordinates.map(c=>[c[1],c[0]]):null;entTotal(true);entLinea();if(!$('#diagSheet').hidden&&!$('#diagHora').hidden)entListaPintar()}}catch(e){}finally{RTOT.busy=false}}
 function entTotal(sinPedir){const el=$('#entTot'),E=S.ent;if(!el)return;if(!E){el.textContent='';return}
   const pend=E.stops.filter(s=>s.c&&!entDone(s)),ini=EPOS?EPOS.c:E.inicio;
   if(!pend.length){el.innerHTML=E.stops.some(s=>s.c)?'<b>✓ Ruta terminada</b>':'';return}
@@ -2576,7 +2602,7 @@ document.querySelector('[data-tab="entrega"]').addEventListener('click',()=>{tra
 // ===== Lista en la nube: los mismos paquetes en el teléfono y en la PC (rf_lista_leer / rf_lista_guardar) =====
 // S.syncVer = última versión de la nube que vio este aparato; S.baseIds = ids que había en ese momento
 // (sirven para saber qué se borró en un lado y qué es nuevo). S.dirty = hay cambios sin subir.
-const NUBE_KEYS=['nums','jor','ent','pk','coord','form','camino','comp','ext','entr','h1','h2','pref','fecha','hora','start','vel','min','ret','route','veh','ttKey','ttOn','gan'];
+const NUBE_KEYS=['nums','jor','ent','pk','coord','form','camino','comp','ext','entr','h1','h2','pref','fecha','hora','start','vel','min','ret','route','veh','ttKey','ttOn','gan','entIni'];
 const nubeMsg=t=>{const el=$('#nubeInfo');if(el)el.textContent=t?' · '+t:''};
 // Se sube todo lo que había en la nube (aunque esta versión no lo conozca) más las claves propias, para no borrar datos de otros aparatos.
 function nubeDatos(){const d={...(S.nubeOtros||{})};NUBE_KEYS.forEach(k=>{if(S[k]!==undefined)d[k]=S[k]});if(S.ex)d.pk=[];return d}

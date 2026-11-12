@@ -23,6 +23,9 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.1 | — | *Crear cuenta* con los campos en blanco |
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
+## 2026-11-12
+- **1.102.0 · Hora de llegada en la Lista de Ruta:** en *Ruta > 📋 Lista* cada pendiente con ubicación trae la **hora aproximada de llegada** (🕐 ~8:15 am), contando desde la **Hora de inicio** que se pone arriba de la lista (o desde ahora). Arriba sale el inicio y la hora de la última entrega; se copia y se comparte igual que antes. Tiempo = manejo por calle sin tráfico + 4 min por entrega (la primera parada usa TomTom si está activo y sale ahora).
+
 ## 2026-11-11
 - **1.101.4 · Búsqueda por número que sí se ve:** en *Ruta*, al buscar (por número, nombre, teléfono o guía) la lista muestra solo las fichas que coinciden, justo debajo del mapa, y la pantalla sube al mapa con el pin marcado en naranja: se ven el pin y la ficha a la vez. Al borrar la búsqueda vuelven todas. En *Paquetes*, si escribe un número (por ejemplo 62) y existe un paquete con ese número, se ve solo ese (antes salían también las guías que tenían esos dígitos y el número quedaba perdido).
 - **1.101.3 · Buscar por número en Ruta:** en el buscador de *Ruta* ahora puede escribir el **número del paquete** (el del pin y la ficha, por ejemplo 48): marca ese pin en naranja en el mapa, abre su nombre y lleva a su ficha. Nombre, teléfono y guía se buscan igual que antes.

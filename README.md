@@ -30,7 +30,7 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
   - El mapa va arriba de la lista y sube con la pantalla al bajar (1.101.2): ya no tapa las tarjetas.
   - ▶ Iniciar / ■ Finalizar entregas para el reporte. Desde ▶ Iniciar el orden de la ruta queda fijo (solo cambia si lo reordenás a mano).
   - Vehículo 🏍️ 🚙 🚐 (carro por defecto), que va en el WhatsApp "Estamos en camino 🏍️…".
-  - 📋 Lista en orden. Las paradas entregadas quedan en gris (sin tachar) en el mapa y la lista.
+  - 📋 Lista en orden. Las paradas entregadas quedan en gris (sin tachar) en el mapa y la lista. Desde la 1.102.0 la Lista trae la **hora aproximada de llegada** a cada parada, contando desde la hora de inicio que uno pone.
   - 🚦 Tráfico en vivo para la próxima parada (TomTom, plan gratis con clave propia).
   - En cada parada: Hold, ⛔ Devolver y ✓ Entregado. ⛔ Devolver saca la parada de la ruta y deja el paquete marcado en Paquetes. ✓ Entregado guarda la fecha y la hora reales.
 - **Cierres** (solo reportes que ya funcionan; sin avisos de "Próximamente"):
