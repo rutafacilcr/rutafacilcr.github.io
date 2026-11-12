@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-12
+- **1.104.0 · Contactos con el número del paquete:** en *Mensajes*, **📇 Guardar contactos del día** y la columna *contacto* del **Excel del día** ahora nombran al cliente con el prefijo **más el número fijo del paquete**: *TM12-María Rojas-JCR123* (sin guía *TM12-María Rojas*). Si un mismo teléfono tiene varios paquetes, van los números y las guías juntos (*TM12/15-Sofía-PO1/PO2*). Los textos de los mensajes no cambian.
 - **1.103.0 · Pago especial del 11/11/2026:** en *Cierres > 💰 Ganancia* los paquetes entregados cuya **fecha de ingreso** es el **11/11/2026** se pagan a **₡600** cada uno; los demás siguen con la tarifa de ⚙️ Tarifas (₡500 de fábrica). Cambia Pago, Te quedó, Rentabilidad, el resumen por WhatsApp y el Excel.
 - **1.102.0 · Hora de llegada en la Lista de Ruta:** en *Ruta > 📋 Lista* cada pendiente con ubicación trae la **hora aproximada de llegada** (🕐 ~8:15 am), contando desde la **Hora de inicio** que se pone arriba de la lista (o desde ahora). Arriba sale el inicio y la hora de la última entrega; se copia y se comparte igual que antes. Tiempo = manejo por calle sin tráfico + 4 min por entrega (la primera parada usa TomTom si está activo y sale ahora).
 
