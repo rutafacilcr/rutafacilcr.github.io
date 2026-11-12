@@ -27,6 +27,7 @@ Servicios externos sin cuenta: wa.me (WhatsApp), Google Maps, Waze
 - En Supabase se guardan las respuestas del formulario y las **pruebas de entrega** (tabla `entregas` + fotos en Storage, carpeta `evidencias`).
 - **Escanear etiquetas** corre todo en el celular: no manda fotos ni datos a ningún servidor y no tiene costo. Las librerías se bajan solo al usar el escáner.
 - Desde la 1.96.0 el escáner usa la **cámara en vivo** del navegador (`getUserMedia`): necesita HTTPS (GitHub Pages ya lo da) y el permiso de cámara del sitio. En iPhone: *Ajustes > Safari > Cámara* (o *aA > Configuración del sitio web > Cámara*). Si el permiso está negado, la app usa la cámara normal del celular como antes. La foto no se guarda ni se sube. *Escanear & mensaje* (1.97.0) abre `wa.me` en una pestaña nueva: no usa ninguna API ni cobra nada.
+- *Buscar por número en Ruta* (1.101.3): solo filtra en el celular; no hay SQL ni datos nuevos.
 - *Mapa de Ruta sin sticky* (1.101.2): solo CSS y el desplazamiento del buscador; no hay SQL ni datos nuevos.
 - *Buscar por número en Mensajes* (1.101.1): solo filtra en pantalla; no hay SQL ni datos nuevos.
 - *Número asignado al escanear* (1.101.0): solo pantalla, se calcula en el celular con los mismos datos de `numerar()`; no hay SQL ni datos nuevos.
