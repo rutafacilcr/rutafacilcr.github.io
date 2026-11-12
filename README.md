@@ -36,7 +36,7 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
 - **Cierres** (solo reportes que ya funcionan; sin avisos de "Próximamente"):
   - Período arriba: **Hoy**, **Semana**, **Mes** o **Mes pasado** (1.93.0).
   - Reporte de entregas con todos los paquetes por estado, **Paquetes recibidos** (lista corta con número, guía, teléfono, nombre, dirección y hora de escaneo, en orden de escaneo; 1.99.0 a 1.99.7). Las Guías por fecha de recibido y por fecha de entrega se quitaron (1.99.8 y 1.99.10).
-  - **💰 Ganancia:** entregados × pago por paquete (₡500 de fábrica) menos la gasolina (estimada por km o anotada por día) = **Te quedó**, y **💹 Rentabilidad**: ₡ por paquete (con sus minutos y km), ₡ por hora y ₡ por km.
+  - **💰 Ganancia:** entregados × pago por paquete (₡500 de fábrica) menos la gasolina (estimada por km o anotada por día) = **Te quedó**, Desde la 1.103.0 hay **pago especial por fecha de ingreso**: los paquetes recibidos el 11/11/2026 se pagan a ₡600. y **💹 Rentabilidad**: ₡ por paquete (con sus minutos y km), ₡ por hora y ₡ por km.
   - **📍 Ranking de zonas:** dónde más te deja cada hora, dónde entregás más rápido y dónde más te devuelven (zona aproximada de la GAM).
   - **📊 Resumen** semanal o mensual por **WhatsApp** o en **Excel**.
   - Un reporte PDF horizontal por cada grupo de *Entregas del …* (el día en que se recibieron los paquetes), también de listas ya vaciadas.
