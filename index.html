@@ -446,7 +446,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
   <!-- 1.92.1: Guardar contactos y Bajar Excel van abajo de la lista (Victor) -->
   <div class="panel" id="vcfPanel">
     <div class="vcfrow"><label>Prefijo<input id="m-pref" maxlength="8" placeholder="TM" autocomplete="off"></label><button class="btn sm primary" id="vcfBtn" type="button">📇 Guardar contactos del día</button><button class="btn sm" id="xlsBtn" type="button">📊 Bajar Excel del día</button></div>
-    <p class="small muted">Guarda a todos los clientes en tus contactos como <b id="vcfEj">TM-Nombre-pedido</b> (el pedido es la guía), para que en WhatsApp salga el nombre cuando te contesten. <b>Bajar Excel del día</b> llena la plantilla de Excel con nombre, teléfono, dirección, ubicación, guía, nota y fecha de ingreso de cada cliente.</p>
+    <p class="small muted">Guarda a todos los clientes en tus contactos como <b id="vcfEj">TM12-Nombre-pedido</b> (12 es el número del paquete y el pedido es la guía), para que en WhatsApp salga el nombre cuando te contesten. <b>Bajar Excel del día</b> llena la plantilla de Excel con nombre, teléfono, dirección, ubicación, guía, nota y fecha de ingreso de cada cliente.</p>
     <p class="small" id="xlsIos" hidden style="background:var(--warn-bg);border-radius:8px;padding:10px 12px">Excel en iPhone: en el menú elegí <b>Guardar en Archivos</b> &gt; <b>En mi iPhone</b> &gt; carpeta <b>RutaFacilCR</b> (la primera vez tocá el ícono de carpeta nueva para crearla) &gt; <b>Guardar</b>. La próxima vez el iPhone ya propone esa carpeta. Para verlo, abrí la app <b>Archivos</b>.</p>
     <p class="small" id="vcfIos" hidden style="background:var(--warn-bg);border-radius:8px;padding:10px 12px">En iPhone: elegí <b>Guardar en Archivos</b>. Después abrí la app <b>Archivos</b>, tocá <b>contactos-….vcf</b> y luego <b>Agregar los N contactos</b> &gt; <b>Crear contactos nuevos</b>. (Si lo abrís directo desde Safari, el iPhone solo agrega el primero.)</p>
   </div>
@@ -563,7 +563,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
   </div>
   <!-- 1.99.10 (Victor): se eliminó la tarjeta "Reporte para pago" (#pagLista); repPdf(k,true) queda sin uso -->
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.103.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.104.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -1165,16 +1165,17 @@ $('#vaciarTile').onclick=async()=>{const pk=S.ex?[]:S.pk,pend=pk.filter(p=>p.st!
 $('#clearAll').onclick=e=>{const b=e.currentTarget;if(b.disabled)return;if(b.dataset.c){delete b.dataset.c;cerrarDia(b)}else{b.dataset.c=1;b.textContent='¿Cerrar el día? Tocá otra vez';setTimeout(()=>{if(b.dataset.c){b.textContent='Vaciar lista';delete b.dataset.c}},3000)}};
 const bind=(sel,k,num)=>{const el=$(sel);el.value=S[k]??'';el.addEventListener(el.type==='checkbox'?'change':'input',()=>{S[k]=el.type==='checkbox'?el.checked:(num?+el.value:el.value);save();if(['coord','form','yo','fecha'].includes(k))renderMsg()})};
 $('#routeBtn').onclick=calcRoute;
-// ---- Contactos del día: un .vcf con todos los clientes como "TM-Nombre" ----
+// ---- Contactos del día: un .vcf con todos los clientes como "TM12-Nombre-pedido" ----
 if(S.pref==null)S.pref='TM';
 const vcfEsc=s=>String(s).replace(/\\/g,'\\\\').replace(/[,;]/g,m=>'\\'+m).replace(/\r?\n/g,' ');
-// Nombre del contacto: TM-Nombre-pedido (sin guía queda TM-Nombre; varias guías del mismo teléfono van juntas con /)
-const vcfName=(p,guias)=>{const pre=(S.pref||'').trim(),g=(guias||[p.guia]).filter(Boolean).join('/');return [pre,tidyName(p.nombre)||'Cliente',g].filter(Boolean).join('-')};
+// Nombre del contacto (1.104.0): prefijo + número fijo del paquete (p.num), TM12-Nombre-pedido (sin guía TM12-Nombre;
+// varias guías del mismo teléfono van juntas con / y también sus números: TM12/15-Sofía-PO1/PO2). Sin número queda TM-Nombre-pedido.
+const vcfName=(p,guias,nums)=>{const pre=(S.pref||'').trim(),g=(guias||[p.guia]).filter(Boolean).join('/'),n=(nums||[p.num]).filter(Boolean).join('/');return [pre+n,tidyName(p.nombre)||'Cliente',g].filter(Boolean).join('-')};
 const IOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 async function saveContacts(){
   const by=new Map(),cards=[];
-  for(const p of S.pk){const d=phoneWA(p.tel);if(!d)continue;if(!by.has(d))by.set(d,{p,g:[]});if(p.guia)by.get(d).g.push(p.guia.trim())}
-  for(const [d,{p,g}] of by){const n=vcfEsc(vcfName(p,g));
+  for(const p of S.pk){const d=phoneWA(p.tel);if(!d)continue;if(!by.has(d))by.set(d,{p,g:[],n:[]});if(p.guia)by.get(d).g.push(p.guia.trim());if(p.num)by.get(d).n.push(p.num)}
+  for(const [d,{p,g,n:ns}] of by){const n=vcfEsc(vcfName(p,g,ns));
     cards.push(['BEGIN:VCARD','VERSION:3.0','FN:'+n,'N:;'+n+';;;','TEL;TYPE=CELL:+'+d,'END:VCARD'].join('\r\n'))}
   if(!cards.length){toast('No hay clientes con teléfono válido');return}
   const name=`contactos-${new Date().toISOString().slice(0,10)}.vcf`,blob=new Blob([cards.join('\r\n')+'\r\n'],{type:'text/vcard'});
@@ -1189,7 +1190,7 @@ async function saveContacts(){
   setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},5000);toast(`${cards.length} contactos listos para guardar`);
 }
 $('#vcfBtn').onclick=e=>conCarga(e.currentTarget,saveContacts);$('#vcfCancel').onclick=()=>{$('#vcfSheet').hidden=true};
-// Excel del día: mismas columnas que plantilla-paquetes.xlsx (se puede volver a importar) + "contacto" (TM-Nombre-pedido).
+// Excel del día: mismas columnas que plantilla-paquetes.xlsx (se puede volver a importar) + "contacto" (TM12-Nombre-pedido).
 function saveExcel(){
   if(!window.XLSX){toast('Preparando Excel…');cargarXlsx().then(()=>toast('Excel listo. Tocá de nuevo “Excel” para descargarlo.')).catch(()=>toast('No se pudo cargar Excel. Revisá el internet y probá de nuevo.'));return}
   const pk=S.pk.filter(p=>p.nombre||p.tel);if(!pk.length){toast('No hay clientes en la lista');return}
@@ -1490,7 +1491,7 @@ $('#ganDias').addEventListener('change',e=>{const i=e.target.closest('[data-gas]
 $('#resWa').onclick=ganWa;$('#resXls').onclick=ganXls;
 document.querySelector('[data-tab="cierres"]').addEventListener('click',()=>trasPintar(()=>{fixIng1031();const gfe=$('#guiFechaEnt');if(gfe&&!gfe.value)gfe.value=new Date().toLocaleDateString('en-CA');try{ganActualizar();ganPintar()}catch(e){console.warn('ganancia',e)}repLista();repPagoLista();repRecLista();guiLista();repCargar().catch(()=>{});
   $('#repInfo').textContent='Buscando reportes de cierres anteriores…';repCierres().then(()=>{try{ganActualizar();ganPintar()}catch(e){console.warn('ganancia',e)}repLista();repPagoLista();repRecLista();guiLista();$('#repInfo').textContent=''})}));
-$('#m-pref').addEventListener('input',()=>{$('#vcfEj').textContent=vcfName({nombre:'Nombre',guia:'pedido'})});
+$('#m-pref').addEventListener('input',()=>{$('#vcfEj').textContent=vcfName({nombre:'Nombre',guia:'pedido',num:12})});
 $('#m-buscar').addEventListener('input',()=>renderMsg());
 $('#msgFil').addEventListener('click',e=>{const b=e.target.closest('[data-msgf]');if(!b)return;MSGF=b.dataset.msgf;renderMsg()});
 $('#p-buscar').addEventListener('input',()=>renderPk());
@@ -2198,7 +2199,7 @@ function msgFab196(){let c=false;const nz=t=>String(t||'').replace(/\s+/g,' ').t
   const nz5=t=>String(t||'').replace(/\s+/g,' ').trim();if([DEF_COORD3,DEF_COORD4,DEF_COORD5].some(x=>nz5(x)===nz5(S.coord))||/nos gustar[ií]a coordinar la entrega/i.test(S.coord||'')){S.coord=DEF_COORD6;c=true} // 1.96.5/1.96.6: mensaje 1 nuevo si seguía de fábrica · 1.96.7: también las versiones editadas del texto viejo ("…nos gustaría coordinar la entrega…", Victor)
   return c} // 1.96.2 (Victor): textos nuevos de los mensajes 2, 3, 5, 6 y 7; solo cambia los que seguían con el texto de fábrica (también si la nube trae los viejos)
 if(msgFab196())save();
-bind('#m-pref','pref');$('#vcfEj').textContent=vcfName({nombre:'Nombre',guia:'pedido'});bind('#m-yo','yo');bind('#m-fecha','fecha');bind('#m-coord','coord');bind('#m-camino','camino');bind('#m-comp','comp');bind('#m-ext','ext');bind('#m-entr','entr');bind('#m-h1','h1');bind('#m-h2','h2');bind('#m-form','form');bind('#r-start','start');bind('#r-hora','hora');bind('#r-vel','vel',1);bind('#r-min','min',1);bind('#r-filter','filter');
+bind('#m-pref','pref');$('#vcfEj').textContent=vcfName({nombre:'Nombre',guia:'pedido',num:12});bind('#m-yo','yo');bind('#m-fecha','fecha');bind('#m-coord','coord');bind('#m-camino','camino');bind('#m-comp','comp');bind('#m-ext','ext');bind('#m-entr','entr');bind('#m-h1','h1');bind('#m-h2','h2');bind('#m-form','form');bind('#r-start','start');bind('#r-hora','hora');bind('#r-vel','vel',1);bind('#r-min','min',1);bind('#r-filter','filter');
 $('#r-return').checked=!!S.ret;$('#r-return').onchange=e=>{S.ret=e.target.checked;save()};
 $('#m-fecha').placeholder=tomorrow();
 const grow=el=>{el.style.height='auto';el.style.height=el.scrollHeight+2+'px'};

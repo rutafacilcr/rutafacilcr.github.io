@@ -255,7 +255,7 @@ Solo `index.html`. Al abrir la app se corrigen solos los nombres ya guardados en
 
 ### Contactos del día (1.16.0)
 
-Solo `index.html`; el `.vcf` se arma en el celular, no pasa por Supabase ni por ningún servidor. En iPhone (1.16.1) se entrega con el menú de compartir (Web Share con archivos, iOS 15+), porque Safari solo importa el primer contacto de un `.vcf`.
+Solo `index.html`; el `.vcf` se arma en el celular, no pasa por Supabase ni por ningún servidor. Desde la 1.104.0 el nombre lleva el número fijo del paquete (`pk[].num`, ya guardado en la lista): *TM12-Nombre-pedido*; no hay SQL nuevo. En iPhone (1.16.1) se entrega con el menú de compartir (Web Share con archivos, iOS 15+), porque Safari solo importa el primer contacto de un `.vcf`.
 
 ### Confirmar entrega (1.15.4)
 
