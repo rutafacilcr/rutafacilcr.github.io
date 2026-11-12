@@ -23,6 +23,9 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.1 | — | *Crear cuenta* con los campos en blanco |
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
+## 2026-11-12
+- **1.102.0 · Hora de llegada en la Lista de Ruta:** en *Ruta > 📋 Lista* cada pendiente con ubicación trae la **hora aproximada de llegada** (🕐 ~8:15 am), contando desde la **Hora de inicio** que se pone arriba de la lista (o desde ahora). Arriba sale el inicio y la hora de la última entrega; se copia y se comparte igual que antes. Tiempo = manejo por calle sin tráfico + 4 min por entrega (la primera parada usa TomTom si está activo y sale ahora).
+
 ## 2026-11-11
 - **1.101.1 · Buscar por número en Mensajes:** el buscador de *Mensajes* ahora también encuentra el paquete por su **número asignado** (el mismo de Paquetes y Ruta). Si escribe 1 a 3 dígitos y hay un paquete con ese número, se ve solo ese; si no, busca como antes (nombre, guía, teléfono).
 - **1.101.0 · Número asignado al escanear:** en *Paquetes > Escanear*, apenas se lee la etiqueta aparece arriba a la derecha, en naranja, el **número asignado** que va a llevar el paquete (el mismo de Paquetes, Mensajes y Ruta). Si la guía ya está en la lista, sale en rojo con el número que ya tiene.

@@ -28,7 +28,7 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
   - Ordenar desde tu GPS o desde un punto del mapa (🎯 *Elegir en el mapa*: el mapa se marca en naranja con un aviso y *Cancelar*, y el toque vale aunque el dedo se mueva un poco o caiga sobre un pin; 1.95.3). Al tocar el punto sale *⏳ Ordenando la ruta…* y luego la pantalla vuelve arriba de Ruta (1.96.3). El punto elegido pasa a ser tu ubicación (punto azul) hasta que te movás más de 200 m (1.96.4).
   - ▶ Iniciar / ■ Finalizar entregas para el reporte. Desde ▶ Iniciar el orden de la ruta queda fijo (solo cambia si lo reordenás a mano).
   - Vehículo 🏍️ 🚙 🚐 (carro por defecto), que va en el WhatsApp "Estamos en camino 🏍️…".
-  - 📋 Lista en orden. Las paradas entregadas quedan en gris (sin tachar) en el mapa y la lista.
+  - 📋 Lista en orden. Las paradas entregadas quedan en gris (sin tachar) en el mapa y la lista. Desde la 1.102.0 la Lista trae la **hora aproximada de llegada** a cada parada, contando desde la hora de inicio que uno pone.
   - 🚦 Tráfico en vivo para la próxima parada (TomTom, plan gratis con clave propia).
   - En cada parada: Hold, ⛔ Devolver y ✓ Entregado. ⛔ Devolver saca la parada de la ruta y deja el paquete marcado en Paquetes. ✓ Entregado guarda la fecha y la hora reales.
 - **Cierres** (solo reportes que ya funcionan; sin avisos de "Próximamente"):
