@@ -373,7 +373,7 @@ Los enlaces de Google Maps se parten cada 10 paradas (límite de waypoints en Ma
 
 ## 3c-quater. Contadores (1.52.0)
 
-- `renderStats()`: Recibidos = `S.pk.length`; Entregados = `st==='entregado'`; Devueltos = `devuelto` o `p.devolver`; Hold = abiertos con alguna parada (`entParadasDe`) `hold && !done`; Sin ubicación = abiertos sin `parseCoord(p.ubic)` ni parada con `c`. `.stats` es `repeat(5,minmax(0,1fr))`; en celular centrado y letra de 11 px.
+- `renderStats()`: Recibidos = `S.pk.length`; Entregados = `st==='entregado'`; Devueltos = `devuelto` o `p.devolver`; Hold = abiertos con alguna parada (`entParadasDe`) `hold && !done`; Sin ubicación = abiertos sin `parseCoord(p.ubic)` ni parada con `c`. Desde 1.104.1 la tarjeta usa la misma regla con `pkCoordRuta(p)` (coordenadas de `p.ubic` o, si no hay, la `c` de la primera parada de `entParadasDe(p)`): `cc` decide `.sinub`, *● Ubicación lista / ○ Falta ubicación* y si *📋 Pegar ubicación* va `primary`; `pkChip()` oculta *Pedir ubicación* si `pkCoordRuta(p)` da algo. Solo se muestra: no se copia la coordenada al paquete (`p.ubic` no cambia, así *Mensajes* sigue igual). `.stats` es `repeat(5,minmax(0,1fr))`; en celular centrado y letra de 11 px.
 
 ## 3c-ter. Cierre (1.51.0)
 

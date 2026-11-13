@@ -158,7 +158,7 @@ Columnas: `nombre`, `telefono`, `direccion`, `ubicacion`, `guia`, `nota`.
 
 - **Teléfono:** los 8 dígitos. La app agrega el +506.
 - **Ubicación:** pegá el link completo que manda el cliente (`https://maps.google.com/?q=...`), un link de Waze o las coordenadas (`9.99,-84.11`). Debajo sale en verde **✓ Coordenadas detectadas**. Los links cortos tipo `maps.app.goo.gl` no se leen: abrilos primero y copiá el link largo.
-- Cada paquete muestra **● Ubicación lista** o **○ Falta ubicación**.
+- Cada paquete muestra **● Ubicación lista** o **○ Falta ubicación**. Desde la 1.104.1 también dice **● Ubicación lista** si el paquete no tiene ubicación propia pero su parada en *Ruta* sí (por ejemplo, cuando la ubicación vino en el Excel de la ruta). En ese caso no sale *Pedir ubicación*, el borde no es rojo y *📋 Pegar ubicación* queda en blanco. Las tarjetas con *○ Falta ubicación* (borde rojo) son las mismas que suma el cuadro **Sin 📍**.
 
 ### Día de entrega (pestaña **Entrega**)
 

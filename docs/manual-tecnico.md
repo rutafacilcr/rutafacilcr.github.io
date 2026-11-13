@@ -253,6 +253,10 @@ Solo `index.html`. Usa SheetJS 0.18.5, que ya se carga desde cdnjs para importar
 
 Solo `index.html`. Al abrir la app se corrigen solos los nombres ya guardados en el celular.
 
+### Tarjeta con ubicación de la ruta (1.104.1)
+
+Solo `index.html` (pantalla de *Paquetes*). No hay SQL nuevo ni cambia lo que se guarda en Supabase: la tarjeta toma la ubicación de la parada de la ruta (`S.ent.stops[].c`, que ya viaja en la lista) cuando el paquete no trae la suya.
+
 ### Contactos del día (1.16.0)
 
 Solo `index.html`; el `.vcf` se arma en el celular, no pasa por Supabase ni por ningún servidor. Desde la 1.104.0 el nombre lleva el número fijo del paquete (`pk[].num`, ya guardado en la lista): *TM12-Nombre-pedido*; no hay SQL nuevo. En iPhone (1.16.1) se entrega con el menú de compartir (Web Share con archivos, iOS 15+), porque Safari solo importa el primer contacto de un `.vcf`.

@@ -23,6 +23,9 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.1 | — | *Crear cuenta* con los campos en blanco |
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
+## 2026-11-13
+- **1.104.1 · Paquetes: ubicación de la ruta cuenta:** la tarjeta de un paquete que no tiene ubicación propia pero cuya parada en *Ruta* sí la tiene ya no dice *○ Falta ubicación* junto a *🏍️ En la ruta*: dice **● Ubicación lista**, sin borde rojo, sin *Pedir ubicación* y con *📋 Pegar ubicación* en blanco. Así las tarjetas en rojo son exactamente las que cuenta **Sin 📍**. No cambia ningún dato ni la pestaña *Mensajes*.
+
 ## 2026-11-12
 - **1.104.0 · Contactos con el número del paquete:** en *Mensajes*, **📇 Guardar contactos del día** y la columna *contacto* del **Excel del día** ahora nombran al cliente con el prefijo **más el número fijo del paquete**: *TM12-María Rojas-JCR123* (sin guía *TM12-María Rojas*). Si un mismo teléfono tiene varios paquetes, van los números y las guías juntos (*TM12/15-Sofía-PO1/PO2*). Los textos de los mensajes no cambian.
 - **1.103.0 · Pago especial del 11/11/2026:** en *Cierres > 💰 Ganancia* los paquetes entregados cuya **fecha de ingreso** es el **11/11/2026** se pagan a **₡600** cada uno; los demás siguen con la tarifa de ⚙️ Tarifas (₡500 de fábrica). Cambia Pago, Te quedó, Rentabilidad, el resumen por WhatsApp y el Excel.
