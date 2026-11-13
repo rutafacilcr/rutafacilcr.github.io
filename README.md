@@ -11,7 +11,7 @@ Herramienta web para repartidores de paquetes en Costa Rica. Cargás la lista de
 La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cierres**, **Mensajes** y **Ruta** (Paquetes y Ruta con una burbuja de lo que falta por entregar) y Ruta siempre muestra el mapa con tu ubicación, aunque no haya paradas (con la parte de arriba compacta); la ubicación que pongás en Ruta queda también en Paquetes. El botón **Soporte** está arriba, en el encabezado.
 
 - **Paquetes:**
-  - Seis contadores con color (1.94.0): Recibidos (negro), Entregados (verde), En ruta (azul), Hold (amarillo), Devueltos (rojo) y Sin 📍.
+  - Seis contadores con color (1.94.0): Recibidos (negro), Entregados (verde), En ruta (azul), Hold (amarillo), Devueltos (rojo) y Sin 📍. Desde la 1.104.1 las tarjetas que dicen *Falta ubicación* son exactamente las que cuenta *Sin 📍*: si la parada del paquete en la ruta ya tiene ubicación, la tarjeta dice *Ubicación lista*.
   - Tarjeta en orden Nombre, Guía, Tel. y Dirección; la nota se guarda en MAYÚSCULAS; *Devuelto* en rojo arriba a la derecha (1.94.0).
   - Cuatro botones grandes: 🧹 Vaciar lista, Agregar a mano, Importar y Escanear.
   - Un buscador por nombre, teléfono, guía o número.
