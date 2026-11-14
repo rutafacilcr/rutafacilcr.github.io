@@ -72,6 +72,7 @@ header.top{border-bottom:3px solid var(--accent)}
 .rfdlg-ojo{margin-top:12px;padding:8px 10px;border-radius:10px;background:rgba(242,169,0,.14);color:var(--ink);font-size:13px;font-weight:600}.rfdlg-ojo::before{content:'⚠ '}
 .rfdlg-btns{display:flex;flex-direction:column;gap:8px;margin-top:20px}
 .rfdlg-btns button{min-height:46px;border:0;border-radius:14px;font:600 15px var(--f-body);cursor:pointer;transition:filter .15s,transform .1s}
+.rfdlg-btns a{min-height:46px;border-radius:14px;font:700 15px var(--f-body);display:flex;align-items:center;justify-content:center} /* 1.105.0: botón-link de rfAviso */
 .rfdlg-btns button:active{transform:scale(.98);filter:brightness(.95)}
 .rfdlg-si{order:1;background:var(--accent);color:#fff}.rfdlg-si.mal{background:#c0392b}.rfdlg-no{order:2;background:transparent;color:var(--muted)}
 .rfdlg-btns button:focus{outline:none}.rfdlg-btns button:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(120,120,128,.25)}
@@ -563,7 +564,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
   </div>
   <!-- 1.99.10 (Victor): se eliminó la tarjeta "Reporte para pago" (#pagLista); repPdf(k,true) queda sin uso -->
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.104.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.105.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -2467,6 +2468,14 @@ $('#wzNo').onclick=wzCerrar;$('#wzGo').addEventListener('click',()=>setTimeout(w
 function entrAvisar(p){if(!p)return;const l=waLink(p,msgText(p,'entr'));if(!l)return;$('#enTxt').innerHTML=`¿Le avisás a <b>${esc(p.nombre||'el cliente')}</b> que su paquete fue entregado?`;$('#enGo').href=l;$('#enGo').dataset.id=p.id;$('#enSheet').hidden=false;document.body.style.overflow='hidden'}
 function enCerrar(){$('#enSheet').hidden=true;document.body.style.overflow=''}
 $('#enNo').onclick=enCerrar;$('#enGo').addEventListener('click',()=>{const p=S.pk.find(x=>x.id===$('#enGo').dataset.id);if(p){p.entrSent=true;save()}setTimeout(enCerrar,50)});$('#enSheet').addEventListener('click',e=>{if(e.target.id==='enSheet')enCerrar()});
+// 1.105.0 (Victor): aviso de devolución que se abre en el WhatsApp del cliente al tocar ⛔ Devolver en Ruta
+function devWaTexto(guia){return `Su paquete${guia?` con la GUIA: ${guia}`:''}, ha sido devuelto a las Bodegas de J&T Express, a partir de este momento, cualquier pregunta sobre el paquete se debe canalizar al +506 4600-9150 o servicioalcliente@jtexpress.cr`}
+function devWaUrl(q){const n=q&&phoneWA(q.tel);return n?`https://wa.me/${n}?text=${encodeURIComponent(devWaTexto(String(q.guia||'').trim()))}`:''}
+// Aviso de un solo botón (mismo estilo que rfConfirm). Con btn={href,txt} el botón naranja es un link (abre otra app dentro del toque).
+function rfAviso(tit,txt,btn){const w=document.createElement('div');w.className='rfdlg';w.innerHTML=`<div class="rfdlg-box" role="alertdialog" aria-modal="true" aria-labelledby="rfavT"><div class="rfdlg-ico" aria-hidden="true">${btn?'💬':'ℹ️'}</div><h3 id="rfavT"></h3><p></p><div class="rfdlg-btns">${btn?'<button type="button" class="rfdlg-no">Cerrar</button><a class="rfdlg-si" target="_blank" rel="noopener"></a>':'<button type="button" class="rfdlg-si">Entendido</button>'}</div></div>`;
+  w.querySelector('h3').textContent=tit;w.querySelector('p').textContent=txt;const si=w.querySelector('.rfdlg-si');if(btn){si.href=btn.href;si.textContent=btn.txt;si.style.textDecoration='none';si.style.textAlign='center'}
+  const fin=()=>{w.classList.remove('on');setTimeout(()=>w.remove(),150)};si.addEventListener('click',()=>setTimeout(fin,0));const no=w.querySelector('.rfdlg-no');if(no)no.onclick=fin;w.onclick=e=>{if(e.target===w)fin()};
+  document.body.appendChild(w);requestAnimationFrame(()=>w.classList.add('on'))}
 function entWaUrl(wa,t){return `https://wa.me/${wa}?text=${encodeURIComponent(`Estamos en camino ${vehIcono()}, le estaremos entregando su paquete${t?`, en ${t}`:''}\n\n*IMPORTANTE*\n- Mostrar la cédula para verificar la etiqueta del paquete.\n\n* POLÍTICA DE ENTREGA*\n- Si previo se había coordinado la entrega y se llega al lugar  y nadie puede recibirlo, el paquete será devuelto a bodega para una reprogramacion.\n- La entrega es totalmente *GRATIS* en el primer intento.\n- Se tendrá un segundo intento en el tanto la ruta así lo permita.\n- Si por alguna razón usted no puede recibir el paquete, pero lo puede recibir un tercero, indíquenos por WhatsApp el nombre y la cédula de esa persona; al llegar debe mostrar la cédula.`)}`}
 // Tráfico en vivo (1.70.0): TomTom Routing con traffic=true, plan gratis (2.500 consultas al día, sin tarjeta).
 // Solo se consulta la PRÓXIMA parada, cada 2 min o si te moviste 300 m: unas 300 consultas en un día largo.
@@ -2589,9 +2598,14 @@ $('#entList').addEventListener('click',async e=>{if(e.target.closest('[data-edon
     // 1.94.0 (Victor): primero una nota con el motivo (se suma a la que ya tenga), después la confirmación
     const nt=await pedir({ico:'⛔',titulo:`Devolver: ${s.nombre||'esta parada'}`,texto:`Escribí el motivo de la devolución.${(p?p.nota:s.nota)?`<br>Nota actual: <b>${esc(p?p.nota:s.nota)}</b> (la nueva se suma)`:''}`,label:'Nota',placeholder:'EJ: NO CONTESTA, NADIE EN CASA',si:'Seguir'});if(nt===null)return;
     if(!await rfConfirm(`¿Devolverá el paquete de ${s.nombre||'esta parada'}?\n${p?'Sale de la ruta y queda en Paquetes con ⛔ Devolver.':'Queda en la ruta pero desactivado.'}`))return;
+    // 1.105.0 (Victor): se abre aquí, todavía dentro del toque de "Devolver" (iPhone lo exige); lo de siempre sigue igual abajo
+    const dwa=devWaUrl(p||s),dvw=dwa?window.open(dwa,'_blank','noopener'):null;
     const nn=String(nt).trim().toUpperCase();if(nn){const q=p||s;q.nota=q.nota?q.nota+', '+nn:nn;if(p)entCopiarPk(p,entParadasDe(p))}
     if(p){p.devolver=true;p.devolverAt=Date.now();S.ent.quitadas=S.ent.quitadas||[];if(!S.ent.quitadas.includes(p.id))S.ent.quitadas.push(p.id);S.ent.stops.splice(k,1)}else{s.devolver=true;s.hold=false}
-    ESEL=-1;save();render();renderEnt();toast(`${s.nombre||'Parada'}: ${p?'salió de la ruta, queda en Paquetes para devolver':'para devolver'}`);return}
+    ESEL=-1;save();render();renderEnt();toast(`${s.nombre||'Parada'}: ${p?'salió de la ruta, queda en Paquetes para devolver':'para devolver'}`);
+    if(!dwa)setTimeout(()=>rfAviso('No se abrió WhatsApp',`${s.nombre||'Esta parada'} no tiene un teléfono válido. El paquete sí quedó para devolver; si querés avisarle, corregí el teléfono en Paquetes con Editar.`),300);
+    else if(!dvw)setTimeout(()=>rfAviso('Avisar al cliente',`El celular no dejó abrir WhatsApp solo. Tocá el botón para mandarle el aviso de devolución a ${s.nombre||'este cliente'}.`,{href:dwa,txt:'💬 Abrir WhatsApp'}),300);
+    return}
   const bvn=e.target.closest('[data-edevno]');if(bvn){const s=S.ent.stops[+bvn.dataset.edevno],p=entPkg(s);if(!s)return;if(!await rfConfirm(`¿Quitar "Devolver" a ${s.nombre||'esta parada'}?\nVuelve a estar activo en Paquetes, Mensajes y Ruta.`))return;delete s.devolver;if(p)delete p.devolver;
     save();render();if(EPOS||jorEnCurso()){entOrdenar(EPOS?EPOS.c:null,'donde estás');return}renderEnt();toast(`${s.nombre||'Parada'} vuelve a la ruta`);return}
   const bd=e.target.closest('[data-edone]');if(bd){const s=S.ent.stops[+bd.dataset.edone],p=entPkg(s);s.done=true;

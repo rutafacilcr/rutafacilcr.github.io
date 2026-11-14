@@ -23,6 +23,9 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.1 | — | *Crear cuenta* con los campos en blanco |
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
+## 2026-11-14
+- **1.105.0 · Ruta: aviso por WhatsApp al devolver:** al confirmar **⛔ Devolver** en una parada de *Ruta*, además de lo de siempre (nota, sale de la ruta, queda en Paquetes con ⛔ Devolver), se abre el WhatsApp del cliente con el mensaje listo: *"Su paquete con la GUIA: …, ha sido devuelto a las Bodegas de J&T Express…"* con el teléfono +506 4600-9150 y servicioalcliente@jtexpress.cr. Si el paquete no tiene teléfono, no se abre WhatsApp y la app lo avisa. Al volver de WhatsApp la app queda igual, en *Ruta*.
+
 ## 2026-11-13
 - **1.104.1 · Paquetes: ubicación de la ruta cuenta:** la tarjeta de un paquete que no tiene ubicación propia pero cuya parada en *Ruta* sí la tiene ya no dice *○ Falta ubicación* junto a *🏍️ En la ruta*: dice **● Ubicación lista**, sin borde rojo, sin *Pedir ubicación* y con *📋 Pegar ubicación* en blanco. Así las tarjetas en rojo son exactamente las que cuenta **Sin 📍**. No cambia ningún dato ni la pestaña *Mensajes*.
 
