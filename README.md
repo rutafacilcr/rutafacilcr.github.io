@@ -32,6 +32,7 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
   - Vehículo 🏍️ 🚙 🚐 (carro por defecto), que va en el WhatsApp "Estamos en camino 🏍️…".
   - 📋 Lista en orden. Las paradas entregadas quedan en gris (sin tachar) en el mapa y la lista. Desde la 1.102.0 la Lista trae la **hora aproximada de llegada** a cada parada, contando desde la hora de inicio que uno pone.
   - 🚦 Tráfico en vivo para la próxima parada (TomTom, plan gratis con clave propia).
+  - Parada a la que vas en azul (1.108.0): al tocar **🚗 Waze** o **🗺️ Maps** de una parada, su pin en el mapa se pone **azul** (más grande) y la ficha dice *🚗 Vas para acá*, hasta que toqués Waze o Maps de otra o la marqués hecha.
   - En cada parada: Hold, ⛔ Devolver y ✓ Entregado. ⛔ Devolver saca la parada de la ruta y deja el paquete marcado en Paquetes; desde la 1.105.1 ese paquete se puede corregir con *Editar* en Paquetes (por ejemplo el teléfono) sin quitarle la marca, y desde la 1.105.2 también los ya 🔴 Devueltos; desde la 1.105.0 también abre el WhatsApp del cliente con el aviso de que el paquete volvió a las bodegas de J&T Express y a dónde preguntar. ✓ Entregado guarda la fecha y la hora reales.
 - **Cierres** (solo reportes que ya funcionan; sin avisos de "Próximamente"):
   - Período arriba: **Hoy**, **Semana**, **Mes** o **Mes pasado** (1.93.0).
