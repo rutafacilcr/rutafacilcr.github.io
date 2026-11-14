@@ -253,6 +253,10 @@ Solo `index.html`. Usa SheetJS 0.18.5, que ya se carga desde cdnjs para importar
 
 Solo `index.html`. Al abrir la app se corrigen solos los nombres ya guardados en el celular.
 
+### Reporte de devoluciones (1.107.0)
+
+Solo `index.html`. Se arma en el celular con los mismos datos (paquetes actuales y cierres guardados) y el mismo jsPDF + autoTable de cdnjs que el *Reporte de entregas*. No hay SQL nuevo, consultas nuevas ni datos nuevos guardados: el motivo es el campo `nota` del paquete, que ya existía.
+
 ### Editar paquetes por devolver (1.105.1) y devueltos (1.105.2)
 
 Solo `index.html` (CSS de la tarjeta de *Paquetes*). No hay SQL nuevo ni cambia lo que se guarda en Supabase: el paquete conserva `devolver:true` al guardar la edición.
