@@ -352,6 +352,10 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
 .pkg .name>:is(.chip,.msgst,.coordbtn){margin-left:auto} /* 1.95.4 (Victor): la etiqueta o botón del estado siempre a la derecha, sin importar el largo del nombre */
 #pkgList .pkg:not(.entregado):not(.devol){border:2px solid var(--ink)} /* 1.95.4 (Victor): borde negro solo en los que están por entregar (1.95.5: no en devueltos ni para devolver) */
 #pkgList .pkg.sinub:not(.entregado):not(.devol){border:2px solid var(--bad,#d93025)} /* sin ubicación sigue en rojo */
+/* 1.105.1 (Victor): en Paquetes, los que están "por devolver" (⛔ Devolver de Ruta) dejan Editar activo; el resto de la tarjeta sigue desactivada. Los ya devueltos no cambian */
+#pkgList .pkg.devol.pordev>.actions{opacity:1;filter:none;pointer-events:auto}
+#pkgList .pkg.devol.pordev>.actions>.btn:not([data-act="edit"]){pointer-events:none}
+#pkgList .pkg.devol.pordev>.actions>.btn[data-act="edit"]{background:var(--surface)!important;color:var(--ink)!important;border:1px solid var(--ctl-line)!important;opacity:1;filter:none;pointer-events:auto}
 html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el encabezado deja espacio para la isla de arriba */
 #pkgList .pkg .actions .btn.camwa{background:#fff;color:#1f2125;border:1px solid #9aa0a6} /* 1.94.0 (Victor): botón 📷 en blanco */
 .pknota{color:#1f2125!important} /* 1.94.0 (Victor): nota amarilla con letra negra (se lee mejor), también en tarjetas apagadas */
@@ -895,7 +899,7 @@ function renderPk(){
   const bqn=/^\d{1,3}$/.test(bq)&&S.pk.some(p=>String(p.num)===bq);
   const ok=p=>bqn?String(p.num)===bq:!bq||bq.split(/\s+/).every(w=>nt(p.nombre).includes(w))||nt(p.guia).includes(bq)||(/^\d{1,3}$/.test(bq)&&String(p.num)===bq)||(bd.length>=3&&String(p.tel||'').replace(/\D/g,'').includes(bd.slice(-8)));
   const vis=S.pk.map((p,i)=>[p,i]).filter(([p])=>ok(p));if(!vis.length){L.innerHTML='<div class="empty">Ningún paquete coincide con la búsqueda.</div>';return}
-  const cards=vis.sort((a,b)=>rk(a[0])-rk(b[0])||pkGrupoT(a[0])-pkGrupoT(b[0])||a[1]-b[1]).map(([p],i)=>{const c=parseCoord(p.ubic),cc=c||pkCoordRuta(p);return `<div class="pkg${p.st==='entregado'?' entregado':''}${pkOff(p)?' devol':''}${!cc&&p.st!=='entregado'&&p.st!=='devuelto'&&!pkDevol(p)?' sinub':''}">
+  const cards=vis.sort((a,b)=>rk(a[0])-rk(b[0])||pkGrupoT(a[0])-pkGrupoT(b[0])||a[1]-b[1]).map(([p],i)=>{const c=parseCoord(p.ubic),cc=c||pkCoordRuta(p);return `<div class="pkg${p.st==='entregado'?' entregado':''}${pkOff(p)?' devol':''}${pkDevol(p)?' pordev':''}${!cc&&p.st!=='entregado'&&p.st!=='devuelto'&&!pkDevol(p)?' sinub':''}">
     <div class="num${p.st==='entregado'?' tachado':''}">${p.num||i+1}</div>
     <div class="name">${esc(p.nombre||'(sin nombre)')} ${pkChip(p)}</div>
     <div class="meta">${p.guia?`<span class="mono">Guía: ${esc(p.guia)}</span>`:''}<span class="mono">${p.tel?`Tel. ${esc(p.tel)}`:'sin teléfono'}</span></div>

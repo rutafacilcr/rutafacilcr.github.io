@@ -25,6 +25,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 
 ## 2026-11-14
 - **1.106.0 · Ruta: la parada a la que vas, en azul:** al tocar **🚗 Waze** o **🗺️ Maps** en una parada de *Ruta* (o **🚗 Abrir Waze** después del WhatsApp), el pin de ese paquete en el mapa queda **azul**, más grande y encima de los demás, y su ficha lleva borde azul y la etiqueta *🚗 Vas para acá*. Se queda así al volver de Waze o Maps, hasta que toqués Waze o Maps de otra parada o la marqués entregada o para devolver. No es el punto azul redondo de *Estás aquí*. No cambia *Mensajes* ni *Paquetes*.
+- **1.105.1 · Paquetes: editar los que están por devolver:** en las tarjetas marcadas **⛔ Devolver** el botón **Editar** ya se puede tocar (nombre, teléfono, dirección, ubicación, guía, nota). Al guardar, el paquete sigue por devolver. Los demás botones de esa tarjeta siguen desactivados y los ya **🔴 Devueltos** no cambian.
 - **1.105.0 · Ruta: aviso por WhatsApp al devolver:** al confirmar **⛔ Devolver** en una parada de *Ruta*, además de lo de siempre (nota, sale de la ruta, queda en Paquetes con ⛔ Devolver), se abre el WhatsApp del cliente con el mensaje listo: *"Su paquete con la GUIA: …, ha sido devuelto a las Bodegas de J&T Express…"* con el teléfono +506 4600-9150 y servicioalcliente@jtexpress.cr. Si el paquete no tiene teléfono, no se abre WhatsApp y la app lo avisa. Al volver de WhatsApp la app queda igual, en *Ruta*.
 
 ## 2026-11-13
