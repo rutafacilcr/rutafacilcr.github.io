@@ -578,7 +578,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div id="devLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.109.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.110.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -866,10 +866,12 @@ function devBar(p,enPk){if(p.st==='devuelto')return `<div class="devkeep"><butto
 // 1.92.4 (Victor): Pedir ubicación desde Paquetes después de las 9:30 p. m. (y hasta las 5 a. m.) empieza disculpándose por la hora
 const DISC_HORA='Ofrecemos una disculpa por la hora.',DISC_TIT='🤖 MENSAJE AUTOMÁTICO – COORDINACIÓN DE ENTREGA'; // 1.96.6 (Victor): título arriba, disculpa en la línea siguiente al saludo y "Buenas noches" al final
 function esTarde(d=new Date()){const m=d.getHours()*60+d.getMinutes();return m>=21*60+30||m<5*60}
-function pkCoordText(p){let t=coordText(p);if(!esTarde())return t;const i=t.indexOf('\n\n');t=i<0?DISC_HORA+'\n\n'+t:t.slice(0,i)+'\n'+DISC_HORA+'\n\n'+t.slice(i+2);t=t.replace(/¡Gracias!\s*$/,'¡Gracias! Buenas noches');return DISC_TIT+'\n\n'+t} // 1.96.6: de noche, título + disculpa debajo de "Hola {nombre} 👋" + "Buenas noches"
+function pkCoordText(p,conGuia){let t=coordText(p);if(conGuia)t=conGuiaTxt(t,p);if(!esTarde())return t;const i=t.indexOf('\n\n');t=i<0?DISC_HORA+'\n\n'+t:t.slice(0,i)+'\n'+DISC_HORA+'\n\n'+t.slice(i+2);t=t.replace(/¡Gracias!\s*$/,'¡Gracias! Buenas noches');return DISC_TIT+'\n\n'+t} // 1.96.6: de noche, título + disculpa debajo de "Hola {nombre} 👋" + "Buenas noches"
+// 1.110.0 (Victor): desde Paquetes (botón y Escanear & mensaje), Pedir ubicación lleva la guía: "…de TEMU Guía: JCR…, a su nombre…". Sin guía, o si el texto ya la trae, queda igual. Mensajes no cambia.
+function conGuiaTxt(t,p){const g=String(p.guia||'').trim();if(!g||t.includes(g))return t;return t.replace(/(\s)a su nombre/i,(m,sp)=>`${sp}Guía: ${g}, a su nombre`)}
 // 1.104.1 (Victor): coordenadas del paquete o, si no tiene, las de su parada en la ruta (misma regla que el resumen "Sin 📍")
 function pkCoordRuta(p){const c=parseCoord(p.ubic);if(c)return c;try{const s=entParadasDe(p).find(x=>x.c);return s?s.c:null}catch(e){return null}}
-function pkChip(p){if(p.st==='entregado'||p.st==='devuelto')return stChip(p);if(pkDevol(p))return '<span class="chip devtag on">⛔ Devolver</span>'; /* 1.94.0: arriba a la derecha (Victor) */let hd=false;try{hd=entParadasDe(p).some(x=>x.hold&&!x.done)}catch(e){}if(hd)return '<span class="msgst ms-hold">⏸ HOLD</span>'; /* 1.95.5 (Victor): los de Hold dicen HOLD también en Paquetes */if(pkCoordRuta(p))return ''; /* 1.104.1: tampoco si su parada en la ruta ya tiene ubicación. 1.91.0: Pedir ubicación solo sale si el paquete no tiene ubicación */const l=waLink(p,pkCoordText(p));
+function pkChip(p){if(p.st==='entregado'||p.st==='devuelto')return stChip(p);if(pkDevol(p))return '<span class="chip devtag on">⛔ Devolver</span>'; /* 1.94.0: arriba a la derecha (Victor) */let hd=false;try{hd=entParadasDe(p).some(x=>x.hold&&!x.done)}catch(e){}if(hd)return '<span class="msgst ms-hold">⏸ HOLD</span>'; /* 1.95.5 (Victor): los de Hold dicen HOLD también en Paquetes */if(pkCoordRuta(p))return ''; /* 1.104.1: tampoco si su parada en la ruta ya tiene ubicación. 1.91.0: Pedir ubicación solo sale si el paquete no tiene ubicación */const l=waLink(p,pkCoordText(p,true));
   return l?`<a class="coordbtn" href="${l}" target="_blank" rel="noopener" data-act="sent" data-k="coord" data-id="${p.id}" title="Abrir WhatsApp con el mensaje para pedir la ubicación (1. Coordinar)">Pedir ubicación${p.sent?' ✓':''}</a>`:`<span class="coordbtn off" title="Teléfono inválido: corregilo con Editar">Pedir ubicación</span>`} /* 1.91.0: antes decía "1. Coordinar" (Victor) */
 function stChip(p){if(p.st==='devuelto')return `<button class="chip devtag" data-act="st" data-id="${p.id}" title="Devuelto al almacén. Tocá para cambiar el estado">🔴 Devuelto</button>`; // 1.56.0: devueltos con la misma etiqueta que ⛔ Devolver
   return `<button class="chip st-${p.st}" data-act="st" data-id="${p.id}" title="Cambiar estado">${SLABEL[p.st]}</button>`}
@@ -1103,7 +1105,7 @@ document.addEventListener('click',async e=>{
   else if(a==='set'&&p){if(el.dataset.st==='entregado'&&p.st!=='entregado'){openPOD(p);return}p.st=el.dataset.st;pkReflejar(p);toast(`${p.nombre}: ${SLABEL[p.st]}`)}
   else if(a==='ev'&&p){openEvidence(p);return}
   else if(a==='paste'&&p){pasteReply(p);return}
-  else if(a==='sent'&&p){const k=el.dataset.k||'coord';if(el.classList.contains('coordbtn')||k==='coord'){const l=waLink(p,pkCoordText(p));if(l)el.href=l} /* 1.96.5: también en Mensajes */ /* 1.92.4: la hora se revisa al tocar, no al pintar */if(k==='coord')p.sent=true;else if(k==='form')p.formSent=true;else if(k==='camino')p.caminoSent=true;else p[k+'Sent']=true;delete p.msgSel;save();setTimeout(render,300);return}
+  else if(a==='sent'&&p){const k=el.dataset.k||'coord';if(el.classList.contains('coordbtn')||k==='coord'){const l=waLink(p,pkCoordText(p,!!el.closest('#v-paquetes')));if(l)el.href=l} /* 1.96.5: también en Mensajes · 1.110.0: con guía solo en Paquetes */ /* 1.92.4: la hora se revisa al tocar, no al pintar */if(k==='coord')p.sent=true;else if(k==='form')p.formSent=true;else if(k==='camino')p.caminoSent=true;else p[k+'Sent']=true;delete p.msgSel;save();setTimeout(render,300);return}
   else if(a==='msgsel'&&p){p.msgSel=el.dataset.k;save();renderMsg();return}
   else if(a==='copy'&&p){const t=msgText(p);try{await navigator.clipboard.writeText(t);toast('Mensaje copiado')}catch(err){const d=el.closest('.pkg').querySelector('details');d.open=true;const r=document.createRange();r.selectNodeContents(d.querySelector('.preview'));getSelection().removeAllRanges();getSelection().addRange(r);toast('Texto seleccionado, copialo')}return}
   else if(a==='del'&&p){const ps=entParadasDe(p);
@@ -2099,7 +2101,7 @@ $('#scanSave').onclick=()=>{
   if(again)$('#scanCam').click(); // abrir la cámara dentro del toque (iPhone lo exige)
   if(S.ex){S.pk=[];S.ex=false}
   const np=mkPkg(v);if(cp)np.cp=cp;S.pk.push(np);
-  if(SCAN.msg){const l=waLink(np,pkCoordText(np)); // se abre dentro del mismo toque (iPhone lo exige)
+  if(SCAN.msg){const l=waLink(np,pkCoordText(np,true)); // se abre dentro del mismo toque (iPhone lo exige)
     if(l){np.sent=true;window.open(l,'_blank','noopener')}else toast('Teléfono inválido: no se abrió WhatsApp. Corregilo con Editar.')}
   S.route=null;save();render();SCAN.n++;if(!SCAN.msg||!np.sent)toast(`Guardado: paquete #${np.num} (${SCAN.n} en esta tanda)`);
   if(SCAN.msg&&np.sent&&SCAN.live){SCAN.file=null;$('#scanImg').hidden=true;scanUI('wait');scanNumPintar(np.num,'Guardado');scanSt('Mandá el mensaje en WhatsApp y volvé: la cámara se abre sola para el siguiente.');return}
