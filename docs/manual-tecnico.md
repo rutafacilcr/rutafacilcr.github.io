@@ -253,6 +253,10 @@ Solo `index.html`. Usa SheetJS 0.18.5, que ya se carga desde cdnjs para importar
 
 Solo `index.html`. Al abrir la app se corrigen solos los nombres ya guardados en el celular.
 
+### Editar paquetes por devolver (1.105.1)
+
+Solo `index.html` (CSS de la tarjeta de *Paquetes*). No hay SQL nuevo ni cambia lo que se guarda en Supabase: el paquete conserva `devolver:true` al guardar la edición.
+
 ### Aviso de devolución por WhatsApp (1.105.0)
 
 Solo `index.html`. Abre un link `https://wa.me/506XXXXXXXX?text=…` en el WhatsApp del celular; no pasa por Supabase, no usa la API de WhatsApp ni cobra nada. No hay SQL nuevo ni datos nuevos guardados. El texto (teléfono +506 4600-9150 y servicioalcliente@jtexpress.cr de J&T Express) está en `devWaTexto()`: si J&T cambia esos datos, se cambian ahí.
