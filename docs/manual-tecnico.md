@@ -253,6 +253,10 @@ Solo `index.html`. Usa SheetJS 0.18.5, que ya se carga desde cdnjs para importar
 
 Solo `index.html`. Al abrir la app se corrigen solos los nombres ya guardados en el celular.
 
+### Parada a la que vas en azul (1.106.0)
+
+Solo `index.html`. No hay SQL nuevo. Se guarda una marca de hora `voy` en la parada que se tocó (`S.ent.stops[].voy`), dentro de la ruta que ya se guarda en el celular y en Supabase, así que sigue en azul al volver de Waze o Maps aunque el celular recargue la app, y se ve igual en otro aparato de la misma cuenta. Solo una parada la tiene a la vez.
+
 ### Aviso de devolución por WhatsApp (1.105.0)
 
 Solo `index.html`. Abre un link `https://wa.me/506XXXXXXXX?text=…` en el WhatsApp del celular; no pasa por Supabase, no usa la API de WhatsApp ni cobra nada. No hay SQL nuevo ni datos nuevos guardados. El texto (teléfono +506 4600-9150 y servicioalcliente@jtexpress.cr de J&T Express) está en `devWaTexto()`: si J&T cambia esos datos, se cambian ahí.
