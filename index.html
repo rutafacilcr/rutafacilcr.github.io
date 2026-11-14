@@ -422,6 +422,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
         <label>Ubicación (pegá el link o las coordenadas)<input id="f-ubic" placeholder="https://maps.google.com/?q=9.99,-84.11"><span id="f-ubic-ok" class="small" style="text-transform:none;letter-spacing:0;font-weight:500"></span></label>
         <label>Guía / pedido<input id="f-guia"></label>
       </div>
+      <label>C.P. (código postal)<input id="f-cp" class="mono" inputmode="numeric" maxlength="5" placeholder="40307"></label>
       <label>Nota<input id="f-nota" placeholder="EJ: SOLO DESPUÉS DE LAS 2 PM" style="text-transform:uppercase"></label>
       <label>Pertenece a<select id="f-lote"></select></label>
       <div class="row"><button class="btn primary" type="submit" id="saveBtn">Agregar</button><button class="btn ghost" type="button" id="cancelEdit" hidden>Cancelar</button></div>
@@ -577,7 +578,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div id="devLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.108.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.109.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -654,6 +655,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
   <form id="scanForm" class="list" hidden onsubmit="return false">
     <label>Guía<input id="s-guia" class="mono" autocomplete="off"></label>
     <p class="small" id="scanDup" hidden style="color:var(--bad);margin:0"></p>
+    <label>C.P. (código postal)<input id="s-cp" class="mono" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="40307"></label>
     <label>Nombre<input id="s-nombre" autocomplete="off"></label>
     <label>Teléfono<input id="s-tel" inputmode="tel" autocomplete="off" placeholder="8888-1234"></label>
     <label>Dirección<textarea id="s-dir" rows="3"></textarea></label>
@@ -908,7 +910,7 @@ function renderPk(){
   const cards=vis.sort((a,b)=>rk(a[0])-rk(b[0])||pkGrupoT(a[0])-pkGrupoT(b[0])||a[1]-b[1]).map(([p],i)=>{const c=parseCoord(p.ubic),cc=c||pkCoordRuta(p);return `<div class="pkg${p.st==='entregado'?' entregado':''}${pkOff(p)?' devol':''}${pkOff(p)?' pordev':''}${!cc&&p.st!=='entregado'&&p.st!=='devuelto'&&!pkDevol(p)?' sinub':''}">
     <div class="num${p.st==='entregado'?' tachado':''}">${p.num||i+1}</div>
     <div class="name">${esc(p.nombre||'(sin nombre)')} ${pkChip(p)}</div>
-    <div class="meta">${p.guia?`<span class="mono">Guía: ${esc(p.guia)}</span>`:''}<span class="mono">${p.tel?`Tel. ${esc(p.tel)}`:'sin teléfono'}</span></div>
+    <div class="meta">${p.guia?`<span class="mono">Guía: ${esc(p.guia)}</span>`:''}${p.cp?`<span class="mono">C.P. ${esc(p.cp)}</span>`:''}<span class="mono">${p.tel?`Tel. ${esc(p.tel)}`:'sin teléfono'}</span></div>
     <div class="addr">${esc(p.dir||'Sin dirección')}${p.nota?`<div class="pknota">📝 ${esc(p.nota)}</div>`:''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
     <div class="meta"><span class="pin ${cc?'yes':'no'}">${cc?'● Ubicación lista':'○ Falta ubicación'}</span>${S.ent&&S.ent.stops?(enR[p.id]?(enR[p.id].c||!c||p.st==='entregado'||p.st==='devuelto'?`<span class="small muted">🏍️ En la ruta${enR[p.id].c?'':' (sin ubicación)'}</span>`:''):c&&p.st!=='entregado'&&p.st!=='devuelto'?'':'<span class="small muted">No está en la ruta</span>'):''}</div>${p.ubic&&!c?`<div class="small ubwarn" style="color:var(--bad)">⚠ No reconozco esta ubicación (${esc(String(p.ubic).slice(0,40))}). Pegá el link que trae coordenadas, por ejemplo el de "Compartir ubicación" de WhatsApp o un link de Waze.</div>`:''}${p.pod?`<div class="ev">📷 ${p.pod.n} fotos · ${fmtDT(p.pod.at)}${p.pod.lat!=null?' · 📍 ±'+Math.round(p.pod.acc)+' m':' · sin GPS'} · ${p.pod.up?'☁️ respaldada':'⏳ sin subir'} <button class="btn sm" data-act="ev" data-id="${p.id}" style="margin-left:4px">Ver evidencia</button></div>`:p.entAt?`<div class="ev">✓ Entregado ${fmtDT(p.entAt)}${p.entGps?` · <a href="https://www.google.com/maps?q=${p.entGps.lat},${p.entGps.lng}" target="_blank" rel="noopener">📍 dónde (±${p.entGps.acc} m)</a>`:' · sin GPS'}</div>`:''}
     <div class="pkruta">${enR[p.id]?(enR[p.id].c||!c||p.st==='entregado'||p.st==='devuelto'?'':`<button class="btn sm" data-act="aruta" data-id="${p.id}">📍 Poner en la ruta</button>`):p.st!=='entregado'&&p.st!=='devuelto'&&!p.devolver?`<button class="btn sm" data-act="aruta" data-id="${p.id}">➕ Agregar a la ruta</button>`:''}<button class="btn sm${cc?"":" primary"}" data-act="paste" data-id="${p.id}">📋 Pegar ubicación</button></div>
@@ -1108,7 +1110,7 @@ document.addEventListener('click',async e=>{
     if(!await rfConfirm(`¿Eliminar el paquete #${p.num||''} de ${p.nombre||'este cliente'}?\n${ps.length?'También se quita su parada de la Ruta.\n':''}Esto no se puede deshacer.`))return;
     if(ps.length&&S.ent){S.ent.stops=S.ent.stops.filter(x=>!ps.includes(x));let k=0;S.ent.stops.forEach(x=>{if(x.c)x.n=++k});ESEL=-1;entMod()}
     S.pk=S.pk.filter(x=>x!==p);S.route=null;toast(ps.length?'Paquete borrado de Paquetes, Mensajes y Ruta':'Paquete borrado');save();render();if(typeof renderEnt==='function')renderEnt();return}
-  else if(a==='edit'&&p){document.querySelector('[data-tab="paquetes"]').click();editId=p.id;$('#f-nombre').value=p.nombre||'';$('#f-tel').value=p.tel||'';$('#f-dir').value=p.dir||'';$('#f-ubic').value=p.ubic||'';$('#f-guia').value=p.guia||'';$('#f-nota').value=p.nota||'';loteLlenar(repDia(p.ing));subAbrir('formPanel');$('#formTitle').textContent='Editar paquete';$('#saveBtn').textContent='Guardar cambios';$('#cancelEdit').hidden=false;return}
+  else if(a==='edit'&&p){document.querySelector('[data-tab="paquetes"]').click();editId=p.id;$('#f-nombre').value=p.nombre||'';$('#f-tel').value=p.tel||'';$('#f-dir').value=p.dir||'';$('#f-ubic').value=p.ubic||'';$('#f-guia').value=p.guia||'';$('#f-cp').value=p.cp||'';$('#f-nota').value=p.nota||'';loteLlenar(repDia(p.ing));subAbrir('formPanel');$('#formTitle').textContent='Editar paquete';$('#saveBtn').textContent='Guardar cambios';$('#cancelEdit').hidden=false;return}
   save();render();
 });
 // Lote (1.61.0): un paquete agregado a mano o editado pertenece a unas "Entregas del …" (su fecha de recibido, p.ing).
@@ -1135,10 +1137,11 @@ const ubicCheck=()=>{const v=$('#f-ubic').value.trim(),c=parseCoord(v),o=$('#f-u
 $('#f-ubic').addEventListener('input',ubicCheck);
 $('#pkgForm').onsubmit=async e=>{e.preventDefault();
   const v=['nombre','tel','dir','ubic','guia','nota'].map(k=>$('#f-'+k).value);
-  if(editId){const p=S.pk.find(x=>x.id===editId);const n=mkPkg(v);
-    const cam=[['Nombre','nombre'],['Teléfono','tel'],['Dirección','dir'],['Ubicación','ubic'],['Guía','guia']].filter(([l,k])=>{const a=String(p[k]||'').trim(),b=String(n[k]||'').trim();if(k==='ubic'){const ca=parseCoord(a),cb=parseCoord(b);if(ca&&cb)return Math.abs(ca[0]-cb[0])>1e-6||Math.abs(ca[1]-cb[1])>1e-6}if(k==='tel')return a.replace(/\D/g,'')!==b.replace(/\D/g,'');return a!==b}).map(([l,k])=>`• ${l}: "${p[k]||'—'}" → "${n[k]||'—'}"`);
-    if(cam.length&&!await rfConfirm(`¿Guardar estos cambios de ${p.nombre||'este paquete'}?\n${cam.join('\n')}\n\nSe actualizan en Paquetes, Mensajes y Ruta.`))return;const ps=entParadasDe(p);if(p.tel&&phoneWA(p.tel)!==phoneWA(n.tel))p.telsAnt=[...new Set([...(p.telsAnt||[]),p.tel])];const teniaC=!!parseCoord(p.ubic);Object.assign(p,{nombre:n.nombre,tel:n.tel,dir:n.dir,ubic:n.ubic,guia:n.guia,nota:n.nota,ing:loteIng($('#f-lote').value,p.ing)});entCopiarPk(p,ps);if(teniaC&&!parseCoord(p.ubic))ps.forEach(x=>{if(!entDone(x)){delete x.c;x.ub=''}});/* 1.86.1: si se borra la ubicación, la parada sale del mapa (queda en Ruta como sin ubicación) */S.route=null;save();render();toast('Cambios guardados')}
-  else{const k=$('#f-lote').value;if(S.ex){S.pk=[];S.ex=false;S.nums={}}const n=mkPkg(v);n.ing=loteIng(k);S.pk.push(n);S.route=null;save();render();toast(`Paquete agregado a ${repEntregasDe(repDia(n.ing))}`)}
+  const cpF=$('#f-cp').value.replace(/\D/g,'').slice(0,5); // 1.109.0
+  if(editId){const p=S.pk.find(x=>x.id===editId);const n=mkPkg(v);n.cp=cpF;
+    const cam=[['Nombre','nombre'],['Teléfono','tel'],['Dirección','dir'],['Ubicación','ubic'],['Guía','guia'],['C.P.','cp']].filter(([l,k])=>{const a=String(p[k]||'').trim(),b=String(n[k]||'').trim();if(k==='ubic'){const ca=parseCoord(a),cb=parseCoord(b);if(ca&&cb)return Math.abs(ca[0]-cb[0])>1e-6||Math.abs(ca[1]-cb[1])>1e-6}if(k==='tel')return a.replace(/\D/g,'')!==b.replace(/\D/g,'');return a!==b}).map(([l,k])=>`• ${l}: "${p[k]||'—'}" → "${n[k]||'—'}"`);
+    if(cam.length&&!await rfConfirm(`¿Guardar estos cambios de ${p.nombre||'este paquete'}?\n${cam.join('\n')}\n\nSe actualizan en Paquetes, Mensajes y Ruta.`))return;const ps=entParadasDe(p);if(p.tel&&phoneWA(p.tel)!==phoneWA(n.tel))p.telsAnt=[...new Set([...(p.telsAnt||[]),p.tel])];const teniaC=!!parseCoord(p.ubic);Object.assign(p,{nombre:n.nombre,tel:n.tel,dir:n.dir,ubic:n.ubic,guia:n.guia,nota:n.nota,ing:loteIng($('#f-lote').value,p.ing)});if(cpF)p.cp=cpF;else delete p.cp;entCopiarPk(p,ps);if(teniaC&&!parseCoord(p.ubic))ps.forEach(x=>{if(!entDone(x)){delete x.c;x.ub=''}});/* 1.86.1: si se borra la ubicación, la parada sale del mapa (queda en Ruta como sin ubicación) */S.route=null;save();render();toast('Cambios guardados')}
+  else{const k=$('#f-lote').value;if(S.ex){S.pk=[];S.ex=false;S.nums={}}const n=mkPkg(v);n.ing=loteIng(k);if(cpF)n.cp=cpF;S.pk.push(n);S.route=null;save();render();toast(`Paquete agregado a ${repEntregasDe(repDia(n.ing))}`)}
   resetForm();subAbrir(null);
 };
 $('#importBtn').onclick=()=>{if(!$('#pasteBox').value.trim()){toast('Pegá primero las filas');return}addPkgs(parseText($('#pasteBox').value));$('#pasteBox').value='';subAbrir(null)};
@@ -1898,7 +1901,7 @@ async function leerTexto(L){
   const pasadas=cr?[()=>readText(cr),()=>readText(binarizar(cr),'11'),()=>readText(L.c)]:[()=>readText(L.c)];
   const K=['guia','nombre','tel','dir'],n=r=>K.filter(k=>r[k]).length;let best=null,textos=[];
   for(const p of pasadas){const t=await p();textos.push(t);const r=parseLabel(t,L.codes);
-    if(!best)best=r;else K.forEach(k=>{if(!best[k]&&r[k])best[k]=r[k]}) // la primera pasada (la más limpia) manda; las otras rellenan
+    if(!best)best=r;else[...K,'cp'].forEach(k=>{if(!best[k]&&r[k])best[k]=r[k]}) // la primera pasada (la más limpia) manda; las otras rellenan
     if(n(best)===4)break}
   return{text:textos.join('\n\n— otra pasada —\n\n'),r:best};
 }
@@ -1924,8 +1927,11 @@ const L_NAME=/^(?:.*?\b)?(destinatari[oa]|recipient|consignee|ship\s*to|deliver\
 const L_TEL=/(?:\+?\s?506[\s-]?)?\b([245678]\d{3})[\s-]?(\d{4})\b/g;
 // Etiqueta J&T Express (la de Temu en Costa Rica): "Nombre: …", "C.P: … /Tel: …", la dirección en
 // 1–3 líneas y cierra con "Distrito/Cantón/Provincia". Después viene el remitente (YC - Log, China): se ignora.
+// 1.109.0: C.P. = código postal de Costa Rica (5 dígitos: provincia 1–7, cantón, distrito). Va antes de "/Tel".
+function cpDe(lines){for(const l of lines){const m=l.replace(/(c\.?\s?p\s*[:;.]?\s*)([\dOoIl\s]{5,8})/i,(a,b,c)=>b+c.replace(/[Oo]/g,'0').replace(/[Il]/g,'1')).match(/c\.?\s?p\s*[:;.]?\s*(\d\s?\d\s?\d\s?\d\s?\d)(?!\d)/i);
+    if(m&&!/yc\s*-?\s*l[o0]g|guangdong|526200/i.test(l)){const d=m[1].replace(/\s/g,'');if(/^[1-7]\d{4}$/.test(d))return d}}return''}
 function parseJT(lines){
-  const r={nombre:'',tel:'',dir:''};
+  const r={nombre:'',tel:'',dir:'',cp:''};
   let iN=lines.findIndex(l=>/n[o0]mbre\s*[:;.]/i.test(l)&&!/yc\s*-?\s*l[o0]g/i.test(l));
   if(iN>-1){const m=lines[iN].match(/n[o0]mbre\s*[:;.]\s*(.*)$/i);let nm=m[1]||'';
     if(nm.replace(/[^A-Za-zÁ-ú]/g,'').length<4&&lines[iN+1]&&!/t[e€]l\s*[:;.]|c\.?\s?p\s*[:;.]/i.test(lines[iN+1])){nm=lines[iN+1];iN++} // el nombre quedó en la línea de abajo
@@ -1933,6 +1939,7 @@ function parseJT(lines){
   const iT=lines.findIndex((l,i)=>i>=iN&&/t[e€]l\s*[:;.]|c\.?\s?p\s*[:;.]/i.test(l));
   if(iT>-1){const m=lines[iT].replace(/[oO]/g,'0').match(/t[e€]l\s*[:;.]?\s*([\d\s'’.-]{8,12})/i);
     const d=m?m[1].replace(/\D/g,''):'';if(/^[245678]\d{7}$/.test(d))r.tel=d.slice(0,4)+'-'+d.slice(4)}
+  r.cp=cpDe(lines); // 1.109.0 (Victor): el C.P. (código postal) del cliente, ej. "C.P: 40307 /Tel: …"
   const desde=iT>-1?iT+1:iN>-1?iN+1:-1;
   if(desde>0){const ds=[];
     for(let i=desde;i<lines.length;i++){const l=lines[i];
@@ -1949,13 +1956,14 @@ function parseJT(lines){
 }
 function parseLabel(text,codes){
   const lines=text.split('\n').map(l=>l.replace(/[|_~«»]+/g,' ').replace(/\s+/g,' ').trim()).filter(l=>l.length>1);
-  const r={guia:'',nombre:'',tel:'',dir:''};
+  const r={guia:'',nombre:'',tel:'',dir:'',cp:''};
   const gc=codes.map(c=>c.replace(/\s/g,'')).sort((a,b)=>/^[A-Z]{2,5}\d{8,}$/.test(b)-/^[A-Z]{2,5}\d{8,}$/.test(a)||b.length-a.length);
   r.guia=gc[0]||'';
   if(/^JCR/.test(r.guia)||/c\.?\s?p\s*[:;.].{0,20}t[e€]l/i.test(text)){const j=parseJT(lines);
     const ok=j.nombre.replace(/[^A-Za-zÁ-ú]/g,'').length>=4&&j.nombre.split(' ').length>=2;
-    if(ok&&j.tel&&j.dir.length>8)return{guia:r.guia,nombre:cleanName(j.nombre),tel:j.tel,dir:j.dir};
+    if(ok&&j.tel&&j.dir.length>8)return{guia:r.guia,nombre:cleanName(j.nombre),tel:j.tel,dir:j.dir,cp:j.cp};
     r.jt=j;r.jtOk=ok}
+  r.cp=cpDe(lines);
   if(!r.guia){const m=text.match(/\b([A-Z]{2,5})\s?((?:\d\s?){9,16}\d)\b/);if(m)r.guia=(m[1]+m[2]).replace(/\s/g,'')}
   const gd=r.guia.replace(/\D/g,'');
   let tels=[];
@@ -2004,7 +2012,7 @@ function closeScan(){liveStop();SCAN.msg=false;const fx=SCAN.fix;SCAN.fix=null;$
 async function scanFile(file,rot=0){
   SCAN.file=file;SCAN.rot=rot;SCAN.busy=true;
   if(SCAN.url)URL.revokeObjectURL(SCAN.url);SCAN.url=URL.createObjectURL(file);$('#scanImg').src=SCAN.url;$('#scanImg').hidden=false;$('#scanImg').style.transform=`rotate(${rot*90}deg)`;
-  ['guia','nombre','tel','dir','nota'].forEach(k=>$('#s-'+k).value='');$('#scanRaw').textContent='';$('#scanDup').hidden=true;
+  ['guia','nombre','tel','dir','nota','cp'].forEach(k=>$('#s-'+k).value='');$('#scanRaw').textContent='';$('#scanDup').hidden=true;
   scanUI('busy');$('#scanForm').hidden=false;scanSt('Buscando el código de barras…');
   let codes=[],text='',fail='';
   let best=null;
@@ -2015,8 +2023,8 @@ async function scanFile(file,rot=0){
   }catch(e){fail='foto'}
   if(SCAN.file!==file)return;
   const r=best||parseLabel(text,codes);
-  ['guia','nombre','tel','dir'].forEach(k=>{if(r[k])$('#s-'+k).value=r[k]});
-  const fx=SCAN.fix&&S.pk.find(x=>x.id===SCAN.fix);if(fx)['guia','nombre','tel','dir','nota'].forEach(k=>{if(!$('#s-'+k).value)$('#s-'+k).value=fx[k]||''});scanDupCheck();
+  ['guia','nombre','tel','dir','cp'].forEach(k=>{if(r[k])$('#s-'+k).value=r[k]});
+  const fx=SCAN.fix&&S.pk.find(x=>x.id===SCAN.fix);if(fx)['guia','nombre','tel','dir','nota','cp'].forEach(k=>{if(!$('#s-'+k).value)$('#s-'+k).value=fx[k]||''});scanDupCheck();
   $('#scanRaw').textContent=(codes.length?'Código: '+codes.join(' · ')+'\n\n':'')+(text.trim()||'(sin texto)');
   const got=['guia','nombre','tel','dir'].filter(k=>r[k]).length;
   scanSt(fail==='foto'?'No se pudo abrir esa foto. Tomala de nuevo.':fail&&!got?'No se pudo cargar el lector. Revisá el internet y tocá "Girar y leer de nuevo", o llená los datos a mano.':
@@ -2084,13 +2092,13 @@ $('#scanSkip').onclick=()=>{if(!SCAN.busy)scanNext()};
 $('#scanEnd').onclick=closeScan;
 $('#scanSave').onclick=()=>{
   if(SCAN.busy)return;
-  const v=['nombre','tel','dir','','guia','nota'].map(k=>k?$('#s-'+k).value:'');
+  const v=['nombre','tel','dir','','guia','nota'].map(k=>k?$('#s-'+k).value:'');const cp=$('#s-cp').value.replace(/\D/g,'').slice(0,5);
   if(!v[0].trim()&&!v[1].trim()&&!v[4].trim()){toast('Poné al menos el nombre, el teléfono o la guía');return}
-  if(SCAN.fix){const p=S.pk.find(x=>x.id===SCAN.fix);if(p){const n=mkPkg(v);const ps=entParadasDe(p);if(p.tel&&phoneWA(p.tel)!==phoneWA(n.tel))p.telsAnt=[...new Set([...(p.telsAnt||[]),p.tel])];Object.assign(p,{nombre:n.nombre,tel:n.tel,dir:n.dir,guia:n.guia,nota:n.nota});entCopiarPk(p,ps);S.route=null;save();render();toast(`Corregido: ${p.nombre||p.guia}`)}closeScan();return}
+  if(SCAN.fix){const p=S.pk.find(x=>x.id===SCAN.fix);if(p){const n=mkPkg(v);const ps=entParadasDe(p);if(p.tel&&phoneWA(p.tel)!==phoneWA(n.tel))p.telsAnt=[...new Set([...(p.telsAnt||[]),p.tel])];Object.assign(p,{nombre:n.nombre,tel:n.tel,dir:n.dir,guia:n.guia,nota:n.nota});if(cp)p.cp=cp;entCopiarPk(p,ps);S.route=null;save();render();toast(`Corregido: ${p.nombre||p.guia}`)}closeScan();return}
   const again=!SCAN.queue.length&&SCAN.cam&&!SCAN.live&&!SCAN.msg; // con mensaje se abre WhatsApp, no la cámara; en vivo, scanNext vuelve a abrir la cámara sola
   if(again)$('#scanCam').click(); // abrir la cámara dentro del toque (iPhone lo exige)
   if(S.ex){S.pk=[];S.ex=false}
-  const np=mkPkg(v);S.pk.push(np);
+  const np=mkPkg(v);if(cp)np.cp=cp;S.pk.push(np);
   if(SCAN.msg){const l=waLink(np,pkCoordText(np)); // se abre dentro del mismo toque (iPhone lo exige)
     if(l){np.sent=true;window.open(l,'_blank','noopener')}else toast('Teléfono inválido: no se abrió WhatsApp. Corregilo con Editar.')}
   S.route=null;save();render();SCAN.n++;if(!SCAN.msg||!np.sent)toast(`Guardado: paquete #${np.num} (${SCAN.n} en esta tanda)`);
