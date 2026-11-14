@@ -340,7 +340,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
 /* 1.92.4 (Victor): nota del paquete en letra blanca con fondo amarillo */.pknota{margin-top:4px;padding:4px 8px;border-radius:8px;background:#e0a100;color:#fff;font-weight:700;font-size:.92em;display:inline-block;max-width:100%;overflow-wrap:anywhere}
 /* ===== 1.94.0 · Lista de mejoras de Victor (noviembre) ===== */
 .epin.dev{background:#7f1d1d;opacity:.85;border-style:dashed}
-/* 1.106.0 (Victor): la parada a la que vas (tocaste Waze o Maps) queda en azul fuerte, más grande y con anillo; distinto del punto azul redondo de "Estás aquí" */
+/* 1.108.0 (Victor): la parada a la que vas (tocaste Waze o Maps) queda en azul fuerte, más grande y con anillo; distinto del punto azul redondo de "Estás aquí" */
 .epin.voy,.epin.voy.sel,.epin.hold.voy{background:#1d4ed8;width:38px;height:38px;border-width:3px;box-shadow:0 0 0 3px rgba(29,78,216,.35),0 2px 6px rgba(0,0,0,.5)}.epin.voy b,.epin.hold.voy b{color:#fff;font-size:13px}
 .voytag{display:inline-block;margin-left:4px;padding:1px 8px;border-radius:999px;background:#1d4ed8;color:#fff;font:700 12px var(--f-body);vertical-align:middle}.estop.voy{border-color:#1d4ed8;box-shadow:0 0 0 2px #1d4ed8}.estop.voy .n{background:#1d4ed8;color:#fff}
 .msgst.ms-ent{background:#15803d;color:#fff;border-color:#15803d}.msgst.ms-dev{background:#c0392b;color:#fff;border-color:#c0392b}.msgst.ms-hold{background:#facc15;color:#1f2125;border-color:#ca8a04}
@@ -352,7 +352,7 @@ nav.tabs button[aria-selected="true"]{color:var(--accent-text);font-weight:700}
 .pkg .name>:is(.chip,.msgst,.coordbtn){margin-left:auto} /* 1.95.4 (Victor): la etiqueta o botón del estado siempre a la derecha, sin importar el largo del nombre */
 #pkgList .pkg:not(.entregado):not(.devol){border:2px solid var(--ink)} /* 1.95.4 (Victor): borde negro solo en los que están por entregar (1.95.5: no en devueltos ni para devolver) */
 #pkgList .pkg.sinub:not(.entregado):not(.devol){border:2px solid var(--bad,#d93025)} /* sin ubicación sigue en rojo */
-/* 1.105.1 (Victor): en Paquetes, los que están "por devolver" (⛔ Devolver de Ruta) dejan Editar activo; el resto de la tarjeta sigue desactivada. Los ya devueltos no cambian */
+/* 1.105.1 (Victor): en Paquetes, los que están "por devolver" (⛔ Devolver de Ruta) dejan Editar activo; el resto de la tarjeta sigue desactivada. 1.105.2: también los 🔴 Devueltos */
 #pkgList .pkg.devol.pordev>.actions{opacity:1;filter:none;pointer-events:auto}
 #pkgList .pkg.devol.pordev>.actions>.btn:not([data-act="edit"]){pointer-events:none}
 #pkgList .pkg.devol.pordev>.actions>.btn[data-act="edit"]{background:var(--surface)!important;color:var(--ink)!important;border:1px solid var(--ctl-line)!important;opacity:1;filter:none;pointer-events:auto}
@@ -570,8 +570,14 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div id="repLista"></div><span class="small muted" id="repInfo"></span>
   </div>
   <!-- 1.99.10 (Victor): se eliminó la tarjeta "Reporte para pago" (#pagLista); repPdf(k,true) queda sin uso -->
+  <!-- 1.107.0 (Victor): Reporte de devoluciones = Reporte de entregas solo con devueltos, sin hora de entrega, tiempo ni km desde anterior, y con Motivo de devolución (la nota del paquete) -->
+  <div class="panel">
+    <h2>Reporte de devoluciones</h2>
+    <p class="small muted">Un reporte por cada día en que se recibieron paquetes, solo con los <b>devueltos</b> (y los marcados ⛔ Devolver): número, guía / pedido, teléfono, nombre, fecha recibido, estado, fecha de devolución y <b>motivo de devolución</b> (la nota que escribiste al tocar ⛔ Devolver). Tocá <b>📄 PDF</b> para bajarlo.</p>
+    <div id="devLista"></div>
+  </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.106.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.108.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -899,7 +905,7 @@ function renderPk(){
   const bqn=/^\d{1,3}$/.test(bq)&&S.pk.some(p=>String(p.num)===bq);
   const ok=p=>bqn?String(p.num)===bq:!bq||bq.split(/\s+/).every(w=>nt(p.nombre).includes(w))||nt(p.guia).includes(bq)||(/^\d{1,3}$/.test(bq)&&String(p.num)===bq)||(bd.length>=3&&String(p.tel||'').replace(/\D/g,'').includes(bd.slice(-8)));
   const vis=S.pk.map((p,i)=>[p,i]).filter(([p])=>ok(p));if(!vis.length){L.innerHTML='<div class="empty">Ningún paquete coincide con la búsqueda.</div>';return}
-  const cards=vis.sort((a,b)=>rk(a[0])-rk(b[0])||pkGrupoT(a[0])-pkGrupoT(b[0])||a[1]-b[1]).map(([p],i)=>{const c=parseCoord(p.ubic),cc=c||pkCoordRuta(p);return `<div class="pkg${p.st==='entregado'?' entregado':''}${pkOff(p)?' devol':''}${pkDevol(p)?' pordev':''}${!cc&&p.st!=='entregado'&&p.st!=='devuelto'&&!pkDevol(p)?' sinub':''}">
+  const cards=vis.sort((a,b)=>rk(a[0])-rk(b[0])||pkGrupoT(a[0])-pkGrupoT(b[0])||a[1]-b[1]).map(([p],i)=>{const c=parseCoord(p.ubic),cc=c||pkCoordRuta(p);return `<div class="pkg${p.st==='entregado'?' entregado':''}${pkOff(p)?' devol':''}${pkOff(p)?' pordev':''}${!cc&&p.st!=='entregado'&&p.st!=='devuelto'&&!pkDevol(p)?' sinub':''}">
     <div class="num${p.st==='entregado'?' tachado':''}">${p.num||i+1}</div>
     <div class="name">${esc(p.nombre||'(sin nombre)')} ${pkChip(p)}</div>
     <div class="meta">${p.guia?`<span class="mono">Guía: ${esc(p.guia)}</span>`:''}<span class="mono">${p.tel?`Tel. ${esc(p.tel)}`:'sin teléfono'}</span></div>
@@ -1354,6 +1360,35 @@ function repLista(){const G=repGrupos(),el=$('#repLista');if(!el)return;
   const av=$('#cierreAviso'),dc=diasCierres();if(av){av.hidden=!dc;av.innerHTML=dc?`📌 Los cierres se guardan <b>${dc} días</b> y después se borran. <b>Bajá el PDF</b> de cada fecha e imprimilo o guardalo: ese es tu respaldo.`:''}
   el.innerHTML=G.length?G.map(g=>{const R=repResumen(g.pk),n=repFilas(g.pk).length,be=repBorraEn(g.k);return `<div class="replin"><div><b>📦 ${repEntregasDe(g.k)}</b>${be!=null&&be<=3?`<div class="small" style="color:var(--bad);font-weight:600">⚠ ${be<=0?'Se borra hoy':'Se borra en '+be+' día'+(be===1?'':'s')}: bajá el PDF</div>`:''}<div class="small muted">${R.rec} recibidos · ${R.ent} entregados · ${R.ruta} en ruta · ${R.hold} hold · ${R.dev} devueltos${R.pMin!=null?` · prom. ${Math.round(R.pMin)} min${R.pKm!=null?' / '+R.pKm.toFixed(1)+' km':''} por entrega`:''}</div></div><button class="btn sm primary" type="button" data-rep="${g.k}"${n?'':' disabled'}>📄 PDF</button></div>`}).join(''):'<p class="small muted">Todavía no hay paquetes.</p>'}
 $('#repLista').addEventListener('click',e=>{const b=e.target.closest('[data-rep]');if(b)repPdf(b.dataset.rep)});
+// 1.107.0 (Victor): Reporte de devoluciones. Misma información del Reporte de entregas, solo con los devueltos (repEstado = Devuelto:
+// devueltos al almacén y marcados ⛔ Devolver), sin hora de entrega, tiempo desde anterior ni km desde anterior (ni km/horas/promedio arriba),
+// y con "Motivo de devolución" = p.nota (ahí se guarda en mayúsculas el motivo que pide ⛔ Devolver). No toca repPdf.
+const devDe=L=>L.filter(p=>repEstado(p)==='Devuelto');
+function devPdf(k){
+  const G=repGrupos().find(x=>x.k===k),L=G?G.pk:[],D=devDe(L);if(!D.length){toast('Esa fecha no tiene devoluciones');return}
+  if(!(window.jspdf&&window.jspdf.jsPDF&&window.jspdf.jsPDF.API.autoTable)){toast('Cargando el reporte… tocá otra vez en un momento');repCargar().catch(()=>toast('No se pudo cargar el PDF. Revisá el internet.'));return}
+  const f=t=>t?new Date(t).toLocaleDateString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric'}):'';
+  const tl=x=>{const d=String(x||'').replace(/\D/g,'');return d.length===11&&d.startsWith('506')?d.slice(3):d};
+  const tD=p=>p.st==='devuelto'?p.devAt:(p.devolverAt||null); // fecha de devolución: al almacén, o cuando se marcó ⛔ Devolver
+  const fil=D.sort((a,b)=>(tD(a)||Infinity)-(tD(b)||Infinity)||(+a.num||0)-(+b.num||0))
+    .map(p=>[String(p.num||''),p.guia||'',tl(p.tel),tidyName(p.nombre||''),f(p.ing),p.st==='devuelto'?'Devuelto':'Por devolver',f(tD(p)),String(p.nota||'').trim().toUpperCase()||'—']);
+  const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'letter'}),hoy=new Date(),fd=f(hoy),R=repResumen(L),W=doc.internal.pageSize.getWidth();
+  doc.setFontSize(15);doc.text('RutaFácil CR',14,15);doc.text(repEntregasDe(k).replace('Entregas','Devoluciones'),W/2,15,{align:'center'});
+  const ct=(kk,v,x,y)=>{doc.setFont(undefined,'bold');doc.text(kk+':',x,y);const w=doc.getTextWidth(kk+': ')+1;doc.setFont(undefined,'normal');doc.text(v,x+w,y)};
+  doc.setFontSize(10);
+  [[['Fecha',fd],['Entregado por',S.yo||'—']],[['Recibidos el',repDiaTxt(k)],['Días de entrega',String(R.dias)]],
+    [['Paquetes recibidos',String(R.rec)],['Paquetes entregados',String(R.ent)],['Paquetes en ruta',String(R.ruta)],['Paquetes en Hold',String(R.hold)],['Paquetes devueltos',String(R.dev)]]]
+    .forEach((col,c)=>col.forEach((e,j)=>ct(e[0],e[1],14+c*64,23+j*6)));
+  doc.autoTable({startY:53,head:[['No. paquete','No. guía / pedido','No. teléfono','Nombre','Fecha recibido','Estado','Fecha devolución','Motivo de devolución']],body:fil,
+    styles:{fontSize:8.5,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},
+    columnStyles:{0:{cellWidth:20},1:{cellWidth:34},2:{cellWidth:23},3:{cellWidth:45},4:{cellWidth:22},5:{cellWidth:22},6:{cellWidth:22},7:{cellWidth:'auto'}},
+    didParseCell:d=>{if(d.section==='body'&&d.column.index===5)d.cell.styles.textColor=[200,40,40]}});
+  const name=`devoluciones-del-${k?repDiaTxt(k).replace(/\//g,'-'):'sin-fecha'}.pdf`; // dd-mm-aaaa (la / no se permite en nombres de archivo)
+  if(IOS&&navigator.canShare){const file=new File([doc.output('blob')],name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Reporte guardado')).catch(()=>{});return}}
+  doc.save(name);toast(`Reporte con ${fil.length} devolución(es)`)}
+function devLista(){const el=$('#devLista');if(!el)return;const G=repGrupos();
+  el.innerHTML=G.length?G.map(g=>{const n=devDe(g.pk).length,R=repResumen(g.pk);return `<div class="replin"><div><b>↩️ ${repEntregasDe(g.k).replace('Entregas','Devoluciones')}</b><div class="small muted">${n} ${n===1?'devolución':'devoluciones'} de ${R.rec} recibidos</div></div><button class="btn sm primary" type="button" data-dev="${g.k}"${n?'':' disabled'}>📄 PDF</button></div>`}).join(''):'<p class="small muted">Todavía no hay paquetes.</p>'}
+$('#devLista').addEventListener('click',e=>{const b=e.target.closest('[data-dev]');if(b)devPdf(b.dataset.dev)});
 // Reporte "Guías + fecha" (1.71.0): entregados agrupados por día de ENTREGA (repT), con Nombre, Tel., Guía y Nota
 function guiGrupos(){const g={};repTodos().forEach(p=>{ /* 1.95.0 (Victor): todos los recibidos, no solo los entregados */const k=p.ing?repDia(p.ing):'sin';(g[k]=g[k]||[]).push(p)}); // 1.72.3: un reporte por fecha de RECIBIDO
   return Object.keys(g).sort((a,b)=>a==='sin'?1:b==='sin'?-1:b.localeCompare(a)).map(k=>({k,pk:g[k].sort((a,b)=>(repT(a)||0)-(repT(b)||0))}))}
@@ -1499,8 +1534,8 @@ $('#ganGuardar').onclick=()=>{const g=ganS(),n=id=>{const v=$(id).value.trim();r
   save();$('#ganCfg').hidden=true;$('#ganCfgBtn').setAttribute('aria-expanded',false);ganPintar();toast('Tarifas guardadas')};
 $('#ganDias').addEventListener('change',e=>{const i=e.target.closest('[data-gas]');if(!i)return;const g=ganS(),v=i.value.trim();if(v==='')delete g.gas[i.dataset.gas];else g.gas[i.dataset.gas]=Math.max(0,Math.round(+v));save();ganPintar()});
 $('#resWa').onclick=ganWa;$('#resXls').onclick=ganXls;
-document.querySelector('[data-tab="cierres"]').addEventListener('click',()=>trasPintar(()=>{fixIng1031();const gfe=$('#guiFechaEnt');if(gfe&&!gfe.value)gfe.value=new Date().toLocaleDateString('en-CA');try{ganActualizar();ganPintar()}catch(e){console.warn('ganancia',e)}repLista();repPagoLista();repRecLista();guiLista();repCargar().catch(()=>{});
-  $('#repInfo').textContent='Buscando reportes de cierres anteriores…';repCierres().then(()=>{try{ganActualizar();ganPintar()}catch(e){console.warn('ganancia',e)}repLista();repPagoLista();repRecLista();guiLista();$('#repInfo').textContent=''})}));
+document.querySelector('[data-tab="cierres"]').addEventListener('click',()=>trasPintar(()=>{fixIng1031();const gfe=$('#guiFechaEnt');if(gfe&&!gfe.value)gfe.value=new Date().toLocaleDateString('en-CA');try{ganActualizar();ganPintar()}catch(e){console.warn('ganancia',e)}repLista();repPagoLista();repRecLista();devLista();guiLista();repCargar().catch(()=>{});
+  $('#repInfo').textContent='Buscando reportes de cierres anteriores…';repCierres().then(()=>{try{ganActualizar();ganPintar()}catch(e){console.warn('ganancia',e)}repLista();repPagoLista();repRecLista();devLista();guiLista();$('#repInfo').textContent=''})}));
 $('#m-pref').addEventListener('input',()=>{$('#vcfEj').textContent=vcfName({nombre:'Nombre',guia:'pedido',num:12})});
 $('#m-buscar').addEventListener('input',()=>renderMsg());
 $('#msgFil').addEventListener('click',e=>{const b=e.target.closest('[data-msgf]');if(!b)return;MSGF=b.dataset.msgf;renderMsg()});
@@ -2371,7 +2406,7 @@ async function renderEnt(){entSyncPk();rutaGlobo();jorRender();vehPintar();ttPin
   $('#entInfo').innerHTML=`<b>${esc(isoDMY(E.nombre))}</b> · ${ok} de ${E.stops.length} entregadas`;
   // Pendientes arriba (en orden de ruta; las sin ubicación después) y las entregadas totalmente de últimas
   const erk=s=>entDone(s)?2:s.c?(s.hold?0.5:0):1;
-  E.stops.forEach(s=>{if(s.voy&&(entDone(s)||!s.c))delete s.voy}); // 1.106.0: al marcarla hecha (entregada, devuelta, ⛔ Devolver) deja de estar en azul
+  E.stops.forEach(s=>{if(s.voy&&(entDone(s)||!s.c))delete s.voy}); // 1.108.0: al marcarla hecha (entregada, devuelta, ⛔ Devolver) deja de estar en azul
   let fil=null;try{fil=entHits($('#entBuscar').value)}catch(e){} // 1.101.4: con búsqueda activa la lista muestra solo las que coinciden (como en Paquetes)
   LI.innerHTML=E.stops.map((s,i)=>[s,i]).filter(([s,i])=>!fil||fil.includes(i)).sort((a,b)=>erk(a[0])-erk(b[0])||a[1]-b[1]).map(([s,i])=>{const d=entDone(s),p=entPkg(s),ubx=s.ub!==undefined?s.ub:(p&&p.ubic&&!parseCoord(p.ubic)?String(p.ubic):undefined),nav=s.c?`https://www.google.com/maps/dir/?api=1&destination=${s.c[0]},${s.c[1]}&travelmode=driving`:'',wz=s.waze||(s.c?`https://waze.com/ul?ll=${s.c[0]},${s.c[1]}&navigate=yes`:''),wa=phoneWA(p&&entFuerte(s,p)?p.tel:s.tel);
     return `<div class="estop${d?' ok':''}${s.devolver?' devol':''}${i===ESEL?' sel':''}${s.voy&&!d?' voy':''}" data-ei="${i}"><div class="n${s.c||d?'':' no'}">${s.c||d?eNum(s):'?'}</div>
@@ -2580,7 +2615,7 @@ async function entUbicar(i){const s=S.ent.stops[i];const t=await pedir({ico:'�
   if(t.trim()){const c=parseCoord(t.trim());if(!c){toast('No reconocí esa ubicación. Probá con el link completo o las coordenadas');return}entPonerC(i,c);return}
   if(!EMAP){toast('Primero tiene que verse el mapa');return}EMAP.pick=false;EMAP.pickStop=i;entPickModo(true,`Tocá el mapa donde vive ${s.nombre||'el cliente'}`);$('#entMap').scrollIntoView({behavior:'smooth',block:'start'})}
 $('#entFile').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)entCargar(f).catch(()=>toast('No se pudo leer ese archivo'))};
-// 1.106.0 (Victor): al tocar Waze o Maps de una parada, esa parada queda como "a la que vas": su pin se ve en azul
+// 1.108.0 (Victor): al tocar Waze o Maps de una parada, esa parada queda como "a la que vas": su pin se ve en azul
 // hasta que tocás Waze o Maps de otra o la marcás hecha. Se guarda en la parada (s.voy), así sigue en azul al volver de Waze.
 function entVoy(s){if(!s||!S.ent||!S.ent.stops)return;if(s.voy&&S.ent.stops.every(x=>x===s||!x.voy))return;S.ent.stops.forEach(x=>{if(x!==s)delete x.voy});s.voy=Date.now();save();
   setTimeout(()=>{if(!$('#v-entrega').hidden)renderEnt()},300)} // después del toque, para que el link abra Waze/Maps sin estorbos

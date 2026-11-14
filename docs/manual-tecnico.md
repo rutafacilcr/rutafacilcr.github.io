@@ -253,11 +253,15 @@ Solo `index.html`. Usa SheetJS 0.18.5, que ya se carga desde cdnjs para importar
 
 Solo `index.html`. Al abrir la app se corrigen solos los nombres ya guardados en el celular.
 
-### Parada a la que vas en azul (1.106.0)
+### Parada a la que vas en azul (1.108.0)
 
 Solo `index.html`. No hay SQL nuevo. Se guarda una marca de hora `voy` en la parada que se tocó (`S.ent.stops[].voy`), dentro de la ruta que ya se guarda en el celular y en Supabase, así que sigue en azul al volver de Waze o Maps aunque el celular recargue la app, y se ve igual en otro aparato de la misma cuenta. Solo una parada la tiene a la vez.
 
-### Editar paquetes por devolver (1.105.1)
+### Reporte de devoluciones (1.107.0)
+
+Solo `index.html`. Se arma en el celular con los mismos datos (paquetes actuales y cierres guardados) y el mismo jsPDF + autoTable de cdnjs que el *Reporte de entregas*. No hay SQL nuevo, consultas nuevas ni datos nuevos guardados: el motivo es el campo `nota` del paquete, que ya existía.
+
+### Editar paquetes por devolver (1.105.1) y devueltos (1.105.2)
 
 Solo `index.html` (CSS de la tarjeta de *Paquetes*). No hay SQL nuevo ni cambia lo que se guarda en Supabase: el paquete conserva `devolver:true` al guardar la edición.
 
