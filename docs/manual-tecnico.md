@@ -253,6 +253,10 @@ Solo `index.html`. Usa SheetJS 0.18.5, que ya se carga desde cdnjs para importar
 
 Solo `index.html`. Al abrir la app se corrigen solos los nombres ya guardados en el celular.
 
+### Guía en Pedir ubicación (1.110.0)
+
+Solo `index.html`. Sin SQL ni configuración: la guía sale del paquete (`guia`) que ya se sincroniza con Supabase. No cambia el texto guardado de Mensajes (`coord`).
+
 ### C.P. de la etiqueta (1.109.0)
 
 Solo `index.html`. No hay SQL nuevo: el C.P. se guarda como un campo más del paquete (`cp`) dentro de la lista que ya se sincroniza con Supabase. La lectura es la misma del escáner (gratis, dentro del celular); no se agregan librerías.
