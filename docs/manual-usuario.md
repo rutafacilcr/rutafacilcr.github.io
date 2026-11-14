@@ -555,6 +555,10 @@ Debajo de **📷 Escáner** está el botón verde **WhatsApp**, que abre el chat
 - Al tocar **✓ Entregado** se guarda la hora y el punto como siempre y sale un aviso con el botón **WhatsApp: Entregado**. Tocalo, mandá el mensaje y volvé a RutaFácil (en el celular, con la flecha de regresar o cambiando de app).
 - **↩ Deshacer** en una entregada: la parada sale de la ruta y el paquete queda en Paquetes con **➕ Agregar a la ruta**.
 - **⛔ Devolver** primero pide el motivo (se suma a la nota que ya tenga, separada con coma) y después pregunta **¿Devolverá el paquete de …?**.
+- **Aviso al cliente por WhatsApp (1.105.0):** al tocar **Devolver** en esa pregunta, se abre el WhatsApp del cliente con este mensaje ya escrito (con la guía del paquete):
+  > Su paquete con la GUIA: JMX123456, ha sido devuelto a las Bodegas de J&T Express, a partir de este momento, cualquier pregunta sobre el paquete se debe canalizar al +506 4600-9150 o servicioalcliente@jtexpress.cr
+
+  Revisalo y tocá enviar. Para volver a RutaFácil usá el botón **atrás** del celular (Android) o tocá **◀ RutaFácil** / cambiá de app (iPhone): la app queda igual, en *Ruta*, y el paquete ya aparece como ⛔ Devolver. Si el paquete no tiene teléfono, no se abre WhatsApp y sale un aviso (el paquete sí queda para devolver). Si el celular no deja abrir WhatsApp solo, sale un botón **💬 Abrir WhatsApp** para abrirlo con un toque.
 - El WhatsApp de "en camino" trae tres líneas nuevas después de la política de entrega: entrega **GRATIS** en el primer intento, segundo intento si la ruta lo permite, y que un tercero puede recibir con nombre y cédula.
 - **📋 Lista** ahora es solo lo que falta por entregar: primero los de **HOLD** y después los **pendientes**, en orden de ruta.
 
