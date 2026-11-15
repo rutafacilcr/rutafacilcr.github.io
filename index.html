@@ -455,7 +455,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
   <!-- 1.92.1: Guardar contactos y Bajar Excel van abajo de la lista (Victor) -->
   <div class="panel" id="vcfPanel">
     <div class="vcfrow"><label>Prefijo<input id="m-pref" maxlength="8" placeholder="TM" autocomplete="off"></label><button class="btn sm primary" id="vcfBtn" type="button">📇 Guardar contactos del día</button><button class="btn sm" id="xlsBtn" type="button">📊 Bajar Excel del día</button></div>
-    <p class="small muted">Guarda a todos los clientes en tus contactos como <b id="vcfEj">TM12-Nombre-pedido</b> (12 es el número del paquete y el pedido es la guía), para que en WhatsApp salga el nombre cuando te contesten. <b>Bajar Excel del día</b> llena la plantilla de Excel con nombre, teléfono, dirección, ubicación, guía, nota y fecha de ingreso de cada cliente.</p>
+    <p class="small muted">Guarda a todos los clientes en tus contactos como <b id="vcfEj">TM-12-Nombre-pedido</b> (12 es el número del paquete y el pedido es la guía), para que en WhatsApp salga el nombre cuando te contesten. <b>Bajar Excel del día</b> llena la plantilla de Excel con nombre, teléfono, dirección, ubicación, guía, nota y fecha de ingreso de cada cliente.</p>
     <p class="small" id="xlsIos" hidden style="background:var(--warn-bg);border-radius:8px;padding:10px 12px">Excel en iPhone: en el menú elegí <b>Guardar en Archivos</b> &gt; <b>En mi iPhone</b> &gt; carpeta <b>RutaFacilCR</b> (la primera vez tocá el ícono de carpeta nueva para crearla) &gt; <b>Guardar</b>. La próxima vez el iPhone ya propone esa carpeta. Para verlo, abrí la app <b>Archivos</b>.</p>
     <p class="small" id="vcfIos" hidden style="background:var(--warn-bg);border-radius:8px;padding:10px 12px">En iPhone: elegí <b>Guardar en Archivos</b>. Después abrí la app <b>Archivos</b>, tocá <b>contactos-….vcf</b> y luego <b>Agregar los N contactos</b> &gt; <b>Crear contactos nuevos</b>. (Si lo abrís directo desde Safari, el iPhone solo agrega el primero.)</p>
   </div>
@@ -578,7 +578,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div id="devLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.110.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.111.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -1186,12 +1186,13 @@ $('#vaciarTile').onclick=async()=>{const pk=S.ex?[]:S.pk,pend=pk.filter(p=>p.st!
 $('#clearAll').onclick=e=>{const b=e.currentTarget;if(b.disabled)return;if(b.dataset.c){delete b.dataset.c;cerrarDia(b)}else{b.dataset.c=1;b.textContent='¿Cerrar el día? Tocá otra vez';setTimeout(()=>{if(b.dataset.c){b.textContent='Vaciar lista';delete b.dataset.c}},3000)}};
 const bind=(sel,k,num)=>{const el=$(sel);el.value=S[k]??'';el.addEventListener(el.type==='checkbox'?'change':'input',()=>{S[k]=el.type==='checkbox'?el.checked:(num?+el.value:el.value);save();if(['coord','form','yo','fecha'].includes(k))renderMsg()})};
 $('#routeBtn').onclick=calcRoute;
-// ---- Contactos del día: un .vcf con todos los clientes como "TM12-Nombre-pedido" ----
+// ---- Contactos del día: un .vcf con todos los clientes como "TM-12-Nombre-pedido" ----
 if(S.pref==null)S.pref='TM';
 const vcfEsc=s=>String(s).replace(/\\/g,'\\\\').replace(/[,;]/g,m=>'\\'+m).replace(/\r?\n/g,' ');
 // Nombre del contacto (1.104.0): prefijo + número fijo del paquete (p.num), TM12-Nombre-pedido (sin guía TM12-Nombre;
 // varias guías del mismo teléfono van juntas con / y también sus números: TM12/15-Sofía-PO1/PO2). Sin número queda TM-Nombre-pedido.
-const vcfName=(p,guias,nums)=>{const pre=(S.pref||'').trim(),g=(guias||[p.guia]).filter(Boolean).join('/'),n=(nums||[p.num]).filter(Boolean).join('/');return [pre+n,tidyName(p.nombre)||'Cliente',g].filter(Boolean).join('-')};
+// 1.111.0 (Victor): guion entre el prefijo y el número: TM-12-Nombre-pedido, TM-12/15-Sofía-PO1/PO2. Sin número sigue TM-Nombre-pedido.
+const vcfName=(p,guias,nums)=>{const pre=(S.pref||'').trim(),g=(guias||[p.guia]).filter(Boolean).join('/'),n=(nums||[p.num]).filter(Boolean).join('/');return [pre,n,tidyName(p.nombre)||'Cliente',g].filter(Boolean).join('-')};
 const IOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 async function saveContacts(){
   const by=new Map(),cards=[];
@@ -1211,7 +1212,7 @@ async function saveContacts(){
   setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},5000);toast(`${cards.length} contactos listos para guardar`);
 }
 $('#vcfBtn').onclick=e=>conCarga(e.currentTarget,saveContacts);$('#vcfCancel').onclick=()=>{$('#vcfSheet').hidden=true};
-// Excel del día: mismas columnas que plantilla-paquetes.xlsx (se puede volver a importar) + "contacto" (TM12-Nombre-pedido).
+// Excel del día: mismas columnas que plantilla-paquetes.xlsx (se puede volver a importar) + "contacto" (TM-12-Nombre-pedido).
 function saveExcel(){
   if(!window.XLSX){toast('Preparando Excel…');cargarXlsx().then(()=>toast('Excel listo. Tocá de nuevo “Excel” para descargarlo.')).catch(()=>toast('No se pudo cargar Excel. Revisá el internet y probá de nuevo.'));return}
   const pk=S.pk.filter(p=>p.nombre||p.tel);if(!pk.length){toast('No hay clientes en la lista');return}
