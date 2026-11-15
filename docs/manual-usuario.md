@@ -19,7 +19,7 @@ Resumen de cómo está la app ahora. Más abajo se explica cada parte con la ver
 **Barra de abajo:** **Paquetes**, **Cierres**, **Mensajes** y **Ruta**. *Paquetes* lleva una burbuja con los paquetes que faltan por entregar y, desde la 1.86.0, *Ruta* lleva otra con las paradas de la ruta que faltan (las de Hold cuentan; entregadas y devueltas no). Siempre queda pegada al fondo de la pantalla y lo que desplazás es lo de arriba, así no tapa nada (1.85.1; antes, en iPhone, a veces se quedaba a media pantalla). **Soporte** está arriba, en el encabezado. En la computadora, si no ves los cambios, apretá **Ctrl + Shift + R**.
 
 **Paquetes**
-- Arriba, cinco contadores: **Recibidos**, **Entregados**, **Hold**, **Devueltos** y **Sin 📍** (sin ubicación).
+- Arriba, seis contadores: **Recibidos**, **Entregados**, **En ruta**, **Hold**, **Devueltos** y **Sin 📍** (sin ubicación). *Hold* + *En ruta* da las paradas que faltan en *Ruta*. Desde la 1.111.1, si ponés o quitás ⏸ Hold en *Ruta*, el contador cambia de una vez al volver a *Paquetes*.
 - Cuatro botones grandes: **🧹 Vaciar lista** (en rojo), **Agregar a mano**, **Importar** y **Escanear**.
 - Después, el buscador 🔍 y enseguida las tarjetas (desde la 1.69.1 ya no está el título *Lista del día*).
 - El orden de las tarjetas es (desde la 1.92.3): primero los que tienen ubicación o ya están en la ruta, luego Hold, luego los que no tienen ubicación ni están en la ruta, después los devueltos (y ⛔ Devolver) y al final los entregados (en gris; desde la 1.73.0 el número ya no sale tachado).

@@ -277,6 +277,10 @@ Solo `index.html` (CSS de la tarjeta de *Paquetes*). No hay SQL nuevo ni cambia 
 
 Solo `index.html`. Abre un link `https://wa.me/506XXXXXXXX?text=…` en el WhatsApp del celular; no pasa por Supabase, no usa la API de WhatsApp ni cobra nada. No hay SQL nuevo ni datos nuevos guardados. El texto (teléfono +506 4600-9150 y servicioalcliente@jtexpress.cr de J&T Express) está en `devWaTexto()`: si J&T cambia esos datos, se cambian ahí.
 
+### Resumen de Paquetes al día con Ruta (1.111.1)
+
+Solo `index.html`. Sin SQL nuevo ni cambios en Supabase: es solo repintar el resumen cuando se toca algo en *Ruta*. Si un contador se ve viejo en un aparato con versión anterior, basta recargar la app.
+
 ### Tarjeta con ubicación de la ruta (1.104.1)
 
 Solo `index.html` (pantalla de *Paquetes*). No hay SQL nuevo ni cambia lo que se guarda en Supabase: la tarjeta toma la ubicación de la parada de la ruta (`S.ent.stops[].c`, que ya viaja en la lista) cuando el paquete no trae la suya.
