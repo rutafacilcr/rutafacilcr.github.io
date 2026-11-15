@@ -22,6 +22,7 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
   - Botón 📷 que abre el WhatsApp del cliente para mandarle una foto (1.92.2).
   - Todas las fechas salen como dd/mm/aaaa (1.92.2).
 - **Mensajes (1.94.0):** ocho mensajes por cliente (1. Pedir ubicación, 2. En camino, 3. Comprensión, 4. Hablar con cliente, 5. Entregado, 6. Horario 8 a 12 md, 7. Horario 12 md a 5 p. m. y 8. Horario extendido, desde la 1.95.1) y etiquetas ✅ Entregado, 🔴 Devuelto (una sola vez, arriba a la derecha) y ⏸ HOLD. Los de Hold se pueden mensajear (1.96.1); sin botones de filtro desde la 1.96.8.
+- **WhatsApp oficial (1.112.0, apagado hasta configurarlo):** en *Mensajes*, un botón **Enviar a N sin enviar** manda el aviso *Pedir ubicación* a todos de un toque por la API oficial de WhatsApp (Meta), sin que bloqueen el número. Cuando el cliente responde con su ubicación, el paquete queda **Confirmado** solo. Cuesta ≈ US$0,0113 (≈ ₡6) por aviso, lo cobra Meta. Se configura con la Edge Function `supabase/functions/whatsapp` (ver manual técnico, sección 3w).
 - **En la computadora (1.94.0):** la app se ve dentro de un marco de iPhone; *Ver sin marco* la abre a pantalla completa.
 - **Ruta:**
   - Tel. y nota en cada parada; devueltos visibles en el mapa sin entrar a la ruta; al marcar ✓ Entregado sale el botón para mandar el WhatsApp "Entregado"; *Devolver* pide el motivo; la *Lista* muestra solo lo pendiente, Hold primero (1.94.0).

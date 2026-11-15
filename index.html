@@ -169,6 +169,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);outline-
 .btn.off{opacity:.55} /* incompleto: se puede tocar y dice qué falta */
 .btn.road{background:var(--road);color:var(--road-ink);border-color:var(--road)}
 .btn.wa{background:var(--wa);color:#fff;border-color:var(--wa)}
+.wainfo{font-weight:600;color:var(--ok)}.wainfo.mal{color:var(--bad)}.wapanel{display:flex;flex-direction:column;gap:8px} /* 1.112.0 */
 .btn.ghost{background:none}
 .btn.sm{padding:6px 10px;font-size:13px}
 .btn.danger{color:var(--bad)}
@@ -443,6 +444,11 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     </div>
   </div>
   <div class="row" style="justify-content:flex-end"><span class="small muted" id="sentCount"></span></div><!-- 1.91.0: sin el título "Clientes" -->
+  <!-- 1.112.0: WhatsApp oficial (API de Meta). Solo sale si config.js trae whatsappApi:true y la cuenta está habilitada (rf_wa_puede) -->
+  <div class="panel wapanel" id="waPanel" hidden>
+    <p class="small" style="margin:0"><b>📤 WhatsApp oficial</b> · <span id="waInfo"></span></p>
+    <div class="row" style="justify-content:flex-end"><button class="btn primary" id="waBtn" type="button">Enviar a todos</button></div>
+  </div>
   <input id="m-buscar" type="search" placeholder="🔍 Buscar por nombre, teléfono, guía o número" autocomplete="off" aria-label="Buscar cliente">
   <div class="msgfil" id="msgFil" role="group" aria-label="Filtrar clientes" hidden></div><!-- 1.96.8 (Victor): filtros quitados, no aportaban -->
   <div class="list" id="msgList"></div>
@@ -578,7 +584,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div id="devLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.111.1</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.112.0</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -964,11 +970,12 @@ function renderMsg(){
   L.innerHTML=S.pk.map((p,i)=>[p,i]).sort((a,b)=>rk(a[0])-rk(b[0])||(rk(a[0])?pkGrupoT(a[0])-pkGrupoT(b[0]):0)||rp(a[0],a[1])-rp(b[0],b[1])).map(([p,i])=>{const sel=msgSel(p),txt=msgText(p,sel);const l=waLink(p,txt);return `<div class="pkg${p.st==='entregado'?' entregado':''}${pkOff(p)?' devol':''}"${hit(p)?'':' style="display:none"'}>
     <div class="num${p.st==='entregado'?' tachado':''}">${p.num||i+1}</div>
     <div class="name">${esc(p.nombre)} ${msgChip(p,enHold(p))}</div>
-    <div class="addr">${p.guia?`<span class="mono">Guía: ${esc(p.guia)}</span> · `:''}<span class="mono">${esc(p.tel||'sin teléfono')}</span>${p.nota?`<div class="pknota">📝 ${esc(p.nota)}</div>`:''}${p.resp?' <span class="small" style="color:var(--ok);font-weight:600">✓ llenó el formulario</span>':''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
+    <div class="addr">${p.guia?`<span class="mono">Guía: ${esc(p.guia)}</span> · `:''}<span class="mono">${esc(p.tel||'sin teléfono')}</span>${waLinea(p)}${p.nota?`<div class="pknota">📝 ${esc(p.nota)}</div>`:''}${p.resp?' <span class="small" style="color:var(--ok);font-weight:600">✓ llenó el formulario</span>':''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
     <div class="msgsel" role="radiogroup" aria-label="Qué mensaje mandar">${msgOpts().map(([k,t])=>`<button type="button" role="radio" aria-checked="${k===sel}" data-act="msgsel" data-k="${k}" data-id="${p.id}">${t}</button>`).join('')}</div>
     <details class="small"><summary>Ver mensaje</summary><div class="preview">${txt?esc(txt):'<i>Se abre el chat del cliente sin texto: escribís lo que querés y lo mandás.</i>'}</div></details>
     <div class="actions msgacts">${l?`<a class="btn wa" href="${l}" target="_blank" rel="noopener" data-act="sent" data-k="${sel}" data-id="${p.id}">Abrir WhatsApp</a>`:'<span class="small" style="color:var(--bad)">Teléfono inválido, corregilo en Paquetes</span>'}</div>
   ${devBar(p)}</div>`}).join('')+(S.pk.some(hit)?'':'<div class="empty">Ningún cliente en este filtro.</div>');
+  waPintar();
 }
 
 // ---- Ruta ----
@@ -2748,11 +2755,75 @@ async function nubeSync(force){
 }
 $('#nubeInfo').onclick=()=>{if(NUBE.on){nubeMsg('☁️ sincronizando…');nubeSync(true).then(()=>toast(`Nube v${S.syncVer||0} · ${S.pk.length} paquetes${S.ent?' · ruta '+S.ent.nombre:' · sin ruta'}`))}};
 function nubeSoon(){if(!NUBE.on)return;clearTimeout(NUBE.t);NUBE.t=setTimeout(nubeSync,2500)}
-RF_AUTH.listo.then(c=>{if(cuentaLocal(c))return;usarCuenta(c);
+RF_AUTH.listo.then(c=>{if(cuentaLocal(c))return;usarCuenta(c);if(c)waIniciar(); // 1.112.0: WhatsApp oficial
 if(FORM_ON&&c){NUBE.on=true;nubeSync();setInterval(()=>{if(!document.hidden)nubeSync()},60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)nubeSync()})}
 if(FORM_ON){ // formulario como segundo mensaje: el primero nunca lleva link
 $('#syncPanel').hidden=false;$('#syncBtn').onclick=()=>{syncResp(true);uploadPending()};syncResp();uploadPending();setInterval(()=>{if(!document.hidden){syncResp();uploadPending()}},60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncResp()})}
 });
+
+// ===== WhatsApp oficial (1.112.0) =====
+// En vez de abrir WhatsApp uno por uno (el número se bloqueaba por mandar a gente que no lo tiene guardado),
+// la app manda la plantilla aprobada "Pedir ubicación" por la API de Meta, a través de la Edge Function `whatsapp`.
+// Solo aparece si config.js trae whatsappApi:true y la cuenta está habilitada (rf_wa_puede: el admin o wa_api).
+// Cuando el cliente manda su ubicación al número oficial, rf_wa_leer la trae y el paquete queda Confirmado solo.
+const WA={on:false,enviando:false,cada:null};
+const WA_COSTO_USD=0.0113,WA_CRC=505; // precio Meta "Resto de Latinoamérica" (utilidad), aproximado
+async function waIniciar(){
+  if(WA.cada||!(window.RF_CONFIG&&RF_CONFIG.whatsappApi)||!RF_CONFIG.supabaseUrl)return;
+  try{WA.on=!!(await RF_AUTH.rpc('rf_wa_puede',{}))}catch(e){WA.on=false}
+  if(!WA.on)return;
+  $('#waPanel').hidden=false;$('#waBtn').onclick=waEnviar;waPintar();waLeer();
+  WA.cada=setInterval(()=>{if(!document.hidden)waLeer()},60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)waLeer()});
+}
+// A quién le toca: activos, sin ubicación, sin mensaje mandado (ni a mano ni por la API) y con teléfono válido
+function waPend(){return S.pk.filter(p=>!p.sent&&!p.waId&&p.st!=='entregado'&&p.st!=='devuelto'&&!p.devolver&&!parseCoord(p.ubic)&&phoneWA(p.tel))}
+function waPintar(){
+  if(!WA.on)return;const n=waPend().length,b=$('#waBtn'),env=S.pk.filter(p=>p.waId).length,ub=S.pk.filter(p=>p.waId&&p.waUbic).length;
+  $('#waInfo').textContent=WA.enviando?'mandando…':`${env} enviados · ${ub} mandaron ubicación${n?` · ${n} por enviar`:''}`;
+  b.textContent=n?`Enviar a ${n} sin enviar`:'Nada por enviar';b.disabled=!n||WA.enviando;
+}
+function waLinea(p){
+  if(!p.waId&&!p.waErr)return '';
+  if(p.waEst==='fallo'||(!p.waId&&p.waErr))return `<div class="small wainfo mal">⚠️ WhatsApp oficial: no se pudo${p.waErr?` (${esc(p.waErr)})`:''}</div>`;
+  const e={enviado:'✓ enviado',entregado:'✓✓ entregado',leido:'✓✓ leído'}[p.waEst]||'✓ enviado';
+  return `<div class="small wainfo">📤 WhatsApp oficial: ${e}${p.waUbic?' · 📍 mandó ubicación':''}${p.waTxt?` · 💬 “${esc(p.waTxt.slice(0,140))}”`:''}</div>`;
+}
+async function waEnviar(){
+  const L=waPend();if(!L.length||WA.enviando)return;
+  const usd=L.length*WA_COSTO_USD;
+  if(!await rfConfirm(`¿Mandar "Pedir ubicación" a ${L.length} cliente(s) por el WhatsApp oficial?\nCosto aproximado: ₡${Math.round(usd*WA_CRC).toLocaleString('es-CR')} (US$${usd.toFixed(2)}), lo cobra Meta a la tarjeta.`))return;
+  WA.enviando=true;waPintar();
+  const fecha=(S.fecha||'').trim()||tomorrow();let ok=0,mal=0,err='';
+  try{
+    for(let i=0;i<L.length;i+=50){
+      const parte=L.slice(i,i+50);
+      const r=await fetch(RF_CONFIG.supabaseUrl.replace(/\/$/,'')+'/functions/v1/whatsapp',{method:'POST',headers:{...(await RF_AUTH.headers()),'Content-Type':'application/json'},
+        body:JSON.stringify({fecha,paquetes:parte.map(p=>({id:p.id,tel:phoneWA(p.tel),nombre:(p.nombre||'').split(' ')[0],guia:p.guia||''}))})});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok){err=j.error||('código '+r.status);break}
+      for(const f of j.resultados||[]){const p=S.pk.find(x=>x.id===f.paquete_id);if(!p)continue;
+        if(f.wamid){p.waId=f.wamid;p.waEst='enviado';p.waErr='';p.sent=true;ok++}else{p.waErr=f.error||'error';mal++}}
+    }
+  }catch(e){err=e.message||'sin conexión'}
+  WA.enviando=false;save();render();
+  toast(err&&!ok?'No se pudo mandar: '+err:`${ok} enviado(s)${mal?` · ${mal} con error`:''}${err?' · se cortó: '+err:''}`);
+}
+async function waLeer(){
+  if(!WA.on||!S.pk.length)return;
+  try{
+    const rows=await RF_AUTH.rpc('rf_wa_leer',{p_desde:S.waDesde||null})||[];let nuevos=0;
+    for(const row of rows){if(!S.waDesde||row.actualizado>S.waDesde)S.waDesde=row.actualizado;
+      const p=S.pk.find(x=>x.id===row.paquete_id&&(!x.waId||!row.wamid||x.waId===row.wamid));if(!p)continue;
+      if(row.wamid&&!p.waId){p.waId=row.wamid;p.sent=true}
+      p.waEst=row.estado;if(row.error)p.waErr=row.error;
+      let c=row.lat!=null&&row.lng!=null?[row.lat,row.lng]:null;
+      if(row.texto&&row.texto!==p.waTxt){p.waTxt=row.texto;if(!c)c=parseCoord(row.texto)} // también si pegó un link de Maps o coordenadas
+      if(c&&!parseCoord(p.ubic)){p.ubic=cTxt(c);p.waUbic=true;if(p.st==='pendiente'||p.st==='noresponde')p.st='confirmado';S.route=null;nuevos++}
+    }
+    if(rows.length){save();render()}
+    if(nuevos)toast(`📍 ${nuevos} ubicación(es) nueva(s) por WhatsApp`);
+  }catch(e){console.warn('waLeer',e)}
+}
 
 // 1.69.6: al abrir, la lista se pinta antes de que existan las funciones de Ruta (entPkg…); se vuelve a pintar al final para que "En la ruta" salga bien
 try{render()}catch(e){console.warn('render final',e)}

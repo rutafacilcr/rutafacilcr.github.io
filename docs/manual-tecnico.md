@@ -511,6 +511,42 @@ Igual que la 1.79.0: solo diseño, sin cambios en Supabase ni en datos. Agrega b
 
 Solo cambia CSS (y la clase de la etiqueta ⛔ Devuelto). No toca Supabase, `config.js`, `auth.js` ni los datos guardados, así que no hace falta correr SQL ni limpiar caché: al publicar, los celulares ven el aviso de versión nueva como siempre. Para revisarlo: Lighthouse en Chrome (DevTools > Lighthouse > Accesibilidad) debe dar 100 en la app, el Panel, el formulario y «Conocé la app».
 
+## 3w. WhatsApp oficial (API de Meta) · 1.112.0
+
+Manda el aviso *Pedir ubicación* a todos por la **API oficial de WhatsApp** (Cloud API, directo con Meta, sin proveedor). Apagado de fábrica.
+
+**Costo (Costa Rica = "Resto de Latinoamérica", vigente desde el 01/10/2026):** plantilla de **utilidad** ≈ US$0,0113 por mensaje entregado (≈ ₡6); si Meta la reclasifica como marketing, ≈ US$0,074. Las respuestas dentro de las 24 h (las automáticas de la función) tienen 1.000 gratis al mes por número. Para ~1.050 avisos al mes: ≈ US$12 (≈ ₡6.000). Lo cobra Meta a la tarjeta de la cuenta de negocio.
+
+**Pasos (una sola vez):**
+
+1. **Número:** conseguir un número que **no** esté en WhatsApp (un chip prepago sirve; solo tiene que recibir un SMS o llamada con el código). Si se usa el 6270 0666, deja de funcionar en la app normal de WhatsApp.
+2. **Meta:** en business.facebook.com crear la cuenta de negocio (*RutaFácil CR*). En developers.facebook.com > *Mis apps* > *Crear app* > tipo **Negocios** > agregar el producto **WhatsApp**. Ahí sale un número de prueba gratis (solo manda a 5 números que uno registra) para probar.
+3. **Agregar el número real:** WhatsApp > *Configuración de la API* > *Agregar número de teléfono*, con el nombre visible *RutaFácil CR*. Copiar el **Phone number ID**.
+4. **Tarjeta:** Meta Business > *Facturación* > agregar tarjeta a la cuenta de WhatsApp.
+5. **Plantilla:** WhatsApp Manager > *Plantillas* > *Crear*: nombre `pedir_ubicacion`, categoría **Utilidad**, idioma **Español** (`es`). Texto (sin links):
+
+   > Hola {{1}} 👋
+   >
+   > Tenemos un paquete de TEMU a su nombre (orden {{2}}) y queremos coordinar su entrega para el {{3}}.
+   >
+   > 📍 Por favor, compártanos su ubicación por este medio para agregarla a nuestra ruta.
+   >
+   > Una vez recibida, lo asignaremos a la ruta y nos comunicaremos con usted para coordinar la entrega.
+   >
+   > ¡Gracias!
+
+   Ejemplos para Meta: {{1}} María, {{2}} JCR123456, {{3}} lunes 16/11/2026. Aprobación: de minutos a 24 h.
+6. **Token permanente:** Meta Business > *Configuración* > *Usuarios del sistema* > crear uno (admin) > asignarle la app y la cuenta de WhatsApp > *Generar token* con permisos `whatsapp_business_messaging` y `whatsapp_business_management`, sin vencimiento. **No pegarlo en el chat ni en el repositorio.**
+7. **Supabase > SQL Editor:** correr `supabase.sql` (agrega `rf_wa` y las funciones `rf_wa_*`; se puede correr de nuevo).
+8. **Supabase > Edge Functions > Deploy a new function > Via editor:** nombre `whatsapp`, pegar `supabase/functions/whatsapp/index.ts`, y en sus ajustes **apagar "Verify JWT"** (Meta no manda sesión; la función revisa la sesión ella misma).
+9. **Supabase > Edge Functions > Secrets:** `WA_TOKEN` (paso 6), `WA_PHONE_ID` (paso 3), `WA_APP_SECRET` (app de Meta > *Configuración de la app* > *Básica* > *Clave secreta*), `WA_VERIFY` (una palabra cualquiera inventada), y opcional `WA_CONTACTO` = `6270-0666` (para la respuesta automática a quien escribe texto). Opcionales: `WA_PLANTILLA` (de fábrica `pedir_ubicacion`), `WA_IDIOMA` (`es`), `WA_GRAPH_VERSION` (`v23.0`).
+10. **Webhook:** app de Meta > WhatsApp > *Configuración* > *Webhook*: URL `https://mdomcfdmqzgtmnvcfzrs.supabase.co/functions/v1/whatsapp`, token de verificación = `WA_VERIFY`; suscribir el campo **messages**.
+11. **Encender:** en `config.js` poner `whatsappApi: true` y publicar. Solo lo ven el administrador y las cuentas con `wa_api` (`select rf_admin_wa('<id>', true);` desde el Panel/SQL como admin).
+
+**Límites:** sin verificar el negocio, Meta deja escribirle a 250 clientes distintos por día (alcanza para ~105 cada 3 días). Si muchos clientes bloquean o reportan, Meta baja la calidad del número y lo limita: el texto tiene que ser puro aviso de entrega. Las filas de `rf_wa` se borran solas a los 30 días.
+
+**Si algo falla:** la tarjeta muestra el error de Meta (p. ej. `131026` número sin WhatsApp, `132001` plantilla no aprobada o con otro nombre/idioma). *Supabase > Edge Functions > whatsapp > Logs* muestra cada llamada.
+
 ## 4. Configuración (`config.js`)
 
 ```js
@@ -522,6 +558,8 @@ window.RF_CONFIG = {
 
 Opcional: `soporte: '62700666'` cambia el WhatsApp de soporte que muestra la pantalla de entrar (`auth.js`); si falta, usa 62700666.
 
+Opcional (1.112.0): `whatsappApi: true` muestra el cuadro **📤 WhatsApp oficial** en Mensajes (solo admin y cuentas con `wa_api`). De fábrica `false`; ver sección 3w.
+
 Si los dos valores están vacíos, la app funciona sin formulario: los mensajes no llevan link y no aparece el panel de respuestas.
 
 ## 5. Dependencias externas
@@ -531,6 +569,7 @@ Si los dos valores están vacíos, la app funciona sin formulario: los mensajes 
 | cdnjs `xlsx 0.18.5` | Leer Excel/CSV subido | Se puede pegar la lista. |
 | Google Fonts | Tipografías | Usa fuentes del sistema. |
 | `wa.me` | Abrir WhatsApp con texto | Botón **Copiar texto**. |
+| Graph API de Meta (WhatsApp Cloud API), desde la Edge Function `whatsapp` | Avisos *Pedir ubicación* masivos y respuestas de clientes (1.112.0, opcional) | Se usa **Abrir WhatsApp** uno por uno. Cobra por mensaje (sección 3w). |
 | Google Maps / Waze | Navegación | Se pueden copiar las coordenadas. |
 | jsDelivr `zxing-wasm 3.1.6` (`dist/iife/reader/index.js` + `zxing_reader.wasm` desde fastly.jsdelivr.net, ~1 MB la primera vez) | Leer la guía del código de barras o del QR, también con la etiqueta inclinada (desde 1.96.0) | Se usa ZXing JS de abajo. |
 | jsDelivr `@zxing/library 0.21.3` | Leer el código de barras de la etiqueta (solo si el navegador no trae `BarcodeDetector`, como en iPhone) | Se escribe la guía a mano. |
