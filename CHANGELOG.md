@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-15
+- **1.111.2 · Pedir ubicación igual en Mensajes y Paquetes:** el botón **1. Pedir ubicación** de **Mensajes** (vista previa, Copiar y WhatsApp) ahora manda exactamente el mismo texto que el de **Paquetes**: con "Guía: JCR…," antes de "a su nombre" y, de 9:30 p. m. a 5 a. m., con el encabezado 🤖, la disculpa por la hora y "Buenas noches". Los demás mensajes no cambian. (15/11/2026)
 - **1.111.1 · Hold bien contado en Paquetes:** al poner o quitar ⏸ Hold (o marcar Entregado / Devolver) en **Ruta**, el resumen de **Paquetes** (Hold, En ruta, Sin 📍…) y sus tarjetas se actualizan de una vez. Antes quedaba el número viejo: con 2 pines amarillos decía Hold 1 y En ruta 6.
 - **1.111.0 · Contactos con guion después de TM:** **📇 Guardar contactos del día** y la columna *contacto* del **Excel del día** ahora ponen un guion entre el prefijo y el número fijo del paquete: *TM-12-María Rojas-JCR123* (antes *TM12-…*); sin guía *TM-12-María Rojas*; mismo teléfono *TM-12/15-Sofía-PO1/PO2*. Los mensajes no cambian.
 
