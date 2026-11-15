@@ -23,6 +23,9 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.1 | — | *Crear cuenta* con los campos en blanco |
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
+## 2026-11-15
+- **1.111.0 · Contactos con guion después de TM:** **📇 Guardar contactos del día** y la columna *contacto* del **Excel del día** ahora ponen un guion entre el prefijo y el número fijo del paquete: *TM-12-María Rojas-JCR123* (antes *TM12-…*); sin guía *TM-12-María Rojas*; mismo teléfono *TM-12/15-Sofía-PO1/PO2*. Los mensajes no cambian.
+
 ## 2026-11-14
 - **1.110.0 · Pedir ubicación con la guía (Paquetes):** el botón **Pedir ubicación** de *Paquetes* (y *Escanear & mensaje*) ahora dice "Tenemos un paquete de TEMU **Guía: JCR…**, a su nombre…". Si el paquete no tiene guía, el mensaje queda como antes. La versión de noche (9:30 p. m. a 5 a. m.) se conserva. El botón 1 de *Mensajes* no cambia.
 - **1.109.0 · Escáner: C.P. de la etiqueta:** al escanear una etiqueta J&T la app lee también el **C.P.** (código postal del cliente, ej. *C.P: 40307*), lo pone en la casilla nueva **C.P.** del escáner y lo guarda en el paquete; la tarjeta de *Paquetes* lo muestra a la par de la guía (*C.P. 40307*). También se puede escribir o corregir en *Agregar a mano* y *Editar*. Mensajes no cambia.
