@@ -267,7 +267,7 @@ Solo `index.html`. No hay SQL nuevo. Se guarda una marca de hora `voy` en la par
 
 ### Reporte de devoluciones (1.107.0)
 
-Solo `index.html`. Se arma en el celular con los mismos datos (paquetes actuales y cierres guardados) y el mismo jsPDF + autoTable de cdnjs que el *Reporte de entregas*. No hay SQL nuevo, consultas nuevas ni datos nuevos guardados: el motivo es el campo `nota` del paquete, que ya existía.
+Solo `index.html`. El porcentaje de devoluciones (1.111.3) se calcula en el celular; no hay SQL nuevo. Se arma en el celular con los mismos datos (paquetes actuales y cierres guardados) y el mismo jsPDF + autoTable de cdnjs que el *Reporte de entregas*. No hay SQL nuevo, consultas nuevas ni datos nuevos guardados: el motivo es el campo `nota` del paquete, que ya existía.
 
 ### Editar paquetes por devolver (1.105.1) y devueltos (1.105.2)
 

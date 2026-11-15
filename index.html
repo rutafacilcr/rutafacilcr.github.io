@@ -578,7 +578,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div id="devLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.111.2</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.111.3</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -1369,6 +1369,8 @@ $('#repLista').addEventListener('click',e=>{const b=e.target.closest('[data-rep]
 // 1.107.0 (Victor): Reporte de devoluciones. Misma información del Reporte de entregas, solo con los devueltos (repEstado = Devuelto:
 // devueltos al almacén y marcados ⛔ Devolver), sin hora de entrega, tiempo desde anterior ni km desde anterior (ni km/horas/promedio arriba),
 // y con "Motivo de devolución" = p.nota (ahí se guarda en mayúsculas el motivo que pide ⛔ Devolver). No toca repPdf.
+// 1.111.3 (Victor): porcentaje de devoluciones = devueltos ÷ recibidos, con un decimal si hace falta (25 %, 12,5 %)
+const devPct=(n,t)=>t?(Math.round(n/t*1000)/10).toLocaleString('es-CR')+' %':'0 %';
 const devDe=L=>L.filter(p=>repEstado(p)==='Devuelto');
 function devPdf(k){
   const G=repGrupos().find(x=>x.k===k),L=G?G.pk:[],D=devDe(L);if(!D.length){toast('Esa fecha no tiene devoluciones');return}
@@ -1383,7 +1385,7 @@ function devPdf(k){
   const ct=(kk,v,x,y)=>{doc.setFont(undefined,'bold');doc.text(kk+':',x,y);const w=doc.getTextWidth(kk+': ')+1;doc.setFont(undefined,'normal');doc.text(v,x+w,y)};
   doc.setFontSize(10);
   [[['Fecha',fd],['Entregado por',S.yo||'—']],[['Recibidos el',repDiaTxt(k)],['Días de entrega',String(R.dias)]],
-    [['Paquetes recibidos',String(R.rec)],['Paquetes entregados',String(R.ent)],['Paquetes en ruta',String(R.ruta)],['Paquetes en Hold',String(R.hold)],['Paquetes devueltos',String(R.dev)]]]
+    [['Paquetes recibidos',String(R.rec)],['Paquetes entregados',String(R.ent)],['Paquetes en ruta',String(R.ruta)],['Paquetes en Hold',String(R.hold)],['Paquetes devueltos',`${R.dev} (${devPct(R.dev,R.rec)} de los recibidos)`]]] // 1.111.3 (Victor): % de devoluciones
     .forEach((col,c)=>col.forEach((e,j)=>ct(e[0],e[1],14+c*64,23+j*6)));
   doc.autoTable({startY:53,head:[['No. paquete','No. guía / pedido','No. teléfono','Nombre','Fecha recibido','Estado','Fecha devolución','Motivo de devolución']],body:fil,
     styles:{fontSize:8.5,cellPadding:2},headStyles:{fillColor:[31,33,37],textColor:255},alternateRowStyles:{fillColor:[245,245,245]},
@@ -1393,7 +1395,7 @@ function devPdf(k){
   if(IOS&&navigator.canShare){const file=new File([doc.output('blob')],name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){navigator.share({files:[file]}).then(()=>toast('Reporte guardado')).catch(()=>{});return}}
   doc.save(name);toast(`Reporte con ${fil.length} devolución(es)`)}
 function devLista(){const el=$('#devLista');if(!el)return;const G=repGrupos();
-  el.innerHTML=G.length?G.map(g=>{const n=devDe(g.pk).length,R=repResumen(g.pk);return `<div class="replin"><div><b>↩️ ${repEntregasDe(g.k).replace('Entregas','Devoluciones')}</b><div class="small muted">${n} ${n===1?'devolución':'devoluciones'} de ${R.rec} recibidos</div></div><button class="btn sm primary" type="button" data-dev="${g.k}"${n?'':' disabled'}>📄 PDF</button></div>`}).join(''):'<p class="small muted">Todavía no hay paquetes.</p>'}
+  el.innerHTML=G.length?G.map(g=>{const n=devDe(g.pk).length,R=repResumen(g.pk);return `<div class="replin"><div><b>↩️ ${repEntregasDe(g.k).replace('Entregas','Devoluciones')}</b><div class="small muted">${n} ${n===1?'devolución':'devoluciones'} de ${R.rec} recibidos (${devPct(n,R.rec)})</div></div><button class="btn sm primary" type="button" data-dev="${g.k}"${n?'':' disabled'}>📄 PDF</button></div>`}).join(''):'<p class="small muted">Todavía no hay paquetes.</p>'}
 $('#devLista').addEventListener('click',e=>{const b=e.target.closest('[data-dev]');if(b)devPdf(b.dataset.dev)});
 // Reporte "Guías + fecha" (1.71.0): entregados agrupados por día de ENTREGA (repT), con Nombre, Tel., Guía y Nota
 function guiGrupos(){const g={};repTodos().forEach(p=>{ /* 1.95.0 (Victor): todos los recibidos, no solo los entregados */const k=p.ing?repDia(p.ing):'sin';(g[k]=g[k]||[]).push(p)}); // 1.72.3: un reporte por fecha de RECIBIDO
