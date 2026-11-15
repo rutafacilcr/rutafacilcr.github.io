@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-15
+- **1.112.0 · WhatsApp oficial (API de Meta):** en *Mensajes* aparece el cuadro **📤 WhatsApp oficial** con **Enviar a N sin enviar**: manda la plantilla aprobada *Pedir ubicación* a todos los clientes sin enviar ni ubicación, por la Edge Function `whatsapp`, sin abrir WhatsApp uno por uno (evita el bloqueo de 24 h). Cada tarjeta muestra si se entregó, se leyó o falló, y lo que contestó el cliente; si manda su ubicación, el paquete queda Confirmado solo. Apagado de fábrica (`whatsappApi: false` en `config.js`) hasta que se configure Meta; sin eso la app no cambia. SQL nuevo: tabla `rf_wa` y funciones `rf_wa_*`.
 - **1.111.1 · Hold bien contado en Paquetes:** al poner o quitar ⏸ Hold (o marcar Entregado / Devolver) en **Ruta**, el resumen de **Paquetes** (Hold, En ruta, Sin 📍…) y sus tarjetas se actualizan de una vez. Antes quedaba el número viejo: con 2 pines amarillos decía Hold 1 y En ruta 6.
 - **1.111.0 · Contactos con guion después de TM:** **📇 Guardar contactos del día** y la columna *contacto* del **Excel del día** ahora ponen un guion entre el prefijo y el número fijo del paquete: *TM-12-María Rojas-JCR123* (antes *TM12-…*); sin guía *TM-12-María Rojas*; mismo teléfono *TM-12/15-Sofía-PO1/PO2*. Los mensajes no cambian.
 

@@ -867,3 +867,122 @@ revoke all on function public.rf_numero_entrar(text) from public;
 revoke all on function public.rf_admin_alterno(text) from public, anon;
 grant execute on function public.rf_numero_entrar(text) to anon, authenticated;
 grant execute on function public.rf_admin_alterno(text) to authenticated;
+
+-- =====================================================================
+-- WhatsApp oficial (API de Meta) · 1.112.0 · 2026-11-15
+-- La app manda la plantilla "Pedir ubicación" por la Edge Function `whatsapp`
+-- (supabase/functions/whatsapp/index.ts). La llave de Meta vive solo en los
+-- secretos de la función, nunca aquí ni en el repositorio.
+-- Cada envío queda en rf_wa; cuando el cliente contesta (ubicación o texto) o
+-- Meta avisa que se entregó/leyó, la función actualiza la fila y la app la lee
+-- con rf_wa_leer cada minuto. Se puede correr de nuevo sin problema.
+-- =====================================================================
+alter table public.rf_perfiles add column if not exists wa_api boolean not null default false;  -- ¿esta cuenta puede usar el número oficial? (el admin siempre)
+
+create table if not exists public.rf_wa (
+  id           bigserial primary key,
+  owner_id     uuid not null references auth.users(id) on delete cascade,
+  paquete_id   text not null,
+  tel          text not null,                 -- 506XXXXXXXX, como lo manda Meta
+  wamid        text unique,                   -- id del mensaje en Meta
+  estado       text not null default 'enviado' check (estado in ('enviado','entregado','leido','fallo')),
+  error        text,
+  lat          double precision,
+  lng          double precision,
+  texto        text,                          -- lo último que escribió el cliente
+  auto_resp_en timestamptz,                   -- última respuesta automática (máximo una cada 12 h)
+  creado       timestamptz not null default now(),
+  actualizado  timestamptz not null default now()
+);
+create index if not exists rf_wa_owner_act on public.rf_wa (owner_id, actualizado);
+create index if not exists rf_wa_tel on public.rf_wa (tel, creado desc);
+alter table public.rf_wa enable row level security;  -- sin políticas: solo por las funciones de abajo
+
+-- ¿Esta cuenta puede mandar por el número oficial?
+create or replace function public.rf_wa_puede()
+returns boolean language plpgsql stable security definer set search_path = public as $$
+begin
+  perform public.rf_exigir_licencia();
+  if auth.uid() is null then return false; end if;
+  return exists (select 1 from rf_perfiles where id = auth.uid() and (rol = 'admin' or wa_api));
+end $$;
+
+-- La Edge Function la llama (con la sesión del repartidor) después de mandar.
+-- p_filas: [{paquete_id, tel, wamid, error}]
+create or replace function public.rf_wa_registrar(p_filas jsonb)
+returns int language plpgsql security definer set search_path = public as $$
+declare n int;
+begin
+  perform public.rf_exigir_licencia();
+  if not public.rf_wa_puede() then raise exception 'RF_WA: esta cuenta no tiene WhatsApp oficial'; end if;
+  if jsonb_array_length(coalesce(p_filas,'[]'::jsonb)) > 200 then raise exception 'RF_WA: máximo 200 por tanda'; end if;
+  delete from rf_wa where owner_id = auth.uid() and creado < now() - interval '30 days';  -- limpieza: 30 días
+  insert into rf_wa (owner_id, paquete_id, tel, wamid, estado, error)
+  select auth.uid(), left(f->>'paquete_id',40), left(regexp_replace(f->>'tel','\D','','g'),15),
+         nullif(f->>'wamid',''), case when coalesce(f->>'wamid','') = '' then 'fallo' else 'enviado' end, left(f->>'error',300)
+  from jsonb_array_elements(p_filas) f
+  on conflict (wamid) do nothing;
+  get diagnostics n = row_count;
+  return n;
+end $$;
+
+-- La app lee lo que cambió en sus envíos (estado, ubicación, texto del cliente).
+create or replace function public.rf_wa_leer(p_desde timestamptz default null)
+returns setof rf_wa language plpgsql security definer set search_path = public as $$
+begin
+  perform public.rf_exigir_licencia();
+  if auth.uid() is null then raise exception 'RF_CUENTA: sin sesión'; end if;
+  return query select * from rf_wa
+    where owner_id = auth.uid() and actualizado > coalesce(p_desde, now() - interval '7 days')
+    order by actualizado limit 1000;
+end $$;
+
+-- Solo la Edge Function (service_role) la llama cuando Meta avisa algo.
+-- p_tipo 'estado': p_wamid + p_estado (sent/delivered/read/failed).
+-- p_tipo 'mensaje': p_tel + p_texto o p_lat/p_lng. Devuelve true si toca responder automático.
+create or replace function public.rf_wa_entrante(p_tipo text, p_wamid text, p_tel text, p_estado text,
+  p_texto text, p_lat double precision, p_lng double precision, p_error text)
+returns boolean language plpgsql security definer set search_path = public as $$
+declare r rf_wa; e text; orden text[] := array['enviado','entregado','leido'];
+begin
+  if p_tipo = 'estado' then
+    e := case p_estado when 'delivered' then 'entregado' when 'read' then 'leido' when 'failed' then 'fallo' else 'enviado' end;
+    update rf_wa set
+      estado = case when e = 'fallo' then (case when estado in ('entregado','leido') then estado else 'fallo' end)
+                    when estado = 'fallo' then estado
+                    when array_position(orden, e) > array_position(orden, estado) then e else estado end,
+      error = coalesce(left(p_error,300), error), actualizado = now()
+    where wamid = p_wamid;
+    return false;
+  end if;
+  select * into r from rf_wa where tel = regexp_replace(p_tel,'\D','','g') and creado > now() - interval '7 days'
+    order by creado desc limit 1;
+  if not found then return false; end if;
+  update rf_wa set
+    lat = coalesce(p_lat, lat), lng = coalesce(p_lng, lng),
+    texto = coalesce(left(p_texto,1000), texto),
+    estado = case when estado = 'fallo' then estado else 'leido' end,  -- si contestó, lo leyó
+    auto_resp_en = case when p_texto is not null and (auto_resp_en is null or auto_resp_en < now() - interval '12 hours') then now() else auto_resp_en end,
+    actualizado = now()
+  where id = r.id;
+  return p_texto is not null and (r.auto_resp_en is null or r.auto_resp_en < now() - interval '12 hours');
+end $$;
+
+-- El administrador habilita o quita el número oficial a una cuenta.
+create or replace function public.rf_admin_wa(p_id uuid, p_on boolean)
+returns void language plpgsql security definer set search_path = public as $$
+begin
+  perform public.rf_admin_check();
+  update rf_perfiles set wa_api = coalesce(p_on, false) where id = p_id;
+end $$;
+
+revoke all on function public.rf_wa_puede() from public, anon;
+revoke all on function public.rf_wa_registrar(jsonb) from public, anon;
+revoke all on function public.rf_wa_leer(timestamptz) from public, anon;
+revoke all on function public.rf_wa_entrante(text,text,text,text,text,double precision,double precision,text) from public, anon, authenticated;
+revoke all on function public.rf_admin_wa(uuid, boolean) from public, anon;
+grant execute on function public.rf_wa_puede() to authenticated;
+grant execute on function public.rf_wa_registrar(jsonb) to authenticated;
+grant execute on function public.rf_wa_leer(timestamptz) to authenticated;
+grant execute on function public.rf_wa_entrante(text,text,text,text,text,double precision,double precision,text) to service_role;
+grant execute on function public.rf_admin_wa(uuid, boolean) to authenticated;

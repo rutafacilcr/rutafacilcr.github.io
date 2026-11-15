@@ -282,6 +282,18 @@ En la pestaña **Ruta**, abajo, aparece **Recorrido de hoy** en cuanto hacés la
 
 ---
 
+### WhatsApp oficial: avisar a todos de un toque (1.112.0)
+
+Si tu cuenta tiene el **WhatsApp oficial** activado, en **Mensajes** vas a ver arriba el cuadro **📤 WhatsApp oficial**:
+
+1. Revisá el **Día de entrega**.
+2. Tocá **Enviar a N sin enviar**. La app te dice cuántos son y cuánto cuesta más o menos (≈ ₡6 por cliente, lo cobra Meta a la tarjeta) y te pide confirmar.
+3. Listo: a cada cliente le llega el aviso *Pedir ubicación* desde el número oficial. No tenés que abrir WhatsApp ni mandar uno por uno, y WhatsApp no te bloquea.
+
+En cada tarjeta sale cómo va: *✓ enviado*, *✓✓ entregado*, *✓✓ leído* o *⚠️ no se pudo*. Si el cliente manda su **ubicación**, el paquete queda **Confirmado** y entra a la ruta solo (te sale un aviso 📍). Si escribe texto, se ve en la tarjeta (💬) y le llega una respuesta automática con tu WhatsApp para que te escriba ahí.
+
+Solo se manda a los que no tienen ubicación y todavía no recibieron el mensaje 1; nunca se repite. Los demás mensajes (En camino, Entregado, etc.) siguen con **Abrir WhatsApp** como siempre.
+
 ## 3. Estados de un paquete
 
 Cada etiqueta lleva ícono, nombre y color (1.79.0; círculos de color desde la 1.84.0), así se distingue aunque no se vean bien los colores:

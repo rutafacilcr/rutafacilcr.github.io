@@ -454,6 +454,15 @@ Se carga después de `config.js` en `index.html` y `admin.html`. Sin Supabase en
 - **En `index.html`:** `syncResp()` y `uploadPOD()` usan `await RF_AUTH.headers()`. La sincronización arranca dentro de `RF_AUTH.listo.then(...)`. `usarCuenta(c)` pone `S.yo = c.nombre` y deja `#m-yo` de solo lectura.
 - **`admin.html`:** define `window.RF_AUTH_ADMIN = true` antes de `auth.js` (exige `rol = 'admin'`). Lista cuentas (`rf_admin_cuentas`), movimientos (`rf_admin_eventos`) y ajustes (`rf_admin_ajustes` con nulos = solo leer). Acciones: `rf_admin_renovar`, `rf_admin_estado`, `rf_admin_telefono` (`aprobar|rechazar|liberar`), `rf_admin_pin` (PIN aleatorio de 6 dígitos), `rf_admin_nombre`. Después de activar, renovar o reactivar, `ofrecerAviso(c, nuevo)` muestra `#avisar` con un enlace `wa.me/506<tel>?text=…` ya escrito (no se abre solo: los navegadores bloquean ventanas que no vienen de un toque). Avisos: `rf_admin_avisos` (nulos = leer; las llaves solo se escriben y vuelven como `true/false`) y `rf_admin_probar_avisos`. Fotos: `storage/v1/object/list/evidencias` por carpeta de día y `DELETE storage/v1/object/evidencias` con `prefixes` (de 500 en 500).
 
+## 3w. WhatsApp oficial (1.112.0)
+
+- **Activación:** `RF_CONFIG.whatsappApi === true` **y** `rf_wa_puede()` verdadero (admin o `rf_perfiles.wa_api`). `waIniciar()` corre una vez al entrar (`RF_AUTH.listo`). Si no, `#waPanel` queda oculto y nada cambia.
+- **Enviar:** `waPend()` = activos, sin ubicación, `!p.sent && !p.waId`, teléfono válido. `waEnviar()` pide confirmación con el costo (`WA_COSTO_USD` × `WA_CRC`) y manda tandas de 50 a `POST {supabaseUrl}/functions/v1/whatsapp` con `{fecha, paquetes:[{id, tel, nombre, guia}]}` y los headers de `RF_AUTH.headers()`. Por cada resultado con `wamid` marca `p.sent`, `p.waId`, `p.waEst='enviado'`; si falla, `p.waErr` (se puede reintentar).
+- **Leer:** `waLeer()` cada 60 s llama `rf_wa_leer(p_desde)` (cursor `S.waDesde`, solo en el aparato). Aplica `estado`, `error`, `texto` (`p.waTxt`) y, si viene `lat/lng` o el texto trae un link/coordenadas (`parseCoord`), pone `p.ubic`, `p.waUbic=true` y pasa a `confirmado` si estaba pendiente.
+- **Pintar:** `waLinea(p)` agrega una línea en la tarjeta de Mensajes; `waPintar()` actualiza el cuadro y el botón (naranja, a la derecha). Los campos `wa*` viajan dentro de `S.pk` a la nube.
+- **Edge Function** `supabase/functions/whatsapp/index.ts` (Deno): POST de la app → revisa `rf_wa_puede` con la sesión del usuario (que llama `rf_exigir_licencia`), manda la plantilla por Graph API de 5 en 5 (máx. 100 por llamada) y registra con `rf_wa_registrar` usando la misma sesión. Webhook de Meta (GET verificación con `WA_VERIFY`; POST con firma `X-Hub-Signature-256` revisada con `WA_APP_SECRET`) → `rf_wa_entrante` con la llave service_role. Parámetros de la plantilla: {{1}} nombre, {{2}} guía, {{3}} fecha.
+- `rf_wa_entrante` es la única función de datos del repartidor sin `rf_exigir_licencia()`: no hay usuario (la llama Meta) y solo tiene permiso `service_role`.
+
 ## 4. Base de datos y seguridad (`supabase.sql`)
 
 ### Cuentas
