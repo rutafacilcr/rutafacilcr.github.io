@@ -253,9 +253,9 @@ Solo `index.html`. Usa SheetJS 0.18.5, que ya se carga desde cdnjs para importar
 
 Solo `index.html`. Al abrir la app se corrigen solos los nombres ya guardados en el celular.
 
-### Guía en Pedir ubicación (1.110.0)
+### Guía en Pedir ubicación (1.110.0 y 1.111.2)
 
-Solo `index.html`. Sin SQL ni configuración: la guía sale del paquete (`guia`) que ya se sincroniza con Supabase. No cambia el texto guardado de Mensajes (`coord`).
+Solo `index.html`. Sin SQL ni configuración: la guía sale del paquete (`guia`) que ya se sincroniza con Supabase. No cambia el texto guardado de Mensajes (`coord`): la guía se agrega al armar el mensaje. Desde la 1.111.2 también se agrega en *Mensajes*, así que Paquetes y Mensajes mandan el mismo texto.
 
 ### C.P. de la etiqueta (1.109.0)
 
