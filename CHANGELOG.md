@@ -23,6 +23,9 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.1 | — | *Crear cuenta* con los campos en blanco |
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
+## 2026-11-16
+- **1.111.4 · Hablar con cliente abre WhatsApp de una vez:** en **Mensajes**, al tocar **4. Hablar con cliente** se abre directo el chat de WhatsApp del cliente (sin texto), sin tener que tocar después *Abrir WhatsApp*. Queda marcado como mandado. Si el teléfono no sirve, avisa que hay que corregirlo en Paquetes. Paquetes, Ruta y los textos de los otros mensajes no cambian.
+
 ## 2026-11-15
 - **1.111.3 · Reporte de devoluciones con porcentaje:** en el PDF, *Paquetes devueltos* dice también qué porcentaje son de los recibidos (por ejemplo **3 (75 % de los recibidos)**), y la línea de cada fecha en Cierres lo muestra igual. Es devueltos ÷ recibidos de esa fecha.
 - **1.111.2 · Pedir ubicación igual en Mensajes y Paquetes:** el botón **1. Pedir ubicación** de **Mensajes** (vista previa, Copiar y WhatsApp) ahora manda exactamente el mismo texto que el de **Paquetes**: con "Guía: JCR…," antes de "a su nombre" y, de 9:30 p. m. a 5 a. m., con el encabezado 🤖, la disculpa por la hora y "Buenas noches". Los demás mensajes no cambian. (15/11/2026)
