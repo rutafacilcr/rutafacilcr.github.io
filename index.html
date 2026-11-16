@@ -578,7 +578,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div id="devLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.111.4</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.111.5</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -944,7 +944,8 @@ function renderMsg(){
   const L=$('#msgList');
   $('#sentCount').textContent=S.pk.length?`${S.pk.filter(p=>p.sent).length} de ${S.pk.length} enviados`:'';
   if(!S.pk.length){L.innerHTML='<div class="empty">Agregá paquetes en el paso 1 para preparar los mensajes.</div>';return}
-  const q=($('#m-buscar').value||'').trim().toLowerCase(),qd=q.replace(/\D/g,'');
+  const nt=t=>String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(); // 1.111.5: sin tildes, igual que Paquetes
+  const q=nt($('#m-buscar').value).trim(),qd=q.replace(/\D/g,'');
   // Buscar: por nombre o guía, o por los últimos dígitos del teléfono (sirve para ver de quién es un número que contesta)
   // 1.101.1 (Victor): también por el número asignado del paquete, exacto (1 a 3 dígitos), igual que en Paquetes
   // 1.88.0: filtros por estado (Todos, Sin contestar, No responde, Confirmados). Solo cuentan los que siguen activos (no entregados, devueltos ni para devolver)
@@ -954,14 +955,16 @@ function renderMsg(){
   MSGF='todos'; // 1.96.8 (Victor): sin filtros en Mensajes; se ven todos
   if(0)$('#msgFil').innerHTML=[['todos','Todos',S.pk.length],['sin','🟡 Sin enviar',S.pk.filter(FIL.sin).length],['nr','📨 Esperando respuesta',S.pk.filter(FIL.nr).length],['ok','🔵 Confirmados',S.pk.filter(FIL.ok).length],['hold','⏸ Hold',S.pk.filter(FIL.hold).length],['dev','⛔ Devolver',S.pk.filter(FIL.dev).length],['ent','✅ Entregados',S.pk.filter(FIL.ent).length],['devu','🔴 Devueltos',S.pk.filter(FIL.devu).length]].map(([k,t,n])=>`<button type="button" data-msgf="${k}" aria-pressed="${k===MSGF}">${t} <b>${n}</b></button>`).join('');
   const qn=/^\d{1,3}$/.test(q)&&S.pk.some(p=>String(p.num)===q); // 1.101.1: si hay un paquete con ese número, se ve solo ese (las guías y teléfonos traen muchos dígitos y taparían el resultado)
-  const hit=p=>(MSGF==='todos'||FIL[MSGF](p))&&hit0(p),hit0=p=>!q||(qn?String(p.num)===q:(p.nombre||'').toLowerCase().includes(q)||(p.guia||'').toLowerCase().includes(q)||(qd.length>=3&&String(p.tel||'').replace(/\D/g,'').includes(qd.slice(-8))));
+  const hit=p=>(MSGF==='todos'||FIL[MSGF](p))&&hit0(p),hit0=p=>!q||(qn?String(p.num)===q:q.split(/\s+/).every(w=>nt(p.nombre).includes(w))||nt(p.guia).includes(q)||(qd.length>=3&&String(p.tel||'').replace(/\D/g,'').includes(qd.slice(-8))));
   // 1.52.1: como en Paquetes, los entregados se ven en gris (número tachado) y bajan; al final los devueltos
   // 1.52.4: los que están en Hold en la Ruta van después de los pendientes y antes de los entregados (1.96.1: ya no en gris, sus mensajes se pueden enviar)
   const rk=p=>p.st==='entregado'?2:p.st==='devuelto'?3:enHold(p)?1:0;
   // 1.69.3: dentro de cada grupo, el mismo orden que en Ruta (posición de su parada en la lista de Ruta); los que no están en la ruta van después, en el orden de la lista
   const rpos={};try{const E=S.ent;if(E&&E.stops){const erk=s=>entDone(s)?2:s.c?(s.hold?0.5:0):1;let k=0;E.stops.map((s,i)=>[s,i]).sort((a,b)=>erk(a[0])-erk(b[0])||a[1]-b[1]).forEach(([s])=>{const q=entPkg(s);if(q&&rpos[q.id]===undefined)rpos[q.id]=k;k++})}}catch(e){}
   const rp=(p,i)=>rpos[p.id]!==undefined?rpos[p.id]:1e6+i;
-  L.innerHTML=S.pk.map((p,i)=>[p,i]).sort((a,b)=>rk(a[0])-rk(b[0])||(rk(a[0])?pkGrupoT(a[0])-pkGrupoT(b[0]):0)||rp(a[0],a[1])-rp(b[0],b[1])).map(([p,i])=>{const sel=msgSel(p),txt=msgText(p,sel);const l=waLink(p,txt);return `<div class="pkg${p.st==='entregado'?' entregado':''}${pkOff(p)?' devol':''}"${hit(p)?'':' style="display:none"'}>
+  // 1.111.5 (Victor): al buscar, lo encontrado va de primero: número exacto, después el nombre que empieza así, después una palabra del nombre que empieza así, y el resto de coincidencias
+  const sc=p=>{if(!q)return 0;if(!hit(p))return 9;if(qn)return 0;const n=nt(p.nombre).trim(),w0=q.split(/\s+/)[0];return (n+' ').startsWith(q+' ')?1:n.startsWith(q)?1.5:n.split(/\s+/).some(w=>w.startsWith(w0))?2:3};
+  L.innerHTML=S.pk.map((p,i)=>[p,i]).sort((a,b)=>sc(a[0])-sc(b[0])||rk(a[0])-rk(b[0])||(rk(a[0])?pkGrupoT(a[0])-pkGrupoT(b[0]):0)||rp(a[0],a[1])-rp(b[0],b[1])).map(([p,i])=>{const sel=msgSel(p),txt=msgText(p,sel);const l=waLink(p,txt);return `<div class="pkg${p.st==='entregado'?' entregado':''}${pkOff(p)?' devol':''}"${hit(p)?'':' style="display:none"'}>
     <div class="num${p.st==='entregado'?' tachado':''}">${p.num||i+1}</div>
     <div class="name">${esc(p.nombre)} ${msgChip(p,enHold(p))}</div>
     <div class="addr">${p.guia?`<span class="mono">Guía: ${esc(p.guia)}</span> · `:''}<span class="mono">${esc(p.tel||'sin teléfono')}</span>${p.nota?`<div class="pknota">📝 ${esc(p.nota)}</div>`:''}${p.resp?' <span class="small" style="color:var(--ok);font-weight:600">✓ llenó el formulario</span>':''}${p.horario?`<div class="small" style="color:var(--ok);font-weight:600">🕓 ${esc(p.horario)}</div>`:''}${p.senas?`<div class="small muted">🏠 ${esc(p.senas)}${p.recibe?` · Recibe: ${esc(p.recibe)}`:''}</div>`:''}</div>
@@ -1547,7 +1550,8 @@ $('#resWa').onclick=ganWa;$('#resXls').onclick=ganXls;
 document.querySelector('[data-tab="cierres"]').addEventListener('click',()=>trasPintar(()=>{fixIng1031();const gfe=$('#guiFechaEnt');if(gfe&&!gfe.value)gfe.value=new Date().toLocaleDateString('en-CA');try{ganActualizar();ganPintar()}catch(e){console.warn('ganancia',e)}repLista();repPagoLista();repRecLista();devLista();guiLista();repCargar().catch(()=>{});
   $('#repInfo').textContent='Buscando reportes de cierres anteriores…';repCierres().then(()=>{try{ganActualizar();ganPintar()}catch(e){console.warn('ganancia',e)}repLista();repPagoLista();repRecLista();devLista();guiLista();$('#repInfo').textContent=''})}));
 $('#m-pref').addEventListener('input',()=>{$('#vcfEj').textContent=vcfName({nombre:'Nombre',guia:'pedido',num:12})});
-$('#m-buscar').addEventListener('input',()=>renderMsg());
+// 1.111.5 (Victor): al escribir, el buscador sube arriba de la pantalla para que lo encontrado quede visible (y no detrás del teclado). La app se desplaza dentro de #app, no en window.
+$('#m-buscar').addEventListener('input',e=>{renderMsg();if(!e.target.value.trim())return;const a=$('#app'),b=e.target;if(a&&b){const d=b.getBoundingClientRect().top-a.getBoundingClientRect().top-8;if(Math.abs(d)>4)a.scrollTop+=d}});
 $('#msgFil').addEventListener('click',e=>{const b=e.target.closest('[data-msgf]');if(!b)return;MSGF=b.dataset.msgf;renderMsg()});
 $('#p-buscar').addEventListener('input',()=>renderPk());
 $('#r-here').onclick=()=>{const b=$('#r-here');if(!navigator.geolocation){toast('Este navegador no da la ubicación');return}b.textContent='Buscando…';

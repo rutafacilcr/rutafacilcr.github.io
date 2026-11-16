@@ -265,6 +265,10 @@ Solo `index.html`. No hay SQL nuevo: el C.P. se guarda como un campo más del pa
 
 Solo `index.html`. No hay SQL nuevo. Se guarda una marca de hora `voy` en la parada que se tocó (`S.ent.stops[].voy`), dentro de la ruta que ya se guarda en el celular y en Supabase, así que sigue en azul al volver de Waze o Maps aunque el celular recargue la app, y se ve igual en otro aparato de la misma cuenta. Solo una parada la tiene a la vez.
 
+### Búsqueda de Mensajes de primero (1.111.5)
+
+Solo `index.html`. No hay SQL nuevo ni datos nuevos: solo cambia el orden en pantalla y el desplazamiento al buscar.
+
 ### Hablar con cliente abre WhatsApp (1.111.4)
 
 Solo `index.html`. No hay SQL nuevo ni servicio externo: usa el mismo enlace `https://wa.me/506…` (sin texto) que ya armaba la app. Si el navegador bloquea ventanas emergentes para rutafacilcr.github.io, hay que permitirlas.
