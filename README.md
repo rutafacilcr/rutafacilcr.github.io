@@ -21,7 +21,7 @@ La app se maneja con cuatro pestañas en la barra de abajo: **Paquetes**, **Cier
   - *Pedir ubicación* desde Paquetes incluye la guía del paquete ("Tenemos un paquete de TEMU Guía: JCR…, a su nombre…"); sin guía, se omite (1.110.0). Desde la 1.111.2 *Mensajes* manda exactamente el mismo texto.
   - Botón 📷 que abre el WhatsApp del cliente para mandarle una foto (1.92.2).
   - Todas las fechas salen como dd/mm/aaaa (1.92.2).
-- **Mensajes (1.94.0):** ocho mensajes por cliente (1. Pedir ubicación, 2. En camino, 3. Comprensión, 4. Hablar con cliente, 5. Entregado, 6. Horario 8 a 12 md, 7. Horario 12 md a 5 p. m. y 8. Horario extendido, desde la 1.95.1) y etiquetas ✅ Entregado, 🔴 Devuelto (una sola vez, arriba a la derecha) y ⏸ HOLD. Los de Hold se pueden mensajear (1.96.1); sin botones de filtro desde la 1.96.8.
+- **Mensajes (1.94.0):** ocho mensajes por cliente (1. Pedir ubicación, 2. En camino, 3. Comprensión, 4. Hablar con cliente (desde la 1.111.4 abre WhatsApp del cliente con solo tocarlo), 5. Entregado, 6. Horario 8 a 12 md, 7. Horario 12 md a 5 p. m. y 8. Horario extendido, desde la 1.95.1) y etiquetas ✅ Entregado, 🔴 Devuelto (una sola vez, arriba a la derecha) y ⏸ HOLD. Los de Hold se pueden mensajear (1.96.1); sin botones de filtro desde la 1.96.8.
 - **En la computadora (1.94.0):** la app se ve dentro de un marco de iPhone; *Ver sin marco* la abre a pantalla completa.
 - **Ruta:**
   - Tel. y nota en cada parada; devueltos visibles en el mapa sin entrar a la ruta; al marcar ✓ Entregado sale el botón para mandar el WhatsApp "Entregado"; *Devolver* pide el motivo; la *Lista* muestra solo lo pendiente, Hold primero (1.94.0).

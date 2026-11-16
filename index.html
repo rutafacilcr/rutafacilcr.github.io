@@ -466,7 +466,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <label hidden>Formulario (ya no se usa en Mensajes)<textarea id="m-form"></textarea></label>
     <label>2. Voy en camino<textarea id="m-camino"></textarea></label>
     <label>3. Comprensión<textarea id="m-comp"></textarea></label>
-    <p class="small muted" style="margin:0">4. Hablar con cliente no tiene texto: abre el chat vacío.</p>
+    <p class="small muted" style="margin:0">4. Hablar con cliente no tiene texto: al tocarlo abre de una vez el WhatsApp del cliente, con el chat vacío.</p>
     <label>5. Entregado<textarea id="m-entr"></textarea></label>
     <label>6. Horario 8 a. m. a 12 md<textarea id="m-h1"></textarea></label>
     <label>7. Horario 12 md a 5 p. m.<textarea id="m-h2"></textarea></label>
@@ -578,7 +578,7 @@ html.enmarco header.top{padding-top:40px} /* dentro del marco de iPhone, el enca
     <div id="devLista"></div>
   </div>
 </section>
-<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.111.3</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
+<footer class="appver"><a href="#" id="supPie" style="color:inherit">Soporte</a> · RutaFácil CR · versión <span id="appVer">1.111.4</span><span id="nubeInfo" role="button" tabindex="0" style="cursor:pointer" title="Sincronizar ahora"></span></footer>
 <div class="copy" style="text-align:center;font-size:11px;color:var(--muted,#888);margin:0 0 8px;padding:0 16px">© 2026. InfolinkCR todos los derechos reservados.</div>
 </main>
 </div>
@@ -1106,6 +1106,8 @@ document.addEventListener('click',async e=>{
   else if(a==='ev'&&p){openEvidence(p);return}
   else if(a==='paste'&&p){pasteReply(p);return}
   else if(a==='sent'&&p){const k=el.dataset.k||'coord';if(el.classList.contains('coordbtn')||k==='coord'){const l=waLink(p,pkCoordText(p,true));if(l)el.href=l} /* 1.96.5: también en Mensajes · 1.111.2: con guía también en Mensajes (Victor) */ /* 1.92.4: la hora se revisa al tocar, no al pintar */if(k==='coord')p.sent=true;else if(k==='form')p.formSent=true;else if(k==='camino')p.caminoSent=true;else p[k+'Sent']=true;delete p.msgSel;save();setTimeout(render,300);return}
+  else if(a==='msgsel'&&p&&el.dataset.k==='hablar'){const l=waLink(p,'');if(!l){p.msgSel='hablar';save();renderMsg();return} /* 1.111.4 (Victor): 4. Hablar con cliente abre WhatsApp de una vez (chat del cliente sin texto) */
+    window.open(l,'_blank','noopener');p.hablarSent=true;delete p.msgSel;save();setTimeout(render,300);return}
   else if(a==='msgsel'&&p){p.msgSel=el.dataset.k;save();renderMsg();return}
   else if(a==='copy'&&p){const t=msgText(p);try{await navigator.clipboard.writeText(t);toast('Mensaje copiado')}catch(err){const d=el.closest('.pkg').querySelector('details');d.open=true;const r=document.createRange();r.selectNodeContents(d.querySelector('.preview'));getSelection().removeAllRanges();getSelection().addRange(r);toast('Texto seleccionado, copialo')}return}
   else if(a==='del'&&p){const ps=entParadasDe(p);
