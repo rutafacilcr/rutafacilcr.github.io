@@ -24,6 +24,7 @@ Versiones con formato **mayor.menor.corrección** (desde la 1.6.2). Antes se usa
 | 1.12.2 | — | *Crear cuenta* subrayado en la pantalla de entrar |
 
 ## 2026-11-16
+- **1.111.5 · Búsqueda de Mensajes de primero:** en **Mensajes**, al escribir en el buscador la pantalla sube para dejar el buscador arriba y lo encontrado justo debajo (antes podía quedar abajo, detrás del teclado). Si hay varias coincidencias, van de primero: número exacto, nombre que empieza con lo escrito, una palabra del nombre que empieza así y el resto. Ya no importan las tildes ("lopez" encuentra "López") y el nombre se busca por palabras, igual que en Paquetes. Paquetes y Ruta no cambian.
 - **1.111.4 · Hablar con cliente abre WhatsApp de una vez:** en **Mensajes**, al tocar **4. Hablar con cliente** se abre directo el chat de WhatsApp del cliente (sin texto), sin tener que tocar después *Abrir WhatsApp*. Queda marcado como mandado. Si el teléfono no sirve, avisa que hay que corregirlo en Paquetes. Paquetes, Ruta y los textos de los otros mensajes no cambian.
 
 ## 2026-11-15
